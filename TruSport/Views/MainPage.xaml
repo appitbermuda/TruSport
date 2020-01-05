@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:syncfusion="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+             x:Class="TruSport.MainPage">
+    <ContentPage.Content>
+        <Grid RowSpacing="0" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Image Grid.Row="0" Source="OnTrack_Wordmark_Reversed.png"
+                                       Aspect="AspectFit"
+                                       WidthRequest="150"
+                                       HorizontalOptions="CenterAndExpand"
+                                       VerticalOptions="EndAndExpand"/>
+            <!--<syncfusion:SfBusyIndicator Grid.Row="1"
+                                           BackgroundColor="Transparent"
+                                  TextColor="{StaticResource primaryPink}"
+                                  VerticalOptions="FillAndExpand"
+                                  HorizontalOptions="FillAndExpand"
+                                  AnimationType="SingleCircle"  
+                                  ViewBoxWidth="50"
+                                            ViewBoxHeight="50"
+                                  IsVisible="{Binding IsActivityIndicatorVisible}"
+                                  Duration="3"
+                                                 />-->
+            <!--<extension:CustomLoader x:Name="loader" Grid.Row="1"
+                                        Source="ontrackindicator.png"
+                                        RotationLength="2000"
+                                        VerticalOptions="EndAndExpand"
+                                    WidthRequest="100"
+                                        HorizontalOptions="Center"
+                                        
+                                        IsRunning="{Binding IsActivityIndicatorVisible}"
+                                        IsVisible="{Binding IsActivityIndicatorVisible}"/>-->
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

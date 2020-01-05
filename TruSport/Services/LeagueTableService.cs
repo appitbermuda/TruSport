@@ -1,0 +1,294 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using RestSharp;
+using TruSport.Model;
+
+namespace TruSport.Services
+{
+    public class LeagueTableService
+    {
+        public LeagueTableService()
+        {
+        }
+
+        public async Task<List<LeagueTable>> GetPremierLeagueTables()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/PremierLeagueTable", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueTable> table = JsonConvert.DeserializeObject<List<LeagueTable>>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueTable>> GetFirstDivisionTables()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/FirstDivisionTable", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueTable> table = JsonConvert.DeserializeObject<List<LeagueTable>>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueTable>> GetCoronaLeagueTables()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/CoronaLeagueTable", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueTable> table = JsonConvert.DeserializeObject<List<LeagueTable>>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<LeagueTable> GetPremierLeagueTableByTeam(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/PremierLeagueTableByTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    LeagueTable table = JsonConvert.DeserializeObject<LeagueTable>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<LeagueTable> GetFirstDivisionTableByTeam(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/FirstDivisionTableByTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    LeagueTable table = JsonConvert.DeserializeObject<LeagueTable>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueTable>> GetTeamLeagueTables(string teamID, string leagueID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                    var client = new RestClient(Constants.APIEndpoint);
+                    var request = new RestRequest("LeagueTable/TeamTable", Method.GET);
+                    request.AddParameter("teamID", teamID);
+                    request.AddParameter("leagueID", leagueID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        List<LeagueTable> coaches = JsonConvert.DeserializeObject<List<LeagueTable>>(response.Content);
+
+                        return coaches;
+                    }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueTable>> GetLeagueTableByLeague(string leagueID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/LeagueTableByLeague", Method.GET);
+                request.AddParameter("leagueID", leagueID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueTable> coaches = JsonConvert.DeserializeObject<List<LeagueTable>>(response.Content);
+
+                    return coaches;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<LeagueTable> Get(string ID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                    var client = new RestClient(Constants.APIEndpoint);
+                    var request = new RestRequest("LeagueTable/Get", Method.GET);
+                    request.AddParameter("id", ID);
+
+                    // We execute the request and capture the response
+                    // in a variable called `response`
+                    IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        LeagueTable fixture = JsonConvert.DeserializeObject<LeagueTable>(response.Content);
+
+                        return fixture;
+                    }
+                //}
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+
+                return null;
+            }
+        }
+    }
+}

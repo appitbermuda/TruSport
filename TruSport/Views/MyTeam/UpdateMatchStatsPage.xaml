@@ -1,0 +1,565 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extensions="clr-namespace:TruSport.Extensions" xmlns:converter="clr-namespace:TruSport.Converters" xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:syncfusion="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms" x:Class="TruSport.Views.MyTeam.UpdateMatchStatsPage" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+    <ContentPage.Resources>
+        <converter:SelectedTeamConverter x:Key="selectedTeamConverter"/>
+            <converter:SelectedTeamBackgroundConverter x:Key="selectedTeamBackgroundConverter"/>
+            <converter:SelectedTeamTextConverter x:Key="selectedTeamTextConverter"/>
+        <converter:GameTimeConverter x:Key="gameTimeConverter"/>
+        <converter:MatchTimeConverter x:Key="matchTimeConverter"/>
+            <converter:TimeConverter x:Key="timeConverter"/>
+        <converter:SelectedTeamResultConverter x:Key="selectedTeamResultConverter"/>
+            <converter:SelectedTeamProfileConverter x:Key="selectedTeamProfileConverter"/>
+            <converter:TeamNameConverter x:Key="teamNameConverter" />
+        <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
+            <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
+            <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
+            <converter:GroupingSelectionConverter x:Key="groupingSelectionConverter"/>
+            <converter:FavouriteFontConverter x:Key="favouriteFontConverter"/>
+            <converter:FavouriteConverter x:Key="favouriteConverter"/>
+        <converter:EventArgsConverter x:Key="eventArgsConverter"/>
+        <DataTemplate x:Name="MatchRosterItemTemplate"  x:Key="MatchRosterPlayerItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0"
+                             >
+                <Grid x:Name="grid"
+                      Padding="0,0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="JerseyNumberLabel"
+                                   FontSize="Small"
+                                   TextColor="White"
+                                        Text="{Binding MatchRoster.Player.JerseyNumber}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                     Spacing="5"
+                                     Orientation="Horizontal"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label x:Name="FirstNameLabel"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                       Text="{Binding MatchRoster.Player.FirstName}"
+                                   TextColor="White"/>
+                            <Label x:Name="LastNameLabel"
+                                   FontSize="Small"
+                                   FontAttributes="Bold"
+                                       Text="{Binding MatchRoster.Player.LastName}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GamesPlayedLabel"
+                                   FontSize="Small"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Played}"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GoalsLabel"
+                                   FontSize="Micro"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Goals}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="YellowCardsLabel"
+                                   FontSize="Micro"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding YellowCards}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="RedCardsLabel"
+                                   FontSize="Micro"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding RedCards}"/>
+                        </StackLayout>
+                        <BoxView Grid.Row="1" Grid.ColumnSpan="6"
+                                         BackgroundColor="White" Opacity="0.2"
+                                         HeightRequest="1"/>
+                        </Grid>
+                        
+                    </StackLayout>
+            </DataTemplate>
+        <DataTemplate x:Name="HomeTeamFixtureItemTemplate"  x:Key="HomeTeamFixtureItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid"
+                      Padding="0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                     <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                        <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <Label x:Name="SelectedTeamIDLabel" IsVisible="false"
+                                        Text="{Binding SelectedTeamID}"/>
+                        <StackLayout Grid.Column="0" Grid.Row="0"
+                                 VerticalOptions="End"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2">
+                            <Label x:Name="DateLabel"
+                                   FontSize="10"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Date, StringFormat='{0:dd MMM}'}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="1"
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2">
+                            <Label x:Name="TTLabel"
+                                   FontSize="10"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="FT"/>
+                        </StackLayout>
+                            
+                            <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="FillAndExpand"
+                                     HorizontalOptions="Start"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                <Label x:Name="HomeTeamAlias" Text="{Binding HomeTeam.Alias}" IsVisible="false"/>
+                            <Label x:Name="HomeTeamNameLabel"
+                                   FontSize="14"
+                                   FontAttributes="{Binding HomeTeamID, Converter={StaticResource selectedTeamProfileConverter}, ConverterParameter={x:Reference Name=SelectedTeamIDLabel}}"
+                                   TextColor="White"
+                                        Text="{Binding HomeTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference HomeTeamAlias}}"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="1"
+                                 VerticalOptions="FillAndExpand"
+                                     HorizontalOptions="Start"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                <Label x:Name="AwayTeamAlias" Text="{Binding AwayTeam.Alias}" IsVisible="false"/>
+                            <Label x:Name="AwayTeamNameLabel"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   FontAttributes="{Binding AwayTeamID, Converter={StaticResource selectedTeamProfileConverter}, ConverterParameter={x:Reference Name=SelectedTeamIDLabel}}"
+                                    Text="{Binding AwayTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference AwayTeamAlias}}"/>
+                        </StackLayout>
+                    
+                            <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="HomeTeamScoreLabel"
+                                   FontSize="15"
+                                   TextColor="White"
+                                   FontAttributes="{Binding HomeTeamID, Converter={StaticResource selectedTeamProfileConverter}, ConverterParameter={x:Reference Name=SelectedTeamIDLabel}}"
+                                        Text="{Binding Match.HomeTeamScore}"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="AwayTeamScoreLabel"
+                                   FontSize="15"
+                                   TextColor="White"
+                                   FontAttributes="{Binding AwayTeamID, Converter={StaticResource selectedTeamProfileConverter}, ConverterParameter={x:Reference Name=SelectedTeamIDLabel}}"
+                                        Text="{Binding Match.AwayTeamScore}"/>
+                                
+                        </StackLayout>
+                    <StackLayout Grid.RowSpan="2" Grid.Column="3" Padding="5"  VerticalOptions="Center" HorizontalOptions="Center">
+                        <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                            <!--<Frame BackgroundColor="Green" HasShadow="False" WidthRequest="40" HeightRequest="40" CornerRadius="20" VerticalOptions="Center" HorizontalOptions="Center"/>-->
+                            <BoxView BackgroundColor="{Binding SelectedTeamResult, Converter={StaticResource selectedTeamResultConverter}}" HeightRequest="40" WidthRequest="40" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="20"/>
+                            <Label Text="{Binding SelectedTeamResult}" TextColor="White" FontAttributes="Bold" FontSize="Micro" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Grid>
+                    </StackLayout>
+                    <BoxView Grid.Row="2" Grid.ColumnSpan="4" Opacity=".3"
+                                         BackgroundColor="White"
+                                         HeightRequest="1"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        <DataTemplate x:Name="AwayTeamFixtureItemTemplate"  x:Key="AwayTeamFixtureItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid"
+                      Padding="0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                     <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                        <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <Label x:Name="SelectedTeamIDLabel" IsVisible="false"
+                                        Text="{Binding SelectedTeamID}"/>
+                        <StackLayout Grid.Column="0" Grid.Row="0"
+                                 VerticalOptions="End"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2">
+                            <Label x:Name="DateLabel"
+                                   FontSize="10"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Date, StringFormat='{0:dd MMM}'}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="1"
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2">
+                            <Label x:Name="TTLabel"
+                                   FontSize="10"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="FT"/>
+                        </StackLayout>
+                            
+                            <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="FillAndExpand"
+                                     HorizontalOptions="Start"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                <Label x:Name="HomeTeamAlias" Text="{Binding HomeTeam.Alias}" IsVisible="false"/>
+                            <Label x:Name="HomeTeamNameLabel"
+                                   FontSize="14"
+                                   FontAttributes="{Binding HomeTeamID, Converter={StaticResource selectedTeamProfileConverter}, ConverterParameter={x:Reference Name=SelectedTeamIDLabel}}"
+                                   TextColor="White"
+                                        Text="{Binding HomeTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference HomeTeamAlias}}"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="1"
+                                 VerticalOptions="FillAndExpand"
+                                     HorizontalOptions="Start"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                <Label x:Name="AwayTeamAlias" Text="{Binding AwayTeam.Alias}" IsVisible="false"/>
+                            <Label x:Name="AwayTeamNameLabel"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   FontAttributes="{Binding AwayTeamID, Converter={StaticResource selectedTeamProfileConverter}, ConverterParameter={x:Reference Name=SelectedTeamIDLabel}}"
+                                    Text="{Binding AwayTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference AwayTeamAlias}}"/>
+                        </StackLayout>
+                    
+                            <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="HomeTeamScoreLabel"
+                                   FontSize="15"
+                                   TextColor="White"
+                                   FontAttributes="{Binding HomeTeamID, Converter={StaticResource selectedTeamProfileConverter}, ConverterParameter={x:Reference Name=SelectedTeamIDLabel}}"
+                                        Text="{Binding Match.HomeTeamScore}"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="AwayTeamScoreLabel"
+                                   FontSize="15"
+                                   TextColor="White"
+                                   FontAttributes="{Binding AwayTeamID, Converter={StaticResource selectedTeamProfileConverter}, ConverterParameter={x:Reference Name=SelectedTeamIDLabel}}"
+                                        Text="{Binding Match.AwayTeamScore}"/>
+                                
+                        </StackLayout>
+                    <StackLayout Grid.RowSpan="2" Grid.Column="3" Padding="5"  VerticalOptions="Center" HorizontalOptions="Center">
+                        <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                            <!--<Frame BackgroundColor="Green" HasShadow="False" WidthRequest="40" HeightRequest="40" CornerRadius="20" VerticalOptions="Center" HorizontalOptions="Center"/>-->
+                            <BoxView BackgroundColor="{Binding SelectedTeamResult, Converter={StaticResource selectedTeamResultConverter}}" HeightRequest="40" WidthRequest="40" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="20"/>
+                            <Label Text="{Binding SelectedTeamResult}" TextColor="White" FontAttributes="Bold" FontSize="Micro" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Grid>
+                    </StackLayout>
+                    <BoxView Grid.Row="2" Grid.ColumnSpan="4" Opacity=".3"
+                                         BackgroundColor="White"
+                                         HeightRequest="1"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        <DataTemplate x:Name="HeadToHeadItemTemplate"  x:Key="HeadToHeadItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid"
+                      Padding="0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                     <!--<ColumnDefinition Width="50"/>-->
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                        <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <Label x:Name="SelectedTeamIDLabel" IsVisible="false"
+                                        Text="{Binding SelectedTeamID}"/>
+                        <StackLayout Grid.Column="0" Grid.Row="0"
+                                 VerticalOptions="End"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2">
+                            <Label x:Name="DateLabel"
+                                   FontSize="10"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Date, StringFormat='{0:dd MMM}'}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="1"
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2">
+                            <Label x:Name="TTLabel"
+                                   FontSize="10"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="FT"/>
+                        </StackLayout>
+                            
+                            <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="FillAndExpand"
+                                     HorizontalOptions="Start"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                <Label x:Name="HomeTeamAlias" Text="{Binding HomeTeam.Alias}" IsVisible="false"/>
+                            <Label x:Name="HomeTeamNameLabel"
+                                   FontSize="14"
+                                   TextColor="White"
+                                        Text="{Binding HomeTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference HomeTeamAlias}}"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="1"
+                                 VerticalOptions="FillAndExpand"
+                                     HorizontalOptions="Start"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                <Label x:Name="AwayTeamAlias" Text="{Binding AwayTeam.Alias}" IsVisible="false"/>
+                            <Label x:Name="AwayTeamNameLabel"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   Text="{Binding AwayTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference AwayTeamAlias}}"/>
+                        </StackLayout>
+                    
+                            <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="HomeTeamScoreLabel"
+                                   FontSize="15"
+                                   TextColor="White"
+                                        Text="{Binding Match.HomeTeamScore}"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="AwayTeamScoreLabel"
+                                   FontSize="15"
+                                   TextColor="White"
+                                        Text="{Binding Match.AwayTeamScore}"/>
+                                
+                        </StackLayout>
+                    <!--<StackLayout Grid.RowSpan="2" Grid.Column="3" Padding="5"  VerticalOptions="Center" HorizontalOptions="Center">
+                        <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                            <BoxView BackgroundColor="{Binding SelectedTeamResult, Converter={StaticResource selectedTeamResultConverter}}" HeightRequest="40" WidthRequest="40" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="20"/>
+                            <Label Text="{Binding SelectedTeamResult}" TextColor="White" FontAttributes="Bold" FontSize="Micro" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Grid>
+                    </StackLayout>-->
+                    <BoxView Grid.Row="2" Grid.ColumnSpan="3" Opacity=".3"
+                                         BackgroundColor="White"
+                                         HeightRequest="1"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+    </ContentPage.Resources>
+    <NavigationPage.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <!--<ColumnDefinition Width="50"/>-->
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <!--<StackLayout Grid.Column="0" VerticalOptions="Center">
+                <Button x:Name="BackButton"
+                    HorizontalOptions="Start"
+                        TextColor="White"
+                    Text=""
+                    Clicked="BackButtonClicked"
+                    FontFamily="{StaticResource fontAwesomeSolidFamily}"
+                    VerticalOptions="Center"
+                        FontSize="Large"
+                        BackgroundColor="Transparent"
+                    />
+            </StackLayout>-->
+            <StackLayout Grid.Column="0" VerticalOptions="Center">
+                <Label Text="Edit Fixture" FontSize="Large" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+            </StackLayout>
+            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                <Button x:Name="SaveButton"
+                    HorizontalOptions="End"
+                        TextColor="White"
+                    Text=""
+                    Command="{Binding SaveCommand}"
+                    FontFamily="{StaticResource fontAwesomeSolidFamily}"
+                    VerticalOptions="Center"
+                        FontSize="Title"
+                        BackgroundColor="Transparent"
+                    />
+            </StackLayout>
+        </Grid>
+    </NavigationPage.TitleView>
+    <ContentPage.Content>
+        <Grid HorizontalOptions="FillAndExpand" RowSpacing="0"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+           <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        <Grid HorizontalOptions="FillAndExpand" RowSpacing="0" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70" />
+                <RowDefinition Height="70" />
+                <RowDefinition Height="70" />
+                <RowDefinition Height="70" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!--<StackLayout Grid.Row="0" Grid.Column="0" Padding="10">
+                <Label HorizontalOptions="Center" Text="{Binding HomeTeamName}" TextColor="White" FontSize="Medium" />
+            </StackLayout>
+            <StackLayout Grid.Row="0" Grid.Column="1" Padding="10">
+                <Label HorizontalOptions="Center" Text="{Binding AwayTeamName}" TextColor="White" FontSize="Medium" />
+            </StackLayout>-->
+            <StackLayout Grid.Row="0" Padding="10,0" Grid.Column="0">
+                <StackLayout
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenHomeTeamScorePicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <inputLayout:SfTextInputLayout Hint="{Binding HomeTeamName}"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   VerticalOptions="FillAndExpand" HeightRequest="50">
+                        <Entry Text="{Binding HomeTeamScore}" TextColor="White" BackgroundColor="Transparent" Keyboard="Numeric" />
+                    </inputLayout:SfTextInputLayout>
+                    
+                </StackLayout>
+            </StackLayout>
+            <StackLayout  Grid.Row="0" Padding="10,0" Grid.Column="1">
+                <StackLayout 
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenAwayTeamScorePicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <inputLayout:SfTextInputLayout Hint="{Binding AwayTeamName}"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   VerticalOptions="FillAndExpand" HeightRequest="50"  >
+                        <Entry Text="{Binding AwayTeamScore}" TextColor="White" BackgroundColor="Transparent" Keyboard="Numeric" />
+                    </inputLayout:SfTextInputLayout>
+                    
+                </StackLayout>
+            </StackLayout>
+            <StackLayout  Grid.Row="1" Padding="10,20,0,0" Grid.Column="0">
+                <StackLayout 
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenAwayTeamScorePicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <Label Text="Penalty Shootout?" TextColor="White" BackgroundColor="Transparent" HeightRequest="50"/>
+                   </StackLayout>
+            </StackLayout>
+            <StackLayout  Grid.Row="1" Padding="0,20,10,0" Grid.Column="1">
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <syncfusion:SfSwitch IsOn="{Binding IsPenalties}" BackgroundColor="{StaticResource primaryBarBlue}"  VisualType="Material" HorizontalOptions="CenterAndExpand"/>
+                 </StackLayout>
+            </StackLayout>
+             <StackLayout Grid.Row="2" Padding="10,0" Grid.Column="0" Orientation="Horizontal" IsVisible="{Binding IsPenalties}">
+                <StackLayout
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="{Binding HomeTeamName}"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   VerticalOptions="FillAndExpand" HeightRequest="40"  >
+                        <Entry Text="{Binding HomeTeamPenalty}" TextColor="White" BackgroundColor="Transparent" Keyboard="Numeric" />
+                    </inputLayout:SfTextInputLayout>
+                    
+                </StackLayout>
+                 </StackLayout>
+                 <StackLayout Grid.Row="2" Padding="10,0" Grid.Column="1" Orientation="Horizontal" IsVisible="{Binding IsPenalties}">
+                <StackLayout
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="{Binding AwayTeamName}"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   VerticalOptions="FillAndExpand" HeightRequest="40">
+                        <Entry Text="{Binding AwayTeamPenalty}" TextColor="White" BackgroundColor="Transparent" Keyboard="Numeric" />
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+            </StackLayout>
+        </Grid>
+            </ScrollView>
+            <ContentView BackgroundColor="{StaticResource primaryDarkBlueTwo}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            <extensions:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            </Grid>
+    </ContentPage.Content>
+</ContentPage>

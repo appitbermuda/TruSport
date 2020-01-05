@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
+             xmlns:local="clr-namespace:TruSport.ViewModels"
+             xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+             xmlns:picker="clr-namespace:Syncfusion.SfPicker.XForms;assembly=Syncfusion.SfPicker.XForms"
+             xmlns:syncfusion="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms"
+             x:Class="TruSport.Views.Admin.EditUserTypePage">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="SaveToolbarItem" Text="Save" Activated="SaveClicked" Order="Primary" Priority="1" />
+<!--        <ToolbarItem x:Name="DeleteToolbarItem" Icon="DeleteWhite.png" Activated="DeleteClicked" Order="Primary" Priority="1" />-->
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand">
+            <Grid HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand"
+                  Padding="10"
+                  RowSpacing="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackLayout Grid.Row="0" Grid.Column="0" Orientation="Horizontal"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Name"
+                                                    ContainerType="Outlined"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="userTypeName"
+                               Text="{Binding UserTypeItem.Name}"
+                               />
+                    </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

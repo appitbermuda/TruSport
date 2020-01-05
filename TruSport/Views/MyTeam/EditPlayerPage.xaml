@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:extensions="clr-namespace:TruSport.Extensions" xmlns:syncfusion="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms" x:Class="TruSport.Views.MyTeam.EditPlayerPage"
+             BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+    <NavigationPage.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <!--<ColumnDefinition Width="50"/>-->
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <!--<StackLayout Grid.Column="0" VerticalOptions="Center">
+                <Button x:Name="BackButton"
+                    HorizontalOptions="Start"
+                        TextColor="White"
+                    Text=""
+                    Clicked="BackButtonClicked"
+                    FontFamily="{StaticResource fontAwesomeSolidFamily}"
+                    VerticalOptions="Center"
+                        FontSize="Large"
+                        BackgroundColor="Transparent"
+                    />
+            </StackLayout>-->
+            <StackLayout Grid.Column="0" VerticalOptions="Center">
+                <Label Text="Edit Player" FontSize="Large" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+            </StackLayout>
+            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                <Button x:Name="SaveButton"
+                    HorizontalOptions="End"
+                        TextColor="White"
+                    Text=""
+                    Command="{Binding SaveCommand}"
+                    FontFamily="{StaticResource fontAwesomeSolidFamily}"
+                    VerticalOptions="Center"
+                        FontSize="Title"
+                        BackgroundColor="Transparent"
+                    />
+            </StackLayout>
+        </Grid>
+    </NavigationPage.TitleView>
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid>
+            <ScrollView>
+                <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="80"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Orientation="Horizontal">
+                        <StackLayout>
+                    <Label Text="Active?" TextColor="White" BackgroundColor="Transparent" VerticalOptions="CenterAndExpand"/>
+                   </StackLayout>
+                        <StackLayout  HorizontalOptions="EndAndExpand">
+                    <syncfusion:SfSwitch IsOn="{Binding PlayerSeasonItem.IsActive}"  VisualType="Material">
+                                <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="On">
+                    <VisualState.Setters>
+                        <Setter Property="SwitchSettings">
+                            <Setter.Value>
+                                <syncfusion:MaterialSwitchSettings x:TypeArguments="syncfusion:OnState"
+                                                                    ThumbColor="{StaticResource primaryAccentPink}"
+                                                                    TrackColor="Gray"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Off">
+                    <VisualState.Setters>
+                        <Setter Property="SwitchSettings">
+                            <Setter.Value>
+                                <syncfusion:MaterialSwitchSettings x:TypeArguments="syncfusion:OffState"
+                                                                    ThumbColor="White"
+                                                                    TrackColor="Gray"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+                            </syncfusion:SfSwitch>
+                            </StackLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <inputLayout:SfTextInputLayout Hint="Jersey Number" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None">
+                            <Entry x:Name="jerseyEntry" TextColor="White" HeightRequest="30" Text="{Binding PlayerSeasonItem.JerseyNumber}"/>
+                        </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <inputLayout:SfTextInputLayout Hint="First Name" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None">
+                            <Entry x:Name="firstNameEntry" TextColor="White" HeightRequest="30" Text="{Binding PlayerSeasonItem.Player.FirstName}"/>
+                        </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <inputLayout:SfTextInputLayout Hint="Last Name" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None">
+                            <Entry x:Name="lastNameEntry" TextColor="White" HeightRequest="30" Text="{Binding PlayerSeasonItem.Player.LastName}"/>
+                        </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <inputLayout:SfTextInputLayout Hint="Played" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None">
+                            <Entry x:Name="playedEntry" TextColor="White" HeightRequest="30" Text="{Binding PlayerSeasonItem.GamesPlayed}" Keyboard="Numeric"/>
+                        </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <inputLayout:SfTextInputLayout Hint="Goals" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None">
+                            <Entry x:Name="goalEntry" TextColor="White" HeightRequest="30" Text="{Binding PlayerSeasonItem.Goals}" Keyboard="Numeric"/>
+                        </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="4" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <inputLayout:SfTextInputLayout Hint="Yellow Cards" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None">
+                            <Entry x:Name="yellowCardEntry" TextColor="White" HeightRequest="30" Text="{Binding PlayerSeasonItem.YellowCards}" Keyboard="Numeric"/>
+                        </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="4" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <inputLayout:SfTextInputLayout Hint="Red Cards" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None">
+                            <Entry x:Name="redCardEntry" TextColor="White" HeightRequest="30" Text="{Binding PlayerSeasonItem.RedCards}" Keyboard="Numeric"/>
+                        </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                    
+                </Grid>
+            </ScrollView>
+                <ContentView BackgroundColor="Black" Opacity=".3" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+                <extensions:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            </Grid>
+            
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

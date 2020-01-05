@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:converter="clr-namespace:TruSport.Converters" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" x:Class="TruSport.Views.MyTeam.RosterPage"
+             Title="Squad"
+             >
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:SeasonFixtureDateConverter x:Key="seasonFixtureDateConverter"/>
+            <converter:IsPastFixtureConverter x:Key="isPastFixtureConverter"/>
+            <converter:IsUpcomingFixtureConverter x:Key="isUpcomingFixtureConverter"/>
+            <converter:ImageConverter x:Key="imageConverter"/>
+            <converter:SelectedTeamConverter x:Key="selectedTeamConverter"/>
+            <converter:SelectedTeamPenaltyConverter x:Key="selectedTeamPenaltyConverter"/>
+            <converter:SelectedTeamBackgroundConverter x:Key="selectedTeamBackgroundConverter"/>
+            <converter:SelectedTeamTextConverter x:Key="selectedTeamTextConverter"/>
+            <converter:TableIndexToColorConverter x:Key="tableIndexConverter"/>
+            <converter:GameTimeConverter x:Key="gameTimeConverter"/>
+            <converter:TimeConverter x:Key="timeConverter"/>
+            <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
+            <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
+            <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
+            <converter:GroupingSelectionConverter x:Key="groupingSelectionConverter"/>
+            <converter:SelectedTeamResultConverter x:Key="selectedTeamResultConverter"/>
+            <converter:SelectedTeamProfileConverter x:Key="selectedTeamProfileConverter"/>
+            <converter:FavouriteFontConverter x:Key="favouriteFontConverter"/>
+            <converter:FavouriteConverter x:Key="favouriteConverter"/>
+            <converter:TeamNameConverter x:Key="teamNameConverter" />
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontAwesomeFamily" Android="fa-regular-400.ttf#Font Awesome 5 Pro Regular" iOS="Font Awesome 5 Pro" />
+            <DataTemplate x:Name="PlayerItemTemplate"  x:Key="PlayerItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0">
+                <Grid x:Name="grid"
+                      Padding="0,0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="43" />
+                            <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="JerseyNumberLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                        Text="{Binding JerseyNumber}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                     Spacing="5"
+                                     Orientation="Horizontal"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label x:Name="FirstNameLabel"
+                                   FontSize="12"
+                                       FontAttributes="Bold"
+                                       Text="{Binding Player.FirstName}"
+                                   TextColor="White"/>
+                            <Label x:Name="LastNameLabel"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                       Text="{Binding Player.LastName}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GamesPlayedLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding GamesPlayed}"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GoalsLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Goals}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="YellowCardsLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding YellowCards}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="RedCardsLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding RedCards}"/>
+                        </StackLayout>
+                        <BoxView Grid.Row="1" Grid.ColumnSpan="6"
+                                         BackgroundColor="White" Opacity="0.2"
+                                         HeightRequest="1"/>
+                        </Grid>
+                        
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <NavigationPage.TitleView>
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     Padding="0,0,0,0">
+            <StackLayout.Padding>
+               <OnPlatform x:TypeArguments="Thickness">
+                 <On Platform="Android" Value="0, 0, 0, 0"/>
+                 <On Platform="iOS" Value="0, 0, 0, 0"/>
+                </OnPlatform>
+              </StackLayout.Padding>
+            <Grid HorizontalOptions="FillAndExpand">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                 <StackLayout Grid.Column="0" Padding="0,0,0,0" VerticalOptions="CenterAndExpand">
+                        <StackLayout.HorizontalOptions>
+                            <OnPlatform x:TypeArguments="LayoutOptions">
+                                <On Platform="Android" Value="StartAndExpand"/>
+                                <On Platform="iOS" Value="CenterAndExpand"/>
+                            </OnPlatform>
+                        </StackLayout.HorizontalOptions>
+                         <Label x:Name="TitleLabel" Text="{Binding TeamName}" FontSize="14" HorizontalTextAlignment="Center" TextColor="White" FontAttributes="Bold" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                <!--<StackLayout Grid.Column="1" Padding="0,0,0,0" HorizontalOptions="End">
+                <Button x:Name="FavouriteButton"
+                    HorizontalOptions="End"
+                        TextColor="White"
+                    Text="{Binding IsFavourite, Converter={StaticResource favouriteConverter}}"
+                    Command="{Binding FavouriteCommand}"
+                    FontFamily="{Binding IsFavourite, Converter={StaticResource favouriteFontConverter}}"
+                    VerticalOptions="Center"
+                        FontSize="Medium"
+                        BackgroundColor="Transparent"
+                    />
+                </StackLayout>-->
+                </Grid>
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+                <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="3" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="1" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                    <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0">
+                            
+                        <Grid Grid.Row="0" 
+                              x:Name="TeamTableHeaderGrid"
+                              Padding="0"
+                              RowSpacing="1"
+                              ColumnSpacing="1"
+                              
+                              VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand">    
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label
+                                   FontSize="13"
+                                       Text="#"
+                                       FontAttributes="Bold"
+                                    HorizontalTextAlignment="Center"
+                                   TextColor="White"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label
+                                   FontSize="13"
+                                       Text="NAME"
+                                       FontAttributes="Bold"
+                                   TextColor="White"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                        Text="GP"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                        Text="G"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                        Text="Y"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                        Text="R"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                                <BoxView Grid.Row="2" Opacity=".3"
+                                         BackgroundColor="White"
+                                         HeightRequest="1"/>
+                            <listView:SfListView Grid.Row="3" x:Name="PlayerListView"
+                                                ItemsSource="{Binding PlayerCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                                    ItemTemplate="{StaticResource PlayerItemTemplate}"
+                                                   SelectionMode="SingleDeselect"
+                                                   ItemSpacing="0"
+                                                    SelectionBackgroundColor="{StaticResource primaryBarBlue}"
+                                                 ItemSize="45"
+                                                 TapCommand="{Binding OnPlayerSelectedCommand}"
+                                            
+                                />
+                            <ContentView Grid.RowSpan="4" BackgroundColor="{StaticResource primaryDarkBlueTwo}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+               <extension:CustomBusyIndicator Grid.RowSpan="4" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+                        </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

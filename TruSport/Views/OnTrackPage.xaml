@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extension="clr-namespace:TruSport.Extensions"  x:Class="TruSport.Views.OnTrackPage" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+    <ContentPage.Content>
+        <Grid VerticalOptions="FillAndExpand">
+            <!--<StackLayout Grid.Row="0" Padding="120,0"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <Image VerticalOptions="CenterAndExpand"
+                           HorizontalOptions="CenterAndExpand"
+                           Source="eleresports_wordmark.png"
+                           Aspect="AspectFit"/>
+                <extension:CustomLoader x:Name="loader"
+                                        Source="ontrackindicator.png"
+                                        RotationLength="2000"
+                                        VerticalOptions="EndAndExpand"
+                                        WidthRequest="100"
+                                        HorizontalOptions="Center"
+                                        IsRunning="True"
+                                        IsVisible="True">
+                    <extension:CustomLoader.HeightRequest>
+                        <OnPlatform x:TypeArguments="x:Double">
+                            <On Platform="Android" Value="100" />
+                            <On Platform="iOS" Value="100" />
+                        </OnPlatform>
+                    </extension:CustomLoader.HeightRequest>
+                </extension:CustomLoader>
+                </StackLayout>-->
+            <StackLayout Grid.Row="0" Padding="85,10,85,0"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="CenterAndExpand">
+                    <Image VerticalOptions="CenterAndExpand"
+                           HorizontalOptions="FillAndExpand"
+                           Source="ontrack_wordmark_reversed"
+                           Aspect="AspectFit">
+                    </Image>
+                </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

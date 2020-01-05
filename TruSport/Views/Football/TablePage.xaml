@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms"
+             xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+             xmlns:syncfusion="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms"
+             
+             xmlns:local="clr-namespace:TruSport.ViewModels"
+             xmlns:model="clr-namespace:TruSport.Model"
+             xmlns:converter="clr-namespace:TruSport.Converters"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+             x:Class="TruSport.Views.Football.TablePage"
+             Title="Standings"
+             Icon="TableWhite24.png">
+    <ContentPage.BindingContext>
+        <local:TablePageViewModel x:Name="viewModel"/>
+    </ContentPage.BindingContext>
+    <ContentPage.ToolbarItems>
+<!--        <ToolbarItem x:Name="AdminToolbarItem" Icon="Admin32.png" Activated="AdminClicked" Order="Primary" Priority="1" />-->
+<!--        <ToolbarItem x:Name="DeleteToolbarItem" Icon="DeleteWhite.png" Activated="DeleteClicked" Order="Primary" Priority="1" />-->
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:TeamNameConverter x:Key="teamNameConverter"/>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converter:TableIndexToColorConverter x:Key="tableIndexConverter"/>
+            <converter:GameTimeConverter x:Key="gameTimeConverter"/>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Name="TableItemTemplate"  x:Key="TableItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center">
+                    <StackLayout 
+                                 HorizontalOptions="FillAndExpand"
+                                 VerticalOptions="FillAndExpand">
+                    
+                <Grid x:Name="grid"
+                      Padding="0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <!--<ColumnDefinition Width="30"/>-->
+                        <!--<ColumnDefinition Width="30"/>-->
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="38" />
+                            <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label x:Name="PositionLabel"
+                                       HorizontalTextAlignment="Center"
+                                   FontSize="12"
+                                       Text="{Binding Position}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="TeamAlias" Text="{Binding Alias}" IsVisible="false"/>
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                   TextColor="White"
+                                        Text="{Binding Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference TeamAlias}}"/>
+                            <!--<Label x:Name="TeamNameLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="{Binding Name}"/>-->
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Played}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Wins}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="LossLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Loss}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="DrawLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Draws}"/>
+                        </StackLayout>
+                    <!--<StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GoalsForLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding GoalsFor}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GoalsAgainstLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding GoalsAgainst}"/>
+                        </StackLayout>-->
+                    <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GoalDiffLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding GoalDiff}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="PointsLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Points}"/>
+                        </StackLayout>
+                         <BoxView Grid.Row="1" Grid.ColumnSpan="8"
+                                         BackgroundColor="White" Opacity="0.2"
+                                         HeightRequest="1"/>
+                        </Grid>
+                    </StackLayout>
+                    </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="PremierTableItemTemplate"  x:Key="PremierTableItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="10,0"
+                             >
+                    
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label x:Name="PositionLabel"
+                                   FontSize="12"
+                                       Text="{Binding Position}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="{Binding Name}"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="12"
+                                   TextColor="White"
+                                   VerticalTextAlignment="Center"
+                                        Text="{Binding Wins}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="LossLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   VerticalTextAlignment="End"
+                                        Text="{Binding Loss}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="DrawLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   VerticalTextAlignment="End"
+                                        Text="{Binding Draws}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="PointsLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   VerticalTextAlignment="End"
+                                        Text="{Binding Points}"/>
+                        </StackLayout>
+                        <BoxView Grid.Row="1" Grid.ColumnSpan="6"
+                                         BackgroundColor="White" Opacity="0.2"
+                                         HeightRequest="1"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="CoronaTableItemTemplate"  x:Key="CoronaTableItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="10,0"
+                             BackgroundColor="{Binding .,
+                                Converter={StaticResource tableIndexConverter},
+                                ConverterParameter={x:Reference Name=CoronaLeagueList}}">
+                    
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label x:Name="PositionLabel"
+                                   FontSize="12"
+                                       Text="{Binding Position}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="{Binding Name}"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="12"
+                                   TextColor="White"
+                                   VerticalTextAlignment="Center"
+                                        Text="{Binding Wins}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="LossLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   VerticalTextAlignment="End"
+                                        Text="{Binding Loss}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="DrawLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   VerticalTextAlignment="End"
+                                        Text="{Binding Draws}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="PointsLabel"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   VerticalTextAlignment="End"
+                                        Text="{Binding Points}"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout Spacing="0"
+                     Padding="0"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+        <Grid x:Name="PageGrid"
+              RowSpacing="0"
+              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <!--<BoxView HeightRequest="1" Opacity=".3"  BackgroundColor="White" HorizontalOptions="FillAndExpand"/>-->
+            <tabView:SfTabView Grid.Row="0" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}" VisibleHeaderCount="3"
+                                 BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                 DisplayMode="Text"
+                               SelectedIndex="0"
+                               SelectionChanged="Handle_SelectionChanged"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                <!--<tabView:SelectionIndicatorSettings Color="{StaticResource primaryDarkBlueOne}" 
+                                                              Position="Fill" 
+                                                              StrokeThickness="5"/>-->
+                        <tabView:SelectionIndicatorSettings Color="White" 
+                                                              Position="Bottom" 
+                                                          StrokeThickness="0"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="PremierLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Bold"
+                               Text="Premier Division"
+                               TextDecorations="None"
+                               TextColor="White">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="17" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="16" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                        <!--<BoxView x:Name="PremierSelected" BackgroundColor="White" 
+                                 IsVisible="true"
+                                 HorizontalOptions="CenterAndExpand" 
+                                 VerticalOptions="Center"
+                                 HeightRequest="3"/>-->
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="30" />
+                                    <RowDefinition Height="1" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0">
+                        <Grid Grid.Row="1" 
+                              x:Name="PremierDivTableHeaderGrid"
+                              Padding="0,0"
+                              RowSpacing="1"
+                              ColumnSpacing="1"
+
+                              VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand">    
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <!--<ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>-->
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label
+                                   FontSize="13"
+                                    HorizontalTextAlignment="Center"
+                                       Text="#"
+                                       FontAttributes="Bold"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="TEAM"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="P"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="W"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="L"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="D"/>
+                        </StackLayout>
+                            <!--<StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GF"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GA"/>
+                        </StackLayout>-->
+                            <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GD"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="Pts"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                                <BoxView Grid.Row="2"
+                                         BackgroundColor="White" Opacity=".3"
+                                         HeightRequest="1"/>
+                             
+                                <listView:SfListView Grid.Row="3" x:Name="PremierLeagueList"
+                                ItemsSource="{Binding PremierTeamCollection}"
+                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 ItemSize="40"
+                                                      
+                                />
+                            
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="FirstLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Bold"
+                               Text="First Division"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="17" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="16" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                        <!--<BoxView x:Name="FirstSelected" BackgroundColor="White" 
+                                 IsVisible="false"
+                                 HorizontalOptions="CenterAndExpand"
+                                 VerticalOptions="Center"
+                                 HeightRequest="3"/>-->
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                        <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="30" />
+                                    <RowDefinition Height="1" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0">
+                            
+                        <Grid Grid.Row="0" 
+                              x:Name="FirstDivTableHeaderGrid"
+                              Padding="0,0"
+                              RowSpacing="1"
+                              ColumnSpacing="1"
+                              
+                              VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand">    
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <!--<ColumnDefinition Width="30"/>-->
+                                <!--<ColumnDefinition Width="30"/>-->
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label
+                                   FontSize="13"
+                                    HorizontalTextAlignment="Center"
+                                       Text="#"
+                                       FontAttributes="Bold"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="TEAM"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="P"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="W"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="L"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="D"/>
+                        </StackLayout>
+                            <!--<StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GF"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GA"/>
+                        </StackLayout>-->
+                            <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GD"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="Pts"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                                <BoxView Grid.Row="2" Opacity=".3"
+                                         BackgroundColor="White"
+                                         HeightRequest="1"/>
+                            <listView:SfListView Grid.Row="3" x:Name="FirstDivisionList"
+                                                ItemsSource="{Binding FirstDivisionTeamCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                                   SelectionMode="None"
+                                                   ItemSpacing="0"
+                                                    SelectionBackgroundColor="White"
+                                                 ItemSize="40"
+                                                 
+                                            
+                                />
+                            
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                     
+                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="CoronaLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End" 
+                               HorizontalOptions="CenterAndExpand"
+                               FontAttributes="Bold"
+                               Text="Corona League"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="17" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="16" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="30" />
+                                    <RowDefinition Height="1" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0">
+                            
+                        <Grid Grid.Row="0" 
+                              x:Name="CoronaLeagueTableHeaderGrid"
+                              Padding="0,0"
+                              RowSpacing="1"
+                              ColumnSpacing="1"
+                              
+                              VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand">    
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <!--<ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>-->
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label
+                                   FontSize="13"
+                                    HorizontalTextAlignment="Center"
+                                       Text="#"
+                                       FontAttributes="Bold"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="TEAM"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="P"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="W"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="L"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="D"/>
+                        </StackLayout>
+                            <!--<StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GF"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GA"/>
+                        </StackLayout>-->
+                            <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GD"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="Pts"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                                <BoxView Grid.Row="2" Opacity=".3"
+                                         BackgroundColor="White"
+                                         HeightRequest="1"/>
+                            <listView:SfListView Grid.Row="3" x:Name="CoronaLeagueList"
+                                                ItemsSource="{Binding CoronaTeamCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                                   SelectionMode="None"
+                                                   ItemSpacing="0"
+                                                    SelectionBackgroundColor="White"
+                                                 ItemSize="40"
+                                />
+                            
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+            </tabView:SfTabView>
+            <StackLayout Padding="10"  IsVisible="{Binding NoConnectivity}">
+                <Label Text="There are no standings available" FontSize="Caption" TextColor="White" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+                <model:AdMobView Grid.Row="1"  VerticalOptions="EndAndExpand" MinimumHeightRequest="50" Size="Standardbanner"/>
+                <ContentView Grid.Row="0" BackgroundColor="{StaticResource primaryDarkBlueTwo}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+                <!--<syncfusion:SfBusyIndicator Grid.RowSpan="3"
+                    x:Name="BusyIndicator"
+                                  BackgroundColor="Transparent"
+                                  TextColor="{StaticResource primaryPink}"
+                                  VerticalOptions="FillAndExpand"
+                                  HorizontalOptions="FillAndExpand"
+                                  AnimationType="SingleCircle"  
+                                  ViewBoxWidth="50"
+                                            ViewBoxHeight="50"
+                                  IsVisible="{Binding IsActivityIndicatorVisible}"
+                                  Duration="3" />-->
+            <!--<extension:CustomLoader x:Name="loader" Grid.Row="0"
+                                        Source="ontrackindicator.png"
+                                        RotationLength="2000"
+                                    WidthRequest="100"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"
+                                        
+                                        IsRunning="{Binding IsActivityIndicatorVisible}"
+                                        IsVisible="{Binding IsActivityIndicatorVisible}"/>-->
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

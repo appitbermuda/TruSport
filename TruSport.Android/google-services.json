@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "430118884219",
+    "firebase_url": "https://ontrack-9774d.firebaseio.com",
+    "project_id": "ontrack-9774d",
+    "storage_bucket": "ontrack-9774d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:430118884219:android:d6ae930d8adc1f19",
+        "android_client_info": {
+          "package_name": "com.techreef.TruSport"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "430118884219-qp7cr19taklertldo09ra0do6a05ejgq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTGx9gMy6lZxbLAX8f4PRCEG_WG9SVi_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "430118884219-qp7cr19taklertldo09ra0do6a05ejgq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

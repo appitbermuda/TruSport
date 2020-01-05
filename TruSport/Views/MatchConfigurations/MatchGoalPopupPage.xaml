@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage  xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup" xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:converter="clr-namespace:TruSport.Converters" x:Class="TruSport.Views.MatchConfigurations.MatchGoalPopupPage"
+              BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:TeamNameConverter x:Key="teamNameConverter" />
+            <DataTemplate x:Name="MatchRosterHomeItemTemplate"  x:Key="MatchRosterHomeItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0">
+                <Grid x:Name="grid"
+                      Padding="0,0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <!--<RowDefinition Height="25" />-->
+                            <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0"
+                                     Orientation="Horizontal">
+                                <Label x:Name="FirstNameLabel"
+                                   FontSize="Micro"
+                                       FontAttributes="Bold"
+                                       Text="{Binding FirstName}"
+                                   TextColor="White"/>
+                            <Label x:Name="LastNameLabel"
+                                   FontSize="Micro"
+                                   FontAttributes="Bold"
+                                       Text="{Binding LastName}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                    <!--<StackLayout Grid.Row="0" Grid.Column="2" IsVisible="{Binding IsStarter}" HorizontalOptions="EndAndExpand" VerticalOptions="Center" >
+                        <BoxView CornerRadius="5" WidthRequest="10" HeightRequest="10" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Green"/>
+                    </StackLayout>-->
+                        <BoxView Grid.Row="1"
+                                         BackgroundColor="White" Opacity="0.1"
+                                         HeightRequest="1"/>
+                        </Grid>
+                        
+                    </StackLayout>
+            </DataTemplate>
+        <DataTemplate x:Name="MatchRosterAwayItemTemplate"  x:Key="MatchRosterAwayItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0"
+                             >
+                <Grid x:Name="grid"
+                      Padding="0,0"
+                      RowSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <!--<ColumnDefinition Width="10"/>-->
+                        <ColumnDefinition Width="*"/>
+                    <!--<ColumnDefinition Width="15"/>-->
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="35" />
+                            <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <!--<StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="JerseyNumberLabel"
+                                   FontSize="Micro"
+                                   TextColor="White"
+                                        Text="{Binding JerseyNumber}"/>
+                        </StackLayout>-->
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0" Orientation="Horizontal">
+                                <Label x:Name="FirstNameLabel"
+                                   FontSize="Micro"
+                                       FontAttributes="Bold"
+                                       Text="{Binding FirstName}"
+                                   TextColor="White"/>
+                            <Label x:Name="LastNameLabel"
+                                   FontSize="Micro"
+                                   FontAttributes="Bold"
+                                       Text="{Binding LastName}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                    <!--<StackLayout Grid.Row="0" Grid.Column="0" IsVisible="{Binding IsStarter}" HorizontalOptions="EndAndExpand" VerticalOptions="Center" >
+                        <BoxView CornerRadius="5" WidthRequest="10" HeightRequest="10" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Green"/>
+                    </StackLayout>-->
+                        <BoxView Grid.Row="1"
+                                         BackgroundColor="White" Opacity="0.1"
+                                         HeightRequest="1"/>
+                        </Grid>
+                        
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="0,0,0,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+        <StackLayout Padding="10" BackgroundColor="{StaticResource primaryBarBlue}" VerticalOptions="CenterAndExpand">
+            <Button x:Name="BackButton"
+                    HorizontalOptions="Start"
+                        TextColor="White"
+                    Text="Close"
+                    Clicked="BackClicked"
+                    
+                    VerticalOptions="Center"
+                        FontSize="Medium"
+                        BackgroundColor="Transparent"
+                    />
+        </StackLayout>
+   <!-- <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">-->
+        <StackLayout Padding="5" Grid.Row="1">
+                <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0" HeightRequest="50" VerticalOptions="CenterAndExpand">
+                        <Label x:Name="HomeTeamAlias" Text="{Binding FixtureItem.HomeTeam.Alias}" IsVisible="false"/>
+                        <Label Text="{Binding FixtureItem.HomeTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference HomeTeamAlias}}" VerticalOptions="CenterAndExpand" HorizontalOptions="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="Medium" />
+                        <!--<Label Text="{Binding FixtureItem.HomeTeam.Name}" FontSize="Small" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" TextColor="White"/>-->
+                    </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="2" HeightRequest="50" VerticalOptions="CenterAndExpand">
+                        <Label x:Name="AwayTeamAlias" Text="{Binding FixtureItem.AwayTeam.Alias}" IsVisible="false"/>
+                        <Label Text="{Binding FixtureItem.AwayTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference AwayTeamAlias}}" VerticalOptions="CenterAndExpand" HorizontalOptions="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="Medium" />
+                        <!--<Label Text="{Binding FixtureItem.AwayTeam.Name}" FontSize="Small" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" TextColor="White"/>-->
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.Column="0" HeightRequest="70">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="White" BackgroundColor="Transparent" HeightRequest="30" WidthRequest="30" Command="{Binding HomeTeamSubtractClickedCommand}" Padding="0"/>
+                            <Entry Grid.Column="1" Text="{Binding HomeTeamScore}" HorizontalTextAlignment="Center" FontSize="40" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" WidthRequest="60" HeightRequest="60" BackgroundColor="White"/>
+                            <Button Grid.Column="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="White" BackgroundColor="Transparent" HeightRequest="30" WidthRequest="30" Command="{Binding HomeTeamAddClickedCommand}" Padding="0"/>
+                        </Grid>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.Column="2" HeightRequest="70">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="White" BackgroundColor="Transparent" HeightRequest="30" WidthRequest="30" Command="{Binding AwayTeamSubtractClickedCommand}" Padding="0"/>
+                            <Entry Grid.Column="1" Text="{Binding AwayTeamScore}" HorizontalTextAlignment="Center" FontSize="40" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" WidthRequest="60" HeightRequest="60" BackgroundColor="White"/>
+                            <Button Grid.Column="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="White" BackgroundColor="Transparent" HeightRequest="30" WidthRequest="30" Command="{Binding AwayTeamAddClickedCommand}" Padding="0"/>
+                        </Grid>
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" Grid.ColumnSpan="3" Padding="5">
+                        <Label Text="To update the score, select a player from the team rosters below. If you do not know who scored, you can click the plus button." TextColor="White" FontSize="Micro"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" Grid.RowSpan="2" Padding="0,10">
+                        <BoxView WidthRequest="1" VerticalOptions="FillAndExpand" BackgroundColor="White" Opacity=".3"/>
+                    </StackLayout>
+                    <Grid Grid.Row="3" Grid.ColumnSpan="3" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                                <BoxView Grid.Row="0" Grid.ColumnSpan="3"  HeightRequest="3" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryPink}"/>
+                    <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <SearchBar Placeholder="Search Player..."  PlaceholderColor="Gray"  TextColor="White" FontSize="Micro" BackgroundColor="Transparent" HeightRequest="30" TextChanged="HomeTeam_TextChanged" CancelButtonColor="White" />
+                        <listView:SfListView x:Name="HomeRosterItemListView"
+                                                ItemsSource="{Binding HomeTeamCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    ItemTemplate="{StaticResource MatchRosterHomeItemTemplate}"
+                                                   SelectionMode="SingleDeselect"
+                                                   ItemSpacing="0"
+                                                    SelectionBackgroundColor="{StaticResource primaryBarBlue}"
+                                                 AutoFitMode="DynamicHeight"
+                                             TapCommand="{Binding OnHomeTeamSelectedCommand}"
+                                             >
+
+                        </listView:SfListView>
+                    </StackLayout>
+                    <BoxView Grid.Row="1" Grid.Column="1" WidthRequest="1" BackgroundColor="White" Opacity=".3"/>
+                    <StackLayout Grid.Row="1" Grid.Column="2">
+                        <SearchBar Placeholder="Search Player..." PlaceholderColor="Gray" TextColor="White" FontSize="Micro" BackgroundColor="Transparent" HeightRequest="30" TextChanged="AwayTeam_TextChanged" CancelButtonColor="White"/>
+                        <listView:SfListView
+                                             x:Name="AwayRosterItemListView"
+                                                ItemsSource="{Binding AwayTeamCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    ItemTemplate="{StaticResource MatchRosterAwayItemTemplate}"
+                                                   SelectionMode="SingleDeselect"
+                                                   ItemSpacing="0"
+                                                   SelectionBackgroundColor="{StaticResource primaryBarBlue}"
+                                                 AutoFitMode="DynamicHeight"
+                                             TapCommand="{Binding OnAwayTeamSelectedCommand}">
+
+                        </listView:SfListView>
+                    </StackLayout>
+                                </Grid>
+
+                    <StackLayout Grid.Row="4" Grid.ColumnSpan="3" HeightRequest="80" Padding="5">
+                        <Button Text="Save" HeightRequest="50" CornerRadius="25" TextColor="{StaticResource primaryDarkBlueTwo}" BackgroundColor="White" Command="{Binding OnMatchGoalSavedCommand}" VerticalOptions="EndAndExpand"/>
+                    </StackLayout>
+                </Grid>
+            </StackLayout>
+   <!-- </ScrollView>-->
+            </Grid>
+</StackLayout>
+        </ContentPage.Content>
+</ContentPage>

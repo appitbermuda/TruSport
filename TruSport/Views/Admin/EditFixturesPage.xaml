@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
+             xmlns:local="clr-namespace:TruSport.ViewModels"
+          xmlns:converter="clr-namespace:TruSport.Converters"
+             xmlns:extensions="clr-namespace:TruSport.Extensions"
+             xmlns:picker="clr-namespace:Syncfusion.SfPicker.XForms;assembly=Syncfusion.SfPicker.XForms"
+             xmlns:syncfusion="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms" xmlns:syncfusion1="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms" xmlns:combobox="clr-namespace:Syncfusion.XForms.ComboBox;assembly=Syncfusion.SfComboBox.XForms"
+             x:Class="TruSport.Views.Admin.EditFixturesPage"
+             Title="Fixture">
+   <!-- <ContentPage.BindingContext>
+        <local:FixturePageViewModel x:Name="viewModel"/>
+    </ContentPage.BindingContext>-->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="SaveToolbarItem" Text="Save" Command="{Binding SaveCommand}" Order="Primary" Priority="1" />
+<!--        <ToolbarItem x:Name="DeleteToolbarItem" Icon="DeleteWhite.png" Activated="DeleteClicked" Order="Primary" Priority="1" />-->
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:EventArgsConverter x:Key="eventArgsConverter"/>
+            <DataTemplate x:Name="TeamComboItemTemplate"  x:Key="TeamComboItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid" Padding="10,0"
+                      RowSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">   
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="20" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0"
+                                 VerticalOptions="End"
+                                     HorizontalOptions="StartAndExpand"
+                                     Orientation="Horizontal">
+                                <Label x:Name="Name"
+                                   FontSize="Small"
+                                       Text="{Binding Name}"
+                                       VerticalOptions="End"
+                                   TextColor="Black"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="1"
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="StartAndExpand"
+                                     Orientation="Horizontal">
+                                <Label x:Name="LeagueName"
+                                   FontSize="Micro"
+                                       Text="{Binding League.Name}"
+                                       VerticalOptions="Start"
+                                   TextColor="Black"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand">
+            <Grid HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+                <Grid.RowDefinitions>
+                    <!--<RowDefinition Height="60"/>-->
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <!--<Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>-->
+                <!--<StackLayout HorizontalOptions="FillAndExpand" Padding="10" BackgroundColor="{StaticResource primaryBarBlue}" VerticalOptions="CenterAndExpand" Orientation="Horizontal">
+                <Button x:Name="BackButton"
+                    HorizontalOptions="StartAndExpand"
+                        TextColor="White"
+                    Text="Close"
+                    Clicked="BackClicked"
+                    
+                    VerticalOptions="Center"
+                        FontSize="Medium"
+                        BackgroundColor="Transparent"
+                    />
+                    <Button x:Name="SaveButton"
+                    HorizontalOptions="EndAndExpand"
+                        TextColor="White"
+                    Text="Save"
+                    Command="{Binding SaveClickedCommand}"
+                    
+                    VerticalOptions="Center"
+                        FontSize="Medium"
+                        BackgroundColor="Transparent"
+                    />
+        </StackLayout>-->
+                <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never">
+                    <StackLayout>
+                        <Grid HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand"
+                  RowSpacing="20"
+                              Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="70"/>
+                        </Grid.ColumnDefinitions>
+                <StackLayout Grid.Row="0" Grid.ColumnSpan="2">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenMatchDatePicker"/>
+                    </StackLayout.GestureRecognizers>
+                    <inputLayout:SfTextInputLayout Hint="Date" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None" InputTransparent="true">
+                        <Entry x:Name="matchDateEntry" TextColor="White" HeightRequest="50" Text="{Binding MatchDate, StringFormat='{0:MMMM dd, yyyy}'}"/>
+                        <!--<Entry x:Name="matchDateEntry" TextColor="White" HeightRequest="50" Text="{Binding MatchDate}"/>-->
+                    </inputLayout:SfTextInputLayout>
+                    
+                </StackLayout>
+                <!--<Label Text="{Binding FixtureItem.League.Name}" TextColor="White" FontAttributes="Bold" FontSize="Medium" VerticalOptions="CenterAndExpand"/>-->
+            </StackLayout>
+            <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenMatchTimePicker"/>
+                    </StackLayout.GestureRecognizers>
+                    <inputLayout:SfTextInputLayout Hint="Time" UnfocusedColor="White" FocusedColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ContainerType="None" InputTransparent="true">
+                        <Entry x:Name="matchTimeEntry" TextColor="White" HeightRequest="50" Text="{Binding MatchTime, StringFormat='{0:hh:mm tt}'}"/>
+                        <!--<Entry x:Name="matchTimeEntry" TextColor="White" HeightRequest="50" Text="{Binding MatchTime}"/>-->
+                    </inputLayout:SfTextInputLayout>
+                    
+                </StackLayout>
+                <!--<Label Text="{Binding FixtureItem.League.Name}" TextColor="White" FontAttributes="Bold" FontSize="Medium" VerticalOptions="CenterAndExpand"/>-->
+            </StackLayout>
+                <StackLayout Grid.Row="2" Grid.ColumnSpan="2" Padding="0,5"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenLeaguePicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <inputLayout:SfTextInputLayout Hint="League"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   ContainerType="None"
+                                                   HeightRequest="50"
+                                                   HorizontalOptions="FillAndExpand">
+                        <!--<Label x:Name="leagueName"
+                               Text="{Binding LeagueName}"
+                               TextColor="White"
+                               IsEnabled="false"/>-->
+                        <combobox:SfComboBox x:Name="leagueComboBox" Text="{Binding LeagueName}" TextColor="White" SelectedDropDownItemColor="Pink" SelectedItem="{Binding League}" DataSource="{Binding LeagueCollection}" DisplayMemberPath="Name">
+                            <combobox:SfComboBox.Behaviors>
+                    <extensions:ComboBoxEventToCommandBehavior EventName="SelectionChanged"
+                                                  Command="{Binding SelectedLeagueChangedCommand}"
+                                                  Converter="{StaticResource eventArgsConverter}">
+                    </extensions:ComboBoxEventToCommandBehavior>
+                  </combobox:SfComboBox.Behaviors>
+                        </combobox:SfComboBox>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                <StackLayout Grid.Row="3" Grid.ColumnSpan="2" Padding="0,5"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenMatchTypePicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <inputLayout:SfTextInputLayout Hint="Match Type"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   ContainerType="None"
+                                                   HeightRequest="50"
+                                                   HorizontalOptions="FillAndExpand">
+                        <!--<Label x:Name="matchTypeName"
+                               Text="{Binding MatchTypeName}"
+                               TextColor="White"
+                               IsEnabled="false"/>-->
+                        <combobox:SfComboBox x:Name="matchTypeComboBox" Text="{Binding MatchTypeName}"  TextColor="White" SelectedDropDownItemColor="Pink" SelectedItem="{Binding MatchType}" DataSource="{Binding MatchTypeCollection}" DisplayMemberPath="Name">
+                            <combobox:SfComboBox.Behaviors>
+                    <extensions:ComboBoxEventToCommandBehavior EventName="SelectionChanged"
+                                                  Command="{Binding SelectedMatchTypeChangedCommand}"
+                                                  Converter="{StaticResource eventArgsConverter}">
+                    </extensions:ComboBoxEventToCommandBehavior>
+                  </combobox:SfComboBox.Behaviors>
+                        </combobox:SfComboBox>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                <StackLayout Grid.Row="4" Grid.ColumnSpan="2" Padding="0,5"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenFieldPicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <inputLayout:SfTextInputLayout Hint="Field"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   ContainerType="None"
+                                                   HeightRequest="50"
+                                                   HorizontalOptions="FillAndExpand">
+                        <!--<Label x:Name="fieldName"
+                               Text="{Binding FieldName}"
+                               TextColor="White"
+                               IsEnabled="false"/>-->
+                        <combobox:SfComboBox x:Name="fieldComboBox" Text="{Binding FieldName}" TextColor="White" SelectedDropDownItemColor="Pink" SelectedItem="{Binding Field}" DataSource="{Binding FieldCollection}" DisplayMemberPath="Name">
+                            <combobox:SfComboBox.Behaviors>
+                        <extensions:ComboBoxEventToCommandBehavior EventName="SelectionChanged" Command="{Binding SelectedFieldChangedCommand}" Converter="{StaticResource eventArgsConverter}">
+                        </extensions:ComboBoxEventToCommandBehavior>
+                    </combobox:SfComboBox.Behaviors>
+                        </combobox:SfComboBox>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                <StackLayout Grid.Row="5" Padding="0,5"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenHomeTeamPicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <inputLayout:SfTextInputLayout Hint="Home Team"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <!--<Label x:Name="homeTeamName"
+                               Text="{Binding HomeTeamName}"
+                               TextColor="White"
+                               IsEnabled="false"/>-->
+                        <combobox:SfComboBox x:Name="homeTeamComboBox" Text="{Binding HomeTeamName}" ItemTemplate="{StaticResource TeamComboItemTemplate}" TextColor="White" SelectedDropDownItemColor="Pink"  SelectedItem="{Binding HomeTeam}" DataSource="{Binding TeamCollection}" DisplayMemberPath="Name">
+                            <combobox:SfComboBox.Behaviors>
+                    <extensions:ComboBoxEventToCommandBehavior EventName="SelectionChanged"
+                                                  Command="{Binding SelectedHomeTeamChangedCommand}"
+                                                  Converter="{StaticResource eventArgsConverter}">
+                    </extensions:ComboBoxEventToCommandBehavior>
+                  </combobox:SfComboBox.Behaviors>
+                        </combobox:SfComboBox>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                    <StackLayout Grid.Row="5" Grid.Column="1" Padding="0,5"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Score"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="homeTeamScore"
+                               Text="{Binding HomeTeamScore}"
+                               TextColor="White"
+                               Keyboard="Numeric"/>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                <StackLayout Grid.Row="6" Padding="0,5"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenAwayTeamPicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <inputLayout:SfTextInputLayout Hint="Away Team"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <!--<Label x:Name="awayTeamName"
+                               Text="{Binding AwayTeamName}"
+                               TextColor="White"
+                               IsEnabled="false"/>-->
+                        <combobox:SfComboBox x:Name="awayTeamComboBox" Text="{Binding AwayTeamName}" ItemTemplate="{StaticResource TeamComboItemTemplate}" TextColor="White" SelectedDropDownItemColor="Pink"  SelectedItem="{Binding AwayTeam}" DataSource="{Binding TeamCollection}" DisplayMemberPath="Name">
+                            <combobox:SfComboBox.Behaviors>
+                    <extensions:ComboBoxEventToCommandBehavior EventName="SelectionChanged"
+                                                  Command="{Binding SelectedAwayTeamChangedCommand}"
+                                                  Converter="{StaticResource eventArgsConverter}">
+                    </extensions:ComboBoxEventToCommandBehavior>
+                  </combobox:SfComboBox.Behaviors>
+                        </combobox:SfComboBox>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                            <StackLayout Grid.Row="6" Grid.Column="1" Padding="0,5"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Score"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="awayTeamScore"
+                               Text="{Binding AwayTeamScore}"
+                               TextColor="White"
+                               Keyboard="Numeric"/>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                            <StackLayout  Grid.Row="7" Padding="0,5" Grid.Column="0">
+                <StackLayout 
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenAwayTeamScorePicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <Label VerticalOptions="EndAndExpand" VerticalTextAlignment="End" Text="Postponed?" TextColor="White" BackgroundColor="Transparent" HeightRequest="50"/>
+                   </StackLayout>
+            </StackLayout>
+            <StackLayout  Grid.Row="7" Padding="0,5" Grid.Column="1">
+                <StackLayout 
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <syncfusion1:SfSwitch IsOn="{Binding IsPostponed}"  VisualType="Material" HorizontalOptions="CenterAndExpand">
+                                <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="On">
+                    <VisualState.Setters>
+                        <Setter Property="SwitchSettings">
+                            <Setter.Value>
+                                <syncfusion1:MaterialSwitchSettings x:TypeArguments="syncfusion1:OnState"
+                                                                    ThumbColor="{StaticResource primaryAccentPink}"
+                                                                    TrackColor="Gray"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Off">
+                    <VisualState.Setters>
+                        <Setter Property="SwitchSettings">
+                            <Setter.Value>
+                                <syncfusion1:MaterialSwitchSettings x:TypeArguments="syncfusion1:OffState"
+                                                                    ThumbColor="White"
+                                                                    TrackColor="Gray"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+                            </syncfusion1:SfSwitch>
+                </StackLayout>
+            </StackLayout>
+            <StackLayout  Grid.Row="8" Padding="0,5" Grid.Column="0">
+                <StackLayout 
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <!--<StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OpenAwayTeamScorePicker"/>
+                    </StackLayout.GestureRecognizers>-->
+                    <Label Text="Penalty Shootout?" VerticalOptions="EndAndExpand" VerticalTextAlignment="End" TextColor="White" BackgroundColor="Transparent" HeightRequest="50"/>
+                   </StackLayout>
+            </StackLayout>
+            <StackLayout  Grid.Row="8" Padding="0,5" Grid.Column="1">
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand">
+                    <syncfusion1:SfSwitch IsOn="{Binding IsPenalties}"  VisualType="Material" HorizontalOptions="CenterAndExpand">
+                    <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="On">
+                    <VisualState.Setters>
+                        <Setter Property="SwitchSettings">
+                            <Setter.Value>
+                                <syncfusion1:MaterialSwitchSettings x:TypeArguments="syncfusion1:OnState"
+                                                                    ThumbColor="{StaticResource primaryAccentPink}"
+                                                                    TrackColor="Gray"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Off">
+                    <VisualState.Setters>
+                        <Setter Property="SwitchSettings">
+                            <Setter.Value>
+                                <syncfusion1:MaterialSwitchSettings x:TypeArguments="syncfusion1:OffState"
+                                                                    ThumbColor="White"
+                                                                    TrackColor="Gray"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+                    </syncfusion1:SfSwitch>
+                 </StackLayout>
+            </StackLayout>
+             <StackLayout Grid.Row="9" Padding="0,5" Grid.ColumnSpan="2" Orientation="Horizontal">
+                <StackLayout
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Home Team Pen"
+                                                   IsEnabled="{Binding IsPenalties}"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   VerticalOptions="FillAndExpand"
+                                                     HeightRequest="50">
+                        <Entry Text="{Binding HomeTeamPenalty}" TextColor="White" BackgroundColor="Transparent" Keyboard="Numeric" />
+                    </inputLayout:SfTextInputLayout>
+                    
+                </StackLayout>
+                 </StackLayout>
+                 <StackLayout Grid.Row="10" Padding="0,5" Grid.ColumnSpan="2" Orientation="Horizontal">
+                <StackLayout
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="EndAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Away Team Pen"
+                                                   IsEnabled="{Binding IsPenalties}"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   VerticalOptions="FillAndExpand"
+                                                     HeightRequest="40">
+                        <Entry Text="{Binding AwayTeamPenalty}" TextColor="White" BackgroundColor="Transparent" Keyboard="Numeric" />
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+            </StackLayout>
+                            <extensions:DatePicker Grid.RowSpan="10" x:Name="MatchDatePicker" HeaderText="Match Date" ColumnHeaderHeight="40" HorizontalOptions="Start" PickerHeight="400" PickerMode="Dialog" PickerWidth="300" HeaderTextColor="White" HeaderBackgroundColor="{StaticResource primaryPink}" SelectedItem="{Binding MatchDateCollection}"
+                    VerticalOptions="Center">
+                    <picker:SfPicker.Behaviors>
+                        <extensions:PickerEventToCommandBehavior EventName="SelectionChanged" Command="{Binding SelectedMatchDateChangedCommand}" Converter="{StaticResource eventArgsConverter}">
+                        </extensions:PickerEventToCommandBehavior>
+                    </picker:SfPicker.Behaviors>
+                </extensions:DatePicker>
+            <extensions:TimePicker Grid.RowSpan="10" x:Name="MatchTimePicker" HeaderText="Match Time" ColumnHeaderHeight="40" HorizontalOptions="Start" PickerHeight="400" PickerMode="Dialog" PickerWidth="300" HeaderTextColor="White" HeaderBackgroundColor="{StaticResource primaryPink}" SelectedItem="{Binding MatchTimeCollection}"
+                    VerticalOptions="Center">
+                    <picker:SfPicker.Behaviors>
+                        <extensions:PickerEventToCommandBehavior EventName="SelectionChanged" Command="{Binding SelectedMatchTimeChangedCommand}" Converter="{StaticResource eventArgsConverter}">
+                        </extensions:PickerEventToCommandBehavior>
+                    </picker:SfPicker.Behaviors>
+                </extensions:TimePicker>
+                            </Grid>
+                    </StackLayout>
+                </ScrollView>
+                <ContentView BackgroundColor="{StaticResource primaryDarkBlueTwo}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            <extensions:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:converter="clr-namespace:TruSport.Converters" xmlns:combobox="clr-namespace:Syncfusion.XForms.ComboBox;assembly=Syncfusion.SfComboBox.XForms" xmlns:extensions="clr-namespace:TruSport.Extensions" xmlns:syncfusion="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms" x:Class="TruSport.Views.Admin.EditPlayerPage"
+             BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="SaveToolbarItem" Text="Save" Command="{Binding SaveCommand}" Order="Primary" Priority="1" />
+<!--        <ToolbarItem x:Name="DeleteToolbarItem" Icon="DeleteWhite.png" Activated="DeleteClicked" Order="Primary" Priority="1" />-->
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:EventArgsConverter x:Key="eventArgsConverter"/>
+            <DataTemplate x:Name="TeamComboItemTemplate"  x:Key="TeamComboItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid" Padding="10,0"
+                      RowSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">   
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="20" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0"
+                                 VerticalOptions="End"
+                                     HorizontalOptions="StartAndExpand"
+                                     Orientation="Horizontal">
+                                <Label x:Name="Name"
+                                   FontSize="Small"
+                                       Text="{Binding Name}"
+                                       VerticalOptions="End"
+                                   TextColor="Black"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="1"
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="StartAndExpand"
+                                     Orientation="Horizontal">
+                                <Label x:Name="LeagueName"
+                                   FontSize="Micro"
+                                       Text="{Binding League.Name}"
+                                       VerticalOptions="Start"
+                                   TextColor="Black"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand">
+            <Grid HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand" Padding="10,0"
+                  RowSpacing="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="70"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackLayout Grid.Row="0" Grid.Column="0" Padding="0,0,10,0" Orientation="Horizontal"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Jersey Number"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                    ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="jerseyNumber"
+                               Text="{Binding JerseyNumber}"
+                               TextColor="White"
+                               Keyboard="Numeric"
+                               />
+                    </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                <StackLayout  Grid.Row="0" Grid.Column="1">
+                <StackLayout 
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <Label Text="Active?" HorizontalTextAlignment="Center" VerticalOptions="EndAndExpand" TextColor="White" BackgroundColor="Transparent"/>
+                   </StackLayout>
+                <StackLayout 
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <syncfusion:SfSwitch IsOn="{Binding IsActive}"  VisualType="Material" HorizontalOptions="CenterAndExpand">
+                                <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="On">
+                    <VisualState.Setters>
+                        <Setter Property="SwitchSettings">
+                            <Setter.Value>
+                                <syncfusion:MaterialSwitchSettings x:TypeArguments="syncfusion:OnState"
+                                                                    ThumbColor="{StaticResource primaryAccentPink}"
+                                                                    TrackColor="Gray"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Off">
+                    <VisualState.Setters>
+                        <Setter Property="SwitchSettings">
+                            <Setter.Value>
+                                <syncfusion:MaterialSwitchSettings x:TypeArguments="syncfusion:OffState"
+                                                                    ThumbColor="White"
+                                                                    TrackColor="Gray"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+                            </syncfusion:SfSwitch>
+                </StackLayout>
+            </StackLayout>
+                <StackLayout Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="First Name"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                    ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="firstName"
+                               Text="{Binding FirstName}"
+                               TextColor="White"
+                               />
+                    </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                <StackLayout Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Last Name"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                    ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="lastName"
+                               Text="{Binding LastName}"
+                               TextColor="White"
+                               />
+                    </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                <StackLayout Grid.Row="3" Grid.ColumnSpan="2"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Team"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   VerticalOptions="FillAndExpand"
+                                                     HeightRequest="50">
+                        <combobox:SfComboBox x:Name="teamComboBox"
+                                             Text="{Binding TeamName}"
+                                             TextColor="White" SelectedDropDownItemColor="Pink"
+                                             SelectedItem="{Binding Team}"
+                                             DataSource="{Binding TeamCollection}"
+                                             DisplayMemberPath="Name"
+                                             ItemTemplate="{StaticResource TeamComboItemTemplate}">
+                            <combobox:SfComboBox.Behaviors>
+                    <extensions:ComboBoxEventToCommandBehavior EventName="SelectionChanged"
+                                                  Command="{Binding SelectedTeamChangedCommand}"
+                                                  Converter="{StaticResource eventArgsConverter}">
+                    </extensions:ComboBoxEventToCommandBehavior>
+                  </combobox:SfComboBox.Behaviors>
+                        </combobox:SfComboBox>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                <StackLayout Grid.Row="4" Grid.Column="0" Padding="0,0,5,0" Orientation="Horizontal"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Games Played"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                    ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="gamesPlayed"
+                               Text="{Binding GamesPlayed}"
+                               TextColor="White"
+                               Keyboard="Numeric"
+                               />
+                    </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                <StackLayout Grid.Row="4" Grid.Column="1" Padding="5,0,0,0" Orientation="Horizontal"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Goals"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                    ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="goals"
+                               Text="{Binding Goals}"
+                               TextColor="White"
+                               Keyboard="Numeric"
+                               />
+                    </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+
+                <StackLayout Grid.Row="5" Grid.Column="0" Padding="0,0,5,0" Orientation="Horizontal"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Yellow Cards"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                    ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="yellowCards"
+                               Text="{Binding YellowCards}"
+                               TextColor="White"
+                               Keyboard="Numeric"
+                               />
+                    </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                <StackLayout Grid.Row="5" Grid.Column="1" Padding="5,0,0,0" Orientation="Horizontal"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Red Cards"
+                                                   UnfocusedColor="White"
+                                                    FocusedColor="White"
+                                                    ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="redCards"
+                               Text="{Binding RedCards}"
+                               TextColor="White"
+                               Keyboard="Numeric"
+                               />
+                    </inputLayout:SfTextInputLayout>
+                    </StackLayout>
+                <ContentView Grid.RowSpan="6" Grid.ColumnSpan="2" BackgroundColor="{StaticResource primaryDarkBlueTwo}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            <extensions:CustomBusyIndicator Grid.RowSpan="6" Grid.ColumnSpan="2" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

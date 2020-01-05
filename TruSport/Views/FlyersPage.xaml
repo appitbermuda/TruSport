@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:model="clr-namespace:TruSport.Model"
+             xmlns:converter="clr-namespace:TruSport.Converters"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+             x:Class="TruSport.Views.FlyersPage"
+             Title="Media">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:ImageConverter x:Key="imageConverter"/>
+            <converter:WidthConverter x:Key="widthConverter"/>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Name="FlyerItemTemplate"  x:Key="FlyerItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid"
+                      Padding="0"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand"
+                      >
+                        <StackLayout Grid.Row="0"
+                                    VerticalOptions="Start"
+                                     HorizontalOptions="FillAndExpand"
+                                     Orientation="Horizontal"
+                                     >
+                            <Image Source="{Binding Name, Converter={StaticResource imageConverter}}"
+                                   Aspect="AspectFit"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand"
+                                   WidthRequest="{Binding Name, Converter={StaticResource widthConverter}}"
+                                   />
+                            </StackLayout>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <listView:SfListView x:Name="FlyerList"
+                                    ItemsSource="{Binding FlyerCollection}"
+                                    ItemTemplate="{StaticResource FlyerItemTemplate}"
+                                    SelectionMode="None"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    ItemSpacing="5"
+                                 Padding="1"
+                                 WidthRequest="{Binding ScreenWidth}"
+                                    SelectionBackgroundColor="{StaticResource primaryPink}"
+                                    AutoFitMode="DynamicHeight"        
+                                />
+            <StackLayout IsVisible="{Binding NoFlyers}" Padding="10" HorizontalOptions="Center">
+                <Label HorizontalTextAlignment="Center" TextColor="White" Text="There is currently no media available." FontSize="Micro"/>
+            </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+            <model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>
+            <!--<extension:CustomLoader x:Name="loader" Grid.Row="0"
+                                        Source="ontrackindicator.png"
+                                        RotationLength="2000"
+                                    WidthRequest="100"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"
+                                        
+                                        IsRunning="{Binding IsActivityIndicatorVisible}"
+                                        IsVisible="{Binding IsActivityIndicatorVisible}"/>-->
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

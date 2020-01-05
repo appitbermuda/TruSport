@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:model="clr-namespace:TruSport.Model"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+             xmlns:converter="clr-namespace:TruSport.Converters"
+             xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable"
+             x:Class="TruSport.Views.Football.TransferPage"
+             Title="{Binding Title}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
+            <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
+            <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
+            <converter:GroupingTransferSelectionConverter x:Key="groupingTransferSelectionConverter"/>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <DataTemplate x:Name="TransferItemTemplate"  x:Key="TransferItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="5"
+                      ColumnSpacing="10"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1"/>
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.ColumnSpan="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5,5,5">
+                            <Label 
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   Text="{Binding PlayerName}">
+                                    <Label.FontSize>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="iOS" Value="18"/>
+                                            <On Platform="Android" Value="16"/>
+                                        </OnPlatform>
+                                    </Label.FontSize>
+                            </Label>
+                            </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5">
+                            <Label FontSize="Small"
+                                   TextColor="White"
+                                   Text="{Binding PreviousTeam}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5">
+                            <Label FontSize="Medium"
+                                   TextColor="White"
+                                   Text=""
+                                   FontFamily="{StaticResource fontAwesomeSolidFamily}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5">
+                            <Label FontSize="Small"
+                                   TextColor="White"
+                                   Text="{Binding NewTeam}"/>
+                        </StackLayout>
+                    <BoxView BackgroundColor="White" Opacity=".5" HorizontalOptions="FillAndExpand" HeightRequest="1" Grid.ColumnSpan="3" Grid.Row="2"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout Spacing="0"
+                     Padding="0"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+        <Grid x:Name="PageGrid"
+              RowSpacing="0"
+              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand"
+              Padding="0,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <!--<BoxView HeightRequest="3" BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>-->
+                <listView:SfListView Grid.Row="0" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}" x:Name="TransferList"
+                                    ItemsSource="{Binding TransferCollection}"
+                                    ItemTemplate="{StaticResource TransferItemTemplate}"
+                                    SelectionMode="None"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    ItemSpacing="0"
+                                     AllowGroupExpandCollapse="True"
+                                     IsStickyGroupHeader="True"
+                                    SelectionBackgroundColor="{StaticResource primaryPink}"
+                                    AutoFitMode="Height"        
+                                >
+                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="PreviousTeam" Direction="Ascending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                                    <listView:SfListView.GroupHeaderTemplate>
+                                  <DataTemplate>
+                                      <ViewCell>
+                                        <ViewCell.View>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView BackgroundColor="{StaticResource primaryPink}"  Grid.ColumnSpan="2" Opacity=".5"/>
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingTransferSelectionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding Count}"
+                                                     FontSize="14"
+                                                     FontAttributes="Bold"
+                                                    VerticalOptions="Center" HorizontalOptions="EndAndExpand"
+                                                     TextColor="White">
+                                                </Label>
+                                                    </StackLayout>
+                                          </Grid>
+                                        </ViewCell.View>
+                                      </ViewCell>
+                                  </DataTemplate>
+                                </listView:SfListView.GroupHeaderTemplate>
+                </listView:SfListView>
+            <StackLayout Padding="10"  IsVisible="{Binding NoConnectivity}">
+                <Label Text="There aren't any transfers available" FontSize="Caption" TextColor="White" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+                <model:AdMobView Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50" Size="Standardbanner"/>
+            <!--<extension:CustomLoader x:Name="loader" Grid.Row="0"
+                                        Source="ontrackindicator.png"
+                                        RotationLength="2000"
+                                    WidthRequest="100"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"
+                                        
+                                        IsRunning="{Binding IsActivityIndicatorVisible}"
+                                        IsVisible="{Binding IsActivityIndicatorVisible}"/>-->
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+            
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,779 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converter="clr-namespace:TruSport.Converters" x:Class="TruSport.Views.Football.LeagueStatsPage"
+             Title="Leaderboard">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converter:ImageConverter x:Key="imageConverter"/>
+            <DataTemplate x:Name="PlayerItemTemplate"  x:Key="PlayerItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             >
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="1"/>
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,0,0,0">
+                                <Label x:Name="PlayerNameLabel"
+                                   FontSize="Medium"
+                                       Text="{Binding PlayerName}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="EndAndExpand"
+                                     Padding="0,0,10,0">
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="Large"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                   HorizontalOptions="EndAndExpand"
+                                        Text="{Binding Goals}"/>
+                        </StackLayout>
+                    <BoxView Grid.Row="1" HeightRequest="1" Grid.ColumnSpan="2" BackgroundColor="White" Opacity=".1" HorizontalOptions="FillAndExpand"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="TeamItemTemplate"  x:Key="TeamItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center">
+                    
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="1"
+                      ColumnSpacing="5"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="55"/>
+                        <RowDefinition Height="1"/>
+                    </Grid.RowDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,0,0,0">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0">
+                        <ff:CachedImage Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
+                                                        ErrorPlaceholder="ontrack.png"
+                                        LoadingPlaceholder="ontrack.png"
+                                                        CacheDuration="50"
+                                                        RetryCount="3"
+                                                        RetryDelay="600"
+                                        Aspect="AspectFit"
+                                        HeightRequest="40"
+                                                  WidthRequest="40"
+                                                        DownsampleToViewSize="True">  
+                                        </ff:CachedImage>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label x:Name="PlayerNameLabel"
+                                   FontSize="Medium"
+                                       Text="{Binding TeamName}"
+                                   TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="EndAndExpand"
+                                     Padding="0,0,10,0">
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="Large"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                   HorizontalOptions="EndAndExpand"
+                                        Text="{Binding Goals}"/>
+                        </StackLayout>
+                    <BoxView Grid.Row="1" HeightRequest="1" Grid.ColumnSpan="3" BackgroundColor="White" Opacity=".2" HorizontalOptions="FillAndExpand"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout Spacing="0"
+                     Padding="0"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+        <Grid x:Name="PageGrid"
+              RowSpacing="0"
+              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <tabView:SfTabView Grid.Row="0" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}" VisibleHeaderCount="3"
+                                 BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                 DisplayMode="Text"
+                               SelectedIndex="0"
+                               EnableSwiping="False"
+                               SelectionChanged="Handle_SelectionChanged"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                        <tabView:SelectionIndicatorSettings Color="{StaticResource primaryDarkBlueTwo}" 
+                                                              Position="Fill"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="PremierLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               FontAttributes="Bold"
+                               Text="Premier Division"
+                               TextDecorations="None"
+                               TextColor="White">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="17" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="16" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <tabView:SfTabView Grid.Row="1" VisibleHeaderCount="3"
+                                 BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                 DisplayMode="Text"
+                               SelectedIndex="0"
+                               SelectionChanged="Handle_PremierSelectionChanged"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                        <tabView:SelectionIndicatorSettings Color="White" 
+                                                              Position="Bottom" 
+                                                          StrokeThickness="0"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="PremierMostGoalsLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Italic"
+                               Text="Top Scorers"
+                               TextDecorations="None"
+                               TextColor="White">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="PremierPlayerGoalsList"
+                                ItemsSource="{Binding PremierPlayerGoalsCollection}"
+                                    ItemTemplate="{StaticResource PlayerItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 ItemSize="40"      
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="PremierMostGoalsScoredLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Italic"
+                               Text="Goals Scored"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="PremierGoalsScoredList"
+                                ItemsSource="{Binding PremierGoalsScoredCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 ItemSize="60"      
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="PremierMostGoalsConcededLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Italic"
+                               Text="Goals Conceded"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="PremierGoalsConcededList"
+                                ItemsSource="{Binding PremierGoalsConcededCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 ItemSize="60"      
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                            </tabView:SfTabView>
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="FirstLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               FontAttributes="Bold"
+                               Text="First Division"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="17" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="16" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                        <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                            <tabView:SfTabView Grid.Row="1" VisibleHeaderCount="3"
+                                 BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                 DisplayMode="Text"
+                               SelectedIndex="0"
+                               SelectionChanged="Handle_FirstSelectionChanged"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                        <tabView:SelectionIndicatorSettings Color="White" 
+                                                              Position="Bottom" 
+                                                          StrokeThickness="0"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="FirstMostGoalsLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Italic"
+                               Text="Top Scorers"
+                               TextDecorations="None"
+                               TextColor="White">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="FirstDivisionList"
+                                                ItemsSource="{Binding FirstPlayerGoalsCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                                    ItemTemplate="{StaticResource PlayerItemTemplate}"
+                                                   SelectionMode="None"
+                                                   ItemSpacing="0"
+                                                    SelectionBackgroundColor="White"
+                                                 ItemSize="40"
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="FirstMostGoalsScoredLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Italic"
+                               Text="Goals Scored"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="FirstGoalsScoredList"
+                                ItemsSource="{Binding FirstGoalsScoredCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 ItemSize="60"      
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="FirstMostGoalsConcededLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Italic"
+                               Text="Goals Conceded"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="FirstGoalsConcededList"
+                                ItemsSource="{Binding FirstGoalsConcededCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 ItemSize="60"      
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                            </tabView:SfTabView>
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="CoronaLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               FontAttributes="Bold"
+                               Text="Corona League"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="17" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="16" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <tabView:SfTabView Grid.Row="1" VisibleHeaderCount="3"
+                                 BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                 DisplayMode="Text"
+                               SelectedIndex="0"
+                               SelectionChanged="Handle_CoronaSelectionChanged"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                        <tabView:SelectionIndicatorSettings Color="White" 
+                                                              Position="Bottom" 
+                                                          StrokeThickness="0"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="CoronaMostGoalsLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               FontAttributes="Italic"
+                               Text="Top Scorers"
+                               TextDecorations="None"
+                               TextColor="White">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                    <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="CoronaLeagueList"
+                                                ItemsSource="{Binding CoronaPlayerGoalsCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                                    ItemTemplate="{StaticResource PlayerItemTemplate}"
+                                                   SelectionMode="None"
+                                                   ItemSpacing="0"
+                                                    SelectionBackgroundColor="White"
+                                                 ItemSize="40"
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="CoronaMostGoalsScoredLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Italic"
+                               Text="Goals Scored"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="CoronaGoalsScoredList"
+                                ItemsSource="{Binding CoronaGoalsScoredCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 ItemSize="60"      
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                                    <tabView:SfTabItem SelectionColor="White">
+                        <tabView:SfTabItem.HeaderContent>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="0,15"
+                                     Spacing="2">
+                        <Label x:Name="CoronaMostGoalsConcededLabel" HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="End"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               
+                               FontAttributes="Italic"
+                               Text="Goals Conceded"
+                               TextDecorations="None"
+                               TextColor="Gray">
+                            <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="11"  Tablet="14" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="10"  Tablet="13" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                                <listView:SfListView Grid.Row="1" x:Name="CoronaGoalsConcededList"
+                                ItemsSource="{Binding CoronaGoalsConcededCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 ItemSize="60"      
+                                />
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                            </tabView:SfTabView>
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+            </tabView:SfTabView>
+            <StackLayout Padding="10"  IsVisible="{Binding NoConnectivity}">
+                <Label Text="There are no stats available" FontSize="Caption" TextColor="White" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+                <model:AdMobView Grid.Row="1"  VerticalOptions="EndAndExpand" MinimumHeightRequest="50" Size="Standardbanner"/>
+                <ContentView Grid.Row="0" BackgroundColor="{StaticResource primaryDarkBlueTwo}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+                
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms"
+             xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+             xmlns:syncfusion="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms"
+             xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"  
+             xmlns:ffSvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"  
+             xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+             xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable"
+             xmlns:local="clr-namespace:TruSport.ViewModels"
+             xmlns:model="clr-namespace:TruSport.Model"
+             xmlns:converter="clr-namespace:TruSport.Converters"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+             x:Class="TruSport.Views.Football.TeamPage"
+             Title="Teams"
+             Icon="TeamWhite36.png">
+    <ContentPage.BindingContext>
+        <local:TeamPageViewModel x:Name="viewModel"/>
+    </ContentPage.BindingContext>
+    <ContentPage.ToolbarItems>
+<!--        <ToolbarItem x:Name="AdminToolbarItem" Icon="Admin32.png" Activated="AdminClicked" Order="Primary" Priority="1" />-->
+<!--        <ToolbarItem x:Name="DeleteToolbarItem" Icon="DeleteWhite.png" Activated="DeleteClicked" Order="Primary" Priority="1" />-->
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converter:ImageConverter x:Key="imageConverter"/>
+            <converter:TableIndexToColorConverter x:Key="tableIndexConverter"/>
+            <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
+            <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
+            <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
+            <converter:GroupingTeamConverter x:Key="groupingSelectionConverter"/>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Name="FirstDivisionItemTemplate"  x:Key="FirstDivisionItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             BackgroundColor="{Binding .,
+                                Converter={StaticResource tableIndexConverter},
+                                ConverterParameter={x:Reference Name=FirstDivisionList}}"
+                             Padding="10,5">
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="0"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="5"
+                                 Spacing="0">
+                            <!--<controls:CircleImage x:Name="TeamLogo"
+                                                    Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
+                                                    FillColor="White"
+                                                  HeightRequest="40"
+                                                  WidthRequest="40"
+                                                  HorizontalOptions="Center"
+                                                  VerticalOptions="Center"
+                                                  Aspect="AspectFit"/>-->
+                            
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="TeamName"
+                                   FontSize="16"
+                                   TextColor="White"
+                                        Text="{Binding Name}"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+            <!--<DataTemplate x:Name="PremierDivisionItemTemplate"  x:Key="PremierDivisionItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             BackgroundColor="{Binding .,
+                                Converter={StaticResource tableIndexConverter},
+                                ConverterParameter={x:Reference Name=PremierDivisionList}}"
+                             Padding="10,5">
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="0"
+                      ColumnSpacing="5"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="5"
+                                 Spacing="0">
+                            <controls:CircleImage x:Name="TeamLogo"
+                                                    Source="{Binding TeamLogo}"
+                                                    FillColor="White"
+                                                  HeightRequest="40"
+                                                  WidthRequest="40"
+                                                  HorizontalOptions="Center"
+                                                  VerticalOptions="Center"
+                                                  Aspect="AspectFit"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="TeamName"
+                                   FontSize="16"
+                                   TextColor="White"
+                                        Text="{Binding Name}"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>-->
+            <DataTemplate x:Name="TeamItemTemplate"  x:Key="TeamItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             Padding="0">
+                <Grid x:Name="grid"
+                      RowSpacing="0"
+                      BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                      VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" ColumnSpacing="10">    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                     <!--<ContentView BackgroundColor="Black" Opacity=".5" Grid.RowSpan="2"/>-->
+                    <StackLayout Grid.Column="0" Padding="0" VerticalOptions="Center">
+                        <!--<controls:CircleImage FillColor="White" Aspect="AspectFit" Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="40" WidthRequest="40" />-->
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center">
+                        <ff:CachedImage Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
+                                                        ErrorPlaceholder="ontrack.png"
+                                                        CacheDuration="50"
+                                                        RetryCount="3"
+                                                        RetryDelay="600"
+                                        Aspect="AspectFit"
+                                        HeightRequest="30"
+                                                  WidthRequest="30"
+                                                        DownsampleToViewSize="True">  
+                                            <!--<ff:CachedImage.Transformations>  
+                                                <ffTransformations:CircleTransformation />  
+                                            </ff:CachedImage.Transformations>-->  
+                                        </ff:CachedImage>
+                            </Frame> 
+                    </StackLayout>
+                    <StackLayout  Grid.Column="1" VerticalOptions="Center" Padding="0" Spacing="0">
+                        <Label x:Name="TeamName" VerticalOptions="Center" FontSize="Small" Text="{Binding Name}" LineBreakMode="WordWrap" HorizontalTextAlignment="Start" TextColor="White"/>
+                    </StackLayout>
+                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" Opacity=".3" BackgroundColor="White" HorizontalOptions="FillAndExpand"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+            <!--<DataTemplate x:Name="TeamItemTemplate"  x:Key="TeamItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             
+                             Padding="0">
+                <Grid x:Name="grid"
+                      RowSpacing="0"
+                      BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="90" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <StackLayout Grid.Row="0" Padding="5" VerticalOptions="Center">
+                        <Image Aspect="AspectFit"
+                               Source="{Binding TeamLogo}"
+                               HeightRequest="90"
+                                                  WidthRequest="90"
+                               />
+                            </StackLayout>
+                        <StackLayout  Grid.Row="1"
+                             VerticalOptions="FillAndExpand"
+                             Padding="0"
+                             Spacing="0">
+                        <Label x:Name="TeamName" VerticalOptions="Center"
+                                        Text="{Binding Name}"
+                               FontAttributes="Bold"
+                                   LineBreakMode="WordWrap"
+                                  HorizontalTextAlignment="Center"
+                                        TextColor="White"/>
+                        </StackLayout>
+                    <BoxView Grid.Row="2" HeightRequest="1" Opacity=".3" BackgroundColor="White" HorizontalOptions="FillAndExpand"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>-->
+            <DataTemplate x:Name="CoronaDivisionItemTemplate"  x:Key="CoronaDivisionItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             BackgroundColor="{Binding .,
+                                Converter={StaticResource tableIndexConverter},
+                                ConverterParameter={x:Reference Name=CoronaDivisionList}}"
+                             Padding="10,5">
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="0"
+                      ColumnSpacing="5"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="5"
+                                 Spacing="0">
+                            <controls:CircleImage x:Name="TeamLogo"
+                                                    Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
+                                                    FillColor="White"
+                                                  HeightRequest="40"
+                                                  WidthRequest="40"
+                                                  HorizontalOptions="Center"
+                                                  VerticalOptions="Center"
+                                                  Aspect="AspectFit"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="TeamName"
+                                   FontSize="16"
+                                   TextColor="White"
+                                        Text="{Binding Name}"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout Spacing="0"
+                     Padding="0"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+        <Grid x:Name="PageGrid"
+              RowSpacing="0"
+              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <!--<BoxView HeightRequest="1" Opacity=".3" BackgroundColor="White" HorizontalOptions="FillAndExpand"/>-->
+            <StackLayout Grid.Row="0" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}"  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <Grid BackgroundColor="{StaticResource primaryDarkBlueTwo}" RowSpacing="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+                                  Padding="0,0,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <!--<BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>-->
+                                <listView:SfListView Grid.Row="0"  x:Name="TeamsList"
+                                ItemsSource="{Binding TeamCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                   SelectionMode="Single"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="{StaticResource primaryPink}"
+                                 ItemSize="50"
+                                                     IsStickyGroupHeader="True"
+                                                     GroupHeaderSize="30"
+                                                      SelectionChanged="TeamSelected"
+                                >
+                                    <listView:SfListView.DataSource>
+                                    <data:DataSource>
+                                    <data:DataSource.GroupDescriptors>
+                                      <!--<data:GroupDescriptor PropertyName="Date"/>-->
+                                                <data:GroupDescriptor PropertyName="League.Name"/>
+                                    </data:DataSource.GroupDescriptors>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="League.Name" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                                    <listView:SfListView.GroupHeaderTemplate>
+                                  <DataTemplate>
+                                      <ViewCell>
+                                        <ViewCell.View>
+                                          <Grid HeightRequest="50" >
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <!--<ColumnDefinition Width="*"/>-->
+                                                </Grid.ColumnDefinitions>
+                                               <BoxView BackgroundColor="{StaticResource primaryPink}" Opacity=".5"/>
+                                              <StackLayout Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference TeamsList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                    VerticalOptions="Center" HorizontalOptions="Start"
+                                                     TextColor="White"/>
+                                                  </StackLayout>
+                                          </Grid>
+                                        </ViewCell.View>
+                                      </ViewCell>
+                                  </DataTemplate>
+                                </listView:SfListView.GroupHeaderTemplate>
+                                    </listView:SfListView>
+                            
+                            </Grid>
+            </StackLayout>
+            <StackLayout Padding="10"  IsVisible="{Binding NoConnectivity}">
+                <Label Text="There are no teams available" FontSize="Caption" TextColor="White" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+                <model:AdMobView Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50" Size="Standardbanner"/>
+                <!--<syncfusion:SfBusyIndicator Grid.RowSpan="3"
+                    x:Name="BusyIndicator"
+                                  BackgroundColor="Transparent"
+                                  TextColor="{StaticResource primaryPink}"
+                                  VerticalOptions="FillAndExpand"
+                                  HorizontalOptions="FillAndExpand"
+                                  AnimationType="SingleCircle"  
+                                  ViewBoxWidth="50"
+                                            ViewBoxHeight="50"
+                                  IsVisible="{Binding IsActivityIndicatorVisible}"
+                                  Duration="3" />-->
+            <ContentView Grid.Row="0" BackgroundColor="{StaticResource primaryDarkBlueTwo}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            <!--<extension:CustomLoader x:Name="loader" Grid.Row="0"
+                                        Source="ontrackindicator.png"
+                                        RotationLength="2000"
+                                    WidthRequest="100"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"
+                                        
+                                        IsRunning="{Binding IsActivityIndicatorVisible}"
+                                        IsVisible="{Binding IsActivityIndicatorVisible}"/>-->
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

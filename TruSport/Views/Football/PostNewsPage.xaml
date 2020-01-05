@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
+             xmlns:syncfusion="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms"
+             x:Class="TruSport.Views.Football.PostNewsPage"
+             Title="Post News">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="PostToolbarItem" Text="Post" Activated="PostNewsClicked" Order="Primary" Priority="1" />
+<!--        <ToolbarItem x:Name="DeleteToolbarItem" Icon="DeleteWhite.png" Activated="DeleteClicked" Order="Primary" Priority="1" />-->
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand">
+            <Grid HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand"
+                  BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                  RowSpacing="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <BoxView HeightRequest="3" BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
+                <StackLayout Grid.Row="1" Orientation="Horizontal" Padding="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Creator" ContainerType="None"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   FocusedColor="White"
+                                                   ErrorColor="#B00020"
+                                                   HelperText="Required *"
+                                                   UnfocusedColor="White"
+    ErrorText="Please enter your name or an entity"
+    
+                                                   >
+                        <Entry x:Name="OBOEntry"
+                               Text="{Binding OBO}"
+                               TextColor="White"/>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                <StackLayout Grid.Row="2" Orientation="Horizontal" Padding="10"
+                             Spacing="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Title"
+                                                    ContainerType="None"
+                                                   FocusedColor="White"
+                                                   HelperText="Required *"
+                                                   UnfocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="TitleEntry" 
+                               Text="{Binding Title}"
+                               TextColor="White"/>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                <StackLayout Grid.Row="3" Orientation="Horizontal" Padding="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <inputLayout:SfTextInputLayout Hint="Description"
+                                                   ContainerType="None"
+                                                   HelperText="Required *"
+                                                   FocusedColor="White"
+                                                   UnfocusedColor="White"
+                                                   HorizontalOptions="FillAndExpand">
+                        <Editor x:Name="DescriptionEntry"
+                               Text="{Binding Description}"
+                               TextColor="White"/>
+                    </inputLayout:SfTextInputLayout>
+                </StackLayout>
+                
+                
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

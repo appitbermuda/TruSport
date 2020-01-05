@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:model="clr-namespace:TruSport.Model"
+             xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             x:Class="TruSport.Views.HelpPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Name="HelpItemTemplate"  x:Key="HelpItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             Padding="10,5">
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="5"
+                      ColumnSpacing="10"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="1"/>
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" 
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5"
+                                     Spacing="10"
+                                     Orientation="Horizontal">
+                            <Label FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   Text="Q: "/>
+                            </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="1" 
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5"
+                                     Spacing="10"
+                                     Orientation="Horizontal">
+                            <Label FontSize="Caption"
+                                   FontAttributes="None"
+                                   TextColor="White"
+                                   Text="{Binding Question}"/>
+                            </StackLayout>
+                            <StackLayout Grid.Row="1" 
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5"
+                                     Spacing="10"
+                                     Orientation="Horizontal">
+                            <Label FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   Text="A: "/>
+                                   
+                                </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.Column="1" 
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5"
+                                     Spacing="10"
+                                     Orientation="Horizontal">
+                            <Label FontSize="Caption"
+                                   FontAttributes="None"
+                                   TextColor="White"
+                                   Text="{Binding Answer}"/>
+                            </StackLayout>
+                    <BoxView Grid.Row="2" Grid.ColumnSpan="2" Opacity=".5" BackgroundColor="White" HeightRequest="1" HorizontalOptions="FillAndExpand" VerticalOptions="End"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <listView:SfListView x:Name="HelpList"
+                                    ItemsSource="{Binding HelpCollection}"
+                                    ItemTemplate="{StaticResource HelpItemTemplate}"
+                                    SelectionMode="Single"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    ItemSpacing="0"
+                                 
+                                    SelectionBackgroundColor="{StaticResource primaryPink}"
+                                    AutoFitMode="Height"        
+                                />
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+            <model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
