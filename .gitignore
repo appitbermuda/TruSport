@@ -1,0 +1,5 @@
+# ignore obj and debug folders, anywhere in the tree.
+bin/Debug/
+bin/Test/
+obj/Debug
+obj/Test
