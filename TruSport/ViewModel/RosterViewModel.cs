@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Rg.Plugins.Popup.Services;
 using TruSport.Data;
 using TruSport.Model;
 using Xamarin.Forms;
@@ -152,7 +151,7 @@ namespace TruSport.ViewModels
 
                     //MatchViewModel.HomeSelectedData = GetNewHomeTeamData();
                     //MatchViewModel.AwaySelectedData = GetNewAwayTeamData();
-                    await PopupNavigation.Instance.PopAsync();
+                    
                 });
             }
 
@@ -169,7 +168,7 @@ namespace TruSport.ViewModels
 
                     //MatchViewModel.HomeSelectedData = GetNewHomeTeamData();
                     //MatchViewModel.AwaySelectedData = GetNewAwayTeamData();
-                    await PopupNavigation.Instance.PopAsync();
+                    //await PopupNavigation.Instance.PopAsync();
                 });
             }
 

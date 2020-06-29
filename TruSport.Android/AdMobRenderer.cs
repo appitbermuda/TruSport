@@ -55,7 +55,7 @@ namespace TruSport.Droid
 
 #else
                 //adView.AdUnitId = Context.Resources.GetString(Resource.String.banner_ad_unit_id);
-                adView.AdUnitId = Constants.AdMobProductionBannerID;
+                adView.AdUnitId = Constants.AdMobAndroidProductionBannerID;
 #endif
 
                 var requestbuilder = new AdRequest.Builder();

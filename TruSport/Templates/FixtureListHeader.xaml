@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TruSport.Templates.FixtureListHeader">
+    <ViewCell.View>
+        <StackLayout Padding="8,25,8,0">
+<Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+<Frame IsClippedToBounds="True" CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+                                            <Grid>
+                                                <Grid.GestureRecognizers>
+                                                  <TapGestureRecognizer Command="{Binding Path=BindingContext.LeagueSelectedCommand, Source={x:Reference UpcomingFixtureList}}" CommandParameter="{Binding .}"/>
+                                              </Grid.GestureRecognizers>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView BackgroundColor="{DynamicResource controlHeaderBackgroundColor}"  Grid.ColumnSpan="2"/>
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference UpcomingFixtureList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                    </StackLayout>
+                                          </Grid>
+    </Frame>
+</Frame>
+                                            </StackLayout>
+    </ViewCell.View>
+</ViewCell>

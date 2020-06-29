@@ -43,8 +43,6 @@ namespace TruSport.Data
                 //content.Headers
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-
-
                 //if (user.IOSDevices.Any())
                 //{
                 //push.Target.Devices = user.IOSDevices;

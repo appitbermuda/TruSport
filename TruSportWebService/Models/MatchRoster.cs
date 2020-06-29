@@ -15,6 +15,8 @@ namespace OnTrackWebService.Models
         public bool IsStarter { get; set; }
         public int? SubstituteTime { get; set; }
 
+        [NotMapped]
+        public bool IsHomeTeam { get; set; }
 
         [ForeignKey("FixtureID")]
         public Fixture Fixture { get; set; }

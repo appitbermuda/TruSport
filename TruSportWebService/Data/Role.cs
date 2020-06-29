@@ -1,7 +1,7 @@
 ﻿using System;
 namespace OnTrackWebService.Data
 {
-    public static class Role
+    public static class Roles
     {
         public const string AllUsers = "Administrator,Team Administrator,Match Commissioner";
         public const string Admin = "Administrator";

@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TruSport.Views.Setting.SettingPage">
+    <ContentPage.Content>
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}">
+            <TableView Intent="Settings">
+                <TableRoot>
+                    <TableSection Title="Sport" TextColor="{DynamicResource TextPrimaryColor}">
+                        <ViewCell Tapped="ViewCell_Tapped">
+                            <Grid HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackLayout Padding="20,0" VerticalOptions="CenterAndExpand">
+                                    <Label Text="Default" FontAttributes="Bold" FontSize="Medium" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                </StackLayout>
+                                <StackLayout Grid.Column="1" Padding="20,0" VerticalOptions="CenterAndExpand">
+                                    <Label Text="{Binding DefaultSport}" TextColor="Gray" FontSize="Medium"/>
+                                </StackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="Alerts" TextColor="{DynamicResource TextPrimaryColor}">
+                        <ViewCell>
+                            <Grid BackgroundColor="{DynamicResource controlHeaderBackgroundColor}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Football" FontAttributes="Bold" FontSize="Medium" Margin="20,0" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                <Switch Grid.Column="1" IsToggled="{Binding FootballAlert}" OnColor="{StaticResource primaryDarkBlueTwo}" Margin="20,0" VerticalOptions="CenterAndExpand"/>
+                            </Grid>
+                        </ViewCell>
+                        <ViewCell>
+                            <Grid BackgroundColor="{DynamicResource controlHeaderBackgroundColor}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Cricket" FontAttributes="Bold" FontSize="Medium" Margin="20,0" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                <Switch Grid.Column="1" IsToggled="{Binding CricketAlert}" OnColor="{StaticResource primaryDarkBlueTwo}" Margin="20,0" VerticalOptions="CenterAndExpand"/>
+                            </Grid>
+                        </ViewCell>
+                        <!--<ViewCell>
+                            <Grid BackgroundColor="{DynamicResource controlHeaderBackgroundColor}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Favourite" FontAttributes="Bold" FontSize="Medium" Margin="20,0" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                <Switch Grid.Column="1" IsToggled="{Binding FavouriteAlerts}" OnColor="{StaticResource primaryDarkBlueTwo}" Margin="20,0" VerticalOptions="CenterAndExpand"/>
+                            </Grid>
+                        </ViewCell>-->
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

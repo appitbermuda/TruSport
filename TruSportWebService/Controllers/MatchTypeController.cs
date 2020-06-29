@@ -65,7 +65,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // POST api/values
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [Route("Insert")]
         public async Task<IActionResult> Post([FromBody] MatchType matchType)
@@ -84,7 +84,7 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] MatchType matchType)
@@ -104,7 +104,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // DELETE api/values/5
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(string id)

@@ -12,6 +12,11 @@ using Android.Gms.Ads;
 using Microsoft.WindowsAzure.MobileServices;
 using ImageCircle.Forms.Plugin.Droid;
 using Android.Gms.Common;
+using Android.Content;
+using Xamarin.Forms;
+using TruSport.Styles;
+using Android.Content.Res;
+using Android.Support.V7.App;
 
 namespace TruSport.Droid
 {
@@ -36,20 +41,20 @@ namespace TruSport.Droid
             base.OnCreate(bundle);
 
             //SetContentView(Resource.Layout.Main);
-            
+            Forms.SetFlags("CarouselView_Experimental");
 
             CurrentPlatform.Init();
-            Rg.Plugins.Popup.Popup.Init(this, bundle);
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             Xamarin.Essentials.Platform.Init(this, bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
             ImageCircleRenderer.Init();
 
+            LoadApplication(new App());
+
+            SetAppTheme();
             IsPlayServicesAvailable(); //You can use this method to check if play services are available.
             CreateNotificationChannel();
-
-            LoadApplication(new App());
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -59,53 +64,88 @@ namespace TruSport.Droid
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
+        protected override void OnNewIntent(Intent intent)
+        {
+            if (intent.Extras != null)
+            {
+                var message = intent.GetStringExtra("message");
+                //(App.Current.MainPage as MainPage)?.AddMessage(message);
+            }
+
+            base.OnNewIntent(intent);
+        }
+
         public bool IsPlayServicesAvailable()
         {
-            int resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this); if (resultCode != ConnectionResult.Success)
+            int resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
+            if (resultCode != ConnectionResult.Success)
             {
-                if (!GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
+                if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
+                    Log.Debug(Constants.DebugTag, GoogleApiAvailability.Instance.GetErrorString(resultCode));
+                else
                 {
-                    //This device is not supported           
-                    Finish(); // Kill the activity if you want.         
+                    Log.Debug(Constants.DebugTag, "This device is not supported");
                 }
                 return false;
             }
+            return true;
+        }
+
+        private void OnModeChanged(Page arg1, string theme)
+        {
+            if (theme == "light")
+            {
+                Delegate.SetLocalNightMode(AppCompatDelegate.ModeNightNo);
+            }
             else
             {
-                //Google Play Services is available.         
-                return true;
+                Delegate.SetLocalNightMode(AppCompatDelegate.ModeNightYes);
             }
+            SetTheme(theme);
         }
 
         void CreateNotificationChannel()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            // Notification channels are new as of "Oreo".
+            // There is no need to create a notification channel on older versions of Android.
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                // Notification channels are new in API 26 (and not a part of the
-                // support library). There is no need to create a notification 
-                // channel on older versions of Android.
-                return;
+                var channelName = Constants.NotificationChannelName;
+                var channelDescription = String.Empty;
+                var channel = new NotificationChannel(channelName, channelName, NotificationImportance.Default)
+                {
+                    Description = channelDescription
+                };
+
+                var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+                notificationManager.CreateNotificationChannel(channel);
             }
-
-            var channel = new NotificationChannel(CHANNEL_ID, "FCM Notifications", NotificationImportance.Default)
-            {
-                Description = "Firebase Cloud Messages appear in this channel"
-            };
-
-            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
-            notificationManager.CreateNotificationChannel(channel);
         }
 
-        public override void OnBackPressed()
+        void SetAppTheme()
         {
-            if (Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed))
+            if (Resources.Configuration.UiMode.HasFlag(UiMode.NightYes))
+                SetTheme("dark");
+            else
+                SetTheme("light");
+        }
+
+        void SetTheme(string mode)
+        {
+            if (mode == "dark")
             {
-                // Do something if there are some pages in the `PopupStack`
+                //if (App.AppTheme != null && App.AppTheme == "dark")
+                //    return;
+                App.Current.Resources = new DarkTheme();
             }
             else
             {
-                // Do something if there are not any pages in the `PopupStack`
+                //if (App.AppTheme != null && App.AppTheme != "dark")
+                //    return;
+                App.Current.Resources = new LightTheme();
             }
+
+            App.AppTheme = mode;
         }
     }
 }

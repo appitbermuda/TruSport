@@ -25,7 +25,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         [Route("AllUsers")]
         public async Task<IActionResult> GetAll()
@@ -46,7 +46,7 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpGet]
         [Route("Get")]
         public async Task<IActionResult> Get(string id)
@@ -121,7 +121,7 @@ namespace OnTrackWebService.Controllers
         }
 
         //This resource is only For SuperAdmin role
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("Update")]
         public async Task<IActionResult> Update(User user)

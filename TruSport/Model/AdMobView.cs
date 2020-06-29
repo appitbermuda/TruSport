@@ -13,7 +13,7 @@ namespace TruSport.Model
         //}
         public AdMobView()
         {
-            BackgroundColor = (Color)App.Current.Resources["primaryDarkBlueTwo"];
+            BackgroundColor = (Color)App.Current.Resources["backgroundColor"];
         }
     }
     //public class AdMobView : View

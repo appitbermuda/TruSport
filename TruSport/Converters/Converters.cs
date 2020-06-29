@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using Newtonsoft.Json;
 using NodaTime;
 using RestSharp;
@@ -39,6 +42,108 @@ namespace TruSport.Converters
             return int.Parse((string)value);
         }
     }
+
+    public class CricketHomeTeamScoreConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                var teamID = parameter as Label;
+                var cricketFixture = (CricketFixture)value;
+
+
+
+                if (cricketFixture.HomeTeamID == teamID.Text)
+                {
+                    var matchInnings = cricketFixture.MatchInnings.Where(e => e.BattingTeamID == teamID.Text);
+                    string score = "";
+
+                    foreach(var matchInning in matchInnings)
+                    {
+                        if(cricketFixture.MatchType.Name == "One 50 Overs" || cricketFixture.MatchType.Name == "T20")
+                            score += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                        else
+                            score += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+                    }
+                    return score;
+                }
+            }
+            catch(Exception ex)
+            { }
+
+            return "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return int.Parse((string)value);
+        }
+    }
+
+    public class CricketAwayTeamScoreConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                var teamID = parameter as Label;
+                var cricketFixture = (CricketFixture)value;
+
+
+
+                if (cricketFixture.AwayTeamID == teamID.Text)
+                {
+                    var matchInnings = cricketFixture.MatchInnings.Where(e => e.BattingTeamID == teamID.Text);
+                    string score = "";
+
+                    foreach (var matchInning in matchInnings)
+                    {
+                        if (cricketFixture.MatchType.Name == "One 50 Overs" || cricketFixture.MatchType.Name == "T20")
+                            score += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                        else
+                            score += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+                    }
+                    return score;
+                }
+            }
+            catch (Exception ex)
+            { }
+
+            return "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return int.Parse((string)value);
+        }
+    }
+
+    //public class CricketScoreConverter : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        try
+    //        {
+    //            var wicketsLabel = parameter as Label;
+    //            var score = (int?)value;
+
+    //            if (score.HasValue && (score.Value > 0 && System.Convert.ToInt32(wicketsLabel.Text) > 0))
+    //            {
+    //                return String.Format("{0}/{1}", score, wicketsLabel.Text);
+    //            }
+    //        }
+    //        catch (Exception ex)
+    //        { }
+
+    //        return "";
+    //    }
+
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        return int.Parse((string)value);
+    //    }
+    //}
 
     public class ShowScoreConverter : IValueConverter
     {
@@ -169,10 +274,29 @@ namespace TruSport.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value != null)
+            if (!String.IsNullOrEmpty((string)value))
                 return true;
 
             return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class SportConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var sport = (string)value;
+            if (sport == "Football")
+                return "";
+            else if(sport == "Cricket")
+                return "";
+
+            return "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -444,51 +568,86 @@ namespace TruSport.Converters
             }
         }
 
+    //public class MatchTimeConverter : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        try
+    //        {
+
+    //            var matchDateLabel = parameter as Label;
+
+    //            string time = (string)value;
+    //            TimeSpan timeValue = new TimeSpan();
+
+    //            if (TimeSpan.TryParse(time, out timeValue))
+    //            {
+    //                DateTime dateTime = new DateTime();
+
+    //                //if (DateTime.TryParse(matchDateLabel.Text, out dateTime))
+    //                //{
+    //                //    dateTime = (dateTime.Date.Add(timeValue)).ToLocalTime();
+
+    //                //    //dateTime = dateTime.AddMinutes(90);
+
+    //                //    if (dateTime.AddMinutes(105) < DateTime.Now)
+    //                //        return "FT";
+    //                //    //else //if(dateTime > DateTime.Now)
+
+    //                //    return dateTime.ToString("h:mm tt");
+    //                //}
+    //                //else
+    //                //{
+    //                //    //var gameTime = (timeValue.Add(TimeSpan.FromMinutes(105)) - DateTime.Now.TimeOfDay).TotalMinutes;
+    //                //    var gameTime = Math.Round((DateTime.Now.TimeOfDay - timeValue).TotalMinutes);
+
+    //                //    //int gameTimeValue = System.Convert.ToInt32(gameTime);
+
+    //                //    if (gameTime > 45 && gameTime < 60)
+    //                //        return "HT";
+    //                //    else if (gameTime > 60)
+    //                //        return (gameTime - 15).ToString() + "'";
+    //                //    else
+    //                //        return gameTime + "'";
+    //                //}
+    //            }
+
+    //            return "FT";
+    //        }
+    //        catch (Exception ex)
+    //        {
+
+    //        }
+
+    //        return "";
+    //    }
+
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        return int.Parse((string)value);
+    //    }
+    //}
+
     public class MatchTimeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
+                bool hasScore = false;
+                Label scoreLabel = parameter as Label;
 
-                var matchDateLabel = parameter as Label;
-
-                string time = (string)value;
-                TimeSpan timeValue = new TimeSpan();
-
-                if (TimeSpan.TryParse(time, out timeValue))
+                if (scoreLabel != null)
                 {
-                    DateTime dateTime = new DateTime();
-
-                    if (DateTime.TryParse(matchDateLabel.Text, out dateTime))
-                    {
-                        dateTime = (dateTime.Date.Add(timeValue)).ToLocalTime();
-
-                        //dateTime = dateTime.AddMinutes(90);
-
-                        if (dateTime.AddMinutes(105) < DateTime.Now)
-                            return "FT";
-                        //else //if(dateTime > DateTime.Now)
-
-                        return dateTime.ToString("h:mm tt");
-                    }
-                    //else
-                    //{
-                    //    //var gameTime = (timeValue.Add(TimeSpan.FromMinutes(105)) - DateTime.Now.TimeOfDay).TotalMinutes;
-                    //    var gameTime = Math.Round((DateTime.Now.TimeOfDay - timeValue).TotalMinutes);
-
-                    //    //int gameTimeValue = System.Convert.ToInt32(gameTime);
-
-                    //    if (gameTime > 45 && gameTime < 60)
-                    //        return "HT";
-                    //    else if (gameTime > 60)
-                    //        return (gameTime - 15).ToString() + "'";
-                    //    else
-                    //        return gameTime + "'";
-                    //}
+                    hasScore = System.Convert.ToBoolean(scoreLabel.Text);
                 }
 
-                return "FT";
+                DateTime fixtureDate = (DateTime)value;
+
+                if (fixtureDate.AddMinutes(120) < DateTime.Now && hasScore)
+                    return "FT";
+
+                return fixtureDate.ToString("h:mm tt");
             }
             catch (Exception ex)
             {
@@ -590,16 +749,32 @@ namespace TruSport.Converters
 
                 if (TimeSpan.TryParse(time, out timeValue))
                 {
-                    //DateTime dateTime = DateTime.Now.Date;
-                    DateTime dateTime = new DateTime().AddDays(5);
+                    DateTime dateTimeTest = DateTime.Now.ToUniversalTime().Date.Add(timeValue);
+                    DateTime dateTime = new DateTime().AddDays(1);
 
                     dateTime = dateTime.Date + timeValue;
+                    //dateTimeTest = dateTimeTest + timeValue;
 
-                    TimeZone zone = TimeZone.CurrentTimeZone;
-                    TimeSpan offset = zone.GetUtcOffset(DateTime.Now);
-                    TimeSpan utcoffset = zone.GetUtcOffset(dateTime);
+                    DateTime thisTime = DateTime.Now;
+                    bool isDaylight = TimeZoneInfo.Local.IsDaylightSavingTime(thisTime);
 
-                    return dateTime.ToLocalTime().ToString("h:mm tt");
+                    //TimeZone zone = TimeZone.CurrentTimeZone;
+
+                    //TimeSpan offset = zone.GetUtcOffset(DateTime.Now);
+                    //TimeSpan utcoffset = zone.GetUtcOffset(dateTime);
+
+                    TimeSpan offset = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now);
+                    TimeSpan utcoffset = TimeZoneInfo.Local.GetUtcOffset(dateTime);
+
+                    if (isDaylight)
+                        timeValue = timeValue + (utcoffset - offset);
+
+                    
+                    DateTime GameTime = DateTime.Now.ToUniversalTime().Date.Add(timeValue);
+
+                    DateTime localdate = TimeZoneInfo.ConvertTime(GameTime, TimeZoneInfo.Utc, TimeZoneInfo.Local);
+                    return localdate.ToString("h:mm tt");
+                    //return dateTime.ToLocalTime().ToString("h:mm tt");
                 }
                 else
                     return null;
@@ -827,9 +1002,34 @@ namespace TruSport.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if ((bool)value)
-                return (Color)App.Current.Resources["primaryPink"];
+                return (Color)App.Current.Resources["listSelectedBackgroundColor"];
             else
                 return Color.Transparent;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class SelectedTableBackgroundConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                var selectedTeam = (bool)value;
+
+                if (selectedTeam)
+                    return (Color)App.Current.Resources["listSelectedBackgroundColor"];
+                else
+                    return Color.Transparent;
+            }
+            catch(Exception ex)
+            {
+                return Color.Transparent;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -842,11 +1042,40 @@ namespace TruSport.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            //if ((bool)value)
-            //    //return Color.White;
-            //    return (Color)App.Current.Resources["primaryDarkBlue"];
-            //else
+            if ((bool)value)
+            {
+                    return (Color)App.Current.Resources["listSelectedBackgroundColor"];
+            }
+            else
                 return Color.White;
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public  class NumberExtensionConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var number = (int)value;
+            var ones = number % 10;
+            var tens = Math.Floor(number / 10f) % 10;
+            if (tens == 1)
+            {
+                return number + "th";
+            }
+
+            switch (ones)
+            {
+                case 1: return number + "st";
+                case 2: return number + "nd";
+                case 3: return number + "rd";
+                default: return number + "th";
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -947,44 +1176,164 @@ namespace TruSport.Converters
         }
     }
 
-    public class GroupingSelectionConverter : IValueConverter
+    public class GroupingSelectionFootballConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-                return value;
-
-            //DateTime dateTime = new DateTime();
-
-            GroupResult groupResult = value as GroupResult;
-
-            //SfListView listview = parameter as SfListView;
-
-            //string[] result = groupResult.Key.ToString().Split(',');
-
-            //var groupdataitems = (value as GroupResult).Items.ToList<FixtureListView>().ToList();
-            var items = new List<Fixture>(groupResult.Items.ToList<Fixture>());
-            var data = items[0];
-
-            //if (parameter is Label)
-            //    return data.GroupingData.Designation;
-            //else
-            //return data.GroupingData.EmployeeImage;
-
-            if (parameter is Label)
+            try
             {
-                if (!data.MatchType.IsTable)
-                    return data.League.Name + " " + data.MatchType.Name;
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<Fixture>(groupResult.Items.ToList<Fixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    if (!data.MatchType.IsTable)
+                        return data.League.Name + " " + data.MatchType.Name;
+                    else
+                        return data.League.Name;
+                }
                 else
-                    return data.League.Name;
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Date.Year.ToString();
+                }
             }
-            else
+            catch(Exception ex)
             {
-                if (data.Season.IsCurrent)
-                    return data.Date.ToString("MMM d");
-                else
-                    return data.Date.Year.ToString();
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
             }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingSelectionCricketConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<CricketFixture>(groupResult.Items.ToList<CricketFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    if (!data.MatchType.IsTable)
+                        return data.League.Name + " " + data.MatchType.Name;
+                    else
+                        return data.League.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Date.Year.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingCompetitionCricketConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<CricketFixture>(groupResult.Items.ToList<CricketFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    return data.MatchType.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Date.Year.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Competition Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingCompetitionFootballConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<Fixture>(groupResult.Items.ToList<Fixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    return data.MatchType.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Date.Year.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Competition Converter");
+            }
+
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1009,7 +1358,7 @@ namespace TruSport.Converters
             //string[] result = groupResult.Key.ToString().Split(',');
 
             //var groupdataitems = (value as GroupResult).Items.ToList<FixtureListView>().ToList();
-            var items = new List<Transfers>(groupResult.Items.ToList<Transfers>());
+            var items = new List<Transfer>(groupResult.Items.ToList<Transfer>());
             var data = items[0];
 
             return data.PreviousTeam;
@@ -1022,79 +1371,126 @@ namespace TruSport.Converters
         }
     }
 
-    public class GroupingLeagueDateSelectionConverter : IValueConverter
+    public class GroupingLeagueDateSelectionFootballConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                DateTime dateTime = new DateTime();
+
+                GroupResult groupResult = value as GroupResult;
+
+                if (groupResult != null)
+                {
+                    var items = new List<Fixture>(groupResult.Items.ToList<Fixture>());
+                    var data = items[0];
+
+                    if (parameter is Label)
+                    {
+                        return data.MatchType.Name;
+                    }
+                    else
+                    {
+                        return data.Date.ToString("dd MMM yyyy");
+                    }
+                }
+
+                var isDate = DateTime.TryParse(value.ToString(), out dateTime);
+
+                if (isDate)
+                    return dateTime.ToString("dd MMM yyyy");
+                else
+                    return (string)value;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping League Table Selection Converter");
+            }
+
+            return value;
+        }
+        
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingLeagueDateSelectionCricketConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                DateTime dateTime = new DateTime();
+
+                GroupResult groupResult = value as GroupResult;
+
+                if (groupResult != null)
+                {
+                    var items = new List<CricketFixture>(groupResult.Items.ToList<CricketFixture>());
+                    var data = items[0];
+
+                    if (parameter is Label)
+                    {
+                        return data.MatchType.Name;
+                    }
+                    else
+                    {
+                        return data.Date.ToString("dd MMM yyyy");
+                    }
+                }
+
+                var isDate = DateTime.TryParse(value.ToString(), out dateTime);
+
+                if (isDate)
+                    return dateTime.ToString("dd MMM yyyy");
+                else
+                    return (string)value;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping League Table Selection Converter");
+            }
+
+            return value;
+        }
+
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingTeamConverter : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
                 return value;
 
-            DateTime dateTime = new DateTime();
-
             GroupResult groupResult = value as GroupResult;
+            var items = new List<Team>(groupResult.Items.ToList<Team>());
+            var data = items[0];
 
-            //SfListView listview = parameter as SfListView;
+            return data.League.Name;
 
-            //string[] result = groupResult.Key.ToString().Split(',');
-
-            //var groupdataitems = (value as GroupResult).Items.ToList<FixtureListView>().ToList();
-
-            if (groupResult != null)
-            {
-                var items = new List<Fixture>(groupResult.Items.ToList<Fixture>());
-                var data = items[0];
-
-                //if (parameter is Label)
-                //    return data.GroupingData.Designation;
-                //else
-                //return data.GroupingData.EmployeeImage;
-
-                if (parameter is Label)
-                {
-                    return data.MatchType.Name;
-                }
-                else
-                {
-                    return data.Date.ToString("dd MMM yyyy");
-                }
-            }
-
-            var isDate = DateTime.TryParse(value.ToString(), out dateTime);
-
-            if (isDate)
-                return dateTime.ToString("dd MMM yyyy");
-            else
-                return (string)value;
-                //return data.MatchType.Name + " - " + data.Date.ToString("MMM d, yyyy");
-            }
-        
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
         }
 
-        public class GroupingTeamConverter : IValueConverter
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                if (value == null)
-                    return value;
-
-                GroupResult groupResult = value as GroupResult;
-                var items = new List<Team>(groupResult.Items.ToList<Team>());
-                var data = items[0];
-
-                return data.League.Name;
-
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
+            throw new NotImplementedException();
         }
+    }
 
     public class GroupingPlayerConverter : IValueConverter
     {
@@ -1141,28 +1537,32 @@ namespace TruSport.Converters
         {
             if ((string)value != null && (string)value != "")
             {
-                //var client = new RestClient("http://ontrackimagestore.blob.core.windows.net/images/");
-                //var request = new RestRequest((string)value, Method.GET);
-                ////request.AddHeader("authorization", "Bearer " + accessToken);
-
-                //// We execute the request and capture the response
-                //// in a variable called `response`
-                //IRestResponse response = client..Execute(request);
-
-                //if (response.IsSuccessful)
-                //{
-                //    string image = JsonConvert.DeserializeObject<string>(response.Content);
-
-                //    return image;
-                //}
-                //return "ontrack.png";
                 var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
-
 
                 return image;
             }
             else
                 return "ontrack.png";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class CricketImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((string)value != null && (string)value != "")
+            {
+                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+
+                return image;
+            }
+            else
+                return "bcblogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1244,33 +1644,78 @@ namespace TruSport.Converters
             }
         }
 
-        public class EventArgsConverter : IValueConverter
+    public class SportSelectedConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                object eventArgs = null;
-                if (value is Syncfusion.ListView.XForms.ItemTappedEventArgs)
-                    eventArgs = value as Syncfusion.ListView.XForms.ItemTappedEventArgs;
-                else if (value is ListViewLoadedEventArgs)
-                    eventArgs = parameter;
-                else if (value is ItemSelectionChangedEventArgs)
-                    eventArgs = value as ItemSelectionChangedEventArgs;
-                else if (value is SwipingEventArgs)
-                    eventArgs = value as SwipingEventArgs;
-                else if (value is Syncfusion.SfPicker.XForms.SelectionChangedEventArgs)
-                    eventArgs = value as Syncfusion.SfPicker.XForms.SelectionChangedEventArgs;
-                else if (value is Syncfusion.XForms.ComboBox.SelectionChangedEventArgs)
-                    eventArgs = value as Syncfusion.XForms.ComboBox.SelectionChangedEventArgs;
-                else if (value is ToggledEventArgs)
-                    eventArgs = value as ToggledEventArgs;
-            else if (value is Syncfusion.XForms.Buttons.SwitchStateChangedEventArgs)
-                eventArgs = value as Syncfusion.XForms.Buttons.SwitchStateChangedEventArgs;
-            return eventArgs;
-            }
+            var sport = parameter as string;
+            var selectedSport = (string)value;
 
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
+            if (sport == selectedSport)
+                return "";
+
+            return "";
         }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class EventArgsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            object eventArgs = null;
+            if (value is Syncfusion.ListView.XForms.ItemTappedEventArgs)
+                eventArgs = value as Syncfusion.ListView.XForms.ItemTappedEventArgs;
+            else if (value is ListViewLoadedEventArgs)
+                eventArgs = parameter;
+            else if (value is ItemSelectionChangedEventArgs)
+                eventArgs = value as ItemSelectionChangedEventArgs;
+            else if (value is SwipingEventArgs)
+                eventArgs = value as SwipingEventArgs;
+            else if (value is Syncfusion.SfPicker.XForms.SelectionChangedEventArgs)
+                eventArgs = value as Syncfusion.SfPicker.XForms.SelectionChangedEventArgs;
+            else if (value is Syncfusion.XForms.ComboBox.SelectionChangedEventArgs)
+                eventArgs = value as Syncfusion.XForms.ComboBox.SelectionChangedEventArgs;
+            else if (value is ToggledEventArgs)
+                eventArgs = value as ToggledEventArgs;
+        else if (value is Syncfusion.XForms.Buttons.SwitchStateChangedEventArgs)
+            eventArgs = value as Syncfusion.XForms.Buttons.SwitchStateChangedEventArgs;
+        return eventArgs;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ListCountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !(((IList)value).Count == 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class ShowNoContentListConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (((IList)value).Count == 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 }

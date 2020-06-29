@@ -16,7 +16,7 @@ namespace TruSport.Services
         }
 
 
-        public async Task<string> Send(string name, string title, string body)
+        public async Task<string> Send(Content notification)
         {
             try
             {
@@ -25,11 +25,9 @@ namespace TruSport.Services
                 if (accessToken != null)
                 {
                     var client = new RestClient(Constants.APIEndpoint);
-                    var request = new RestRequest("PushNotification/Send", Method.GET);
+                    var request = new RestRequest("PushNotification/Send", Method.POST);
+                    request.AddJsonBody(notification);
                     request.AddHeader("authorization", "Bearer " + accessToken);
-                    request.AddParameter("name", name);
-                    request.AddParameter("title", title);
-                    request.AddParameter("body", body);
 
                     // We execute the request and capture the response
                     // in a variable called `response`

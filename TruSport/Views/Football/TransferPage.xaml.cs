@@ -23,7 +23,7 @@ namespace TruSport.Views.Football
                 PropertyName = "PreviousTeam",
                 KeySelector = (object obj1) =>
                 {
-                    var item = (obj1 as Transfers);
+                    var item = (obj1 as Transfer);
                     return item.PreviousTeam;
                 }
             });

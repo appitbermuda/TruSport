@@ -17,7 +17,6 @@ namespace OnTrackWebService.Controllers
     public class TeamController : ControllerBase
     {
         private readonly TeamRepository _teamRepository;
-        //private readonly IOnTrackRepository<Team> _teamRepository;
 
         public TeamController(IOnTrackRepository<Team> teamRepository)
         {
@@ -52,6 +51,63 @@ namespace OnTrackWebService.Controllers
             try
             {
                 IEnumerable<TeamSeason> teams = await _teamRepository.GetTeamsBySeason(Season);
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("GetTeamsBySport")]
+        public async Task<IActionResult> TeamsBySport(string SportType)
+        {
+            try
+            {
+                IEnumerable<TeamSeason> teams = await _teamRepository.GetTeamBySport(SportType);
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("AllCricket")]
+        public async Task<IActionResult> GetCricketTeams()
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetCricketTeams();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("AllFootball")]
+        public async Task<IActionResult> GetFootballTeams()
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetFootballTeams();
 
                 if (teams != null)
                     return Ok(teams);
@@ -103,8 +159,88 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values/5
+        [HttpGet]
+        [Route("Football")]
+        public async Task<IActionResult> GetFootballTeam(string id)
+        {
+            try
+            {
+                TeamSeason team = await _teamRepository.GetFootballTeam(id);
+
+                if (team != null)
+                    return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("Cricket")]
+        public async Task<IActionResult> GetCricketTeam(string id)
+        {
+            try
+            {
+                TeamSeason team = await _teamRepository.GetCricketTeam(id);
+
+                if (team != null)
+                    return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("CricketProfile")]
+        public async Task<IActionResult> GetCricketProfile(string id)
+        {
+            try
+            {
+                Team team = await _teamRepository.GetCricketProfile(id);
+
+                if (team != null)
+                    return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("FootballProfile")]
+        public async Task<IActionResult> GetFootballProfile(string id)
+        {
+            try
+            {
+                Team team = await _teamRepository.GetFootballProfile(id);
+
+                if (team != null)
+                    return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
         // POST api/values
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [Route("Insert")]
         public async Task<IActionResult> Post([FromBody] Team team)
@@ -123,7 +259,7 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Role.TeamAdmin)]
+        [Authorize(Roles = Roles.TeamAdmin)]
         [HttpPost]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] Team team)
@@ -143,7 +279,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // DELETE api/values/5
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(string id)

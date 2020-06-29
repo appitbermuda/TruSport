@@ -24,14 +24,119 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
+        //Deprecated
         [HttpGet]
         [Route("AllLeagues")]
         public async Task<IActionResult> Leagues()
         {
             try
             {
-
                 IEnumerable<League> leagues = await _leagueRepository.GetAll();
+
+                if (leagues != null)
+                    return Ok(leagues);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "League");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("GetLeagues")]
+        public async Task<IActionResult> GetLeagues()
+        {
+            try
+            {
+
+                IEnumerable<League> leagues = await _leagueRepository.Get();
+
+                if (leagues != null)
+                    return Ok(leagues);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "League");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("Cricket")]
+        public async Task<IActionResult> GetCricketLeagues()
+        {
+            try
+            {
+
+                IEnumerable<League> leagues = await _leagueRepository.GetCricketLeagues();
+
+                if (leagues != null)
+                    return Ok(leagues);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "League");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("Football")]
+        public async Task<IActionResult> GetFootballLeagues()
+        {
+            try
+            {
+
+                IEnumerable<League> leagues = await _leagueRepository.GetFootballLeagues();
+
+                if (leagues != null)
+                    return Ok(leagues);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "League");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("GetLeaguesBySport")]
+        public async Task<IActionResult> GetLeaguesBySportType(string SportType)
+        {
+            try
+            {
+
+                IEnumerable<League> leagues = await _leagueRepository.GetBySportType(SportType);
+
+                if (leagues != null)
+                    return Ok(leagues);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "League");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("SportLeagues")]
+        public async Task<IActionResult> GetLeaguesBySport(string SportID)
+        {
+            try
+            {
+
+                IEnumerable<League> leagues = await _leagueRepository.GetBySport(SportID);
 
                 if (leagues != null)
                     return Ok(leagues);
@@ -85,7 +190,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // POST api/values
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [Route("Insert")]
         public async Task<IActionResult> Post([FromBody] League league)
@@ -104,7 +209,7 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] League league)
@@ -124,7 +229,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // DELETE api/values/5
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(string id)

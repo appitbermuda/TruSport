@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using Foundation;
+using Google.MobileAds;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Push;
 //using Microsoft.WindowsAzure.MobileServices;
@@ -17,6 +19,8 @@ using Syncfusion.XForms.iOS.MaskedEdit;
 using Syncfusion.XForms.iOS.TextInputLayout;
 using UIKit;
 using UserNotifications;
+using WindowsAzure.Messaging;
+using Xamarin.Forms;
 
 namespace TruSport.iOS
 {
@@ -33,11 +37,15 @@ namespace TruSport.iOS
         //
         // You have 17 seconds to return from this method, or iOS will terminate your application.
         //
+
+        private SBNotificationHub Hub { get; set; }
+
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            Google.MobileAds.MobileAds.Configure("ca-app-pub-1338169805120312~6077936967");
+            MobileAds.SharedInstance.Start(CompletionHandler);
 
-            Rg.Plugins.Popup.Popup.Init();
+            Forms.SetFlags("CarouselView_Experimental");
+
             global::Xamarin.Forms.Forms.Init();
 
             App.ScreenWidth = (int)UIScreen.MainScreen.Bounds.Width;
@@ -47,7 +55,6 @@ namespace TruSport.iOS
 
             // Initialize Azure Mobile Apps
             Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
-            new FreshEssentials.iOS.AdvancedFrameRendereriOS();
 
             //UIView statusBar = UIApplication.SharedApplication.ValueForKey(new NSString("statusBarWindow")).ValueForKey(new NSString("statusBar")) as UIView;
             //statusBar.TintColor = UIColor.White;
@@ -67,55 +74,124 @@ namespace TruSport.iOS
 
             LoadApplication(new App());
 
+            base.FinishedLaunching(app, options);
 
-            return base.FinishedLaunching(app, options);
+            RegisterForRemoteNotifications();
+
+            return true;
         }
 
-        public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, System.Action<UIBackgroundFetchResult> completionHandler)
+        private void CompletionHandler(InitializationStatus status)
         {
-            var result = Microsoft.AppCenter.Push.Push.DidReceiveRemoteNotification(userInfo);
-            if (result)
+        }
+
+        void RegisterForRemoteNotifications()
+        {
+            // register for remote notifications based on system version
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
-                completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
+                UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Alert |
+                    UNAuthorizationOptions.Sound |
+                    UNAuthorizationOptions.Sound,
+                    (granted, error) =>
+                    {
+                        if (granted)
+                            InvokeOnMainThread(UIApplication.SharedApplication.RegisterForRemoteNotifications);
+                    });
+            }
+            else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+            {
+                var pushSettings = UIUserNotificationSettings.GetSettingsForTypes(
+                UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
+                new NSSet());
+
+                UIApplication.SharedApplication.RegisterUserNotificationSettings(pushSettings);
+                UIApplication.SharedApplication.RegisterForRemoteNotifications();
             }
             else
             {
-                completionHandler?.Invoke(UIBackgroundFetchResult.NoData);
+                UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge | UIRemoteNotificationType.Sound;
+                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
             }
         }
 
         public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
-            Push.RegisteredForRemoteNotifications(deviceToken);
+            Hub = new SBNotificationHub(Constants.ListenConnectionString, Constants.NotificationHubName);
+
+            // update registration with Azure Notification Hub
+            Hub.UnregisterAll(deviceToken, async (error) =>
+            {
+                if (error != null)
+                {
+                    Debug.WriteLine($"Unable to call unregister {error}");
+                    return;
+                }
+
+                var tags = new NSSet(Constants.SubscriptionTags.ToArray());
+
+                if (App.Database != null)
+                {
+                    var userTags = await App.Database.GetTags();
+
+                    if (userTags != null)
+                    {
+                        tags = new NSSet(userTags);
+                    }
+                }
+
+                Hub.RegisterNative(deviceToken, tags, (errorCallback) =>
+                {
+                    if (errorCallback != null)
+                    {
+                        Debug.WriteLine($"RegisterNativeAsync error: {errorCallback}");
+                    }
+                });
+
+                var templateExpiration = DateTime.Now.AddDays(120).ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-US"));
+                Hub.RegisterTemplate(deviceToken, "defaultTemplate", Constants.APNTemplateBody, templateExpiration, tags, (errorCallback) =>
+                {
+                    if (errorCallback != null)
+                    {
+                        if (errorCallback != null)
+                        {
+                            Debug.WriteLine($"RegisterTemplateAsync error: {errorCallback}");
+                        }
+                    }
+                });
+            });
         }
 
-        public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
-            Push.FailedToRegisterForRemoteNotifications(error);
+            ProcessNotification(userInfo, false);
         }
 
-        //public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
-        //{
+        void ProcessNotification(NSDictionary options, bool fromFinishedLaunching)
+        {
+            // make sure we have a payload
+            if (options != null && options.ContainsKey(new NSString("aps")))
+            {
+                // get the APS dictionary and extract message payload. Message JSON will be converted
+                // into a NSDictionary so more complex payloads may require more processing
+                NSDictionary aps = options.ObjectForKey(new NSString("aps")) as NSDictionary;
+                string payload = string.Empty;
+                NSString payloadKey = new NSString("alert");
+                if (aps.ContainsKey(payloadKey))
+                {
+                    payload = aps[payloadKey].ToString();
+                }
 
-        //    //...
+                if (!string.IsNullOrWhiteSpace(payload))
+                {
+                    //(App.Current.MainPage as MainPage)?.AddMessage(payload);
+                }
 
-        //    // Pass the notification payload to MSPush.
-        //    Push.DidReceiveRemoteNotification(notification.Request.Content.UserInfo);
-
-        //    // Complete handling the notification.
-        //    completionHandler(UNNotificationPresentationOptions.None);
-        //}
-
-        //public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
-        //{
-
-        //    //...
-
-        //    // Pass the notification payload to MSPush.
-        //    Push.DidReceiveRemoteNotification(response.Notification.Request.Content.UserInfo);
-
-        //    // Complete handling the notification.
-        //    completionHandler();
-        //}
+            }
+            else
+            {
+                Debug.WriteLine($"Received request to process notification but there was no payload.");
+            }
+        }
     }
 }

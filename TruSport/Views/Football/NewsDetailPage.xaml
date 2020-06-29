@@ -5,7 +5,7 @@
     <ContentPage.Content>
         <StackLayout HorizontalOptions="FillAndExpand"
                      VerticalOptions="FillAndExpand"
-                     Padding="0,10">
+                     Padding="0,10" BackgroundColor="{DynamicResource backgroundColor}">
         <Grid VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>

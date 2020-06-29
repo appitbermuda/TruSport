@@ -91,7 +91,7 @@ namespace TruSport.iOS
                 bannerView.AdUnitID = Constants.AdMobDeveloperBannerID;
                 //AdUnitID = Constants.AdMobDeveloperBannerID,
 #else
-                bannerView.AdUnitID = Constants.AdMobProductionBannerID;
+                bannerView.AdUnitId = Constants.AdMobiOSProductionBannerID;
                 //AdUnitID = Constants.AdMobProductionBannerID;
 #endif
 

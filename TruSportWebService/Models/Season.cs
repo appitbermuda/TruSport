@@ -9,6 +9,9 @@ namespace OnTrackWebService.Models
         public int Key { get; set; }
         public string Date { get; set; }
         public bool IsCurrent { get; set; }
+        public string SportID { get; set; }
 
+        [ForeignKey("SportID")]
+        public Sport Sport { get; set; }
     }
 }

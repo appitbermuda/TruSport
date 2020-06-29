@@ -47,19 +47,16 @@ namespace OnTrackWebService
             });
 
 
-//#if DEBUG
+            //#if DEBUG
             //services.AddDbContext<OnTrackContext>
             //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
+
+            //#else
             services.AddDbContext<OnTrackContext>
                 (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
-//#else
-            //services.AddDbContext<OnTrackContext>
-            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
-            //services.AddDbContext<OnTrackContext>
-            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
-//#endif
+            //#endif
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -89,20 +86,27 @@ namespace OnTrackWebService
 
             services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
             services.AddScoped<IEmailRepository<string>, EmailRepository>();
+            services.AddScoped<INewsRepository<RssFeedItem>, NewsRepository>();
             services.AddScoped<IOnTrackRepository<Field>, FieldRepository>();
             services.AddScoped<IOnTrackRepository<Fixture>, FixtureRepository>();
             services.AddScoped<IOnTrackRepository<Flyer>, FlyerRepository>();
             services.AddScoped<IOnTrackRepository<League>, LeagueRepository>();
             services.AddScoped<IOnTrackRepository<LeagueStat>, LeagueStatRepository>();
             services.AddScoped<IOnTrackRepository<LTable>, LeagueTableRepository>();
-            services.AddScoped<IOnTrackRepository<Transfers>, TransferRepository>();
+            services.AddScoped<IOnTrackRepository<Transfers>, TransfersRepository>();
+            services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
             services.AddScoped<IOnTrackRepository<Match>, MatchRepository>();
             services.AddScoped<IOnTrackRepository<MatchRoster>, MatchRosterRepository>();
             services.AddScoped<IOnTrackRepository<MatchStat>, MatchStatRepository>();
             services.AddScoped<IOnTrackRepository<MatchType>, MatchTypeRepository>();
             services.AddScoped<IOnTrackRepository<Player>, PlayerRepository>();
+            services.AddScoped<IOnTrackRepository<Award>, AwardRepository>();
             services.AddScoped<IOnTrackRepository<PlayerSeason>, PlayerSeasonRepository>();
             services.AddScoped<IOnTrackRepository<Team>, TeamRepository>();
+            services.AddScoped<IOnTrackRepository<Role>, RoleRepository>();
+            services.AddScoped<ISettingRepository<Setting>, SettingRepository>();
+            services.AddScoped<IOnTrackRepository<Season>, SeasonRepository>();
+            services.AddScoped<IOnTrackRepository<Sport>, SportRepository>();
             services.AddScoped<IDisposable, UserRepository>();
             services.AddScoped<IPushNotificationRepository<Push>, PushNotificationRepository>();
             services.AddScoped<IOnTrackRepository<UserType>, UserTypeRepository>();

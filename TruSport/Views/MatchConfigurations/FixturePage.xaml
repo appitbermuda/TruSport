@@ -30,7 +30,7 @@
         <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
             <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
             <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
-            <converter:GroupingSelectionConverter x:Key="groupingSelectionConverter"/>
+            <converter:GroupingSelectionFootballConverter x:Key="groupingSelectionConverter"/>
             <converter:FavouriteFontConverter x:Key="favouriteFontConverter"/>
             <converter:FavouriteConverter x:Key="favouriteConverter"/>
         <DataTemplate x:Name="MatchRosterHomeItemTemplate"  x:Key="MatchRosterHomeItemTemplate">
@@ -433,7 +433,7 @@
                     </StackLayout>
                     <StackLayout Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3">
                 <Label x:Name="matchDateLabel" Text="{Binding FixtureItem.Date}" IsVisible="false"/>
-                        <Label Text="{Binding FixtureItem.Time, Converter={StaticResource matchTimeConverter}, ConverterParameter={x:Reference matchDateLabel}}" TextColor="White" FontAttributes="Bold" FontSize="Small" VerticalOptions="Start" HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding FixtureItem.FixtureTime, Converter={StaticResource matchTimeConverter}}" TextColor="White" FontAttributes="Bold" FontSize="Small" VerticalOptions="Start" HorizontalTextAlignment="Center"/>
             </StackLayout>
                 </Grid>
             </StackLayout>
@@ -447,7 +447,7 @@
                 
                             <tabview:SfTabView VisibleHeaderCount="2" DisplayMode="Text" SelectionChanged="Handle_SelectionChanged" SelectedIndex="0" TabHeight="50">
                                 <tabview:SfTabView.SelectionIndicatorSettings>
-                        <tabview:SelectionIndicatorSettings Color="White" 
+                        <tabview:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}" 
                                                               Position="Bottom" 
                                                           StrokeThickness="0"/>
                         </tabview:SfTabView.SelectionIndicatorSettings>

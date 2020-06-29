@@ -16,6 +16,7 @@ namespace TruSport.Services
         {
         }
 
+        //[Deprecated]
         public async Task<List<Fixture>> GetFixtures()
         {
             try
@@ -50,6 +51,485 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<Fixture>> GetSportFixtures(string Sport)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/Sport", Method.GET);
+                request.AddParameter("Sport", Sport);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetCricketFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/AllCricket", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<CricketFixture> GetCricketFixture(string id)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/Cricket", Method.GET);
+                request.AddParameter("id", id);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    CricketFixture fixture = JsonConvert.DeserializeObject<CricketFixture>(response.Content);
+
+                    return fixture;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetPastCricketFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/PastCricket", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetUpcomingCricketFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/UpcomingCricket", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetFootballFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/AllFootball", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<Fixture> GetFootballFixture(string id)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/Football", Method.GET);
+                request.AddParameter("id", id);
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    Fixture fixture = JsonConvert.DeserializeObject<Fixture>(response.Content);
+
+                    return fixture;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetPastFootballFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/PastFootball", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetUpcomingFootballFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/UpcomingFootball", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetFootballHeadToHeadFixtures(string fixtureID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/FootballHeadToHead", Method.GET);
+                request.AddParameter("fixtureID", fixtureID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetCricketHeadToHeadFixtures(string fixtureID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/CricketHeadToHead", Method.GET);
+                request.AddParameter("fixtureID", fixtureID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetHomeTeamFixtures(string fixtureID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/GetHomeFixtures", Method.GET);
+                request.AddParameter("fixtureID", fixtureID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetAwayTeamFixtures(string fixtureID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/GetAwayFixtures", Method.GET);
+                request.AddParameter("fixtureID", fixtureID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetLiveFixture()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/Live", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetLiveCricketFixtures()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/LiveCricket", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetLiveFootballFixtures()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/LiveFootball", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        //Deprecated
         public async Task<List<LiveFixture>> GetLiveFixtures()
         {
             try
@@ -83,43 +563,9 @@ namespace TruSport.Services
             }
             return null;
         }
+        
 
-        public async Task<List<Fixture>> GetTeamFixtures(string teamID)
-        {
-            try
-            {
-                //string accessToken = await SecureStorage.GetAsync("oauth_token");
-
-                //if (accessToken != null)
-                //{
-                    var client = new RestClient(Constants.APIEndpoint);
-                    var request = new RestRequest("Fixture/TeamFixtures", Method.GET);
-                    request.AddParameter("teamID", teamID);
-                    //request.AddHeader("authorization", "Bearer " + accessToken);
-
-                    // We execute the request and capture the response
-                    // in a variable called `response`
-                    IRestResponse response = await client.ExecuteTaskAsync(request);
-
-                    if (response.IsSuccessful)
-                    {
-                        List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
-
-                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
-                }
-                //}
-
-                //return null;
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message, "Fixture");
-            }
-            return null;
-        }
-
-        public async Task<List<Fixture>> GetLeagueFixtures(string leagueID)
+        public async Task<List<Fixture>> GetFixturesByTeam(string teamID)
         {
             try
             {
@@ -128,8 +574,8 @@ namespace TruSport.Services
                 //if (accessToken != null)
                 //{
                 var client = new RestClient(Constants.APIEndpoint);
-                var request = new RestRequest("Fixture/LeagueFixtures", Method.GET);
-                request.AddParameter("leagueID", leagueID);
+                var request = new RestRequest("Fixture/GetTeamFixtures", Method.GET);
+                request.AddParameter("teamID", teamID);
                 //request.AddHeader("authorization", "Bearer " + accessToken);
 
                 // We execute the request and capture the response
@@ -146,6 +592,162 @@ namespace TruSport.Services
 
                 //return null;
 
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetCricketTeamFixtures(string teamID)
+        {
+            try
+            {
+                    var client = new RestClient(Constants.APIEndpoint);
+                    var request = new RestRequest("Fixture/CricketTeam", Method.GET);
+                    request.AddParameter("teamID", teamID);
+
+                    // We execute the request and capture the response
+                    // in a variable called `response`
+                    IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetCricketTeamForm(string teamID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/CricketTeamForm", Method.GET);
+                request.AddParameter("teamID", teamID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetFootballTeamFixtures(string teamID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/FootballTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetFootballTeamForm(string teamID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/FootballTeamForm", Method.GET);
+                request.AddParameter("teamID", teamID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetCricketLeagueFixtures(string leagueID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/CricketLeague", Method.GET);
+                request.AddParameter("leagueID", leagueID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetFootballLeagueFixtures(string leagueID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/FootballLeague", Method.GET);
+                request.AddParameter("leagueID", leagueID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
             }
             catch (Exception ex)
             {

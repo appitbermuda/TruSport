@@ -13,7 +13,7 @@
         <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
             <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
             <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
-            <converter:GroupingSelectionConverter x:Key="groupingSelectionConverter"/>
+            <converter:GroupingSelectionFootballConverter x:Key="groupingSelectionConverter"/>
             <converter:FavouriteFontConverter x:Key="favouriteFontConverter"/>
             <converter:FavouriteConverter x:Key="favouriteConverter"/>
         <converter:EventArgsConverter x:Key="eventArgsConverter"/>

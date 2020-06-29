@@ -14,7 +14,7 @@ namespace TruSport.Services
         {
         }
 
-        public async Task<List<Transfers>> GetTransfers()
+        public async Task<List<Transfer>> GetTransfers()
         {
             try
             {
@@ -32,9 +32,9 @@ namespace TruSport.Services
 
                 if (response.IsSuccessful)
                 {
-                    List<Transfers> teams = JsonConvert.DeserializeObject<List<Transfers>>(response.Content);
+                    List<Transfer> transfers = JsonConvert.DeserializeObject<List<Transfer>>(response.Content);
 
-                    return teams;
+                    return transfers;
                 }
                 //}
 
@@ -43,12 +43,12 @@ namespace TruSport.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
             return null;
         }
 
-        public async Task<List<Transfers>> GetLeagueTransfers(string leagueID)
+        public async Task<List<Transfer>> GetLeagueTransfers(string leagueID)
         {
             try
             {
@@ -67,9 +67,9 @@ namespace TruSport.Services
 
                 if (response.IsSuccessful)
                 {
-                    List<Transfers> teams = JsonConvert.DeserializeObject<List<Transfers>>(response.Content);
+                    List<Transfer> transfers = JsonConvert.DeserializeObject<List<Transfer>>(response.Content);
 
-                    return teams;
+                    return transfers;
                 }
                 //}
 
@@ -78,12 +78,12 @@ namespace TruSport.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
             return null;
         }
 
-        public async Task<Transfers> Get(string ID)
+        public async Task<Transfer> Get(string ID)
         {
             try
             {
@@ -101,9 +101,9 @@ namespace TruSport.Services
 
                     if (response.IsSuccessful)
                     {
-                        Transfers team = JsonConvert.DeserializeObject<Transfers>(response.Content);
+                        Transfer transfer = JsonConvert.DeserializeObject<Transfer>(response.Content);
 
-                        return team;
+                        return transfer;
                     }
                 //}
 
@@ -111,7 +111,7 @@ namespace TruSport.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
 
                 return null;
             }

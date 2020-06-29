@@ -103,7 +103,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // POST api/values
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("Insert")]
         public async Task<IActionResult> Post([FromBody] Player player)
@@ -122,7 +122,7 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] PlayerSeason player)
@@ -141,7 +141,7 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("RemovePlayer")]
         public async Task<IActionResult> RemovePlayer([FromBody] PlayerSeason player)
@@ -161,7 +161,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // DELETE api/values/5
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(string id)

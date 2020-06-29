@@ -25,15 +25,15 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpGet]
         [Route("Send")]
-        public async Task<IActionResult> Send(string name, string title, string body)
+        public async Task<IActionResult> Send(string Message)
         {
             try
             {
 
-                string pushNotification = await _pushNotificationRepository.Send(name, title, body);
+                string pushNotification = await _pushNotificationRepository.SendNotification(Message);
 
                 return Ok(pushNotification);
             }

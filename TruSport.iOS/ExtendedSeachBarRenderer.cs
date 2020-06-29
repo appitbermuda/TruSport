@@ -21,8 +21,19 @@ namespace TruSport.iOS
 			base.OnElementPropertyChanged(sender, e);
 
 			if (e.PropertyName == "Text")			{
-				Control.ShowsCancelButton = false;
-                Control.TintColor = UIColor.White;
+
+                if (App.AppTheme == "dark")
+                {
+                    Control.ShowsCancelButton = false;
+                    Control.TintColor = UIColor.White;
+                }
+                else
+                {
+                    Control.ShowsCancelButton = false;
+                    Control.TintColor = UIColor.DarkGray;
+                }
+
+                
 			}
 		}
 
@@ -39,7 +50,9 @@ namespace TruSport.iOS
             if (e.NewElement != null)
             {
                 //UITextField txSearchField = (UITextField)Control.ValueForKey(new Foundation.NSString("searchField"));
-                searchbar.SetImageforSearchBarIcon(UIImage.FromBundle("searchmini"), UISearchBarIcon.Search, UIControlState.Normal);
+
+                if(App.AppTheme == "dark")
+                    searchbar.SetImageforSearchBarIcon(UIImage.FromBundle("searchmini"), UISearchBarIcon.Search, UIControlState.Normal);
                 //searchbar.BackgroundColor = UIColor.Clear;
                 //var searchTextField = searchbar.ValueForKey((Foundation.NSString)"_searchField") as UITextField;
                 //var clearButton = searchTextField.ValueForKey((Foundation.NSString)"_clearButton") as UIButton;
@@ -47,14 +60,32 @@ namespace TruSport.iOS
 
                 Foundation.NSString _searchField = new Foundation.NSString("searchField");
                 var textFieldInsideSearchBar = (UITextField)searchbar.ValueForKey(_searchField);
-                textFieldInsideSearchBar.BackgroundColor = UIColor.FromRGB(29, 36, 98);
-                textFieldInsideSearchBar.TextColor = UIColor.White;
+
+                if (App.AppTheme == "dark")
+                {
+                    textFieldInsideSearchBar.BackgroundColor = UIColor.FromRGB(10, 10, 10);
+                    searchbar.Layer.BackgroundColor = UIColor.FromRGB(0, 0, 0).CGColor;
+                    textFieldInsideSearchBar.TextColor = UIColor.White;
+                    searchbar.ShowsCancelButton = false;
+                    searchbar.TintColor = UIColor.White;
+                }
+                else
+                {
+                    textFieldInsideSearchBar.BackgroundColor = UIColor.FromRGB(245, 245, 245);
+                    searchbar.Layer.BackgroundColor = UIColor.FromRGB(255, 255, 255).CGColor;
+                    textFieldInsideSearchBar.TextColor = UIColor.Black;
+                    searchbar.ShowsCancelButton = false;
+                    searchbar.TintColor = UIColor.DarkGray;
+                    searchbar.BarTintColor = UIColor.DarkGray;
+                }
+
+                
                 textFieldInsideSearchBar.TextAlignment = UITextAlignment.Left;
                 //textFieldInsideSearchBar.BorderStyle = UITextBorderStyle.RoundedRect;
                 //textFieldInsideSearchBar.Layer.BorderColor = UIColor.White.CGColor;
                 //textFieldInsideSearchBar.Layer.BorderWidth = 1;
                 //textFieldInsideSearchBar.Layer.CornerRadius = 10;
-                searchbar.Layer.BackgroundColor = UIColor.FromRGB(29, 36, 98).CGColor;
+
                 //searchbar.TintColor = UIColor.White;
                 //searchbar.BarTintColor = UIColor.White;
 

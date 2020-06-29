@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:converter="clr-namespace:TruSport.Converters" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" x:Class="TruSport.Styles.DefaultTheme">
+    <Color x:Key="primaryBarBlue">#0e1550</Color>
+    <Color x:Key="primaryPink">#848685</Color>
+    <Color x:Key="primaryAccentPink">#ff77d7</Color>
+    <Color x:Key="primaryLightGray">#556167</Color>
+    <Color x:Key="primaryDarkBlue">#2a348d</Color>
+    <Color x:Key="primaryDarkBlueOne">#29338a</Color>
+    <Color x:Key="primaryDarkBlueTwo">#1d2462</Color>
+    <Color x:Key="primaryLightBlue">#3d4ac6</Color>
+    <Color x:Key="primaryBlue">#4a81c2</Color>
+    <Color x:Key="primaryButtonBlue">#0091EA</Color>
+            <Color x:Key="ButtonPrimary">#EE776B</Color>
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="{StaticResource primaryBarBlue}" />
+                <Setter Property="BarTextColor" Value="White" />
+            </Style>
+            <OnPlatform x:Key="fontAwesomeSolidFamily" x:TypeArguments="x:String">
+                <On Platform="iOS" Value="FontAwesome5ProSolid"/>
+                <On Platform="Android" Value="fa-solid-900.ttf#Font Awesome 5 Pro Solid" />
+            </OnPlatform>
+            <OnPlatform x:Key="fontAwesomeRegularFamily" x:TypeArguments="x:String">
+                <On Platform="iOS" Value="FontAwesome5ProRegular"/>
+                <On Platform="Android" Value="fa-regular-400.ttf#Font Awesome 5 Pro Regular" />
+            </OnPlatform>
+    <OnPlatform x:Key="fontAwesomeLightFamily" x:TypeArguments="x:String">
+                <On Platform="iOS" Value="FontAwesome5ProLight"/>
+                <On Platform="Android" Value="fa-light-300.ttf#Font Awesome 5 Pro Light" />
+            </OnPlatform>
+    <OnPlatform x:Key="fontFamily" x:TypeArguments="x:String">
+                <On Platform="iOS" Value="icomoon"/>
+                <On Platform="Android" Value="icomoon.ttf#icomoon" />
+            </OnPlatform>
+</ResourceDictionary>

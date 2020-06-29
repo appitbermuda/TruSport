@@ -16,7 +16,7 @@ namespace OnTrackWebService.Controllers
     {
         private readonly TransferRepository _transferRepository;
 
-        public TransferController(IOnTrackRepository<Transfers> transferRepository)
+        public TransferController(IOnTrackRepository<Transfer> transferRepository)
         {
             _transferRepository = (TransferRepository)transferRepository;
         }
@@ -24,19 +24,19 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [HttpGet]
         [Route("AllTransfers")]
-        public async Task<IActionResult> Transfers()
+        public async Task<IActionResult> Transfer()
         {
             try
             {
 
-                IEnumerable<Transfers> transfers = await _transferRepository.GetAll();
+                IEnumerable<Transfer> transfers = await _transferRepository.GetAll();
 
                 if (transfers != null)
                     return Ok(transfers);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
 
             return NoContent();
@@ -49,14 +49,14 @@ namespace OnTrackWebService.Controllers
             try
             {
                 //League league = _context.Leagues.FirstOrDefaultAsync(e => e.ID == leagueID)
-                IEnumerable<Transfers> transfers = await _transferRepository.GetByTeam(teamID);
+                IEnumerable<Transfer> transfers = await _transferRepository.GetByTeam(teamID);
 
                 if (transfers != null)
                     return Ok(transfers);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
 
             return NoContent();
@@ -69,14 +69,14 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<Transfers> transfers = await _transferRepository.GetByLeague(leagueID);
+                IEnumerable<Transfer> transfers = await _transferRepository.GetByLeague(leagueID);
 
                 if (transfers != null)
                     return Ok(transfers);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
 
             return NoContent();
@@ -89,14 +89,14 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                Transfers transfer = await _transferRepository.Get(id);
+                Transfer transfer = await _transferRepository.Get(id);
 
                 if (transfer != null)
                     return Ok(transfer);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
 
             return NoContent();
@@ -105,7 +105,7 @@ namespace OnTrackWebService.Controllers
         // POST api/values
         [HttpPost]
         [Route("Insert")]
-        public async Task<IActionResult> Post([FromBody] Transfers transfer)
+        public async Task<IActionResult> Post([FromBody] Transfer transfer)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace OnTrackWebService.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
 
             return NoContent();
@@ -123,7 +123,7 @@ namespace OnTrackWebService.Controllers
 
         [HttpPost]
         [Route("Update")]
-        public async Task<IActionResult> Update([FromBody] Transfers transfer)
+        public async Task<IActionResult> Update([FromBody] Transfer transfer)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace OnTrackWebService.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
 
             return NoContent();
@@ -152,7 +152,7 @@ namespace OnTrackWebService.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Transfers");
+                Debug.WriteLine(ex.Message, "Transfer");
             }
 
             return NoContent();

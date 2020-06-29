@@ -11,9 +11,10 @@
              xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
              xmlns:pullToRefresh="clr-namespace:Syncfusion.SfPullToRefresh.XForms;assembly=Syncfusion.SfPullToRefresh.XForms"
              xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
-             xmlns:extension="clr-namespace:TruSport.Extensions"
+             xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:templates="clr-namespace:TruSport.Templates"
              x:Class="TruSport.Views.Football.CompetitionDetailsPage"
-             >
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converter:IsPastFixtureConverter x:Key="isPastFixtureConverter"/>
@@ -29,12 +30,29 @@
             <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
             <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
             <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
-            <converter:GroupingSelectionConverter x:Key="groupingSelectionConverter"/>
-            <converter:GroupingLeagueDateSelectionConverter x:Key="groupingLeagueDateSelectionConverter"/>
+            <converter:GroupingSelectionFootballConverter x:Key="groupingSelectionConverter"/>
+            <converter:GroupingLeagueDateSelectionFootballConverter x:Key="groupingLeagueDateSelectionConverter"/>
             <converter:ShowScoreConverter x:Key="showScoreConverter"/>
             <converter:TeamNameConverter x:Key="teamNameConverter"/>
+            <converter:GroupingCompetitionFootballConverter x:Key="groupingCompetitionConverter"/>
             <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
             <OnPlatform x:TypeArguments="x:String" x:Key="fontAwesomeFamily" Android="fa-regular-400.ttf#Font Awesome 5 Pro Regular" iOS="Font Awesome 5 Pro" />
+            <DataTemplate x:Key="cricketFixtureTemplate">
+                <templates:CricketFixtureList />
+            </DataTemplate>
+            <DataTemplate x:Key="cricketScoreFixtureTemplate">
+                <templates:CricketScoreFixtureList />
+            </DataTemplate>
+            <DataTemplate x:Key="footballFixtureTemplate">
+                <templates:FixtureList />
+            </DataTemplate>
+            <DataTemplate x:Key="footballScoreFixtureTemplate">
+                <templates:ScoreFixtureList />
+            </DataTemplate>
+            <templates:FootballFixtureDataTemplateSelector x:Key="sportFixtureDataTemplateSelector"
+                                                        FootballFixtureTemplate="{StaticResource footballFixtureTemplate}"
+                                                        FootballScoreFixtureTemplate="{StaticResource footballScoreFixtureTemplate}"
+                                                        />
             <DataTemplate x:Name="TableItemTemplate"  x:Key="TableItemTemplate">
                 
                 <StackLayout HorizontalOptions="FillAndExpand"
@@ -71,14 +89,14 @@
                                        HorizontalTextAlignment="Center"
                                    FontSize="13"
                                        Text="{Binding Position}"
-                                   TextColor="White"/>
+                                   TextColor="{DynamicResource TextPrimaryColor}"/>
                         </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="1"
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand">
                             <Label x:Name="TeamNameLabel"
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    VerticalTextAlignment="Center"
                                         Text="{Binding Name}"/>
                         </StackLayout>
@@ -87,7 +105,7 @@
                                      HorizontalOptions="FillAndExpand">
                             <Label
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    HorizontalTextAlignment="Center"
                                         Text="{Binding Wins}"/>
                         </StackLayout>
@@ -96,7 +114,7 @@
                                      HorizontalOptions="FillAndExpand">
                             <Label x:Name="LossLabel"
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    HorizontalTextAlignment="Center"
                                         Text="{Binding Loss}"/>
                         </StackLayout>
@@ -105,7 +123,7 @@
                                      HorizontalOptions="FillAndExpand">
                             <Label x:Name="DrawLabel"
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    HorizontalTextAlignment="Center"
                                         Text="{Binding Draws}"/>
                         </StackLayout>
@@ -115,12 +133,12 @@
                                      >
                             <Label x:Name="PointsLabel"
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}" 
                                    HorizontalTextAlignment="Center"
                                         Text="{Binding Points}"/>
                         </StackLayout>
                             <BoxView Grid.Row="1" Grid.ColumnSpan="6"
-                                         BackgroundColor="White" Opacity="0.2"
+                                         BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Opacity="0.2"
                                          HeightRequest="1"/>
                         </Grid>
                         </StackLayout>
@@ -156,13 +174,13 @@
                                    FontSize="Small"
                                        Text="&#xe901;"
                                        VerticalOptions="Center"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                     FontFamily="{StaticResource fontFamily}"/>
                                 </StackLayout>
                             <StackLayout>
                                 <Label x:Name="FieldName"
                                    FontSize="Small"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                     Text="{Binding Field.Name}"/>
                                 </StackLayout>
                         </StackLayout>
@@ -173,12 +191,12 @@
                                  Padding="5,2">
                                 <Label x:Name="TimeIcon"
                                    FontSize="Small"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="&#xe904;"
                                        FontFamily="{StaticResource fontFamily}"/>
                             <Label x:Name="TimeLabel"
                                    FontSize="Small"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    VerticalTextAlignment="End"
                                         Text="{Binding Time, Converter={StaticResource timeConverter}}"/>
                         </StackLayout>
@@ -191,7 +209,7 @@
                                                   WidthRequest="30"
                                                   
                                                   Aspect="AspectFit" />-->
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
                         <ff:CachedImage Source="{Binding HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontrack.png"
                                         LoadingPlaceholder="ontrack.png"
@@ -218,7 +236,7 @@
                                                   HorizontalOptions="Center"
                                                   VerticalOptions="Center"
                                                   Aspect="AspectFit"/>-->
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
                         <ff:CachedImage Source="{Binding AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontrack.png"
                                         LoadingPlaceholder="ontrack.png"
@@ -245,7 +263,7 @@
                             <Label x:Name="HomeTeamPenaltyLabel"
                                    FontSize="Micro"
                                    FontAttributes="Bold"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="{Binding Match.HomeTeamPenalty, StringFormat='({0}'}"/>
                             <Label 
                                    
@@ -253,11 +271,11 @@
                                    FontAttributes="Bold"
                                    HorizontalOptions="Center"
                                                   VerticalOptions="Center"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="-"/>
                             <Label x:Name="AwayTeamPenaltyLabel"
                                    FontSize="Micro"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                         Text="{Binding Match.AwayTeamPenalty, StringFormat='{0})'}"/>
                                 
@@ -266,7 +284,7 @@
                             <Label x:Name="HomeTeamScoreLabel"
                                    FontSize="Medium"
                                    FontAttributes="Bold"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="{Binding Match.HomeTeamScore}"/>
                             <Label 
                                    x:Name="Versus"
@@ -274,11 +292,11 @@
                                    FontAttributes="Bold"
                                    HorizontalOptions="Center"
                                                   VerticalOptions="Center"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="{Binding Match.HomeTeamScore, Converter={StaticResource showScoreConverter}}"/>
                             <Label x:Name="AwayTeamScoreLabel"
                                    FontSize="Medium"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                         Text="{Binding Match.AwayTeamScore}"/>
                                 
@@ -296,7 +314,7 @@
                                    FontAttributes="Bold"
                                    HorizontalOptions="Center"
                                                   VerticalOptions="Center"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="V"/>
                                 
                         </StackLayout>
@@ -309,7 +327,7 @@
                             <Label x:Name="HomeTeamNameLabel"
                                    FontSize="12"
                                    FontAttributes="Bold"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="{Binding HomeTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference HomeTeamAlias}}"/>
                         </StackLayout>
                             <StackLayout Grid.Row="1" Grid.Column="3"
@@ -320,7 +338,7 @@
                                 <Label x:Name="AwayTeamAlias" Text="{Binding AwayTeam.Alias}" IsVisible="false"/>
                             <Label x:Name="AwayTeamNameLabel"
                                    FontSize="12"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                         Text="{Binding AwayTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference AwayTeamAlias}}"/>
                         </StackLayout>
@@ -426,14 +444,14 @@
                                  Spacing="0">
                             <Label x:Name="MatchType"
                                    FontSize="14"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    HorizontalOptions="StartAndExpand"
                                    FontAttributes="Bold"
                                         Text="{Binding LeagueName}"/>
                                 <Label x:Name="MatchDate"
                                    FontSize="14"
                                        HorizontalOptions="EndAndExpand"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                         Text="{Binding Date,
                                                 StringFormat='{0:MMM dd yyyy}'}"/>
@@ -444,210 +462,176 @@
             </DataTemplate>-->
         </ResourceDictionary>
     </ContentPage.Resources>
+    <!--<NavigationPage.TitleView>
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                     Padding="0,0,0,0">
+            <StackLayout.Padding>
+               <OnPlatform x:TypeArguments="Thickness">
+                 <On Platform="Android" Value="0, 0, 0, 0"/>
+                 <On Platform="iOS" Value="0, 0, 0, 0"/>
+                </OnPlatform>
+              </StackLayout.Padding>
+            <Grid HorizontalOptions="FillAndExpand">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                 <StackLayout Grid.Column="1" Padding="0,0,0,0" VerticalOptions="CenterAndExpand">
+                        <StackLayout.HorizontalOptions>
+                            <OnPlatform x:TypeArguments="LayoutOptions">
+                                <On Platform="Android" Value="StartAndExpand"/>
+                                <On Platform="iOS" Value="CenterAndExpand"/>
+                            </OnPlatform>
+                        </StackLayout.HorizontalOptions>
+                         <Label x:Name="TitleLabel" Text="{Binding Title}" FontSize="14" HorizontalTextAlignment="Center" TextColor="White" FontAttributes="Bold" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                <Button x:Name="BackButton" Text="" TextColor="{DynamicResource navTextColor}" FontSize="25" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="BackButton_Clicked"/>
+                </Grid>
+        </StackLayout>
+    </NavigationPage.TitleView>-->
     <ContentPage.Content>
-        <Grid HorizontalOptions="FillAndExpand" RowSpacing="0" VerticalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+        <Grid HorizontalOptions="FillAndExpand" RowSpacing="0" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <!--<BoxView HeightRequest="1" Opacity=".3" HorizontalOptions="FillAndExpand" BackgroundColor="White"/>-->
-        <tabView:SfTabView Grid.Row="0" IsVisible="{Binding IsTableExist}"
+
+            <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="FillAndExpand"
+                         VerticalOptions="Start"
+                     BackgroundColor="{DynamicResource navBackgroundColor}">
+            <StackLayout.Padding>
+               <OnPlatform x:TypeArguments="Thickness">
+                 <On Platform="Android" Value="0, 0, 0, 0"/>
+                 <On Platform="iOS" Value="0, 50, 0, 0"/>
+                </OnPlatform>
+              </StackLayout.Padding>
+            <Grid HorizontalOptions="FillAndExpand" HeightRequest="50">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                 <StackLayout Grid.ColumnSpan="3" Padding="0,0,0,0" VerticalOptions="CenterAndExpand" HeightRequest="50">
+                        <StackLayout.HorizontalOptions>
+                            <OnPlatform x:TypeArguments="LayoutOptions">
+                                <On Platform="Android" Value="CenterAndExpand"/>
+                                <On Platform="iOS" Value="CenterAndExpand"/>
+                            </OnPlatform>
+                        </StackLayout.HorizontalOptions>
+                         <Label x:Name="TitleLabel" Text="{Binding Title}" FontSize="14" HorizontalTextAlignment="Center" TextColor="White" FontAttributes="Bold" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                <Button x:Name="BackButton" Text="" TextColor="{DynamicResource navTextColor}" BackgroundColor="Transparent" FontSize="25" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="BackButton_Clicked"/>
+                </Grid>
+        </StackLayout>
+
+     <tabView:SfTabView Grid.Row="1"
                         VisibleHeaderCount="2"
-                                 BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                                 TabHeaderBackgroundColor="{DynamicResource tabHeaderColor}"
+                        BackgroundColor="Transparent"
                                  DisplayMode="Text"
                            SelectedIndex="0"
-                           SelectionChanged="TabViewChanged"
-                                TabHeight="50">
+                                TabHeight="50" TabItemTapped="SfTabView_TabItemTapped">
                         <tabView:SfTabView.SelectionIndicatorSettings>
-                <tabView:SelectionIndicatorSettings Color="Transparent" 
-                                                              Position="Fill" 
-                                                              StrokeThickness="3"/>
+                <tabView:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}" 
+                                                              Position="Bottom" 
+                                                              StrokeThickness="2"/>
                 </tabView:SfTabView.SelectionIndicatorSettings>
                         
-                        <tabView:SfTabItem SelectionColor="White">
-                        <tabView:SfTabItem.HeaderContent>
-                        <StackLayout VerticalOptions="Center"
-                                     HorizontalOptions="CenterAndExpand"
-                                     Orientation="Horizontal">
-                        <Label x:Name="FixtureLabel" HorizontalTextAlignment="Center" 
-                               VerticalTextAlignment="Center" 
-                               HorizontalOptions="CenterAndExpand"
-                               HeightRequest="50"
-                               
-                               FontAttributes="Bold"
-                               Text="Fixtures"
-                               TextColor="White">
-                            <Label.FontSize>
-                                    <OnPlatform x:TypeArguments="x:Double">  
-                        <OnPlatform.Android> 
-                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="17" /> 
-                        </OnPlatform.Android> 
-                        <OnPlatform.iOS> 
-                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="16" /> 
-                        </OnPlatform.iOS> 
-                    </OnPlatform> 
-                                </Label.FontSize>
-                        </Label>
-                    </StackLayout>
-                        </tabView:SfTabItem.HeaderContent>
+                        <tabView:SfTabItem Title="Fixtures" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
                         <tabView:SfTabItem.Content>
-                        <Grid BackgroundColor="{StaticResource primaryDarkBlueTwo}" Padding="0,0,0,0"
+                        <Grid BackgroundColor="{DynamicResource backgroundColor}" Padding="0,0,0,0"
                               HorizontalOptions="FillAndExpand"
                               VerticalOptions="FillAndExpand" RowSpacing="0">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="3" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <BoxView HeightRequest="3" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryPink}"/>
-                        <pullToRefresh:SfPullToRefresh Grid.Row="1" x:Name="pullToRefresh" Refreshing="PullToRefreshFixtures_Refreshing"
-                               ProgressBackgroundColor="White" ProgressStrokeColor="{StaticResource primaryDarkBlueTwo}" RefreshContentHeight="50" 
-                               RefreshContentWidth="50" TransitionMode="Push" IsRefreshing="False">
-                            <pullToRefresh:SfPullToRefresh.PullableContent>
-                            <!--<listView:SfListView x:Name="FixtureList"
-                                                ItemsSource="{Binding FixtureCollection}"
-                                                    HorizontalOptions="FillAndExpand"
-                                                    VerticalOptions="FillAndExpand"
-                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
-                                                    ItemTemplate="{StaticResource FixtureItemTemplate}"
-                                                   SelectionMode="Single"
-                                                   ItemSpacing="0"
-                                                    SelectionBackgroundColor="{StaticResource primaryBarBlue}"
-                                                 ItemSize="100">
-                                    <listView:SfListView.DataSource>
-                                  <data:DataSource>
-                                    <data:DataSource.SortDescriptors>
-                                      <data:SortDescriptor PropertyName="Date" Direction="Descending"/>
-                                    </data:DataSource.SortDescriptors>
-                                  </data:DataSource>
-                                </listView:SfListView.DataSource>
-                                    <listView:SfListView.GroupHeaderTemplate>
-                                  <DataTemplate>
-                                      <ViewCell>
-                                        <ViewCell.View>
-                                          <Grid Padding="10,0">
-                                                <Label Grid.Row="0" Text="{Binding Key, 
-                                                            Converter={StaticResource groupHeaderNameConverter}}"
-                                                     FontSize="Medium"
-                                                     FontAttributes="Bold"
-                                                    VerticalOptions="Center" HorizontalOptions="Start"
-                                                     TextColor="White"/>
-                                          </Grid>
-                                        </ViewCell.View>
-                                      </ViewCell>
-                                  </DataTemplate>
-                                </listView:SfListView.GroupHeaderTemplate>
-                                </listView:SfListView>-->
-                                <listView:SfListView x:Name="FixtureList"
+                            <listView:SfListView x:Name="FixtureList"
                                                 ItemsSource="{Binding FixtureCollection}"
                                                      LoadMoreOption="Auto"
                                                      LoadMoreCommand="{Binding LoadMoreItemsCommand}"
                                                      LoadMoreCommandParameter="{Binding Source={x:Reference Name=FixtureList}}"
                                                     HorizontalOptions="FillAndExpand"
                                                     VerticalOptions="FillAndExpand"
-                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
-                                                    ItemTemplate="{StaticResource FixtureItemTemplate}"
                                                    SelectionMode="Single"
                                                    ItemSpacing="0"
                                                      SelectionChanged="OnFixtureSelected"
-                                                    SelectionBackgroundColor="{StaticResource primaryPink}"
-                                                 ItemSize="92">
+                                                    SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                                                 AutoFitMode="DynamicHeight">
+                                <listView:SfListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <templates:FixtureList />
+                                    </DataTemplate>
+                                </listView:SfListView.ItemTemplate>
                                     <listView:SfListView.HeaderTemplate>
                                     <DataTemplate>
                                       <ViewCell>
-                                        <Grid IsVisible="{Binding IsLoadMoreVisible}">
-                                          <Grid Padding="5">
-                                            <Button BackgroundColor="{StaticResource primaryBarBlue}" Text="Previous Fixtures" Padding="10,0" CornerRadius="5" TextColor="White" Clicked="LoadMoreClicked" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                        <Grid Padding="5">
+                                            <Button BackgroundColor="{StaticResource controlHeaderBackgroundColor}" Text="Previous Fixtures" Padding="10,0" CornerRadius="5" TextColor="{DynamicResource frameBackgroundColor}" Clicked="LoadMoreClicked" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsEnabled="{Binding IsLoadMoreVisible}"/>
                                           </Grid>
-                                          <!--<listView:LoadMoreIndicator Color="White" IsRunning="True" IsVisible="{Binding IsActivityVisible}"/>-->
-                                        </Grid>
                                       </ViewCell>
                                     </DataTemplate>
                                   </listView:SfListView.HeaderTemplate>
                                     <listView:SfListView.DataSource>
                                   <data:DataSource>
                                     <data:DataSource.SortDescriptors>
-                                      <data:SortDescriptor PropertyName="Date" Direction="Ascending"/>
+                                      <data:SortDescriptor PropertyName="FixtureTime" Direction="Ascending"/>
                                     </data:DataSource.SortDescriptors>
-                                    <data:DataSource.GroupDescriptors>
-                                      <!--<data:GroupDescriptor PropertyName="MatchType.Name"/>-->
-                                        <data:GroupDescriptor PropertyName="Date"/>
-                                    </data:DataSource.GroupDescriptors>
                                   </data:DataSource>
                                 </listView:SfListView.DataSource>
                                     <listView:SfListView.GroupHeaderTemplate>
                                   <DataTemplate>
                                       <ViewCell>
                                         <ViewCell.View>
-                                          <Grid>
-                                              <Grid.ColumnDefinitions>
-                                                  <ColumnDefinition Width="*"/>
-                                                  <ColumnDefinition Width="*"/>
-                                              </Grid.ColumnDefinitions>
-                                              <BoxView BackgroundColor="{StaticResource primaryPink}" Grid.ColumnSpan="2" Opacity=".5"/>
-                                              <StackLayout Padding="10,0" Grid.Column="0"  VerticalOptions="Center" HorizontalOptions="Start">
-                                                <Label x:Name="matchTypeLabel" Text="{Binding ., 
-                                                            Converter={StaticResource groupingLeagueDateSelectionConverter}, ConverterParameter={x:Reference matchTypeLabel}}"
-                                                     FontSize="14"
+                                            <StackLayout Padding="8,25,8,0">
+<Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+<Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="2*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView Grid.ColumnSpan="2"/>
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingCompetitionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
                                                      FontAttributes="Bold"
-                                                    VerticalOptions="Center" HorizontalOptions="Start"
                                                      TextColor="White"/>
-                                                  </StackLayout>
-                                              <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
-                                              <Label Text="{Binding ., Converter={StaticResource groupingLeagueDateSelectionConverter}, ConverterParameter={x:Reference FixtureList}}"
-                                                     FontSize="14"
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding ., Converter={StaticResource groupingCompetitionConverter}, ConverterParameter={x:Reference FixtureList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
                                                      FontAttributes="Bold"
-                                                    VerticalOptions="Center" HorizontalOptions="EndAndExpand"
                                                      TextColor="White"/>
-                                                  </StackLayout>
+                                                    </StackLayout>
                                           </Grid>
-                                        </ViewCell.View>
+    </Frame>
+</Frame>
+                                            </StackLayout>
+    </ViewCell.View>
                                       </ViewCell>
                                   </DataTemplate>
                                 </listView:SfListView.GroupHeaderTemplate>
                                 </listView:SfListView>
-                            </pullToRefresh:SfPullToRefresh.PullableContent>
- </pullToRefresh:SfPullToRefresh>
                         </Grid>
                         </tabView:SfTabItem.Content>
                     </tabView:SfTabItem>
-                <tabView:SfTabItem SelectionColor="White">
-                            <tabView:SfTabItem.HeaderContent>
-                        <StackLayout VerticalOptions="Center"
-                                     HorizontalOptions="CenterAndExpand"
-                                     Orientation="Horizontal">
-                        <Label  x:Name="TableLabel" HorizontalTextAlignment="Center" 
-                               VerticalTextAlignment="Center" 
-                               HorizontalOptions="CenterAndExpand"
-                               HeightRequest="50"
-                               
-                               FontAttributes="Bold"
-                               Text="Table"
-                               TextColor="Gray">
-                            <Label.FontSize>
-                                    <OnPlatform x:TypeArguments="x:Double">  
-                        <OnPlatform.Android> 
-                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="17" /> 
-                        </OnPlatform.Android> 
-                        <OnPlatform.iOS> 
-                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="16" /> 
-                        </OnPlatform.iOS> 
-                    </OnPlatform> 
-                                </Label.FontSize>
-                        </Label>
-                    </StackLayout>
-                        </tabView:SfTabItem.HeaderContent>
+                <tabView:SfTabItem Title="Table" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}" IsVisible="{Binding IsTableExist}">
                             <tabView:SfTabItem.Content>
                                 <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
                               VerticalOptions="FillAndExpand"
-                              BackgroundColor="{StaticResource primaryDarkBlueTwo}"
+                              BackgroundColor="{DynamicResource backgroundColor}"
                               RowSpacing="0">
                                     <Grid.RowDefinitions>
-                                <RowDefinition Height="3" />
                                         <RowDefinition Height="30" />
-                                        <RowDefinition Height="1" />
+                                        <RowDefinition Height="2" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                                    <BoxView HeightRequest="3"  BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>
-                                    <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand"
+                                    <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand"
                              VerticalOptions="Center"
                              Padding="0,0">
                             
@@ -679,7 +663,7 @@
                                        Text="#"
                                        FontAttributes="Bold"
                                     HorizontalTextAlignment="Center"
-                                   TextColor="White"/>
+                                   TextColor="{DynamicResource TextPrimaryColor}"/>
                         </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="1"
                                  VerticalOptions="Center"
@@ -687,7 +671,7 @@
                                  >
                             <Label
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    VerticalTextAlignment="Center"
                                         Text="TEAM"/>
@@ -697,7 +681,7 @@
                                      HorizontalOptions="FillAndExpand">
                             <Label
                                    FontSize="13"
-                               TextColor="White"
+                               TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
                                         Text="W"/>
@@ -707,7 +691,7 @@
                                      HorizontalOptions="FillAndExpand">
                             <Label
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
                                         Text="L"/>
@@ -717,7 +701,7 @@
                                      HorizontalOptions="FillAndExpand">
                             <Label
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
                                         Text="D"/>
@@ -727,240 +711,111 @@
                                      HorizontalOptions="FillAndExpand">
                             <Label
                                    FontSize="13"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
                                         Text="Pts"/>
                         </StackLayout>
                         </Grid>
                     </StackLayout>
-                            <BoxView Grid.Row="2" HeightRequest="3" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryPink}"/>
-                               <listView:SfListView Grid.Row="3" x:Name="TeamTableListView"
+                            <BoxView Grid.Row="1" HeightRequest="2" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}"/>
+                               <listView:SfListView Grid.Row="2" x:Name="TeamTableListView"
                                                 ItemsSource="{Binding TableCollection}"
                                                     HorizontalOptions="FillAndExpand"
                                                     VerticalOptions="FillAndExpand"
-                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
                                                     ItemTemplate="{StaticResource TableItemTemplate}"
                                                    SelectionMode="None"
                                                    ItemSpacing="0"
                                                     SelectionBackgroundColor="Transparent"
                                                  ItemSize="40">
-                                <!--<listView:SfListView.DataSource>
-                                  <data:DataSource>
-                                        <data:DataSource.SortDescriptors>
-                                      <data:SortDescriptor PropertyName="MatchType.Name" Direction="Ascending"/>
-                                    </data:DataSource.SortDescriptors>
-                                    <data:DataSource.GroupDescriptors>
-                                      <data:GroupDescriptor PropertyName="MatchType.Name"/>
-                                    </data:DataSource.GroupDescriptors>
-                                  </data:DataSource>
-                                </listView:SfListView.DataSource>-->
-                                    <!--<listView:SfListView.GroupHeaderTemplate>
-                                  <DataTemplate>
-                                      <ViewCell>
-                                        <ViewCell.View>
-                                          <Grid Padding="10,0" VerticalOptions="End">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="40"/>
-                                                        <RowDefinition Height="30"/>
-                                                        <RowDefinition Height="1"/>
-                                                    </Grid.RowDefinitions>
-                                                <Label Grid.Row="0" Text="{Binding Key, 
-                                                            Converter={StaticResource groupHeaderNameConverter}}"
-                                                     FontSize="Medium"
-                                                     FontAttributes="Bold"
-                                                    VerticalOptions="Center" HorizontalOptions="Start"
-                                                     TextColor="White"/>
-                                                    <Grid Grid.Row="1" 
-                              x:Name="TableHeaderGrid"
-                              Padding="5,0"
-                              RowSpacing="1"
-                              ColumnSpacing="1"
-                              
-                              VerticalOptions="FillAndExpand"
-                              HorizontalOptions="FillAndExpand">    
-                        <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                        <StackLayout Grid.Row="0" Grid.Column="0"
-                                 VerticalOptions="Center"
-                                     HorizontalOptions="FillAndExpand"
-                                 Padding="0">
-                                <Label
-                                   FontSize="13"
-                                       Text="#"
-                                       FontAttributes="Bold"
-                                   TextColor="White"/>
-                        </StackLayout>
-                           <StackLayout Grid.Row="0" Grid.Column="2"
-                                 VerticalOptions="Center"
-                                     HorizontalOptions="FillAndExpand">
-                            <Label
-                                   FontSize="13"
-                               TextColor="White"
-                                   FontAttributes="Bold"
-                                   VerticalTextAlignment="Center"
-                                        Text="W"/>
-                        </StackLayout>
-                        <StackLayout Grid.Row="0" Grid.Column="3"
-                                 VerticalOptions="Center"
-                                     HorizontalOptions="FillAndExpand">
-                            <Label
-                                   FontSize="13"
-                                   TextColor="White"
-                                   FontAttributes="Bold"
-                                   VerticalTextAlignment="End"
-                                        Text="L"/>
-                        </StackLayout>
-                        <StackLayout Grid.Row="0" Grid.Column="4"
-                                 VerticalOptions="Center"
-                                     HorizontalOptions="FillAndExpand">
-                            <Label
-                                   FontSize="13"
-                                   TextColor="White"
-                                   FontAttributes="Bold"
-                                   VerticalTextAlignment="End"
-                                        Text="D"/>
-                        </StackLayout>
-                        <StackLayout Grid.Row="0" Grid.Column="5"
-                                 VerticalOptions="Center"
-                                     HorizontalOptions="FillAndExpand">
-                            <Label
-                                   FontSize="13"
-                                   TextColor="White"
-                                   FontAttributes="Bold"
-                                   VerticalTextAlignment="End"
-                                        Text="Pts"/>
-                        </StackLayout>
-                        </Grid>
-                                                    <BoxView Grid.Row="2"
-                                         BackgroundColor="White"
-                                         HeightRequest="1"/>
-                                          </Grid>
-                                        </ViewCell.View>
-                                      </ViewCell>
-                                  </DataTemplate>
-                                </listView:SfListView.GroupHeaderTemplate>-->
                             </listView:SfListView>
                             
                         </Grid>
                             </tabView:SfTabItem.Content>
                         </tabView:SfTabItem>
                     </tabView:SfTabView>
-            <Grid Grid.Row="0" IsVisible="{Binding IsTableExist, Converter={StaticResource inverseBooleanConverter}}" BackgroundColor="{StaticResource primaryDarkBlueTwo}" Padding="0,0,0,0"
+            <!--<Grid Grid.Row="0" IsEnabled="{Binding IsTableExist, Converter={StaticResource inverseBooleanConverter}}" Padding="0,0,0,0"
                               HorizontalOptions="FillAndExpand"
                               VerticalOptions="FillAndExpand" RowSpacing="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50" />
-                    <RowDefinition Height="3" />
+                    <RowDefinition Height="1" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                              <StackLayout Grid.Row="0" Padding="0,10" VerticalOptions="Center">
-                                <Label Text="Fixtures" TextColor="White" FontAttributes="Bold" FontSize="Small" VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
+                                <Label Text="Fixtures" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Small" VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
                             </StackLayout>
-                            <BoxView Grid.Row="1" HeightRequest="3" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryPink}"/>
+                            <BoxView Grid.Row="1" HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="WhiteSmoke"/>
                         <pullToRefresh:SfPullToRefresh Grid.Row="2" x:Name="pullToRefreshFixtures" Refreshing="PullToRefreshFixtures_Refreshing"
                                ProgressBackgroundColor="White" ProgressStrokeColor="{StaticResource primaryDarkBlueTwo}" RefreshContentHeight="50" 
-                               RefreshContentWidth="50" TransitionMode="Push" IsRefreshing="False" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+                               RefreshContentWidth="50" TransitionMode="Push" IsRefreshing="False" BackgroundColor="{DynamicResource frameBackgroundColor}">
                             <pullToRefresh:SfPullToRefresh.PullableContent>
                             <listView:SfListView x:Name="FixtureListOnly"
                                                 ItemsSource="{Binding FixtureCollection}"
                                                     HorizontalOptions="FillAndExpand"
                                                     VerticalOptions="FillAndExpand"
-                                                    BackgroundColor="{StaticResource primaryDarkBlueTwo}"
-                                                    ItemTemplate="{StaticResource FixtureItemTemplate}"
+                                                    ItemTemplate="{StaticResource sportFixtureDataTemplateSelector}"
                                                    SelectionMode="Single"
                                                    ItemSpacing="0"
                                                  SelectionChanged="OnFixtureOnlySelected"
                                                     SelectionBackgroundColor="{StaticResource primaryPink}"
-                                                 ItemSize="92">
+                                                 AutoFitMode="DynamicHeight">
                                 <listView:SfListView.HeaderTemplate>
                                     <DataTemplate>
                                       <ViewCell>
-                                        <Grid IsVisible="{Binding IsLoadMoreVisible}">
                                           <Grid Padding="5">
-                                            <Button BackgroundColor="{StaticResource primaryBarBlue}" Text="Previous Fixtures" Padding="10,0" CornerRadius="5" TextColor="White" Clicked="LoadMoreOnlyClicked" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                            <Button BackgroundColor="{DynamicResource indicatorColor}" Text="Previous Fixtures" Padding="10,0" CornerRadius="5" TextColor="{DynamicResource frameBackgroundColor}" Clicked="LoadMoreClicked" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsEnabled="{Binding IsLoadMoreVisible}"/>
                                           </Grid>
-                                          <!--<listView:LoadMoreIndicator Color="White" IsRunning="True" IsVisible="{Binding IsActivityVisible}" HeightRequest="40"/>-->
-                                        </Grid>
                                       </ViewCell>
                                     </DataTemplate>
                                   </listView:SfListView.HeaderTemplate>
                                     <listView:SfListView.DataSource>
                                   <data:DataSource>
                                     <data:DataSource.SortDescriptors>
-                                      <data:SortDescriptor PropertyName="Date" Direction="Ascending"/>
+                                      <data:SortDescriptor PropertyName="FixtureTime" Direction="Ascending"/>
                                     </data:DataSource.SortDescriptors>
-                                    <data:DataSource.GroupDescriptors>
-                                      <!--<data:GroupDescriptor PropertyName="MatchType.Name"/>-->
-                                        <data:GroupDescriptor PropertyName="Date"/>
-                                    </data:DataSource.GroupDescriptors>
                                   </data:DataSource>
                                 </listView:SfListView.DataSource>
                                     <listView:SfListView.GroupHeaderTemplate>
                                   <DataTemplate>
                                       <ViewCell>
                                         <ViewCell.View>
-                                          <Grid>
-
-                                              <Grid.ColumnDefinitions>
-                                                  <ColumnDefinition Width="*"/>
-                                              </Grid.ColumnDefinitions>
-                                                <BoxView BackgroundColor="{StaticResource primaryPink}" Grid.ColumnSpan="2" Opacity=".5"/>
-                                              <StackLayout Padding="10,0" Grid.Column="0"  VerticalOptions="Center" HorizontalOptions="Start">
-                                                <Label x:Name="matchTypeLabel" Text="{Binding ., 
-                                                            Converter={StaticResource groupingLeagueDateSelectionConverter}, ConverterParameter={x:Reference matchTypeLabel}}"
-                                                     FontSize="14"
+        <StackLayout Padding="8,25,8,0">
+<Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+<Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+                                            <Grid>
+                                                 <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="2*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView Grid.ColumnSpan="2"/>
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
                                                      FontAttributes="Bold"
-                                                    VerticalOptions="Center" HorizontalOptions="Start"
                                                      TextColor="White"/>
-                                                  </StackLayout>
-                                              <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
-                                              <Label Text="{Binding ., Converter={StaticResource groupingLeagueDateSelectionConverter}, ConverterParameter={x:Reference FixtureList}}"
-                                                     FontSize="14"
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference FixtureListOnly}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
                                                      FontAttributes="Bold"
-                                                    VerticalOptions="Center" HorizontalOptions="EndAndExpand"
                                                      TextColor="White"/>
-                                                  </StackLayout>
+                                                    </StackLayout>
                                           </Grid>
-                                        </ViewCell.View>
+    </Frame>
+</Frame>
+                                            </StackLayout>
+    </ViewCell.View>
                                       </ViewCell>
                                   </DataTemplate>
                                 </listView:SfListView.GroupHeaderTemplate>
                                 </listView:SfListView>
                             </pullToRefresh:SfPullToRefresh.PullableContent>
  </pullToRefresh:SfPullToRefresh>
-                        </Grid>
-            <ContentView Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryDarkBlueTwo}" IsVisible="{Binding IsActivityIndicatorVisible}" />
-            <!--<syncfusion:SfBusyIndicator Grid.Row="1"
-                                            x:Name="BusyIndicator"
-                                              BackgroundColor="Transparent"
-                                  TextColor="{StaticResource primaryPink}"
-                                  VerticalOptions="FillAndExpand"
-                                  HorizontalOptions="FillAndExpand"
-                                  AnimationType="SingleCircle"  
-                                  ViewBoxWidth="50"
-                                            ViewBoxHeight="50"
-                                  IsVisible="{Binding IsActivityIndicatorVisible}"
-                                  Duration="3" />-->
-            <!--<extension:CustomLoader x:Name="loader" Grid.Row="0"
-                                        Source="ontrackindicator.png"
-                                        RotationLength="2000"
-                                        VerticalOptions="Center" 
-                                        HorizontalOptions="Center"
-                                    WidthRequest="100"
-                                        IsRunning="{Binding IsActivityIndicatorVisible}"
-                                        IsVisible="{Binding IsActivityIndicatorVisible}"/>-->
-            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
-            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityVisible}"/>
+                        </Grid>-->
+            <extension:CustomBusyIndicator Grid.Row="1" IsVisible="{Binding IsActivityIndicatorVisible}"/>
             </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -38,7 +38,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="50"/>
@@ -56,7 +56,7 @@
                                     AutoFitMode="DynamicHeight"        
                                 />
             <StackLayout IsVisible="{Binding NoFlyers}" Padding="10" HorizontalOptions="Center">
-                <Label HorizontalTextAlignment="Center" TextColor="White" Text="There is currently no media available." FontSize="Micro"/>
+                <Label HorizontalTextAlignment="Center" TextColor="{DynamicResource TextPrimaryColor}" Text="There is currently no media available." FontSize="Small"/>
             </StackLayout>
             <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                         <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>

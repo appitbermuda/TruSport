@@ -13,7 +13,7 @@ namespace TruSport.ViewModels
     public class TransferViewModel : BaseViewModel
     {
         
-        private ObservableCollection<Transfers> transferCollection;
+        private ObservableCollection<Transfer> transferCollection;
         private string title;
         private bool noConnectivity;
         private bool _isActivityIndicatorVisible;
@@ -24,7 +24,7 @@ namespace TruSport.ViewModels
         {
             transferService = new TransferService();
 
-            TransferCollection = new ObservableCollection<Transfers>();
+            TransferCollection = new ObservableCollection<Transfer>();
 
             GenerateSource();
         }
@@ -42,7 +42,7 @@ namespace TruSport.ViewModels
         }
 
 
-        public ObservableCollection<Transfers> TransferCollection
+        public ObservableCollection<Transfer> TransferCollection
         {
             get { return transferCollection; }
             set { Set(ref transferCollection, value); }
@@ -66,9 +66,9 @@ namespace TruSport.ViewModels
                 var transfers = await transferService.GetTransfers();
 
                 var transfer = transfers.FirstOrDefault();
-                Title = "Transfers " + transfer.Date;
+                Title = "Transfer " + transfer.Date;
 
-                TransferCollection = new ObservableCollection<Transfers>(transfers);
+                TransferCollection = new ObservableCollection<Transfer>(transfers);
             }
             else
                 NoConnectivity = true;

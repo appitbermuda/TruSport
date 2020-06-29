@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -48,8 +49,47 @@ namespace OnTrackWebService.Repository
 
         public async Task<IEnumerable<GoalsScoredByPlayer>> GetGoalsScoredByPlayer()
         {
-            //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
-            return await _context.GoalsScoredByPlayer.OrderByDescending(e => e.Goals).ToListAsync();
+            try
+            {
+                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
+                return await _context.GoalsScoredByPlayer.OrderByDescending(e => e.Goals).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<RunsByPlayer>> GetRunsByPlayer()
+        {
+            try
+            {
+                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
+                return await _context.RunsByPlayer.OrderByDescending(e => e.Stat).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<WicketsByPlayer>> GetWicketsByPlayer()
+        {
+            try
+            {
+                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
+                return await _context.WicketsByPlayer.OrderByDescending(e => e.Stat).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<GoalsConcededByTeam>> GetGoalsConcededByTeamByLeague(string leagueID)

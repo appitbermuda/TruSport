@@ -10,7 +10,7 @@
             <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
             <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
             <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
-            <converter:GroupingSelectionConverter x:Key="groupingSelectionConverter"/>
+            <converter:GroupingSelectionFootballConverter x:Key="groupingSelectionConverter"/>
             <converter:ShowScoreConverter x:Key="showScoreConverter"/>
             <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
             <DataTemplate x:Name="PastItemTemplate"  x:Key="PastItemTemplate">

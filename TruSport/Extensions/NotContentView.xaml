@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TruSport.Extensions.NotContentView"
+             x:Name="This">
+    <ContentView.Content>
+        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid VerticalOptions="CenterAndExpand" Padding="20,0">
+                <Label Text="{Binding ActionText, Source= {x:Reference This}}" TextColor="{DynamicResource TextPrimaryColor}" LineBreakMode="WordWrap" HorizontalTextAlignment="Center"/>
+            </Grid>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

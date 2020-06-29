@@ -1,55 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using Syncfusion.DataSource;
 using TruSport.Model;
+using TruSport.ViewModels;
 using TruSport.Views.Admin;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace TruSport.Views.Football
 {
     public partial class TeamPage : ContentPage
     {
+        TeamPageViewModel teamPageViewModel;
+
         public TeamPage()
         {
+            teamPageViewModel = new TeamPageViewModel();
+
+            this.BindingContext = teamPageViewModel;
+
             InitializeComponent();
 
-            //loader.Easing = Easing.Linear;
+            TeamsList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
+            {
+                PropertyName = "League.Name",
+                KeySelector = (object obj1) =>
+                {
+                    var item = (obj1 as Team);
+                    return item.League.Order;
+                }
+            });
         }
-
-        //void Handle_SelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
-        //{
-        //    if(e.Index == 0)
-        //    {
-        //        PremierLabel.TextColor = (Color)App.Current.Resources["primaryPink"];
-        //        FirstLabel.TextColor = Color.White;
-        //        //PremierSelected.IsVisible = true;
-        //        //FirstSelected.IsVisible = false;
-        //    }
-        //    else if (e.Index == 1)
-        //    {
-        //        FirstLabel.TextColor = (Color)App.Current.Resources["primaryPink"];
-        //        PremierLabel.TextColor = Color.White;
-        //        //PremierSelected.IsVisible = false;
-        //        //FirstSelected.IsVisible = true;
-        //    }
-        //}
-
-        //async void FirstDivisionSelected(object sender, Syncfusion.ListView.XForms.ItemSelectionChangedEventArgs e)
-        //{
-        //    var items = e.AddedItems;
-
-        //    if (items.Count == 0) return;
-
-        //    var item = (Team)FirstDivisionList.SelectedItem;
-
-        //    await Navigation.PushAsync(new TeamProfilePage(item));
-        //    //await Navigation.PushModalAsync(new NavigationPage(new TeamProfilePage(item))
-        //    //{
-        //    //    BarTextColor = Color.White,
-        //    //    BarBackgroundColor = Color.Transparent
-        //    //});
-
-        //    FirstDivisionList.SelectedItems.Clear();
-        //}
 
         async void TeamSelected(object sender, Syncfusion.ListView.XForms.ItemSelectionChangedEventArgs e)
         {
@@ -59,45 +40,10 @@ namespace TruSport.Views.Football
 
             var item = (Team)TeamsList.SelectedItem;
 
-            await Navigation.PushAsync(new TeamProfilePage(item));
+            //var sport = await SecureStorage.GetAsync("Sport");
+            await Navigation.PushAsync(new Football.TeamProfilePage(item));
 
             TeamsList.SelectedItems.Clear();
-        }
-
-        //async void PremierDivisionSelected(object sender, Syncfusion.ListView.XForms.ItemSelectionChangedEventArgs e)
-        //{
-        //    var items = e.AddedItems;
-
-        //    if (items.Count == 0) return;
-
-        //    var item = (Team)PremierDivisionList.SelectedItem;
-
-        //    await Navigation.PushAsync(new TeamProfilePage(item));
-
-        //    PremierDivisionList.SelectedItems.Clear();
-        //}
-
-        async void CoronaDivisionSelected(object sender, Syncfusion.ListView.XForms.ItemSelectionChangedEventArgs e)
-        {
-            var items = e.AddedItems;
-
-            if (items.Count == 0) return;
-
-            //var item = (Team)CoronaDivisionList.SelectedItem;
-
-            //await Navigation.PushAsync(new TeamProfilePage(item));
-            //await Navigation.PushModalAsync(new NavigationPage(new TeamProfilePage(item))
-            //{
-            //    BarTextColor = Color.White,
-            //    BarBackgroundColor = Color.Transparent
-            //});
-
-            //CoronaDivisionList.SelectedItems.Clear();
-        }
-
-        async void AdminClicked(object sender, System.EventArgs e)
-        {
-            //await Navigation.PushModalAsync(new AdminMainPage());
         }
     }
 }

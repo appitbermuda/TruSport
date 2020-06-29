@@ -32,6 +32,90 @@ namespace OnTrackWebService.Repository
             return await _context.Leagues.ToListAsync();
         }
 
+        public async Task<IEnumerable<League>> Get()
+        {
+            try
+            {
+                var leagues = await _context.Leagues.Include(e => e.Sport).ToListAsync();
+
+                return leagues;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<List<League>> GetCricketLeagues()
+        {
+            try
+            {
+                var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Cricket");
+
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.SportID == sport.ID).ToListAsync();
+
+                return leagues;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<List<League>> GetFootballLeagues()
+        {
+            try
+            {
+                var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Football");
+
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.SportID == sport.ID).ToListAsync();
+
+                return leagues;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<League>> GetBySportType(string SportType)
+        {
+            try
+            {
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == SportType).ToListAsync();
+
+                return leagues;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<League>> GetBySport(string SportID)
+        {
+            try
+            {
+                var leagues = await _context.Leagues.Where(e => e.SportID == SportID).ToListAsync();
+
+                return leagues;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public Task<IEnumerable<League>> GetByTeam(string teamID)
         {
             throw new NotImplementedException();

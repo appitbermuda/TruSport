@@ -7,19 +7,20 @@ namespace OnTrackWebService.Models
     public class User
     {
         public string ID { get; set; }
-        public string UserTypeID { get; set; }
+        public string RoleID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public string TemporaryPassword { get; set; }
         public string TeamID { get; set; }
+
         [NotMapped]
         public string Token { get; set; }
         public bool IsValidated { get; set; }
 
-        [ForeignKey("UserTypeID")]
-        public UserType UserType { get; set; }
+        [ForeignKey("RoleID")]
+        public Role Role { get; set; }
 
         [ForeignKey("TeamID")]
         public Team Team { get; set; }
@@ -47,14 +48,14 @@ namespace OnTrackWebService.Models
     public class UserResponse
     {
         public string ID { get; set; }
-        public string UserTypeID { get; set; }
+        public string RoleID { get; set; }
         public string TeamID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
 
-        [ForeignKey("UserTypeID")]
-        public UserType UserType { get; set; }
+        [ForeignKey("RoleID")]
+        public Role Role { get; set; }
 
         [ForeignKey("TeamID")]
         public Team Team { get; set; }
