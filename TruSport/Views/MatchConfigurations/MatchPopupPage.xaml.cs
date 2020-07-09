@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Rg.Plugins.Popup.Pages;
-using Rg.Plugins.Popup.Services;
 using TruSport.Model;
 using TruSport.ViewModel;
 using Xamarin.Forms;

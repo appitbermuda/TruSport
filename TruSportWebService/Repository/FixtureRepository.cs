@@ -1,23 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Imports;
+using MatchType = OnTrackWebService.Models.MatchType;
 
 namespace OnTrackWebService.Repository
 {
     public class FixtureRepository : IOnTrackRepository<Fixture>
     {
         OnTrackContext _context;
+        LeagueTableRepository leagueTableRepository;
+        TeamRepository teamRepository;
+        LeagueRepository leagueRepository;
+        SeasonRepository seasonRepository;
+        SettingRepository settingRepository;
 
         public FixtureRepository(OnTrackContext context)
         {
             _context = context;
+            leagueTableRepository = new LeagueTableRepository(context);
+            teamRepository = new TeamRepository(context);
+            leagueRepository = new LeagueRepository(context);
+            seasonRepository = new SeasonRepository(context);
+            settingRepository = new SettingRepository(context);
         }
+
         public Task Delete(string id)
         {
             throw new NotImplementedException();
@@ -25,44 +44,1433 @@ namespace OnTrackWebService.Repository
 
         public async Task<Fixture> Get(string id)
         {
-            return await _context.Fixtures.Include("Field").Include("League").Include("Match").Include("MatchType").Include("Season").Include(e => e.MatchRosters).ThenInclude(e => e.Player).Include(e => e.HomeTeam).ThenInclude(e => e.Coaches).Include(e => e.AwayTeam).ThenInclude(e => e.Coaches).FirstOrDefaultAsync(e => e.ID == id);
+            try
+            {
+                Fixture fixture = new Fixture();
+
+                fixture = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters).ThenInclude(e => e.Player)
+                .Include(e => e.Season)
+                .Include(e => e.Sport).FirstOrDefaultAsync(e => e.ID == id);
+
+                return fixture;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetFixture");
+            }
+            return null;
         }
 
+
+        public async Task<IEnumerable<Fixture>> Get()
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport).ToListAsync();
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetFixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetBySport(string sport)
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+                Sport selectedSport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == sport);
+
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport).Where(e => e.SportID == selectedSport.ID).ToListAsync();
+
+                //if(selectedSport.Name == "Cricket")
+                //{
+                //    fixtures.ForEach(e => e.CricketMatch = new List<CricketMatch>
+                //    {
+                //        new CricketMatch
+                //        {
+                //            TeamID = e.HomeTeamID,
+                //            FixtureID = e.ID,
+                //            Runs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Runs),
+                //            Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wickets),
+                //            Overs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Overs),
+                //            Bye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Bye),
+                //            Extras = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Extras),
+                //            LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.LegBye),
+                //            NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.NoBall),
+                //            Wide = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wide)
+
+                //        },
+                //        new CricketMatch
+                //        {
+                //            TeamID = e.AwayTeamID,
+                //            FixtureID = e.ID,
+                //            Runs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Runs),
+                //            Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wickets),
+                //            Overs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Overs),
+                //            Bye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Bye),
+                //            Extras = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Extras),
+                //            LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.LegBye),
+                //            NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.NoBall),
+                //            Wide = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wide)
+                //        }
+                //    });
+                //}
+
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBySport");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketFixture>> GetCricketFixtures()
+        {
+            try
+            {
+                List<CricketFixture> fixtures = new List<CricketFixture>();
+                fixtures = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters)
+                .Include(e => e.MatchInnings)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                fixtures.ForEach(e => e.MatchResult =
+                    (e.MatchInnings != null && e.MatchInnings.Count > 0) && e.IsCancelled && !e.IsPostponed ? "Match abandoned" : ""
+                );
+
+                foreach (var fixture in fixtures.Where(e => e.MatchInnings != null && e.MatchInnings.Count > 0))
+                {
+
+                    string homeTeamscore = "";
+
+                    List<InningScore> inningScores = new List<InningScore>();
+                    int homeTeamRuns = 0;
+                    int awayTeamRuns = 0;
+
+                    int homeTeamWickets = 0;
+                    int awayTeamWickets = 0;
+
+                    foreach (var matchInning in fixture.MatchInnings)
+                    {
+                        if (matchInning.BattingTeamID == fixture.HomeTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.HomeTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.HomeTeamScore += String.Format("{0}/{1} ", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run.Value,
+                                Wickets = matchInning.Wicket.Value,
+                                Overs = matchInning.Over.Value,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.HomeTeamID,
+                                Team = fixture.HomeTeam
+                            });
+                        }
+
+                        string awayTeamscore = "";
+                        if (matchInning.BattingTeamID == fixture.AwayTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.AwayTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.AwayTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run.Value,
+                                Wickets = matchInning.Wicket.Value,
+                                Overs = matchInning.Over.Value,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.AwayTeamID,
+                                Team = fixture.AwayTeam
+
+                            });
+                        }
+                    }
+
+                    if (fixture.End.HasValue && fixture.End.Value < DateTime.Now)
+                    {
+                        if (fixture.MatchType.Name == "One 50 Overs")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 50))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else if (fixture.MatchType.Name == "T20")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 20))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+
+                //fixtures.ForEach(e => e.CricketMatch = new List<CricketMatch>
+                //{
+                //    new CricketMatch
+                //    {
+                //        TeamID = e.HomeTeamID,
+                //        FixtureID = e.ID,
+                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Runs),
+                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wickets),
+                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Overs),
+                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Bye),
+                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Extras),
+                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.LegBye),
+                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.NoBall),
+                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wide)
+
+                //    },
+                //    new CricketMatch
+                //    {
+                //        TeamID = e.AwayTeamID,
+                //        FixtureID = e.ID,
+                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Runs),
+                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wickets),
+                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Overs),
+                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Bye),
+                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Extras),
+                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.LegBye),
+                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.NoBall),
+                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wide)
+                //    }
+                //});
+
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetCricketFixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketFixture>> GetPastCricketFixtures()
+        {
+            try
+            {
+                List<CricketFixture> fixtures = new List<CricketFixture>();
+                fixtures = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters)
+                .Include(e => e.MatchInnings)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now && e.HomeTeam.Name != "TBD" && e.AwayTeam.Name != "TBD").ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+                fixtures.ForEach(e => e.MatchResult =
+                    (e.MatchInnings != null && e.MatchInnings.Count > 0) && e.IsCancelled && !e.IsPostponed ? "Match abandoned" : ""
+                );
+
+                foreach (var fixture in fixtures.Where(e => e.MatchInnings != null && e.MatchInnings.Count > 0))
+                {
+                    
+                    string homeTeamscore = "";
+
+                    List<InningScore> inningScores = new List<InningScore>();
+                    int homeTeamRuns = 0;
+                    int awayTeamRuns = 0;
+
+                    int homeTeamWickets = 0;
+                    int awayTeamWickets = 0;
+
+                    foreach(var matchInning in fixture.MatchInnings)
+                    {
+                        if(matchInning.BattingTeamID == fixture.HomeTeamID)
+                        { 
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.HomeTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.HomeTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run.Value,
+                                Wickets = matchInning.Wicket.Value,
+                                Overs = matchInning.Over.Value,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.HomeTeamID,
+                                Team = fixture.HomeTeam
+                            });
+                        }
+
+                        string awayTeamscore = "";
+                        if (matchInning.BattingTeamID == fixture.AwayTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.AwayTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.AwayTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run.Value,
+                                Wickets = matchInning.Wicket.Value,
+                                Overs = matchInning.Over.Value,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.AwayTeamID,
+                                Team = fixture.AwayTeam
+
+                            });
+                        }
+                    }
+
+                    if (fixture.End.HasValue && fixture.End.Value < DateTime.Now)
+                    {
+                        if (fixture.MatchType.Name == "One 50 Overs")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 50))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else if (fixture.MatchType.Name == "T20")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 20))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+
+                //fixtures.ForEach(e => e.CricketScores = new List<Cric>
+                //{
+                //    new CricketMatch
+                //    {
+                //        TeamID = e.HomeTeamID,
+                //        FixtureID = e.ID,
+                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Runs),
+                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wickets),
+                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Overs),
+                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Bye),
+                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Extras),
+                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.LegBye),
+                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.NoBall),
+                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wide)
+
+                //    },
+                //    new CricketMatch
+                //    {
+                //        TeamID = e.AwayTeamID,
+                //        FixtureID = e.ID,
+                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Runs),
+                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wickets),
+                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Overs),
+                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Bye),
+                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Extras),
+                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.LegBye),
+                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.NoBall),
+                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wide)
+                //    }
+                //});
+
+
+                return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Past Cricket Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketFixture>> GetCricketResults()
+        {
+            try
+            {
+                List<CricketFixture> fixtures = new List<CricketFixture>();
+                fixtures = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters)
+                .Include(e => e.MatchInnings)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now && e.MatchInnings != null && e.MatchInnings.Count > 0).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                fixtures.ForEach(e => e.MatchResult =
+                    (e.MatchInnings != null && e.MatchInnings.Count > 0) && e.IsCancelled && !e.IsPostponed ? "Match abandoned" : ""
+                );
+
+                foreach (var fixture in fixtures.Where(e => e.MatchInnings != null && e.MatchInnings.Count > 0))
+                {
+                    string homeTeamscore = "";
+
+                    List<InningScore> inningScores = new List<InningScore>();
+                    int homeTeamRuns = 0;
+                    int awayTeamRuns = 0;
+
+                    int homeTeamWickets = 0;
+                    int awayTeamWickets = 0;
+
+                    foreach (var matchInning in fixture.MatchInnings)
+                    {
+                        if (matchInning.BattingTeamID == fixture.HomeTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.HomeTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.HomeTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run.Value,
+                                Wickets = matchInning.Wicket.Value,
+                                Overs = matchInning.Over.Value,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.HomeTeamID,
+                                Team = fixture.HomeTeam
+                            });
+                        }
+
+                        string awayTeamscore = "";
+                        if (matchInning.BattingTeamID == fixture.AwayTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.AwayTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.AwayTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run.Value,
+                                Wickets = matchInning.Wicket.Value,
+                                Overs = matchInning.Over.Value,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.AwayTeamID,
+                                Team = fixture.AwayTeam
+
+                            });
+                        }
+                    }
+
+                    if (fixture.End.HasValue && fixture.End.Value < DateTime.Now)
+                    {
+                        if (fixture.MatchType.Name == "One 50 Overs")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 50))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else if (fixture.MatchType.Name == "T20")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 20))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+
+                //fixtures.ForEach(e => e.CricketMatch = new List<CricketMatch>
+                //{
+                //    new CricketMatch
+                //    {
+                //        TeamID = e.HomeTeamID,
+                //        FixtureID = e.ID,
+                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Runs),
+                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wickets),
+                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Overs),
+                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Bye),
+                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Extras),
+                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.LegBye),
+                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.NoBall),
+                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wide)
+
+                //    },
+                //    new CricketMatch
+                //    {
+                //        TeamID = e.AwayTeamID,
+                //        FixtureID = e.ID,
+                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Runs),
+                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wickets),
+                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Overs),
+                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Bye),
+                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Extras),
+                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.LegBye),
+                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.NoBall),
+                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wide)
+                //    }
+                //});
+
+
+                return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Past Cricket Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketFixture>> GetUpcomingCricketFixtures()
+        {
+            try
+            {
+                List<CricketFixture> fixtures = new List<CricketFixture>();
+                fixtures = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters)
+                .Include(e => e.MatchInnings)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                //fixtures.ForEach(e => e.CricketMatch = new List<CricketMatch>
+                //{
+                //    new CricketMatch
+                //    {
+                //        TeamID = e.HomeTeamID,
+                //        FixtureID = e.ID,
+                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Runs),
+                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wickets),
+                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Overs),
+                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Bye),
+                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Extras),
+                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.LegBye),
+                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.NoBall),
+                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wide)
+
+                //    },
+                //    new CricketMatch
+                //    {
+                //        TeamID = e.AwayTeamID,
+                //        FixtureID = e.ID,
+                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Runs),
+                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wickets),
+                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Overs),
+                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Bye),
+                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Extras),
+                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.LegBye),
+                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.NoBall),
+                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wide)
+                //    }
+                //});
+
+
+                return fixtures.ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upcoming Cricket Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<CricketFixture> GetCricketFixture(string id)
+        {
+            try
+            {
+                CricketFixture fixture = new CricketFixture();
+                fixture = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters).ThenInclude(e => e.Player)
+                .Include(e => e.CricketRosters).ThenInclude(e => e.Team)
+                .Include(e => e.CricketRosters).ThenInclude(e => e.Batters)
+                .Include(e => e.CricketRosters).ThenInclude(e => e.Fielders)
+                .Include(e => e.MatchInnings).ThenInclude(e => e.BattingTeam)
+                .Include(e => e.MatchInnings).ThenInclude(e => e.FieldingTeam)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season).FirstOrDefaultAsync(e => e.ID == id);
+
+                fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
+                fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
+
+                var table = await leagueTableRepository.GetCricketTableByLeague(fixture.LeagueID);
+                table.ForEach(e => e.IsSelectedTeam = (e.TeamID == fixture.HomeTeamID || e.TeamID == fixture.AwayTeamID));
+
+                fixture.LeagueTable = table.ToList();
+
+                fixture.HeadToHead = await GetCricketHeadToHead(fixture.ID);
+                
+                if (fixture.CricketRosters != null && fixture.CricketRosters.Count > 0)
+                {
+                    fixture.CricketRosters.ForEach(e => e.IsHomeTeam = (e.TeamID == fixture.HomeTeamID));
+
+                    //List<MatchRosterSummary> matchRosterSummaries = new List<MatchRosterSummary>();
+
+                    //foreach (var roster in matchRosters)
+                    //{
+                    //    if (roster.MatchStats.Count > 0)
+                    //    {
+                    //        for (var i = 0; i < roster.MatchStats.Count; i++)
+                    //        {
+                    //            if (roster.MatchStats[i].Goal > 0)
+                    //            {
+                    //                matchRosterSummaries.Add(new MatchRosterSummary
+                    //                {
+                    //                    FixtureID = roster.FixtureID,
+                    //                    TeamID = roster.TeamID,
+                    //                    PlayerID = roster.PlayerID,
+                    //                    Player = roster.Player,
+                    //                    AssistPlayerID = roster.MatchStats[i].AssistPlayerID,
+                    //                    AssistPlayer = roster.MatchStats[i].AssistPlayer,
+                    //                    Minute = roster.MatchStats[i].GoalTime ?? 0,
+                    //                    Goal = 1,
+                    //                    IsHomeTeam = roster.IsHomeTeam
+                    //                });
+                    //            }
+
+                    //            if (roster.MatchStats[i].YellowCard > 0)
+                    //            {
+                    //                matchRosterSummaries.Add(new MatchRosterSummary
+                    //                {
+                    //                    FixtureID = roster.FixtureID,
+                    //                    TeamID = roster.TeamID,
+                    //                    PlayerID = roster.PlayerID,
+                    //                    Player = roster.Player,
+                    //                    Minute = roster.MatchStats[i].YellowCardTime ?? 0,
+                    //                    YellowCard = 1,
+                    //                    IsHomeTeam = roster.IsHomeTeam
+                    //                });
+                    //            }
+
+                    //            if (roster.MatchStats[i].RedCard > 0)
+                    //            {
+                    //                matchRosterSummaries.Add(new MatchRosterSummary
+                    //                {
+                    //                    FixtureID = roster.FixtureID,
+                    //                    TeamID = roster.TeamID,
+                    //                    PlayerID = roster.PlayerID,
+                    //                    Player = roster.Player,
+                    //                    Minute = roster.MatchStats[i].RedCardTime ?? 0,
+                    //                    RedCard = 1,
+                    //                    IsHomeTeam = roster.IsHomeTeam
+                    //                });
+                    //            }
+                    //        }
+                    //    }
+
+                    //    if (roster.SubstitutePlayerID != null && roster.IsStarter)
+                    //    {
+                    //        matchRosterSummaries.Add(new MatchRosterSummary
+                    //        {
+                    //            FixtureID = roster.FixtureID,
+                    //            TeamID = roster.TeamID,
+                    //            PlayerID = roster.PlayerID,
+                    //            Player = roster.Player,
+                    //            SubstitutePlayerID = roster.SubstitutePlayerID,
+                    //            SubsitutePlayer = roster.SubstitutePlayer,
+                    //            Minute = roster.SubstituteTime ?? 0,
+                    //            IsSub = true,
+                    //            IsHomeTeam = roster.IsHomeTeam
+                    //        });
+
+                    //    }
+                    //}
+
+                    //if (matchRosterSummaries.Any(e => e.Minute == -1))
+                    //    fixture.MatchRosterSummary = matchRosterSummaries;
+                    //else
+                    //    fixture.MatchRosterSummary = matchRosterSummaries.OrderBy(e => e.Minute).ToList();
+
+                    //var matchStats = await _context.MatchStats
+                    //   .Where(e => matchRosters.Any(m => m.ID == e.MatchRosterID)).ToListAsync();
+
+                }
+
+                
+                fixture.MatchResult = (fixture.MatchInnings != null && fixture.MatchInnings.Count > 0) && fixture.IsCancelled && !fixture.IsPostponed ? "Match abandoned" : "";
+
+                if (fixture.End != null && fixture.End < DateTime.Now)
+                {
+                    if (fixture.MatchInnings != null && fixture.MatchInnings.Count > 0 && !fixture.IsCancelled && !fixture.IsPostponed)
+                    {
+
+                        string homeTeamscore = "";
+
+                        List<InningScore> inningScores = new List<InningScore>();
+                        int homeTeamRuns = 0;
+                        int awayTeamRuns = 0;
+
+                        int homeTeamWickets = 0;
+                        int awayTeamWickets = 0;
+
+                        foreach (var matchInning in fixture.MatchInnings)
+                        {
+                            if (matchInning.BattingTeamID == fixture.HomeTeamID)
+                            {
+                                if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                    fixture.HomeTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                                else
+                                    fixture.HomeTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                                inningScores.Add(new InningScore
+                                {
+                                    Runs = matchInning.Run.Value,
+                                    Wickets = matchInning.Wicket.Value,
+                                    Overs = matchInning.Over.Value,
+                                    Inning = matchInning.Inning,
+                                    TeamID = fixture.HomeTeamID,
+                                    Team = fixture.HomeTeam
+                                });
+                            }
+
+                            string awayTeamscore = "";
+                            if (matchInning.BattingTeamID == fixture.AwayTeamID)
+                            {
+                                if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                    fixture.AwayTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                                else
+                                    fixture.AwayTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                                inningScores.Add(new InningScore
+                                {
+                                    Runs = matchInning.Run.Value,
+                                    Wickets = matchInning.Wicket.Value,
+                                    Overs = matchInning.Over.Value,
+                                    Inning = matchInning.Inning,
+                                    TeamID = fixture.AwayTeamID,
+                                    Team = fixture.AwayTeam
+
+                                });
+                            }
+                        }
+
+                        if (fixture.MatchType.Name == "One 50 Overs")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 50))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else if (fixture.MatchType.Name == "T20")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 20))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+
+                    }
+                }
+
+                return fixture;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetFootballFixtures()
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Football Fixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetPastFootballFixtures()
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season).Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now && e.HomeTeam.Name != "TBD" && e.AwayTeam.Name != "TBD").ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Past Football Fixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetFootballResults()
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season).Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Past Football Fixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetUpcomingFootballFixtures()
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upcoming Football Fixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<Fixture> GetFootballFixture(string id)
+        {
+            try
+            {
+                Fixture fixture = new Fixture();
+                fixture = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters).ThenInclude(e => e.Player)
+                .Include(e => e.MatchRosters).ThenInclude(e => e.Team)
+                .Include(e => e.MatchRosters).ThenInclude(e => e.SubstitutePlayer)
+                .Include(e => e.MatchRosters).ThenInclude(e => e.MatchStats)
+                .Include(e => e.Season).FirstOrDefaultAsync(e => e.ID == id);
+
+                fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
+                fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
+
+                var table = await leagueTableRepository.GetFootballTableByLeague(fixture.LeagueID);
+                table.ForEach(e => e.IsSelectedTeam = (e.TeamID == fixture.HomeTeamID || e.TeamID == fixture.AwayTeamID));
+
+                fixture.LeagueTable = table.ToList();
+
+                fixture.HeadToHead = await GetFootballHeadToHead(fixture.ID);
+
+                //var matchRosters = await _context.MatchRosters
+                //    .Include(e => e.Player)
+                //    .Include(e => e.Team)
+                //    .Include(e => e.SubstitutePlayer)
+                //    .Include(e => e.MatchStats)
+                //    .Where(e => e.FixtureID == fixture.ID).ToListAsync();
+
+                if(fixture.MatchRosters != null && fixture.MatchRosters.Count > 0)
+                {
+                    fixture.MatchRosters.ForEach(e => e.IsHomeTeam = (e.TeamID == fixture.HomeTeamID));
+
+                    List<MatchRosterSummary> matchRosterSummaries = new List<MatchRosterSummary>();
+
+                    foreach(var roster in fixture.MatchRosters)
+                    {
+                        if (roster.MatchStats.Count > 0)
+                        {
+                            for (var i = 0; i < roster.MatchStats.Count; i++)
+                            {
+                                if (roster.MatchStats[i].Goal > 0)
+                                {
+                                    matchRosterSummaries.Add(new MatchRosterSummary
+                                    {
+                                        FixtureID = roster.FixtureID,
+                                        TeamID = roster.TeamID,
+                                        PlayerID = roster.PlayerID,
+                                        Player = roster.Player,
+                                        AssistPlayerID = roster.MatchStats[i].AssistPlayerID,
+                                        AssistPlayer = roster.MatchStats[i].AssistPlayer,
+                                        Minute = roster.MatchStats[i].GoalTime ?? 0,
+                                        Goal = 1,
+                                        IsHomeTeam = roster.IsHomeTeam
+                                    });
+                                }
+
+                                if (roster.MatchStats[i].YellowCard > 0)
+                                {
+                                    matchRosterSummaries.Add(new MatchRosterSummary
+                                    {
+                                        FixtureID = roster.FixtureID,
+                                        TeamID = roster.TeamID,
+                                        PlayerID = roster.PlayerID,
+                                        Player = roster.Player,
+                                        Minute = roster.MatchStats[i].YellowCardTime ?? 0,
+                                        YellowCard = 1,
+                                        IsHomeTeam = roster.IsHomeTeam
+                                    });
+                                }
+
+                                if (roster.MatchStats[i].RedCard > 0)
+                                {
+                                    matchRosterSummaries.Add(new MatchRosterSummary
+                                    {
+                                        FixtureID = roster.FixtureID,
+                                        TeamID = roster.TeamID,
+                                        PlayerID = roster.PlayerID,
+                                        Player = roster.Player,
+                                        Minute = roster.MatchStats[i].RedCardTime ?? 0,
+                                        RedCard = 1,
+                                        IsHomeTeam = roster.IsHomeTeam
+                                    });
+                                }
+                            }
+                        }
+
+                        if (roster.SubstitutePlayerID != null && roster.IsStarter)
+                        {
+                            matchRosterSummaries.Add(new MatchRosterSummary
+                            {
+                                FixtureID = roster.FixtureID,
+                                TeamID = roster.TeamID,
+                                PlayerID = roster.PlayerID,
+                                Player = roster.Player,
+                                SubstitutePlayerID = roster.SubstitutePlayerID,
+                                SubsitutePlayer = roster.SubstitutePlayer,
+                                Minute = roster.SubstituteTime ?? 0,
+                                IsSub = true,
+                                IsHomeTeam = roster.IsHomeTeam
+                            });
+
+                        }
+                    }
+
+                    if (matchRosterSummaries.Any(e => e.Minute == -1))
+                        fixture.MatchRosterSummary = matchRosterSummaries;
+                    else
+                        fixture.MatchRosterSummary = matchRosterSummaries.OrderBy(e => e.Minute).ToList();
+
+                    var matchStats = await _context.MatchStats
+                       .Where(e => fixture.MatchRosters.Any(m => m.ID == e.MatchRosterID)).ToListAsync();
+
+                }
+
+
+                return fixture;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<List<Fixture>> GetFootballHeadToHead(string fixtureID)
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+                Fixture fixture = await _context.Fixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
+
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport)
+                .Where(e => ((e.HomeTeamID == fixture.HomeTeamID && e.AwayTeamID == fixture.AwayTeamID) || (e.HomeTeamID == fixture.AwayTeamID && e.AwayTeamID == fixture.HomeTeamID)) && e.ID != fixture.ID && e.FixtureTime < DateTime.Now.AddMinutes(-90) && (e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue) && !e.IsPostponed).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures;
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<List<CricketFixture>> GetCricketHeadToHead(string fixtureID)
+        {
+            try
+            {
+                List<CricketFixture> fixtures = new List<CricketFixture>();
+                CricketFixture fixture = await _context.CricketFixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
+
+                fixtures = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters)
+                .Include(e => e.MatchInnings)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => ((e.HomeTeamID == fixture.HomeTeamID && e.AwayTeamID == fixture.AwayTeamID) || (e.HomeTeamID == fixture.AwayTeamID && e.AwayTeamID == fixture.HomeTeamID)) && e.ID != fixture.ID && e.FixtureTime < DateTime.Now.AddMinutes(-90) && (e.MatchInnings.Count > 0) && !e.IsPostponed).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetHomeTeam(string fixtureID)
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+                Fixture fixture = await _context.Fixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
+
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport)
+                .Where(e => (e.HomeTeamID == fixture.HomeTeamID || e.AwayTeamID == fixture.HomeTeamID) && e.ID != fixture.ID && (e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue) && !e.IsPostponed && e.FixtureTime < DateTime.Now.AddMinutes(-90)).ToListAsync();
+                
+                fixtures.ForEach(e => e.SelectedTeamID = fixture.HomeTeamID);
+                fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == fixture.HomeTeamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) ? "W" : (e.HomeTeamID == fixture.HomeTeamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) ? "L" : (e.AwayTeamID == fixture.HomeTeamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) ? "W" : (e.AwayTeamID == fixture.HomeTeamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) ? "L" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetAwayTeam(string fixtureID)
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+                Fixture fixture = await _context.Fixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
+
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport)
+                .Where(e => (e.HomeTeamID == fixture.AwayTeamID || e.AwayTeamID == fixture.AwayTeamID) && e.ID != fixture.ID && e.FixtureTime < DateTime.Now.AddMinutes(-90)).ToListAsync();
+
+                fixtures.ForEach(e => e.SelectedTeamID = fixture.HomeTeamID);
+                fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == fixture.AwayTeamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) ? "W" : (e.HomeTeamID == fixture.AwayTeamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) ? "L" : (e.AwayTeamID == fixture.AwayTeamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) ? "W" : (e.AwayTeamID == fixture.AwayTeamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) ? "L" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        //Depracated
         public async Task<IEnumerable<Fixture>> GetAll()
         {
             //return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7").ToListAsync();
             return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").ToListAsync();
         }
 
+
+        public async Task<IEnumerable<Fixture>> GetCupFixtures(string LeagueID, string MatchTypeID)
+        {
+            //return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7").ToListAsync();
+            return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.LeagueID == LeagueID && e.MatchTypeID == MatchTypeID).ToListAsync();
+        }
+
+        //Deprecated
         public async Task<IEnumerable<Fixture>> GetByTeam(string teamID)
         {
             return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.AwayTeamID == teamID || e.HomeTeamID == teamID).ToListAsync();
         }
 
-        public async Task<IEnumerable<Fixture>> GetByLeague(string leagueID)
+        public async Task<IEnumerable<Fixture>> GetFootballTeamFixtures(string teamID)
         {
-            //return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.LeagueID == leagueID && (e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7")).ToListAsync();
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
 
-            return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.LeagueID == leagueID).ToListAsync();
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport)
+                .Where(e => e.AwayTeamID == teamID || e.HomeTeamID == teamID).ToListAsync();
+
+                fixtures.ForEach(e => e.SelectedTeamID = teamID);
+                fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetFootballTeamForm(string teamID)
+        {
+            try
+            {
+                List<Fixture> fixtures = new List<Fixture>();
+
+                fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport)
+                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.FixtureTime < DateTime.Now && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).OrderByDescending(e => e.Date).Take(6).ToListAsync();
+
+                fixtures.ForEach(e => e.SelectedTeamID = teamID);
+                fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketFixture>> GetCricketTeamFixtures(string teamID)
+        {
+            try
+            {
+                List<CricketFixture> fixtures = new List<CricketFixture>();
+
+                fixtures = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters)
+                .Include(e => e.MatchInnings)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => e.AwayTeamID == teamID || e.HomeTeamID == teamID).ToListAsync();
+
+                fixtures.ForEach(e => e.SelectedTeamID = teamID);
+                //fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketFixture>> GetCricketTeamForm(string teamID)
+        {
+            try
+            {
+                List<CricketFixture> fixtures = new List<CricketFixture>();
+
+                fixtures = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters)
+                .Include(e => e.MatchInnings)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.FixtureTime < DateTime.Now && (e.MatchInnings != null && e.MatchInnings.Count > 0)).OrderByDescending(f => f.Date).Take(6).ToListAsync();
+
+                fixtures.ForEach(e => e.SelectedTeamID = teamID);
+                //fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Fixture>> GetFootballFixturesByLeague(string leagueID)
+        {
+            try
+            {
+                var fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport)
+                .Where(e => e.LeagueID == leagueID).ToListAsync();
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Cricket League Fixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketFixture>> GetCricketFixturesByLeague(string leagueID)
+        {
+            try
+            {
+                var fixtures = await _context.CricketFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.CricketRosters)
+                .Include(e => e.MatchInnings)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => e.LeagueID == leagueID).ToListAsync();
+
+                return fixtures;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Cricket League Fixtures");
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<spLiveFixtures>> GetLive()
         {
             try
             {
-                //var dateTime = DateTime.SpecifyKind(DateTime.Now.ToLocalTime(), DateTimeKind.Utc);
-                //string nzTimeZoneKey = "Atlantic/Bermuda";
-                //TimeZoneInfo nzTimeZone = TimeZoneInfo.FindSystemTimeZoneById(nzTimeZoneKey);
-                //DateTime nzDateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, nzTimeZone);
-
-                //var fixtures = await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.Date == nzDateTime.Date && (TimeSpan.Parse(e.Time)) < nzDateTime.TimeOfDay && (TimeSpan.Parse(e.Time)) <= nzDateTime.AddMinutes(110).TimeOfDay && (e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7") && !e.IsPostPoned).ToListAsync();
-
-                ////e => e.Date == DateTime.Now.Date && (TimeSpan.Parse(e.Time)) < DateTime.Now.TimeOfDay && (TimeSpan.Parse(e.Time)) <= DateTime.Now.AddMinutes(110).TimeOfDay &&
-
-                //return fixtures;
-
-                //SqlParameter StopID = new SqlParameter("@StopID", stopID);
-
                 string sqlQuery = "EXEC [dbo].[spLiveFixtures] ";
 
                 var fixtures = await _context.Query<spLiveFixtures>().FromSql(sqlQuery).ToListAsync();
@@ -78,16 +1486,74 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<spLiveFixtures>> GetLiveCricket()
+        {
+            try
+            {
+                string sqlQuery = "EXEC [dbo].[spLiveCricketFixtures] ";
+
+                var fixtures = await _context.Query<spLiveFixtures>().FromSql(sqlQuery).ToListAsync();
+
+                return fixtures;
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<spLiveFixtures>> GetLiveFootball()
+        {
+            try
+            {
+                string sqlQuery = "EXEC [dbo].[spLiveFootballFixtures] ";
+
+                var fixtures = await _context.Query<spLiveFixtures>().FromSql(sqlQuery).ToListAsync();
+
+                return fixtures;
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
 
         public async Task<IEnumerable<Fixture>> GetUpcoming()
         {
             //return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.Date > DateTime.Now.Date && (TimeSpan.Parse(e.Time)) > DateTime.Now.TimeOfDay && (e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7")).ToListAsync();
-            return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.Date > DateTime.Now.Date && (TimeSpan.Parse(e.Time)) > DateTime.Now.TimeOfDay).ToListAsync();
+            return await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport)
+                .Where(e => e.Date > DateTime.Now.Date && (TimeSpan.Parse(e.Time)) > DateTime.Now.TimeOfDay).ToListAsync();
         }
 
         public async Task<IEnumerable<Fixture>> GetPast()
         {
-            return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.Date < DateTime.Now.Date && (TimeSpan.Parse(e.Time)) < DateTime.Now.TimeOfDay && (e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7")).ToListAsync();
+            return await _context.Fixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.MatchRosters)
+                .Include(e => e.Season)
+                .Include(e => e.Sport)
+                .Where(e => e.Date < DateTime.Now.Date && (TimeSpan.Parse(e.Time)) < DateTime.Now.TimeOfDay && (e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7")).ToListAsync();
         }
 
         public async Task Insert(Fixture item)
@@ -105,13 +1571,326 @@ namespace OnTrackWebService.Repository
             { }
         }
 
+        public async Task Insert(CricketFixture item)
+        {
+            try
+            {
+                Season season = await _context.Seasons.FirstOrDefaultAsync(e => e.IsCurrent);
+
+                item.SeasonID = season.ID;
+
+                _context.CricketFixtures.Add(item);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        public async Task<ImportCricketFixtures> UploadCricketFixtures(IFormFile file)
+        {
+            try
+            {
+                List<CricketFixtures> errorFixtures = new List<CricketFixtures>();
+                List<CricketFixture> fixtures = new List<CricketFixture>();
+                List<Team> teams = await teamRepository.GetCricketTeams();
+                List<Field> fields = await _context.Fields.ToListAsync();
+                List<MatchType> matchTypes = await _context.MatchTypes.ToListAsync();
+                List<League> leagues = await leagueRepository.GetCricketLeagues();
+                List<Season> seasons = await seasonRepository.GetCricketSeason();
+                League league = null;
+                Field field = null;
+                MatchType matchType = null;
+                Team homeTeam = null;
+                Team awayTeam = null;
+                Season season = null;
+                string TBD = await settingRepository.GetString(Constants.SETTING_CRICKET_TBD_ID);
+                //Stream reader = file.OpenReadStream();
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    var records = csv.GetRecords<CricketFixtures>();
+
+                    foreach(var record in records)
+                    {
+                        try
+                        {
+                            league = leagues.FirstOrDefault(e => e.Name == record.League.Trim());
+                            field = fields.FirstOrDefault(e => e.Name == record.Field.Trim());
+                            matchType = matchTypes.FirstOrDefault(e => e.Name == record.MatchType.Trim());
+
+                            if (league.Name == "Cup Match")
+                            {
+                                homeTeam = teams.FirstOrDefault(e => (e.Name.Replace("'", "") == record.Home.Replace("'", "").Trim() || e.Alias == record.Home.Trim()) && e.League.Name == "Cup Match");
+                                awayTeam = teams.FirstOrDefault(e => (e.Name.Replace("'", "") == record.Away.Replace("'", "").Trim() || e.Alias == record.Away.Trim()) && e.League.Name == "Cup Match");
+                            }
+                            else
+                            {
+                                homeTeam = teams.FirstOrDefault(e => (e.Name.Replace("'", "") == record.Home.Replace("'", "").Trim() || e.Alias == record.Home.Trim()) && e.League.Name != "Cup Match");
+                                awayTeam = teams.FirstOrDefault(e => (e.Name.Replace("'", "") == record.Away.Replace("'", "").Trim() || e.Alias == record.Away.Trim()) && e.League.Name != "Cup Match");
+                            }
+
+                            season = seasons.FirstOrDefault(e => e.IsCurrent);
+
+                            fixtures.Add(new CricketFixture
+                            {
+                                Date = record.Date,
+                                Time = record.Time.AddHours(4).ToString("HH:mm:ss"),
+                                HomeTeamID = homeTeam != null ? homeTeam.ID : TBD,
+                                AwayTeamID = awayTeam != null ? awayTeam.ID : TBD,
+                                LeagueID = league.ID,
+                                MatchTypeID = matchType.ID,
+                                FieldID = field.ID,
+                                SeasonID = season.ID
+                            });
+                        }
+                        catch(Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorFixtures.Add(record);
+
+                        }
+                    }
+
+                    try
+                    {
+                        await AddFixtures(fixtures);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ImportCricketFixtures
+                        {
+                            Message = "Error importing schedule to database.",
+                            Exception = ex.Message
+                        };
+                    }
+                }
+
+                if(errorFixtures != null && errorFixtures.Count > 0)
+                {
+
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorFixtures);
+                        streamWriter.Flush();
+
+                        return new ImportCricketFixtures
+                        {
+                            Message = "Successfully imported schedule with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorFixtures,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportCricketFixtures
+                {
+                    Message = "Successfully imported schedule!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportCricketFixtures
+                {
+                    Message = "Error importing schedule!",
+                    Exception = ex.Message
+                };
+            }
+        }
+
+        public async Task<ImportFootballFixtures> UploadFootballFixtures(IFormFile file)
+        {
+            try
+            {
+                List<Fixtures> errorFixtures = new List<Fixtures>();
+                List<Fixture> fixtures = new List<Fixture>();
+                List<Team> teams = await teamRepository.GetFootballTeams();
+                List<Field> fields = await _context.Fields.ToListAsync();
+                List<MatchType> matchTypes = await _context.MatchTypes.ToListAsync();
+                List<League> leagues = await leagueRepository.GetFootballLeagues();
+                List<Season> seasons = await seasonRepository.GetFootballSeason();
+                League league = null;
+                Field field = null;
+                MatchType matchType = null;
+                Team homeTeam = null;
+                Team awayTeam = null;
+                Season season = null;
+
+                //Stream reader = file.OpenReadStream();
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    var records = csv.GetRecords<Fixtures>();
+
+                    foreach (var record in records)
+                    {
+                        try
+                        {
+                            league = leagues.FirstOrDefault(e => e.Name == record.League.Trim());
+                            field = fields.FirstOrDefault(e => e.Name == record.Field.Trim());
+                            matchType = matchTypes.FirstOrDefault(e => e.Name == record.MatchType.Trim());
+                            homeTeam = teams.FirstOrDefault(e => (e.Name.Replace("'", "") == record.Home.Replace("'", "").Trim() || e.Alias == record.Home.Trim()));
+                            awayTeam = teams.FirstOrDefault(e => e.Name.Replace("'", "") == record.Away.Replace("'", "").Trim() || e.Alias == record.Away.Trim());
+                            season = seasons.FirstOrDefault(e => e.IsCurrent);
+
+                            fixtures.Add(new Fixture
+                            {
+                                Date = record.Date,
+                                Time = record.Time.AddHours(4).ToString("HH:mm:ss"),
+                                HomeTeamID = homeTeam.ID,
+                                AwayTeamID = awayTeam.ID,
+                                LeagueID = league.ID,
+                                MatchTypeID = matchType.ID,
+                                FieldID = field.ID,
+                                SeasonID = season.ID
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorFixtures.Add(record);
+
+                        }
+                    }
+
+                    try
+                    {
+                        await UpdateFixtures(fixtures);
+                    }
+                    catch(Exception ex)
+                    {
+                        return new ImportFootballFixtures
+                        {
+                            Message = "Error importing schedule to database.",
+                            Exception = ex.Message
+                        };
+                    }
+                }
+
+                if (errorFixtures != null && errorFixtures.Count > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorFixtures);
+                        streamWriter.Flush();
+
+                        return new ImportFootballFixtures
+                        {
+                            Message = "Successfully imported schedule with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorFixtures,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportFootballFixtures
+                {
+                    Message = "Successfully imported schedule!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportFootballFixtures
+                {
+                    Message = "Error importing schedule!",
+                    Exception = ex.Message
+                };
+            }
+
+
+        }
+
+
         public async Task Update(Fixture item)
         {
-            _context.Fixtures.Update(item);
+            try
+            { 
+                _context.Fixtures.Update(item);
 
-            _context.Matches.Update(item.Match);
+                _context.Matches.Update(item.Match);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Fixture");
+            }
         }
+
+        public async Task Update(CricketFixture item)
+        {
+            try
+            { 
+                _context.CricketFixtures.Update(item);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Fixture");
+            }
+        }
+
+
+        public async Task AddFixtures(List<CricketFixture> items)
+        {
+            try
+            {
+                await _context.CricketFixtures.AddRangeAsync(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Fixtures");
+            }
+        }
+
+        public async Task UpdateFixtures(List<CricketFixture> items)
+        {
+            try
+            { 
+                _context.CricketFixtures.UpdateRange(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Fixtures");
+            }
+        }
+
+        public async Task UpdateFixtures(List<Fixture> items)
+        {
+            try
+            {
+                _context.Fixtures.UpdateRange(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Fixtures");
+            }
+        }
+
+        
+    }
+
+    public class InningScore
+    {
+        public string TeamID { get; set; }
+        public int Runs { get; set; }
+        public int Inning { get; set; }
+        public int Wickets { get; set; }
+        public decimal Overs { get; set; }
+        public Team Team { get; set; }
     }
 }

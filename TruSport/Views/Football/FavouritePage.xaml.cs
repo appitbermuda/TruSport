@@ -4,41 +4,44 @@ using TruSport.Data;
 using TruSport.Model;
 using TruSport.ViewModels;
 using TruSport.Views.Admin;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace TruSport.Views.Football
 {
     public partial class FavouritePage : ContentPage
     {
-        
+        FavouritePageViewModel favouritePageViewModel;
 
         public FavouritePage()
         {
-            
+            favouritePageViewModel = new FavouritePageViewModel();
 
             InitializeComponent();
+
+            this.BindingContext = favouritePageViewModel;
 
             //loader.Easing = Easing.Linear;
         }
 
         void Handle_SelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
         {
-            if (e.Index == 0)
-            {
-                TeamLabel.TextColor = Color.White;
-                FixtureLabel.TextColor = Color.Gray;
+            //if (e.Index == 0)
+            //{
+            //    TeamLabel.TextColor = Color.White;
+            //    FixtureLabel.TextColor = Color.Gray;
 
-                //TeamSelected.IsVisible = true;
-                //FixtureSelected.IsVisible = false;
-            }
-            else if (e.Index == 1)
-            {
-                FixtureLabel.TextColor = Color.White;
-                TeamLabel.TextColor = Color.Gray;
+            //    //TeamSelected.IsVisible = true;
+            //    //FixtureSelected.IsVisible = false;
+            //}
+            //else if (e.Index == 1)
+            //{
+            //    FixtureLabel.TextColor = Color.White;
+            //    TeamLabel.TextColor = Color.Gray;
 
-                //TeamSelected.IsVisible = false; 
-                //FixtureSelected.IsVisible = true;
-            }
+            //    //TeamSelected.IsVisible = false; 
+            //    //FixtureSelected.IsVisible = true;
+            //}
         }
 
         async void TeamSelected(object sender, Syncfusion.ListView.XForms.ItemSelectionChangedEventArgs e)
@@ -67,11 +70,6 @@ namespace TruSport.Views.Football
             FavouriteFixtureList.SelectedItems.Clear();
         }
 
-        async void AdminClicked(object sender, System.EventArgs e)
-        {
-            //await Navigation.PushModalAsync(new AdminMainPage());
-        }
-
         async void DeleteClicked(object sender, System.EventArgs e)
         {
             var deleteAll = await DisplayAlert("Clear Favourites", "Are you sure you want to clear your favourites list?", "Delete All", "Cancel");
@@ -80,24 +78,14 @@ namespace TruSport.Views.Football
             {
                 try
                 {
-                    //await databaseManager.DeleteAllFavourites(App.UserID);
+                    //await App.Database.DeleteAllFavourites();
+                    //FavouriteFixtureList.ItemsSource = favouritePageViewModel.FavouriteFixturesCollection;
+                    //TeamsList.ItemsSource = favouritePageViewModel.FavouriteTeamCollection;
+                    
                 }
                 catch (Exception ex)
                 { }
 
-                viewModel = new FavouritePageViewModel();
-                FavouriteFixtureList.ItemsSource = viewModel.FavouriteFixturesCollection;
-                TeamsList.ItemsSource = viewModel.FavouriteTeamCollection;
-
-                //List<Favourite> favourites = new List<Favourite>();
-                //favourites = await databaseManager.GetFavourites();
-
-                //var favouriteGroups = favourites.GroupBy(f => f.Type).Select(g => new Grouping<string, Favourite>(g.Key, g));
-                //FavouriteGroups = new ObservableCollection<Grouping<string, Favourite>>(favouriteGroups);
-                //FavouritesListView.ItemsSource = FavouriteGroups;
-
-                //if (favourites.Count == 0)
-                    //DeleteFavourites.IsEnabled = false;
             }
         }
     }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Rg.Plugins.Popup.Extensions;
-using Rg.Plugins.Popup.Pages;
 using Xamarin.Forms;
-using Rg.Plugins.Popup.Services;
 using TruSport.Data;
 using TruSport.Views.Football;
 using TruSport.ViewModels;
@@ -66,12 +63,6 @@ namespace TruSport.Views
             //await Task.Delay(2000);
             //await Navigation.RemovePopupPageAsync(loadingPage);
             //await Navigation.PushPopupAsync(new LoginSuccessPopupPage());
-            //await PopupNavigation.Instance.PushAsync(_signInPopup);
-        }
-
-        private async void OnCloseButtonTapped(object sender, EventArgs e)
-        {
-            await PopupNavigation.Instance.PopAllAsync();
             //await PopupNavigation.Instance.PushAsync(_signInPopup);
         }
     }

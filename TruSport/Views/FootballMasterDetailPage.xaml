@@ -4,15 +4,16 @@
                   x:Class="TruSport.Views.FootballMasterDetailPage" 
                   xmlns:pages="clr-namespace:TruSport.Views"
                   xmlns:footballPages="clr-namespace:TruSport.Views.Football"
-                  MasterBehavior="Popover">
+                  MasterBehavior="Popover"
+                  NavigationPage.HasNavigationBar="False">
     <MasterDetailPage.Master>
         <pages:FootballMasterDetailPageMaster x:Name="MasterPage" />
     </MasterDetailPage.Master>
     <MasterDetailPage.Detail>
-        <NavigationPage BarBackgroundColor="{StaticResource primaryBarBlue}"
-                BarTextColor="White">
+        <NavigationPage BarBackgroundColor="{DynamicResource navBackgroundColor}"
+                BarTextColor="{DynamicResource navTextColor}">
             <x:Arguments>
-                <footballPages:FixturePage />
+                <pages:FootballMasterDetailPageDetail />
             </x:Arguments>
         </NavigationPage>
     </MasterDetailPage.Detail>

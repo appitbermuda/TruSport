@@ -13,10 +13,13 @@ namespace TruSport.iOS
         {
             var cell = base.GetCell(item, reusableCell, tv);
             var view = item as ViewCell;
-            cell.SelectedBackgroundView = new UIView
-            {
-                BackgroundColor = UIColor.FromRGB(0, 145, 234)
-            };
+            //cell.SelectedBackgroundView = new UIView
+            //{
+            //    //BackgroundColor = UIColor.FromRGB(0, 145, 234)
+            //};
+
+            cell.BackgroundColor = UIColor.White;
+
             switch (item.StyleId)
             {
                 case "none":

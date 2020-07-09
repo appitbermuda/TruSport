@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
+using TruSport.Views.Football;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -15,17 +16,67 @@ namespace TruSport.Views
     {
         public FootballMasterDetailPage()
         {
-            Analytics.TrackEvent("Master detail page");
-
             InitializeComponent();
-            MasterPage.MatchListView.ItemTapped += ListView_ItemTapped;
-            MasterPage.TeamListView.ItemTapped += ListView_ItemTapped;
-            MasterPage.AdminListView.ItemTapped += ListView_ItemTapped;
+
             MasterPage.OnTrackListView.ItemTapped += ListView_ItemTapped;
 
             if (Device.RuntimePlatform == Device.iOS)
                 IsGestureEnabled = false;
+
+            //var defaultSport = SecureStorage.GetAsync("DefaultSport").Result;
+
+            //if (String.IsNullOrEmpty(defaultSport))
+            //{
+            //    defaultSport = "Football";
+            //    SecureStorage.SetAsync("DefaultSport", defaultSport);
+            //}
+
+            //var sport = SecureStorage.GetAsync("Sport").Result;
+
+            ////if (defaultSport != sport)
+            ////    SecureStorage.SetAsync("Sport", sport);
+
+            //if (sport == "Cricket")
+            //{
+            //    Detail = new NavigationPage(new Cricket.FixturePage())
+            //    {
+            //        BarBackgroundColor = (Color)App.Current.Resources["primaryBarBlue"],
+            //        BarTextColor = Color.White
+            //    };
+            //}
+            //else
+            //{
+            //    Detail = new NavigationPage(new Football.FixturePage())
+            //    {
+            //        BarBackgroundColor = (Color)App.Current.Resources["primaryBarBlue"],
+            //        BarTextColor = Color.White
+            //    };
+            //}
         }
+
+        //protected async override void OnAppearing()
+        //{
+        //    base.OnAppearing();
+
+        //    var sport = await SecureStorage.GetAsync("Sport");
+
+        //    if (sport == "Cricket")
+        //    {
+        //        Detail = new NavigationPage(new Cricket.FixturePage())
+        //        {
+        //            BarBackgroundColor = (Color)App.Current.Resources["primaryBarBlue"],
+        //            BarTextColor = Color.White
+        //        };
+        //    }
+        //    else
+        //    {
+        //        Detail = new NavigationPage(new Football.FixturePage())
+        //        {
+        //            BarBackgroundColor = (Color)App.Current.Resources["primaryBarBlue"],
+        //            BarTextColor = Color.White
+        //        };
+        //    }
+        //}
 
         private async void ListView_ItemTapped(object sender, Syncfusion.ListView.XForms.ItemTappedEventArgs e)
         {
@@ -66,24 +117,15 @@ namespace TruSport.Views
                 var page = (Page)Activator.CreateInstance(item.TargetType);
                 page.Title = item.Title;
 
-                //Detail = new NavigationPage(page)
-                //{
-                //    BarBackgroundColor = (Color)App.Current.Resources["primaryDarkBlue"],
-                //    BarTextColor = Color.White
-                //};
-
                 Detail = new NavigationPage(page)
                 {
-                    BarBackgroundColor = (Color)App.Current.Resources["primaryBarBlue"],
-                    BarTextColor = Color.White
+                    BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                    BarTextColor = (Color)App.Current.Resources["navTextColor"]
                 };
             }
 
             IsPresented = false;
 
-            MasterPage.AdminListView.SelectedItem = null;
-            MasterPage.MatchListView.SelectedItem = null;
-            MasterPage.TeamListView.SelectedItem = null;
             MasterPage.OnTrackListView.SelectedItem = null;
         }
     }

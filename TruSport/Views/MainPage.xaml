@@ -2,40 +2,78 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:syncfusion="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms"
-             xmlns:extension="clr-namespace:TruSport.Extensions"
-             x:Class="TruSport.MainPage">
+             xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters"
+             x:Class="TruSport.MainPage"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ImageConverter x:Key="imageConverter" />
+            <converters:CricketImageConverter x:Key="cricketImageConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid RowSpacing="0" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+        <Grid RowSpacing="1" BackgroundColor="White" VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Image Grid.Row="0" Source="OnTrack_Wordmark_Reversed.png"
+            <!--<StackLayout Grid.RowSpan="2">
+                <Image Source="OnTrack_512.png"
                                        Aspect="AspectFit"
-                                       WidthRequest="150"
+                                       
                                        HorizontalOptions="CenterAndExpand"
-                                       VerticalOptions="EndAndExpand"/>
-            <!--<syncfusion:SfBusyIndicator Grid.Row="1"
-                                           BackgroundColor="Transparent"
-                                  TextColor="{StaticResource primaryPink}"
-                                  VerticalOptions="FillAndExpand"
-                                  HorizontalOptions="FillAndExpand"
-                                  AnimationType="SingleCircle"  
-                                  ViewBoxWidth="50"
-                                            ViewBoxHeight="50"
-                                  IsVisible="{Binding IsActivityIndicatorVisible}"
-                                  Duration="3"
-                                                 />-->
-            <!--<extension:CustomLoader x:Name="loader" Grid.Row="1"
-                                        Source="ontrackindicator.png"
-                                        RotationLength="2000"
-                                        VerticalOptions="EndAndExpand"
-                                    WidthRequest="100"
-                                        HorizontalOptions="Center"
-                                        
-                                        IsRunning="{Binding IsActivityIndicatorVisible}"
-                                        IsVisible="{Binding IsActivityIndicatorVisible}"/>-->
-            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+                                       VerticalOptions="CenterAndExpand"/>
+            </StackLayout>-->
+            
+            <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CricketTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <Image Source="bcblogo.png"
+                                       Aspect="AspectFit"
+                                       
+                                       HorizontalOptions="FillAndExpand"
+                                       VerticalOptions="FillAndExpand"/>
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <forms:CachedImage Source="{Binding FeatureImages.HomeCricketImage, Converter={StaticResource cricketImageConverter}}" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                    <Label Text="CRICKET" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+            </StackLayout>
+            <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding FootballTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <Image Source="ontracklogo.png"
+                                       Aspect="AspectFit"
+                                       
+                                       HorizontalOptions="FillAndExpand"
+                                       VerticalOptions="FillAndExpand"/>
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <forms:CachedImage Source="{Binding FeatureImages.HomeFootballImage, Converter={StaticResource imageConverter}}" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                    <Label Text="FOOTBALL" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+            </StackLayout>
+            <ContentView BackgroundColor="{DynamicResource backgroundColor}" IsVisible="{Binding NoConnectivity}" Grid.RowSpan="2"/>
+            <StackLayout VerticalOptions="FillAndExpand"  IsVisible="{Binding NoConnectivity}" Grid.RowSpan="2">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding RefreshCommand}"/>
+                </StackLayout.GestureRecognizers>
+            </StackLayout>
+            <extension:NotContentView ActionText="Please connect to wifi or data." IsVisible="{Binding NoConnectivity}" Grid.RowSpan="2" InputTransparent="True"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Rg.Plugins.Popup.Services;
 using TruSport.Data;
 using TruSport.Services;
+using TruSport.ViewModel;
 using TruSport.Views;
+using TruSport.Views.Cricket;
 using TruSport.Views.Football;
 using Xamarin.Forms;
 
@@ -16,18 +17,36 @@ namespace TruSport
     {
         FixtureService fixtureService;
 
+        MainPageViewModel mainPageViewModel;
+
         public MainPage()
         {
+            mainPageViewModel = new MainPageViewModel(Navigation);
             fixtureService = new FixtureService();
 
+            
             InitializeComponent();
 
+            this.BindingContext = mainPageViewModel;
             //loader.Easing = Easing.Linear;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
+            if (App.Database != null)
+            {
+                var sport = await App.Database.GetDefaultSport();
+
+                if (sport != null && !String.IsNullOrEmpty(sport.Sport))
+                { 
+                    if (sport.Sport.ToLower() == "cricket")
+                        App.Current.MainPage = new CricketMasterDetailPage();
+                    else
+                        App.Current.MainPage = new FootballMasterDetailPage();
+                }
+            }
 
             //try
             //{

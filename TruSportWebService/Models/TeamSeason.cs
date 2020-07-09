@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnTrackWebService.Models
@@ -19,5 +20,28 @@ namespace OnTrackWebService.Models
         [ForeignKey("TeamID")]
         public Team Team { get; set; }
 
+        [NotMapped]
+        public virtual List<Transfer> Transfers { get; set; }
+
+        [NotMapped]
+        public virtual List<CricketFixture> CricketFixtures { get; set; }
+
+        [NotMapped]
+        public virtual List<CricketFixture> CricketForm { get; set; }
+
+        [NotMapped]
+        public virtual List<Fixture> Fixtures { get; set; }
+
+        [NotMapped]
+        public virtual List<Fixture> Form { get; set; }
+
+        [NotMapped]
+        public virtual List<PlayerSeason> Players { get; set; }
+
+        [NotMapped]
+        public virtual List<LeagueTable> FootballTable { get; set; }
+
+        [NotMapped]
+        public virtual List<CricketLeagueTable> CricketTable { get; set; }
     }
 }

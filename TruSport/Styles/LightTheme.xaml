@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:converter="clr-namespace:TruSport.Converters" x:Class="TruSport.Styles.LightTheme" Source="DefaultTheme.xaml">
+    <Color x:Key="backgroundColor">#FFFFFF</Color>
+    <Color x:Key="navBackgroundColor">#0e1550</Color>
+    <Color x:Key="navTextColor">#FFFFFF</Color>
+    <Color x:Key="listBackgroundColor">#F5F5F5</Color>
+    <Color x:Key="listSelectedBackgroundColor">#F0F0F0</Color>
+    <Color x:Key="headerBackgroundColor">#F5F5F5</Color>
+    <Color x:Key="GroupHeaderBackgroundColor">#1d2462</Color>
+    <Color x:Key="frameBackgroundColor">#F9F9F9</Color>
+    <Color x:Key="controlHeaderBackgroundColor">#F5F5F5</Color>
+    <Color x:Key="controlElementBackgroundColor">#F0F0F0</Color>
+    <Color x:Key="TextPrimaryColor">#000000</Color>
+    <Color x:Key="TextSecondaryColor">#000000</Color>
+    <Color x:Key="TextThirdColor">#646464</Color>
+    <Color x:Key="TextHeaderColor">#FFFFFF</Color>
+    <Color x:Key="tabHeaderColor">#F5F5F5</Color>
+    <Color x:Key="tabTextColor">#000000</Color>
+    <Color x:Key="tabIndicatorColor">#0e1550</Color>
+    <Color x:Key="borderColor">#ebebeb</Color>
+    <Color x:Key="indicatorColor">#0e1550</Color>
+    <Color x:Key="indicatorTextColor">#FFFFFF</Color>
+    <Color x:Key="iconColor">#0e1550</Color>
+</ResourceDictionary>

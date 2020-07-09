@@ -1,39 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extension="clr-namespace:TruSport.Extensions"  x:Class="TruSport.Views.OnTrackPage" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters"  x:Class="TruSport.Views.OnTrackPage" NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ImageConverter x:Key="imageConverter" />
+            <converters:CricketImageConverter x:Key="cricketImageConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid VerticalOptions="FillAndExpand">
-            <!--<StackLayout Grid.Row="0" Padding="120,0"
-                             HorizontalOptions="FillAndExpand"
-                             VerticalOptions="EndAndExpand">
-                    <Image VerticalOptions="CenterAndExpand"
-                           HorizontalOptions="CenterAndExpand"
-                           Source="eleresports_wordmark.png"
-                           Aspect="AspectFit"/>
-                <extension:CustomLoader x:Name="loader"
-                                        Source="ontrackindicator.png"
-                                        RotationLength="2000"
-                                        VerticalOptions="EndAndExpand"
-                                        WidthRequest="100"
-                                        HorizontalOptions="Center"
-                                        IsRunning="True"
-                                        IsVisible="True">
-                    <extension:CustomLoader.HeightRequest>
-                        <OnPlatform x:TypeArguments="x:Double">
-                            <On Platform="Android" Value="100" />
-                            <On Platform="iOS" Value="100" />
-                        </OnPlatform>
-                    </extension:CustomLoader.HeightRequest>
-                </extension:CustomLoader>
-                </StackLayout>-->
-            <StackLayout Grid.Row="0" Padding="85,10,85,0"
-                             HorizontalOptions="FillAndExpand"
-                             VerticalOptions="CenterAndExpand">
-                    <Image VerticalOptions="CenterAndExpand"
-                           HorizontalOptions="FillAndExpand"
-                           Source="ontrack_wordmark_reversed"
-                           Aspect="AspectFit">
-                    </Image>
-                </StackLayout>
+        <Grid RowSpacing="0" BackgroundColor="{StaticResource primaryDarkBlueTwo}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!--<StackLayout Grid.RowSpan="2">
+                <Image Source="OnTrack_512.png"
+                                       Aspect="AspectFit"
+                                       
+                                       HorizontalOptions="CenterAndExpand"
+                                       VerticalOptions="CenterAndExpand"/>
+            </StackLayout>-->
+            <ContentView Grid.RowSpan="2" BackgroundColor="Black" Opacity=".5"/>
+            <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CricketTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Frame BackgroundColor="Transparent" VerticalOptions="FillAndExpand" CornerRadius="10" Padding="0" HasShadow="False"> 
+                    <Grid RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <Image Source="bcblogo.png"
+                                       Aspect="AspectFill"
+                                       
+                                       HorizontalOptions="FillAndExpand"
+                                       VerticalOptions="FillAndExpand"/>
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <forms:CachedImage Source="{Binding FeatureImages.HomeCricketImage, Converter={StaticResource cricketImageConverter}}" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                    <Label Text="CRICKET" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+                    </Frame>
+            </StackLayout>
+            <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding FootballTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Frame BackgroundColor="Transparent" VerticalOptions="FillAndExpand" CornerRadius="10" Padding="0" HasShadow="False" >
+                    <Grid RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <Image Source="OnTrack_512.png"
+                                       Aspect="AspectFill"
+                                       
+                                       HorizontalOptions="FillAndExpand"
+                                       VerticalOptions="FillAndExpand"/>
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <forms:CachedImage Source="{Binding FeatureImages.HomeFootballImage, Converter={StaticResource imageConverter}}" ErrorPlaceholder="OnTrack_512.png" LoadingPlaceholder="OnTrack_512.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                    <Label Text="FOOTBALL" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+                    </Frame>
+            </StackLayout>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

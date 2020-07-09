@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Rg.Plugins.Popup.Services;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;

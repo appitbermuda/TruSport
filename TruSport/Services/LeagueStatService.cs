@@ -116,6 +116,74 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<LeagueStat>> GetMostRunsByPlayer()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/RunsByPlayer", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueStat>> GetMostWicketsByPlayer()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/WicketsByPlayer", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
         public async Task<List<LeagueStat>> GetGoalsScoredByPlayerByTeam(string teamID)
         {
             try

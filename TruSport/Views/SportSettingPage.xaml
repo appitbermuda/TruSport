@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:converters="clr-namespace:TruSport.Converters" x:Class="TruSport.Views.SportSettingPage" Title="Sport">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converters:SportSelectedConverter x:Key="sportSelectedConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <TableView Intent="Settings">
+                <TableRoot>
+                    <TableSection>
+                        <ViewCell x:Name="CricketCell" Tapped="CricketCell_Tapped">
+                            <ViewCell.View>
+                                <StackLayout Padding="20,0" VerticalOptions="CenterAndExpand">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackLayout>
+                                            <Label Text="Cricket" FontAttributes="Bold" FontSize="Medium"/>
+                                         </StackLayout>
+                                        <StackLayout Grid.Column="1">
+                                            <Label Text="{Binding DefaultSport, Converter={StaticResource sportSelectedConverter}, ConverterParameter='Cricket'}" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{StaticResource primaryDarkBlueTwo}"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                        <ViewCell x:Name="FootballCell" Tapped="FootballCell_Tapped">
+                            <ViewCell.View>
+                                <StackLayout Padding="20,0" VerticalOptions="CenterAndExpand">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackLayout>
+                                            <Label Text="Football" FontAttributes="Bold" FontSize="Medium"/>
+                                         </StackLayout>
+                                        <StackLayout Grid.Column="1">
+                                            <Label Text="{Binding DefaultSport, Converter={StaticResource sportSelectedConverter}, ConverterParameter='Football'}" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{StaticResource primaryDarkBlueTwo}"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                            <!--<Grid HorizontalOptions="FillAndExpand" BackgroundColor="White">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackLayout Padding="20,0" VerticalOptions="CenterAndExpand">
+                                    <Label Text="Default" FontAttributes="Bold" FontSize="Medium"/>
+                                </StackLayout>
+                                <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="CenterAndExpand">
+                                    <Label Text="{Binding DefaultSport}" TextColor="LightGray" FontSize="Medium"/>
+                                </StackLayout>
+                            </Grid>-->
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+
+            <!--<Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackLayout Padding="10">
+                    <Label Text="Football" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+                <StackLayout Grid.Column="1" HorizontalOptions="EndAndExpand" Padding="10" Orientation="Horizontal">
+                    <Frame IsVisible="{Binding IsFootballDefault}" CornerRadius="5" HasShadow="False" BorderColor="{DynamicResource indicatorColor}">
+                    <Label Text="default"  TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                    </Frame>
+                    <Button Text="Set Default" Padding="10,0" IsVisible="{Binding IsFootballDefault, Converter={StaticResource inverseBooleanConverter}}" TextColor="{DynamicResource frameBackgroundColor}" Command="{Binding SelectedSportCommand}" CommandParameter="Football" BackgroundColor="{DynamicResource indicatorColor}"/>
+                </StackLayout>
+                <BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke" />
+                <StackLayout Grid.Row="2" Padding="10">
+                    <Label Text="Cricket" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+                <StackLayout Grid.Row="2" Grid.Column="1" HorizontalOptions="EndAndExpand" Padding="10" Orientation="Horizontal">
+                    <Frame IsVisible="{Binding IsCricketDefault}" CornerRadius="5" HasShadow="False" BorderColor="{DynamicResource indicatorColor}">
+                    <Label Text="default" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                        </Frame>
+                    <Button Text="Set Default" Padding="10,0" IsVisible="{Binding IsCricketDefault, Converter={StaticResource inverseBooleanConverter}}" TextColor="{DynamicResource frameBackgroundColor}" Command="{Binding SelectedSportCommand}" CommandParameter="Cricket" BackgroundColor="{DynamicResource indicatorColor}"/>
+                </StackLayout>
+            </Grid>-->
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

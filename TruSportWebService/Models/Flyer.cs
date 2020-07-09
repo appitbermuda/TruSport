@@ -8,5 +8,9 @@ namespace OnTrackWebService.Models
         public string ID { get; set; }
         public string Name { get; set; }
         public DateTime ExpiryDate { get; set; }
+        public string SportID { get; set; }
+
+        [ForeignKey("SportID")]
+        public Sport Sport { get; set; }
     }
 }

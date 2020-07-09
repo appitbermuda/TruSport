@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.Azure.NotificationHubs;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OnTrackWebService.Data;
@@ -30,55 +31,79 @@ namespace OnTrackWebService.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<string> Send(string name, string title, string body)
+        public async Task<string> SendTest(string message)
         {
             // let's assume you have a User object that contains 
             // * iOS Devices 
             // * Android Devices
-            var push = new Push
-            {
-                Content = new Content
-                {
-                    Name = name,
-                    Title = title,
-                    Body = body
-                },
-                Target = null
-            };
+            NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString(Constants.FullAccessConnectionString, Constants.NotificationHubName);
+            Dictionary<string, string> templateParameters = new Dictionary<string, string>();
+
+            templateParameters["messageParam"] = message;
 
             try
             {
-
-                HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Add(Constants.ApiKeyName, Constants.ApiKey);
-
-
-                var json = JsonConvert.SerializeObject(push);
-                HttpContent content = new StringContent(json);
-
-                //content.Headers
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-
-
-                //if (user.IOSDevices.Any())
-                //{
-                //push.Target.Devices = user.IOSDevices;
-                await client.PostAsync($"{Constants.Url}{Constants.Organization}/{Constants.IOS}/{Constants.Apis.Notification}", content);
-                //}
-
-                //if (user.AndroidDevices.Any())
-                //{
-                //push.Target.Devices = user.AndroidDevices;
-                await client.PostAsync($"{Constants.Url}{Constants.Organization}/{Constants.Android}/{Constants.Apis.Notification}", content);
-                //}
+                await hub.SendTemplateNotificationAsync(templateParameters, "default");
+                Console.WriteLine($"Sent message to default subscribers.");
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                Console.WriteLine($"Failed to send template notification: {ex.Message}");
             }
 
             return "Notification sent successfully!";
+        }
+
+        public async Task<string> SendTagNotification(string message, string tag)
+        {
+            // let's assume you have a User object that contains 
+            // * iOS Devices 
+            // * Android Devices
+            NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString(Constants.FullAccessConnectionString, Constants.NotificationHubName);
+            Dictionary<string, string> templateParameters = new Dictionary<string, string>();
+
+            templateParameters["messageParam"] = message;
+
+            try
+            {
+                await hub.SendTemplateNotificationAsync(templateParameters, tag);
+                Console.WriteLine($"Sent message to {tag} subscribers.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send template notification: {ex.Message}");
+            }
+
+            return "Notification sent successfully!";
+        }
+
+        public async Task<string> SendNotification(string message)
+        {
+            // let's assume you have a User object that contains 
+            // * iOS Devices 
+            // * Android Devices
+            NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString(Constants.FullAccessConnectionString, Constants.NotificationHubName);
+            Dictionary<string, string> templateParameters = new Dictionary<string, string>();
+
+            templateParameters["messageParam"] = message;
+
+            try
+            {
+                await hub.SendTemplateNotificationAsync(templateParameters, "default");
+                Console.WriteLine($"Sent message to default subscribers.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send template notification: {ex.Message}");
+            }
+
+            return "Notification sent successfully!";
+        }
+
+        public Task<string> Send(string name, string title, string body)
+        {
+            //DeviceInstallation
+            throw new NotImplementedException();
         }
     }
 }

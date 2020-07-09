@@ -47,7 +47,7 @@ namespace OnTrackWebService.Repository
 
         public async Task<User> Get(string id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(e => e.ID == id);
+            var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.ID == id);
 
             user.Password = null;
 
@@ -75,7 +75,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var user = await _context.Users.Include("UserType").Include("Team").FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
+                var user = await _context.Users.Include(e => e.Role).Include(e => e.Team).FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
 
                 if (user != null)
                 {
@@ -91,7 +91,7 @@ namespace OnTrackWebService.Repository
                             Subject = new ClaimsIdentity(new Claim[]
                             {
                                 new Claim(ClaimTypes.Name, user.Email.ToString()),
-                                new Claim(ClaimTypes.Role, user.UserType.Name)
+                                new Claim(ClaimTypes.Role, user.Role.Name)
                             }),
                             Expires = DateTime.UtcNow.AddYears(100),
                             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -103,18 +103,6 @@ namespace OnTrackWebService.Repository
                         user.Password = null;
 
                         return user;
-                        //return new UserResponse
-                        //{
-                        //    ID = user.ID,
-                        //    FirstName = user.FirstName,
-                        //    LastName = user.LastName,
-                        //    UserType = user.UserType,
-                        //    UserTypeID = user.UserTypeID,
-                        //    Email = user.Email,
-                        //    Team = user.Team,
-                        //    TeamID = user.TeamID
-                        //};
-
 
                     }
                 }
@@ -137,18 +125,18 @@ namespace OnTrackWebService.Repository
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                user = await _context.Users.Include(e => e.UserType).Include(e => e.Team).FirstOrDefaultAsync(e => e.ID == user.ID);
+                user = await _context.Users.Include(e => e.Role).Include(e => e.Team).FirstOrDefaultAsync(e => e.ID == user.ID);
 
                 //SEND EMAIL
-                await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.UserType.Name, user.Team != null ? user.Team.Name : null);
+                await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.Role.Name, user.Team != null ? user.Team.Name : null);
                 
                 return new UserResponse
                 {
                     ID = user.ID,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    UserType = user.UserType,
-                    UserTypeID = user.UserTypeID,
+                    Role = user.Role,
+                    RoleID = user.RoleID,
                     Email = user.Email,
                     TeamID = user.TeamID,
                     Team = user.Team
@@ -254,7 +242,7 @@ namespace OnTrackWebService.Repository
                 dbUser.FirstName = item.FirstName;
                 dbUser.LastName = item.LastName;
                 dbUser.Email = item.Email;
-                dbUser.UserTypeID = item.UserTypeID;
+                dbUser.RoleID = item.RoleID;
                 dbUser.TeamID = item.TeamID;
                 dbUser.IsValidated = item.IsValidated;
 
@@ -285,7 +273,7 @@ namespace OnTrackWebService.Repository
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.Email.ToString()),
-                    new Claim(ClaimTypes.Role, user.UserType.Name)
+                    new Claim(ClaimTypes.Role, user.Role.Name)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Rg.Plugins.Popup.Extensions;
-using Rg.Plugins.Popup.Pages;
 using Xamarin.Forms;
-using Rg.Plugins.Popup.Services;
 using TruSport.Data;
 using TruSport.Model;
 using TruSport.Views.Football;
@@ -139,12 +136,6 @@ namespace TruSport.Views
         private void ConfirmPasswordTextChanged(object sender, EventArgs e)
         {
             ConfirmPasswordEntry.TextColor = Color.Black;
-        }
-
-        private async void OnCloseButtonTapped(object sender, EventArgs e)
-        {
-            await PopupNavigation.Instance.PopAllAsync();
-            //await PopupNavigation.Instance.PushAsync(_signInPopup);
         }
     }
 }

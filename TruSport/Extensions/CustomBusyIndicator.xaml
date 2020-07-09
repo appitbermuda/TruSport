@@ -1,15 +1,17 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:busyindicator="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms" x:Class="TruSport.Extensions.CustomBusyIndicator">
     <ContentView.Content>
+        <StackLayout  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <ContentView BackgroundColor="Black" Opacity=".1"/>
         <Grid HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Frame HeightRequest="50" WidthRequest="50" CornerRadius="10" Padding="0" BackgroundColor="Black" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                        <Frame HeightRequest="50" WidthRequest="50" BackgroundColor="Black" CornerRadius="10" Padding="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" IsClippedToBounds="True">
+                    <Frame HeightRequest="50" WidthRequest="50" CornerRadius="10" Padding="0" BackgroundColor="{DynamicResource indicatorColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Frame HeightRequest="50" WidthRequest="50" BackgroundColor="{DynamicResource indicatorColor}" CornerRadius="10" Padding="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" IsClippedToBounds="True">
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <ContentView Opacity=".2" BackgroundColor="White"/>
-
+                    <!--<ContentView Opacity=".2" BackgroundColor="Black"/>-->
             <busyindicator:SfBusyIndicator x:Name="syncIndicator"
                                                AnimationType="SingleCircle" 
                                                ViewBoxWidth="25" 
@@ -17,10 +19,12 @@
                                            Duration="3"
                                                TextSize="20"
                                            VerticalOptions="Center"
-                                               TextColor="White"/>
+                                               TextColor="{DynamicResource indicatorTextColor}"/>
                             </Grid>
                         </Frame>
                         </Frame>
                 </Grid>
+                </Grid>
+            </StackLayout>
     </ContentView.Content>
 </ContentView>

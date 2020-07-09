@@ -104,6 +104,44 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("RunsByPlayer")]
+        public async Task<IActionResult> GetRunsByPlayer()
+        {
+            try
+            {
+                IEnumerable<RunsByPlayer> leagueStats = await _leagueStatRepository.GetRunsByPlayer();
+
+                if (leagueStats != null)
+                    return Ok(leagueStats);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("WicketsByPlayer")]
+        public async Task<IActionResult> GetWicketsByPlayer()
+        {
+            try
+            {
+                IEnumerable<WicketsByPlayer> leagueStats = await _leagueStatRepository.GetWicketsByPlayer();
+
+                if (leagueStats != null)
+                    return Ok(leagueStats);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("GoalsScoredByPlayerByTeam")]
         public async Task<IActionResult> GoalsScoredByPlayerByTeam(string teamID)
         {
@@ -183,7 +221,7 @@ namespace OnTrackWebService.Controllers
         }
 
         //// POST api/values
-        //[Authorize(Roles = Role.Admin)]
+        //[Authorize(Roles = Roles.Admin)]
         //[HttpPost]
         //[Route("Insert")]
         //public async Task<IActionResult> Post([FromBody] LeagueStat leagueStat)
@@ -202,7 +240,7 @@ namespace OnTrackWebService.Controllers
         //    return NoContent();
         //}
 
-        //[Authorize(Roles = Role.Admin)]
+        //[Authorize(Roles = Roles.Admin)]
         //[HttpPost]
         //[Route("Update")]
         //public async Task<IActionResult> Update([FromBody] LeagueStat leagueStat)
@@ -222,7 +260,7 @@ namespace OnTrackWebService.Controllers
         //}
 
         //// DELETE api/values/5
-        //[Authorize(Roles = Role.Admin)]
+        //[Authorize(Roles = Roles.Admin)]
         //[HttpDelete]
         //[Route("Delete")]
         //public async Task<IActionResult> Delete(string id)

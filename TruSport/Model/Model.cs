@@ -7,11 +7,205 @@ using SQLite;
 
 namespace TruSport.Model
 {
+    public class Batting
+    {
+        public string ID { get; set; }
+        public string CricketRosterID { get; set; }
+        public string OutTypeID { get; set; }
+        public string FirstFielderID { get; set; }
+        public string SecondFielderID { get; set; }
+        public int Order { get; set; }
+        public int? Run { get; set; }
+        public int? Ball { get; set; }
+        public int? Four { get; set; }
+        public int? Six { get; set; }
+
+
+        [Ignore]
+        public CricketRoster CricketRoster { get; set; }
+
+        //[ForeignKey("OutTypeID")]
+        //public OutType OutType { get; set; }
+
+        [Ignore]
+        public Fielding FirstFielder { get; set; }
+
+        [Ignore]
+        public Fielding SecondFielder { get; set; }
+    }
+
+    public class Fielding
+    {
+        public string ID { get; set; }
+        public string CricketRosterID { get; set; }
+        public int Over { get; set; }
+        public int Maiden { get; set; }
+        public int Run { get; set; }
+        public int Wicket { get; set; }
+        public int NoBall { get; set; }
+        public int Wide { get; set; }
+
+
+        [Ignore]
+        public CricketRoster CricketRoster { get; set; }
+    }
+
+    public class CricketMatch
+    {
+        public string FixtureID { get; set; }
+        public string TeamID { get; set; }
+        public int? Runs { get; set; }
+        public int? Wickets { get; set; }
+        public decimal? Overs { get; set; }
+        public int? Extras { get; set; }
+        public int? Bye { get; set; }
+        public int? LegBye { get; set; }
+        public int? NoBall { get; set; }
+        public int? Wide { get; set; }
+
+        [Ignore]
+        public Fixture Fixture { get; set; }
+
+        [Ignore]
+        public Team Team { get; set; }
+    }
+
+    public class CricketFieldingRoster
+    {
+        public string ID { get; set; }
+        public string CricketScoreID { get; set; }
+        public string TeamID { get; set; }
+        public string PlayerID { get; set; }
+        public int Overs { get; set; }
+        public int Maidens { get; set; }
+        public int Runs { get; set; }
+        public int Wickets { get; set; }
+        public int NoBalls { get; set; }
+        public int Wides { get; set; }
+
+
+        [Ignore]
+        public CricketScore CricketScore { get; set; }
+
+        [Ignore]
+        public Team Team { get; set; }
+
+        [Ignore]
+        public Player Player { get; set; }
+    }
+
+    public class CricketBattingRoster
+    {
+        public string ID { get; set; }
+        public string CricketScoreID { get; set; }
+        public string OutTypeID { get; set; }
+        public string FirstFielderRosterID { get; set; }
+        public string SecondFielderRosterID { get; set; }
+        public string TeamID { get; set; }
+        public string PlayerID { get; set; }
+        public int Order { get; set; }
+        public int? Runs { get; set; }
+        public int? Balls { get; set; }
+        public int? Four { get; set; }
+        public int? Six { get; set; }
+
+
+        [Ignore]
+        public CricketScore CricketScore { get; set; }
+
+        [Ignore]
+        public OutType OutType { get; set; }
+
+        [Ignore]
+        public CricketFieldingRoster FirstFielderRoster { get; set; }
+
+        [Ignore]
+        public CricketFieldingRoster SecondFielderRoster { get; set; }
+
+        [Ignore]
+        public Team Team { get; set; }
+
+        [Ignore]
+        public Player Player { get; set; }
+    }
+
+    public class OutType
+    {
+        public string ID { get; set; }
+        public string Name { get; set; }
+        public string Initial { get; set; }
+    }
+
+    public class CricketScore
+    {
+        public string ID { get; set; }
+        public string FixtureID { get; set; }
+        public string BattingTeamID { get; set; }
+        public string BowlingTeamID { get; set; }
+        public int? Runs { get; set; }
+        public int? Wickets { get; set; }
+        public decimal? Overs { get; set; }
+        public int? Extras { get; set; }
+        public int? Bye { get; set; }
+        public int? LegBye { get; set; }
+        public int? NoBall { get; set; }
+        public int? Wide { get; set; }
+        public int Innings { get; set; }
+        public int MatchInnings { get; set; }
+
+        [Ignore]
+        public Fixture Fixture { get; set; }
+
+        [Ignore]
+        public Team BattingTeam { get; set; }
+
+        [Ignore]
+        public Team BowlingTeam { get; set; }
+    }
+
+    public class AwardType
+    {
+        public string ID { get; set; }
+        public string Name { get; set; }
+
+    }
+
+    public class Award
+    {
+        public string ID { get; set; }
+        public string PlayerID { get; set; }
+        public string AwardTypeID { get; set; }
+        public string Image { get; set; }
+        public string SeasonID { get; set; }
+        public string SportID { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime ExpiryDate { get; set; }
+
+        public virtual Player Player { get; set; }
+        public virtual AwardType AwardType { get; set; }
+        public virtual Season Season { get; set; }
+        public virtual Sport Sport { get; set; }
+    }
+
     public class Flyer
     {
         public string ID { get; set; }
         public string Name { get; set; }
         public DateTime Date { get; set; }
+    }
+
+    public class DefaultSport
+    {
+        [PrimaryKey, AutoIncrement]
+        public int ID { get; set; }
+        public string SportID { get; set; }
+        public string Sport { get; set; }
+    }
+
+    public class Sport
+    {
+        public string ID { get; set; }
+        public string Name { get; set; }
     }
 
     public class Transfers
@@ -21,6 +215,26 @@ namespace TruSport.Model
         public string PreviousTeam { get; set; }
         public string NewTeam { get; set; }
         public string Date { get; set; }
+    }
+
+    public class Transfer
+    {
+        public string PlayerName { get; set; }
+        public string PreviousTeam { get; set; }
+        public string NewTeamID { get; set; }
+        public string SeasonID { get; set; }
+        public string SportID { get; set; }
+        public string Date { get; set; }
+        public bool IsLateTransfer { get; set; }
+
+        [Ignore]
+        public Team NewTeam { get; set; }
+
+        [Ignore]
+        public Season Season { get; set; }
+
+        [Ignore]
+        public Sport Sport { get; set; }
     }
 
     public class Season
@@ -56,10 +270,33 @@ namespace TruSport.Model
         [Ignore]
         public Season Season { get; set; }
 
-
         //[ForeignKey("TeamID")]
         [Ignore]
         public Team Team { get; set; }
+
+        [Ignore]
+        public virtual List<Transfer> Transfers { get; set; }
+
+        [Ignore]
+        public virtual List<CricketFixture> CricketFixtures { get; set; }
+
+        [Ignore]
+        public virtual List<CricketFixture> CricketForm { get; set; }
+
+        [Ignore]
+        public virtual List<Fixture> Fixtures { get; set; }
+
+        [Ignore]
+        public virtual List<Fixture> Form { get; set; }
+
+        [Ignore]
+        public virtual List<PlayerSeason> Players { get; set; }
+
+        [Ignore]
+        public virtual List<LeagueTable> FootballTable { get; set; }
+
+        [Ignore]
+        public virtual List<CricketLeagueTable> CricketTable { get; set; }
 
     }
 
@@ -129,20 +366,50 @@ namespace TruSport.Model
         public string Alias { get; set; }
         public string TeamLogo { get; set; }
 
-
-        //[ForeignKey("LeagueID")]
-        [Ignore]
-        public League League { get; set; }
-
-        //[ForeignKey("HomeFieldID")]
         [Ignore]
         public Field Field { get; set; }
 
-        //[Ignore]
-        //public virtual List<Player> Players { get; set; }
-
         [Ignore]
         public virtual List<Coach> Coaches { get; set; }
+
+        [Ignore]
+        public League League { get; set; }
+
+        [Ignore]
+        public virtual LeagueTable FootballTable { get; set; }
+
+        [Ignore]
+        public virtual CricketLeagueTable CricketTable { get; set; }
+
+        [Ignore]
+        public virtual List<TeamSeason> TeamSeasons { get; set; }
+
+        //[Ignore]
+        //public virtual List<Transfer> Transfers { get; set; }
+
+        [Ignore]
+        public virtual List<CricketFixture> CricketFixtures { get; set; }
+
+        [Ignore]
+        public virtual List<Fixture> Fixtures { get; set; }
+
+        [Ignore]
+        public virtual List<CricketFixture> CricketForm { get; set; }
+
+        [Ignore]
+        public virtual List<Fixture> Form { get; set; }
+
+        [Ignore]
+        public virtual bool IsFavourite { get; set; }
+
+        //[Ignore]
+        //public virtual List<PlayerSeason> Players { get; set; }
+
+        //[Ignore]
+        //public virtual List<LeagueTable> FootballTable { get; set; }
+
+        //[Ignore]
+        //public virtual List<CricketLeagueTable> CricketTable { get; set; }
     }
 
     public class TeamProfile
@@ -278,6 +545,7 @@ namespace TruSport.Model
     {
         public string ID { get; set; }
         public string TeamID { get; set; }
+        public string TeamLogo { get; set; }
         public string SeasonID { get; set; }
         public string SeasonDate { get; set; }
         public string LeagueID { get; set; }
@@ -292,6 +560,33 @@ namespace TruSport.Model
         public int GoalsFor { get; set; }
         public int GoalsAgainst { get; set; }
         public int GoalDiff { get; set; }
+        public bool IsSelectedTeam { get; set; }
+
+        //[ForeignKey("TeamID")]
+        public Team Team { get; set; }
+
+        //[ForeignKey("LeagueID")]
+        public League League { get; set; }
+
+        public Season Season { get; set; }
+    }
+
+    public class CricketLeagueTable
+    {
+        public string ID { get; set; }
+        public string TeamID { get; set; }
+        public string TeamLogo { get; set; }
+        public string SeasonID { get; set; }
+        public string SeasonDate { get; set; }
+        public string LeagueID { get; set; }
+        public string LeagueName { get; set; }
+        public string Name { get; set; }
+        public int Position { get; set; }
+        public int Played { get; set; }
+        public int Wins { get; set; }
+        public int Loss { get; set; }
+        public int Draws { get; set; }
+        public int Points { get; set; }
         public bool IsSelectedTeam { get; set; }
 
         //[ForeignKey("TeamID")]
@@ -403,29 +698,42 @@ namespace TruSport.Model
         public string SelectedTeamID { get; set; }
         public string SelectedTeamResult { get; set; }
         public bool IsPostponed { get; set; }
+        public bool IsCancelled { get; set; }
         //public DateTime FixtureTime { get; set; }
 
         [Ignore]
         //public DateTime FixtureTime => Date.Add(new DateTime().AddDays(5).Add(TimeSpan.Parse(Time)).ToLocalTime().TimeOfDay);
-        public DateTime FixtureTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? Date.AddDays(1).Add(TimeSpan.Parse(Time)).ToLocalTime() : Date.Add(TimeSpan.Parse(Time)).ToLocalTime();
+        public DateTime FixturesTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? TimeZoneInfo.ConvertTime(Date.AddDays(1).Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local) : TimeZoneInfo.ConvertTime(Date.Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local);
+        //public DateTime FixtureTime => TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Utc, TimeZoneInfo.Local);
 
-        //[ForeignKey("HomeTeamID")]
+        [Ignore]
+        public DateTime FixtureTimeTest => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? TimeZoneInfo.ConvertTime(Date.AddDays(1).Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local) : TimeZoneInfo.ConvertTime(Date.Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local);
+
+        [Ignore]
+        public DateTime FixtureTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
+                        TimeZoneInfo.ConvertTime(Date.AddDays(1).Add((TimeSpan.Parse(Time) + (TimeZoneInfo.Local.GetUtcOffset(new DateTime().Date + TimeSpan.Parse(Time)) - TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)))), TimeZoneInfo.Utc, TimeZoneInfo.Local) :
+                        TimeZoneInfo.ConvertTime(Date.AddDays(1).Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local) : TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
+                        TimeZoneInfo.ConvertTime(Date.Add((TimeSpan.Parse(Time) + (TimeZoneInfo.Local.GetUtcOffset(new DateTime().Date + TimeSpan.Parse(Time)) - TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)))), TimeZoneInfo.Utc, TimeZoneInfo.Local) :
+                        TimeZoneInfo.ConvertTime(Date.Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local);
+
+        [Ignore]
+        public string PostOrCanc => IsPostponed ? "Post." : IsCancelled ? "Canc." : String.Empty;
+
+        [Ignore]
+        public bool IsPostponedOrCancelled { get; set; }
+
         [Ignore]
         public Team HomeTeam { get; set; }
 
-        //[ForeignKey("AwayTeamID")]
         [Ignore]
         public Team AwayTeam { get; set; }
 
-        //[ForeignKey("FieldID")]
         [Ignore]
         public Field Field { get; set; }
 
-        //[ForeignKey("LeagueID")]
         [Ignore]
         public League League { get; set; }
 
-        //[ForeignKey("MatchTypeID")]
         [Ignore]
         public MatchType MatchType { get; set; }
 
@@ -433,10 +741,124 @@ namespace TruSport.Model
         public Match Match { get; set; }
 
         [Ignore]
+        public virtual List<LeagueTable> LeagueTable { get; set; }
+
+        [Ignore]
         public Season Season { get; set; }
 
         [Ignore]
+        public ObservableCollection<Fixture> HeadToHead { get; set; }
+
+        [Ignore]
         public ObservableCollection<MatchRoster> MatchRosters { get; set; }
+
+        [Ignore]
+        public virtual List<MatchRosterSummary> MatchRosterSummary { get; set; }
+    }
+
+    public class CricketFixture
+    {
+        [PrimaryKey]
+        public string ID { get; set; }
+        public string HomeTeamID { get; set; }
+        public string AwayTeamID { get; set; }
+        public string FieldID { get; set; }
+        public string LeagueID { get; set; }
+        public string MatchTypeID { get; set; }
+        //public string CompetitionID { get; set; }
+        public string SeasonID { get; set; }
+        public DateTime Date { get; set; }
+        public string Time { get; set; }
+        public bool IsPostponed { get; set; }
+        public bool IsCancelled { get; set; }
+        public DateTime? Start { get; set; }
+        public DateTime? End { get; set; }
+
+        [Ignore]
+        public string SelectedTeamID { get; set; }
+
+        [Ignore]
+        public string SelectedTeamResult { get; set; }
+
+        [Ignore]
+        public DateTime FixtureTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
+                        TimeZoneInfo.ConvertTime(Date.AddDays(1).Add((TimeSpan.Parse(Time) + (TimeZoneInfo.Local.GetUtcOffset(new DateTime().Date + TimeSpan.Parse(Time)) - TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)))), TimeZoneInfo.Utc, TimeZoneInfo.Local) :
+                        TimeZoneInfo.ConvertTime(Date.AddDays(1).Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local) : TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
+                        TimeZoneInfo.ConvertTime(Date.Add((TimeSpan.Parse(Time) + (TimeZoneInfo.Local.GetUtcOffset(new DateTime().Date + TimeSpan.Parse(Time)) - TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)))), TimeZoneInfo.Utc, TimeZoneInfo.Local) :
+                        TimeZoneInfo.ConvertTime(Date.Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local);
+
+        [Ignore]
+        public string PostOrCanc => IsPostponed ? "Post." : IsCancelled ? "Canc." : String.Empty;
+
+        [Ignore]
+        public bool IsPostponedOrCancelled { get; set; }
+
+        [Ignore]
+        public Team HomeTeam { get; set; }
+
+        [Ignore]
+        public Team AwayTeam { get; set; }
+
+        [Ignore]
+        public Field Field { get; set; }
+
+        [Ignore]
+        public League League { get; set; }
+
+        [Ignore]
+        public MatchType MatchType { get; set; }
+
+        [Ignore]
+        public CricketMatch CricketMatch { get; set; }
+
+        [Ignore]
+        public virtual List<CricketLeagueTable> LeagueTable { get; set; }
+
+        [Ignore]
+        public Season Season { get; set; }
+
+        [Ignore]
+        public ObservableCollection<CricketFixture> HeadToHead { get; set; }
+
+        [Ignore]
+        public ObservableCollection<CricketRoster> CricketRosters { get; set; }
+
+        [Ignore]
+        public ObservableCollection<MatchInning> MatchInnings { get; set; }
+
+        //[Ignore]
+        public string HomeTeamScore { get; set; }
+
+        [Ignore]
+        public string AwayTeamScore { get; set; }
+
+        [Ignore]
+        public string MatchResult { get; set; }
+
+        //[Ignore]
+        //public virtual List<MatchRosterSummary> MatchRosterSummary { get; set; }
+    }
+
+    public class MatchInning
+    {
+        public string ID { get; set; }
+        public string FixtureID { get; set; }
+        public string BattingTeamID { get; set; }
+        public string FieldingTeamID { get; set; }
+        public int? Run { get; set; }
+        public int? Wicket { get; set; }
+        public decimal? Over { get; set; }
+        public int? Order { get; set; }
+        public int Inning { get; set; }
+
+        [Ignore]
+        public Fixture Fixture { get; set; }
+
+        [Ignore]
+        public Team BattingTeam { get; set; }
+
+        [Ignore]
+        public Team FieldingTeam { get; set; }
     }
 
     public class MatchTypes
@@ -493,74 +915,6 @@ namespace TruSport.Model
 
     public class Match
     {
-        //string id;
-        //string fixtureID;
-        //int homeTeamScore;
-        //int awayTeamScore;
-        //int homeYellowCards;
-        //int awayYellowCards;
-        //int homeRedCards;
-        //int awayRedCards;
-
-        //[PrimaryKey]
-        //[JsonProperty(PropertyName = "id")]
-        //public string ID
-        //{
-        //    get { return id; }
-        //    set { id = value; }
-        //}
-
-        //[JsonProperty(PropertyName = "fixtureID")]
-        //public string FixtureID
-        //{
-        //    get { return fixtureID; }
-        //    set { fixtureID = value; }
-        //}
-
-        //[JsonProperty(PropertyName = "homeTeamScore")]
-        //public int HomeTeamScore
-        //{
-        //    get { return homeTeamScore; }
-        //    set { homeTeamScore = value; }
-        //}
-
-        //[JsonProperty(PropertyName = "awayTeamScore")]
-        //public int AwayTeamScore
-        //{
-        //    get { return awayTeamScore; }
-        //    set { awayTeamScore = value; }
-        //}
-
-        //[JsonProperty(PropertyName = "homeYellowCards")]
-        //public int HomeYellowCards
-        //{
-        //    get { return homeYellowCards; }
-        //    set { homeYellowCards = value; }
-        //}
-
-        //[JsonProperty(PropertyName = "awayYellowCards")]
-        //public int AwayYellowCards
-        //{
-        //    get { return awayYellowCards; }
-        //    set { awayYellowCards = value; }
-        //}
-
-        //[JsonProperty(PropertyName = "homeRedCards")]
-        //public int HomeRedCards
-        //{
-        //    get { return homeRedCards; }
-        //    set { homeRedCards = value; }
-        //}
-
-        //[JsonProperty(PropertyName = "awayRedCards")]
-        //public int AwayRedCards
-        //{
-        //    get { return awayRedCards; }
-        //    set { awayRedCards = value; }
-        //}
-
-        //[Version]
-        //public string Version { get; set; }
 
             [PrimaryKey]
         public string ID { get; set; }
@@ -596,7 +950,6 @@ namespace TruSport.Model
 
     public class MatchRoster
     {
-        
         public string ID { get; set; }
         public string FixtureID { get; set; }
         public string TeamID { get; set; }
@@ -606,19 +959,18 @@ namespace TruSport.Model
         public bool IsStarter { get; set; }
         public int? SubstituteTime { get; set; }
 
-        //[ForeignKey("FixtureID")]
+        [Ignore]
+        public bool IsHomeTeam { get; set; }
+
         [Ignore]
         public Fixture Fixture { get; set; }
 
-        //[ForeignKey("TeamID")]
         [Ignore]
         public Team Team { get; set; }
 
-        //[ForeignKey("PlayerID")]
         [Ignore]
         public Player Player { get; set; }
 
-        //[ForeignKey("SubstitutePlayerID")]
         [Ignore]
         public Player SubstitutePlayer { get; set; }
 
@@ -626,9 +978,37 @@ namespace TruSport.Model
         public virtual List<MatchStat> MatchStats { get; set; }
     }
 
+    public class CricketRoster
+    {
+        public string ID { get; set; }
+        public string FixtureID { get; set; }
+        public string TeamID { get; set; }
+        public string PlayerID { get; set; }
+        public int? JerseyNumber { get; set; }
+        public bool IsReserve { get; set; }
+        public bool IsColt { get; set; }
+
+        [Ignore]
+        public bool IsHomeTeam { get; set; }
+
+        [Ignore]
+        public Fixture Fixture { get; set; }
+
+        [Ignore]
+        public Team Team { get; set; }
+
+        [Ignore]
+        public Player Player { get; set; }
+
+        [Ignore]
+        public ObservableCollection<Batting> Batters { get; set; }
+
+        [Ignore]
+        public ObservableCollection<Fielding> Fielders { get; set; }
+    }
+
     public class RosterListView
     {
-
         public string ID { get; set; }
         public string FixtureID { get; set; }
         public string HomeTeamID { get; set; }
@@ -641,7 +1021,6 @@ namespace TruSport.Model
         public int? AwayJerseyNumber { get; set; }
         public bool IsStarter { get; set; }
         public bool IsHomeTeam { get; set; }
-
     }
 
     public class MatchStat
@@ -663,20 +1042,59 @@ namespace TruSport.Model
 
     }
 
+    //public class MatchRosterSummary
+    //{
+
+    //    public string ID { get; set; }
+    //    public string MatchStatID { get; set; }
+    //    public string FixtureID { get; set; }
+    //    public string TeamID { get; set; }
+    //    public string PlayerID { get; set; }
+    //    public string PlayerName { get; set; }
+    //    public string SubstitutePlayerID { get; set; }
+    //    public string SubstitutePlayerName { get; set; }
+    //    public string AssistPlayerID { get; set; }
+    //    public string AssistPlayerName { get; set; }
+    //    //public int? JerseyNumber { get; set; }
+    //    public int Goal { get; set; }
+    //    public int Assist { get; set; }
+    //    public int YellowCard { get; set; }
+    //    public int RedCard { get; set; }
+    //    public bool IsSub { get; set; }
+    //    public bool IsHomeTeam { get; set; }
+    //    public int Minute { get; set; }
+
+    //    ////[ForeignKey("FixtureID")]
+    //    //[Ignore]
+    //    //public Fixture Fixture { get; set; }
+
+    //    ////[ForeignKey("TeamID")]
+    //    //[Ignore]
+    //    //public Team Team { get; set; }
+
+    //    ////[ForeignKey("PlayerID")]
+    //    //[Ignore]
+    //    //public Player Player { get; set; }
+
+    //    ////[ForeignKey("SubstitutePlayerID")]
+    //    //[Ignore]
+    //    //public Player SubsitutePlayer { get; set; }
+
+    //    ////[ForeignKey("AssistPlayerID")]
+    //    //[Ignore]
+    //    //public Player AssistPlayer { get; set; }
+    //}
+
     public class MatchRosterSummary
     {
 
         public string ID { get; set; }
-        public string MatchStatID { get; set; }
+        public string MatchRosterID { get; set; }
         public string FixtureID { get; set; }
         public string TeamID { get; set; }
         public string PlayerID { get; set; }
-        public string PlayerName { get; set; }
         public string SubstitutePlayerID { get; set; }
-        public string SubstitutePlayerName { get; set; }
         public string AssistPlayerID { get; set; }
-        public string AssistPlayerName { get; set; }
-        //public int? JerseyNumber { get; set; }
         public int Goal { get; set; }
         public int Assist { get; set; }
         public int YellowCard { get; set; }
@@ -685,25 +1103,20 @@ namespace TruSport.Model
         public bool IsHomeTeam { get; set; }
         public int Minute { get; set; }
 
-        ////[ForeignKey("FixtureID")]
-        //[Ignore]
-        //public Fixture Fixture { get; set; }
+        [Ignore]
+        public Fixture Fixture { get; set; }
 
-        ////[ForeignKey("TeamID")]
-        //[Ignore]
-        //public Team Team { get; set; }
+        [Ignore]
+        public Team Team { get; set; }
 
-        ////[ForeignKey("PlayerID")]
-        //[Ignore]
-        //public Player Player { get; set; }
+        [Ignore]
+        public Player Player { get; set; }
 
-        ////[ForeignKey("SubstitutePlayerID")]
-        //[Ignore]
-        //public Player SubsitutePlayer { get; set; }
+        [Ignore]
+        public Player SubsitutePlayer { get; set; }
 
-        ////[ForeignKey("AssistPlayerID")]
-        //[Ignore]
-        //public Player AssistPlayer { get; set; }
+        [Ignore]
+        public Player AssistPlayer { get; set; }
     }
 
     public class MatchPlayer
@@ -958,26 +1371,13 @@ namespace TruSport.Model
 
     public class League
     {
-        string id;
-        string name;
+        public string ID { get; set; }
+        public string Name { get; set; }
+        public string SportID { get; set; }
+        public int Order { get; set; }
 
-        [PrimaryKey]
-        [JsonProperty(PropertyName = "id")]
-        public string ID
-        {
-            get { return id; }
-            set { id = value; }
-        }
-
-        [JsonProperty(PropertyName = "name")]
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-
-        [Version]
-        public string Version { get; set; }
+        [Ignore]
+        public Sport Sport { get; set; }
     }
 
     public class Favourites
@@ -1043,12 +1443,17 @@ namespace TruSport.Model
         public string Type { get; set; }
         public string TeamID { get; set; }
         public string FixtureID { get; set; }
+        public string CricketFixtureID { get; set; }
+        public string Sport { get; set; }
 
         [Ignore]
         public League League { get; set; }
 
         [Ignore]
         public Team Team { get; set; }
+
+        [Ignore]
+        public CricketFixture CricketFixture { get; set; }
 
         [Ignore]
         public Fixture Fixture { get; set; }

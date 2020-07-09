@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Rg.Plugins.Popup.Services;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
@@ -342,84 +341,84 @@ namespace TruSport.ViewModel
                 List<MatchRosterSummary> matchRosterSummaries = new List<MatchRosterSummary>();
                 bool IsHomeTeam = false;
 
-                var matchRosters = homeRoster.Union(awayRoster).ToList();
-                foreach (var roster in matchRosters)
-                {
-                    if (roster.TeamID == fixture.HomeTeamID)
-                        IsHomeTeam = true;
-                    else
-                        IsHomeTeam = false;
+                //var matchRosters = homeRoster.Union(awayRoster).ToList();
+                //foreach (var roster in matchRosters)
+                //{
+                //    if (roster.TeamID == fixture.HomeTeamID)
+                //        IsHomeTeam = true;
+                //    else
+                //        IsHomeTeam = false;
 
-                    if (roster.MatchStats.Count > 0)
-                    {
-                        for (var i = 0; i < roster.MatchStats.Count; i++)
-                        {
-                            if (roster.MatchStats[i].Goal > 0)
-                            {
-                                matchRosterSummaries.Add(new MatchRosterSummary
-                                {
-                                    MatchStatID = roster.MatchStats[i].ID,
-                                    FixtureID = roster.FixtureID,
-                                    TeamID = roster.TeamID,
-                                    PlayerID = roster.PlayerID,
-                                    PlayerName = roster.Player.Name,
-                                    AssistPlayerID = roster.MatchStats[i].AssistPlayerID,
-                                    AssistPlayerName = roster.MatchStats[i].AssistPlayer != null ? roster.MatchStats[i].AssistPlayer.Name : null,
-                                    Minute = roster.MatchStats[i].GoalTime ?? 0,
-                                    Goal = 1,
-                                    IsHomeTeam = IsHomeTeam
-                                });
-                            }
+                //    if (roster.MatchStats.Count > 0)
+                //    {
+                //        for (var i = 0; i < roster.MatchStats.Count; i++)
+                //        {
+                //            if (roster.MatchStats[i].Goal > 0)
+                //            {
+                //                matchRosterSummaries.Add(new MatchRosterSummary
+                //                {
+                //                    MatchStatID = roster.MatchStats[i].ID,
+                //                    FixtureID = roster.FixtureID,
+                //                    TeamID = roster.TeamID,
+                //                    PlayerID = roster.PlayerID,
+                //                    PlayerName = roster.Player.Name,
+                //                    AssistPlayerID = roster.MatchStats[i].AssistPlayerID,
+                //                    AssistPlayerName = roster.MatchStats[i].AssistPlayer != null ? roster.MatchStats[i].AssistPlayer.Name : null,
+                //                    Minute = roster.MatchStats[i].GoalTime ?? 0,
+                //                    Goal = 1,
+                //                    IsHomeTeam = IsHomeTeam
+                //                });
+                //            }
 
-                            if (roster.MatchStats[i].YellowCard > 0)
-                            {
-                                matchRosterSummaries.Add(new MatchRosterSummary
-                                {
-                                    MatchStatID = roster.MatchStats[i].ID,
-                                    FixtureID = roster.FixtureID,
-                                    TeamID = roster.TeamID,
-                                    PlayerID = roster.PlayerID,
-                                    PlayerName = roster.Player.Name,
-                                    Minute = roster.MatchStats[i].YellowCardTime ?? 0,
-                                    YellowCard = 1,
-                                    IsHomeTeam = IsHomeTeam
-                                });
-                            }
+                //            if (roster.MatchStats[i].YellowCard > 0)
+                //            {
+                //                matchRosterSummaries.Add(new MatchRosterSummary
+                //                {
+                //                    MatchStatID = roster.MatchStats[i].ID,
+                //                    FixtureID = roster.FixtureID,
+                //                    TeamID = roster.TeamID,
+                //                    PlayerID = roster.PlayerID,
+                //                    PlayerName = roster.Player.Name,
+                //                    Minute = roster.MatchStats[i].YellowCardTime ?? 0,
+                //                    YellowCard = 1,
+                //                    IsHomeTeam = IsHomeTeam
+                //                });
+                //            }
 
-                            if (roster.MatchStats[i].RedCard > 0)
-                            {
-                                matchRosterSummaries.Add(new MatchRosterSummary
-                                {
-                                    MatchStatID = roster.MatchStats[i].ID,
-                                    FixtureID = roster.FixtureID,
-                                    TeamID = roster.TeamID,
-                                    PlayerID = roster.PlayerID,
-                                    PlayerName = roster.Player.Name,
-                                    Minute = roster.MatchStats[i].RedCardTime ?? 0,
-                                    RedCard = 1,
-                                    IsHomeTeam = IsHomeTeam
-                                });
-                            }
-                        }
-                    }
+                //            if (roster.MatchStats[i].RedCard > 0)
+                //            {
+                //                matchRosterSummaries.Add(new MatchRosterSummary
+                //                {
+                //                    MatchStatID = roster.MatchStats[i].ID,
+                //                    FixtureID = roster.FixtureID,
+                //                    TeamID = roster.TeamID,
+                //                    PlayerID = roster.PlayerID,
+                //                    PlayerName = roster.Player.Name,
+                //                    Minute = roster.MatchStats[i].RedCardTime ?? 0,
+                //                    RedCard = 1,
+                //                    IsHomeTeam = IsHomeTeam
+                //                });
+                //            }
+                //        }
+                //    }
 
-                    if (roster.SubstitutePlayerID != null && roster.IsStarter)
-                    {
-                        matchRosterSummaries.Add(new MatchRosterSummary
-                        {
-                            FixtureID = roster.FixtureID,
-                            TeamID = roster.TeamID,
-                            PlayerID = roster.PlayerID,
-                            PlayerName = roster.Player.Name,
-                            SubstitutePlayerID = roster.SubstitutePlayerID,
-                            SubstitutePlayerName = roster.SubstitutePlayer.Name,
-                            Minute = roster.SubstituteTime ?? 0,
-                            IsSub = true,
-                            IsHomeTeam = IsHomeTeam
-                        });
+                //    if (roster.SubstitutePlayerID != null && roster.IsStarter)
+                //    {
+                //        matchRosterSummaries.Add(new MatchRosterSummary
+                //        {
+                //            FixtureID = roster.FixtureID,
+                //            TeamID = roster.TeamID,
+                //            PlayerID = roster.PlayerID,
+                //            PlayerName = roster.Player.Name,
+                //            SubstitutePlayerID = roster.SubstitutePlayerID,
+                //            SubstitutePlayerName = roster.SubstitutePlayer.Name,
+                //            Minute = roster.SubstituteTime ?? 0,
+                //            IsSub = true,
+                //            IsHomeTeam = IsHomeTeam
+                //        });
 
-                    }
-                }
+                //    }
+                //}
 
                 if (matchRosterSummaries.Any(e => e.Minute == -1))
                     MatchRosterSummaryCollection = new ObservableCollection<MatchRosterSummary>(matchRosterSummaries);
@@ -474,84 +473,84 @@ namespace TruSport.ViewModel
             List<MatchRosterSummary> matchRosterSummaries = new List<MatchRosterSummary>();
             bool IsHomeTeam = false;
 
-            var matchRosters = homeRoster.Union(awayRoster).ToList();
-            foreach (var roster in matchRosters)
-            {
-                if (roster.TeamID == fixture.HomeTeamID)
-                    IsHomeTeam = true;
-                else
-                    IsHomeTeam = false;
+            //var matchRosters = homeRoster.Union(awayRoster).ToList();
+            //foreach (var roster in matchRosters)
+            //{
+            //    if (roster.TeamID == fixture.HomeTeamID)
+            //        IsHomeTeam = true;
+            //    else
+            //        IsHomeTeam = false;
 
-                if (roster.MatchStats.Count > 0)
-                {
-                    for (var i = 0; i < roster.MatchStats.Count; i++)
-                    {
-                        if (roster.MatchStats[i].Goal > 0)
-                        {
-                            matchRosterSummaries.Add(new MatchRosterSummary
-                            {
-                                MatchStatID = roster.MatchStats[i].ID,
-                                FixtureID = roster.FixtureID,
-                                TeamID = roster.TeamID,
-                                PlayerID = roster.PlayerID,
-                                PlayerName = roster.Player.Name,
-                                AssistPlayerID = roster.MatchStats[i].AssistPlayerID,
-                                AssistPlayerName = roster.MatchStats[i].AssistPlayer != null ? roster.MatchStats[i].AssistPlayer.Name : null,
-                                Minute = roster.MatchStats[i].GoalTime ?? 0,
-                                Goal = 1,
-                                IsHomeTeam = IsHomeTeam
-                            });
-                        }
+            //    if (roster.MatchStats.Count > 0)
+            //    {
+            //        for (var i = 0; i < roster.MatchStats.Count; i++)
+            //        {
+            //            if (roster.MatchStats[i].Goal > 0)
+            //            {
+            //                matchRosterSummaries.Add(new MatchRosterSummary
+            //                {
+            //                    MatchStatID = roster.MatchStats[i].ID,
+            //                    FixtureID = roster.FixtureID,
+            //                    TeamID = roster.TeamID,
+            //                    PlayerID = roster.PlayerID,
+            //                    PlayerName = roster.Player.Name,
+            //                    AssistPlayerID = roster.MatchStats[i].AssistPlayerID,
+            //                    AssistPlayerName = roster.MatchStats[i].AssistPlayer != null ? roster.MatchStats[i].AssistPlayer.Name : null,
+            //                    Minute = roster.MatchStats[i].GoalTime ?? 0,
+            //                    Goal = 1,
+            //                    IsHomeTeam = IsHomeTeam
+            //                });
+            //            }
 
-                        if (roster.MatchStats[i].YellowCard > 0)
-                        {
-                            matchRosterSummaries.Add(new MatchRosterSummary
-                            {
-                                MatchStatID = roster.MatchStats[i].ID,
-                                FixtureID = roster.FixtureID,
-                                TeamID = roster.TeamID,
-                                PlayerID = roster.PlayerID,
-                                PlayerName = roster.Player.Name,
-                                Minute = roster.MatchStats[i].YellowCardTime ?? 0,
-                                YellowCard = 1,
-                                IsHomeTeam = IsHomeTeam
-                            });
-                        }
+            //            if (roster.MatchStats[i].YellowCard > 0)
+            //            {
+            //                matchRosterSummaries.Add(new MatchRosterSummary
+            //                {
+            //                    MatchStatID = roster.MatchStats[i].ID,
+            //                    FixtureID = roster.FixtureID,
+            //                    TeamID = roster.TeamID,
+            //                    PlayerID = roster.PlayerID,
+            //                    PlayerName = roster.Player.Name,
+            //                    Minute = roster.MatchStats[i].YellowCardTime ?? 0,
+            //                    YellowCard = 1,
+            //                    IsHomeTeam = IsHomeTeam
+            //                });
+            //            }
 
-                        if (roster.MatchStats[i].RedCard > 0)
-                        {
-                            matchRosterSummaries.Add(new MatchRosterSummary
-                            {
-                                MatchStatID = roster.MatchStats[i].ID,
-                                FixtureID = roster.FixtureID,
-                                TeamID = roster.TeamID,
-                                PlayerID = roster.PlayerID,
-                                PlayerName = roster.Player.Name,
-                                Minute = roster.MatchStats[i].RedCardTime ?? 0,
-                                RedCard = 1,
-                                IsHomeTeam = IsHomeTeam
-                            });
-                        }
-                    }
-                }
+            //            if (roster.MatchStats[i].RedCard > 0)
+            //            {
+            //                matchRosterSummaries.Add(new MatchRosterSummary
+            //                {
+            //                    MatchStatID = roster.MatchStats[i].ID,
+            //                    FixtureID = roster.FixtureID,
+            //                    TeamID = roster.TeamID,
+            //                    PlayerID = roster.PlayerID,
+            //                    PlayerName = roster.Player.Name,
+            //                    Minute = roster.MatchStats[i].RedCardTime ?? 0,
+            //                    RedCard = 1,
+            //                    IsHomeTeam = IsHomeTeam
+            //                });
+            //            }
+            //        }
+            //    }
 
-                if (roster.SubstitutePlayerID != null && roster.IsStarter)
-                {
-                    matchRosterSummaries.Add(new MatchRosterSummary
-                    {
-                        FixtureID = roster.FixtureID,
-                        TeamID = roster.TeamID,
-                        PlayerID = roster.PlayerID,
-                        PlayerName = roster.Player.Name,
-                        SubstitutePlayerID = roster.SubstitutePlayerID,
-                        SubstitutePlayerName = roster.SubstitutePlayer.Name,
-                        Minute = roster.SubstituteTime ?? 0,
-                        IsSub = true,
-                        IsHomeTeam = IsHomeTeam
-                    });
+            //    if (roster.SubstitutePlayerID != null && roster.IsStarter)
+            //    {
+            //        matchRosterSummaries.Add(new MatchRosterSummary
+            //        {
+            //            FixtureID = roster.FixtureID,
+            //            TeamID = roster.TeamID,
+            //            PlayerID = roster.PlayerID,
+            //            PlayerName = roster.Player.Name,
+            //            SubstitutePlayerID = roster.SubstitutePlayerID,
+            //            SubstitutePlayerName = roster.SubstitutePlayer.Name,
+            //            Minute = roster.SubstituteTime ?? 0,
+            //            IsSub = true,
+            //            IsHomeTeam = IsHomeTeam
+            //        });
 
-                }
-            }
+            //    }
+            //}
 
             if (matchRosterSummaries.Any(e => e.Minute == -1))
                 MatchRosterSummaryCollection = new ObservableCollection<MatchRosterSummary>(matchRosterSummaries);
@@ -821,7 +820,7 @@ namespace TruSport.ViewModel
                 try
                 {
 
-                    await matchStatService.Remove(item.MatchStatID);
+                    //await matchStatService.Remove(item.MatchStatID);
 
                     if(item.Goal > 0)
                     {

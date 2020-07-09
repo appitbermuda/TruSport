@@ -119,9 +119,16 @@ namespace TruSport.ViewModels
                 {
                     IsActivityIndicatorVisible = true;
 
+                    Content content = new Content
+                    {
+                        Name = Name,
+                        Title = Title,
+                        Body = Body
+                    };
+
                     //await Application.Current.MainPage.DisplayAlert("Success", String.Format("Push Sent - Name: {0} Title: {1} Message: {2}", Name, Title, Body), "Okay");
 
-                    await pushNotificationService.Send(Name, Title, Body);
+                    await pushNotificationService.Send(content);
 
                     await Application.Current.MainPage.DisplayAlert("Success", String.Format("Push Sent - Name: {0}", Body), "Okay");
 

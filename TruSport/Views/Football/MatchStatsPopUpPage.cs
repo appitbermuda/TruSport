@@ -1,13 +1,11 @@
 ﻿using System;
-using Rg.Plugins.Popup.Pages;
-using Rg.Plugins.Popup.Services;
 using TruSport.Data;
 using TruSport.Model;
 using Xamarin.Forms;
 
 namespace TruSport.Views.Football
 {
-    public class MatchStatsPopUpPage : PopupPage
+    public class MatchStatsPopUpPage : ContentPage
     {
         ScrollView MainScrollView;
         AbsoluteLayout MainAbsoluteLayout;
@@ -179,7 +177,7 @@ namespace TruSport.Views.Football
             var closeTapGestureRecognizer = new TapGestureRecognizer();
             closeTapGestureRecognizer.Tapped += async (sender, e) => 
             {
-                await PopupNavigation.Instance.PopAsync();
+                //await PopupNavigation.Instance.PopAsync();
             };
             MainContentView.GestureRecognizers.Add(closeTapGestureRecognizer);
 
@@ -222,7 +220,7 @@ namespace TruSport.Views.Football
                 //databaseManager.UpdatePlayer(thisPlayer);
                 //databaseManager.UpdateMatch(thisMatch);
 
-                await PopupNavigation.Instance.PopAsync();
+                //await PopupNavigation.Instance.PopAsync();
             };
 
             GoalFrame.GestureRecognizers.Add(goalTapGesture);
@@ -267,7 +265,7 @@ namespace TruSport.Views.Football
                 //databaseManager.UpdatePlayer(thisPlayer);
                 //databaseManager.UpdateMatch(thisMatch);
 
-                await PopupNavigation.Instance.PopAsync();
+                //await PopupNavigation.Instance.PopAsync();
             };
 
             YellowCardLabel.GestureRecognizers.Add(yellowCardTapGesture);
@@ -312,7 +310,7 @@ namespace TruSport.Views.Football
                 //databaseManager.UpdatePlayer(thisPlayer);
                 //databaseManager.UpdateMatch(thisMatch);
 
-                await PopupNavigation.Instance.PopAsync();
+                //await PopupNavigation.Instance.PopAsync();
             };
 
             RedCardLabel.GestureRecognizers.Add(redCardTapGesture);

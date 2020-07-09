@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Crashes;
-using Rg.Plugins.Popup.Extensions;
-using Rg.Plugins.Popup.Services;
 using Syncfusion.XForms.Buttons;
 using TruSport.Model;
 using TruSport.Services;

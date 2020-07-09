@@ -65,7 +65,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // POST api/values
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("Insert")]
         public async Task<IActionResult> Post([FromBody] Flyer flyer)
@@ -83,7 +83,7 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] Flyer flyer)
@@ -103,7 +103,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // DELETE api/values/5
-        [Authorize(Roles = Role.AllUsers)]
+        [Authorize(Roles = Roles.AllUsers)]
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(string id)

@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using Syncfusion.DataSource;
+using Syncfusion.GridCommon.ScrollAxis;
+using Syncfusion.ListView.XForms;
+using Syncfusion.ListView.XForms.Control.Helpers;
 using Syncfusion.SfCalendar.XForms;
 using TruSport.Model;
 using TruSport.ViewModels;
 using TruSport.Views.Admin;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace TruSport.Views.Football
@@ -20,11 +26,8 @@ namespace TruSport.Views.Football
         {
             fixturePageViewModel = new FixturePageViewModel(Navigation);
             this.BindingContext = fixturePageViewModel;
+
             InitializeComponent();
-
-            //loader.Easing = Easing.CubicInOut;
-
-            //PastFixtureList.DataSource.SortDescriptors.Add(new SortDescriptor { PropertyName = "Date", Direction = ListSortDirection.Descending });
 
             PastFixtureList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
             {
@@ -45,10 +48,6 @@ namespace TruSport.Views.Football
                     return item.League.Name + item.Date;
                 }
             });
-
-            //upcomingCalendar.TranslateTo(0, upcomingCalendar.Height, 1200, Easing.BounceOut);
-            //upcomingCalendar.LayoutTo(new Rectangle(upcomingCalendar.Bounds.X, upcomingCalendar.Bounds.Y, upcomingCalendar.Bounds.Width, 0), 500, Easing.CubicIn);
-            //fixturePageViewModel.PropertyChanged += FixturePageViewModel_PropertyChanged;
         }
 
         private void FixturePageViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -58,35 +57,11 @@ namespace TruSport.Views.Football
             var viewModel = (FixturePageViewModel)sender;
             if (viewModel.IsUpcomingCalendarVisible)
             {
-                upcomingCalendar.TranslateTo(0, 0, 1200, Easing.BounceOut);
-                //upcomingCalendar.LayoutTo(new Rectangle(upcomingCalendar.Bounds.X, upcomingCalendar.Bounds.Y, 400, 400), 500, Easing.CubicOut);
+                upcomingCalendar.TranslateTo(0, 0, 1200, Easing.BounceIn);
             }
             else
             {
-                upcomingCalendar.TranslateTo(0, upcomingCalendar.Height, 1200, Easing.BounceOut);
-                //upcomingCalendar.LayoutTo(new Rectangle(upcomingCalendar.Bounds.X, upcomingCalendar.Bounds.Y, upcomingCalendar.Bounds.Width, 0), 500, Easing.CubicIn);
-            }
-        }
-
-        void Handle_SelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
-        {
-            if(e.Index == 0)
-            {
-                PastLabel.TextColor = Color.White;
-                UpcomingLabel.TextColor = Color.Gray;
-                LiveLabel.TextColor = Color.Gray;
-            }
-            else if (e.Index == 1)
-            {
-                UpcomingLabel.TextColor = Color.White;
-                LiveLabel.TextColor = Color.Gray;
-                PastLabel.TextColor = Color.Gray;
-            }
-            else if (e.Index == 2)
-            {
-                LiveLabel.TextColor = Color.White;
-                UpcomingLabel.TextColor = Color.Gray;
-                PastLabel.TextColor = Color.Gray;
+                upcomingCalendar.TranslateTo(0, upcomingCalendar.Height, 1200, Easing.BounceIn);
             }
         }
 
@@ -152,19 +127,17 @@ namespace TruSport.Views.Football
 
             if (items.Count == 0) return;
 
-            var item = (LiveFixture)LiveFixtureList.SelectedItem;
+            var item = (Fixture)LiveFixtureList.SelectedItem;
+
+            //var sport = await SecureStorage.GetAsync("Sport");
 
             await Navigation.PushAsync(new FixtureDetailsPage(item));
-
+            
             LiveFixtureList.SelectedItems.Clear();
         }
 
-        async void AdminClicked(object sender, System.EventArgs e)
-        {
-            //await Navigation.PushModalAsync(new AdminMainPage());
-        }
-
-        SearchBar searchBar = null;
+        SearchBar upcomingSearchBar = null;
+        SearchBar previousSearchBar = null;
 
         private void SearchTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -174,26 +147,58 @@ namespace TruSport.Views.Football
                 upcomingCalendar.SelectedDates.Clear();
             }
 
-            searchBar = (sender as SearchBar);
+            upcomingSearchBar = (sender as SearchBar);
             if (UpcomingFixtureList.DataSource != null)
             {
-                this.UpcomingFixtureList.DataSource.Filter = FilterFixtures;
+                this.UpcomingFixtureList.DataSource.Filter = FilterUpcomingFixtures;
                 this.UpcomingFixtureList.DataSource.RefreshFilter();
             }
         }
 
-        private bool FilterFixtures(object obj)
+        private void PreviousSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (searchBar == null || searchBar.Text == null)
+            previousSearchBar = (sender as SearchBar);
+            if (PastFixtureList.DataSource != null)
+            {
+                this.PastFixtureList.DataSource.Filter = FilterPreviousFixtures;
+                this.PastFixtureList.DataSource.RefreshFilter();
+            }
+        }
+
+        private bool FilterPreviousFixtures(object obj)
+        {
+            if (previousSearchBar == null || previousSearchBar.Text == null)
                 return true;
 
             var fixture = obj as Fixture;
             try
             {
-                if (fixture.HomeTeam.Name.ToLower().Contains(searchBar.Text.ToLower()) || fixture.AwayTeam.Name.ToLower().Contains(searchBar.Text.ToLower())
-                    || fixture.Date.ToString().ToLower().Contains(searchBar.Text.ToLower()) || fixture.League.Name.ToLower().Contains(searchBar.Text.ToLower())
-                    || (fixture.HomeTeam.Name.ToLower() + " " + fixture.League.Name.ToLower()).Contains(searchBar.Text.ToLower())
-                    || (fixture.AwayTeam.Name.ToLower() + " " + fixture.League.Name.ToLower()).Contains(searchBar.Text.ToLower()))
+                if (fixture.HomeTeam.Name.ToLower().Contains(previousSearchBar.Text.ToLower()) || fixture.AwayTeam.Name.ToLower().Contains(previousSearchBar.Text.ToLower())
+                    || fixture.Date.ToString().ToLower().Contains(previousSearchBar.Text.ToLower()) || fixture.League.Name.ToLower().Contains(previousSearchBar.Text.ToLower())
+                    || (fixture.HomeTeam.Name.ToLower() + " " + fixture.League.Name.ToLower()).Contains(previousSearchBar.Text.ToLower())
+                    || (fixture.AwayTeam.Name.ToLower() + " " + fixture.League.Name.ToLower()).Contains(previousSearchBar.Text.ToLower()))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        private bool FilterUpcomingFixtures(object obj)
+        {
+            if (upcomingSearchBar == null || upcomingSearchBar.Text == null)
+                return true;
+
+            var fixture = obj as Fixture;
+            try
+            {
+                if (fixture.HomeTeam.Name.ToLower().Contains(upcomingSearchBar.Text.ToLower()) || fixture.AwayTeam.Name.ToLower().Contains(upcomingSearchBar.Text.ToLower())
+                    || fixture.Date.ToString().ToLower().Contains(upcomingSearchBar.Text.ToLower()) || fixture.League.Name.ToLower().Contains(upcomingSearchBar.Text.ToLower())
+                    || (fixture.HomeTeam.Name.ToLower() + " " + fixture.League.Name.ToLower()).Contains(upcomingSearchBar.Text.ToLower())
+                    || (fixture.AwayTeam.Name.ToLower() + " " + fixture.League.Name.ToLower()).Contains(upcomingSearchBar.Text.ToLower()))
                     return true;
                 else
                     return false;
@@ -236,6 +241,14 @@ namespace TruSport.Views.Football
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        void Button_Clicked(System.Object sender, System.EventArgs e)
+        {
+            if (Application.Current.MainPage is MasterDetailPage mdp)
+            {
+                mdp.IsPresented = true;
             }
         }
     }

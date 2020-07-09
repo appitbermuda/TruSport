@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TruSport.Views.NotificationSettingPage" Title="Notification Alerts">
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource frameBackgroundColor}">
+            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackLayout Padding="10" VerticalOptions="CenterAndExpand">
+                    <Label Text="Football Alerts" TextColor="{DynamicResource TextPrimaryColor}"/>
+                </StackLayout>
+                <StackLayout Padding="10" Grid.Column="1" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand">
+                    <Switch IsToggled="{Binding FootballAlertsOn}" OnColor="{DynamicResource indicatorColor}"/>
+                </StackLayout>
+                <BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke" />
+                <StackLayout Padding="10" Grid.Row="2" VerticalOptions="CenterAndExpand">
+                    <Label Text="Cricket Alerts" TextColor="{DynamicResource TextPrimaryColor}"/>
+                </StackLayout>
+                <StackLayout Padding="10" Grid.Row="2" Grid.Column="1" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand">
+                    <Switch IsToggled="{Binding CricketAlertsOn}" OnColor="{DynamicResource indicatorColor}"/>
+                </StackLayout>
+                <BoxView Grid.Row="3" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke" />
+                <StackLayout Padding="10" Grid.Row="4" VerticalOptions="CenterAndExpand">
+                    <Label Text="Favourite Alerts" TextColor="{DynamicResource TextPrimaryColor}"/>
+                </StackLayout>
+                <StackLayout Padding="10" Grid.Row="4" Grid.Column="1" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand">
+                    <Switch IsToggled="{Binding FavouriteAlertsOn}" OnColor="{DynamicResource indicatorColor}"/>
+                </StackLayout>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

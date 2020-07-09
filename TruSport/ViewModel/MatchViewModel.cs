@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Rg.Plugins.Popup.Services;
 using TruSport.Data;
 using TruSport.Model;
 using TruSport.Views.Football;
@@ -160,7 +159,7 @@ namespace TruSport.ViewModels
                 return new Command( async () =>
                 {
                     //MessagingCenter.Send(this, MessengerKeys.SetTeamLineUp, HomeSelectedData);
-                    await PopupNavigation.Instance.PushAsync(new MatchRosterPopUpPage(thisMatchID, thisHomeTeamID, true, HomeSelectedData));
+                    //await PopupNavigation.Instance.PushAsync(new MatchRosterPopUpPage(thisMatchID, thisHomeTeamID, true, HomeSelectedData));
                     //App.NavPage.PushAsync(new MultiSelect(SelectedData));
                 });
             }
@@ -174,7 +173,7 @@ namespace TruSport.ViewModels
                 return new Command(async () =>
                 {
                     //MessagingCenter.Send(this, MessengerKeys.SetTeamLineUp, AwaySelectedData);
-                    await PopupNavigation.Instance.PushAsync(new MatchRosterPopUpPage(thisMatchID, thisAwayTeamID, false, AwaySelectedData));
+                    //await PopupNavigation.Instance.PushAsync(new MatchRosterPopUpPage(thisMatchID, thisAwayTeamID, false, AwaySelectedData));
                     //App.NavPage.PushAsync(new MultiSelect(SelectedData));
                 });
             }

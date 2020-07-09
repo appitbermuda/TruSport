@@ -82,6 +82,74 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<CricketLeagueTable>> GetPremierLeagueCricketTables()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/CricketPremierDivision", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketLeagueTable> table = JsonConvert.DeserializeObject<List<CricketLeagueTable>>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketLeagueTable>> GetFirstDivisionCricketTables()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/CricketFirstDivision", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketLeagueTable> table = JsonConvert.DeserializeObject<List<CricketLeagueTable>>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
         public async Task<List<LeagueTable>> GetCoronaLeagueTables()
         {
             try
@@ -186,7 +254,77 @@ namespace TruSport.Services
             return null;
         }
 
-        public async Task<List<LeagueTable>> GetTeamLeagueTables(string teamID, string leagueID)
+        public async Task<CricketLeagueTable> GetCricketPremierLeagueTableByTeam(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/CricketPremierLeagueTableByTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    CricketLeagueTable table = JsonConvert.DeserializeObject<CricketLeagueTable>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<CricketLeagueTable> GetCricketFirstDivisionTableByTeam(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/CricketFirstDivisionTableByTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    CricketLeagueTable table = JsonConvert.DeserializeObject<CricketLeagueTable>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueTable>> GetFootballTeamLeagueTable(string teamID)
         {
             try
             {
@@ -195,9 +333,8 @@ namespace TruSport.Services
                 //if (accessToken != null)
                 //{
                     var client = new RestClient(Constants.APIEndpoint);
-                    var request = new RestRequest("LeagueTable/TeamTable", Method.GET);
+                    var request = new RestRequest("LeagueTable/FootballTeam", Method.GET);
                     request.AddParameter("teamID", teamID);
-                    request.AddParameter("leagueID", leagueID);
                 //request.AddHeader("authorization", "Bearer " + accessToken);
 
                 // We execute the request and capture the response
@@ -210,6 +347,78 @@ namespace TruSport.Services
 
                         return coaches;
                     }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketLeagueTable>> GetCricketTeamLeagueTable(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/CricketTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketLeagueTable> coaches = JsonConvert.DeserializeObject<List<CricketLeagueTable>>(response.Content);
+
+                    return coaches;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        //Deprecated
+        public async Task<List<LeagueTable>> GetTeamLeagueTables(string teamID, string leagueID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/TeamTable", Method.GET);
+                request.AddParameter("teamID", teamID);
+                request.AddParameter("leagueID", leagueID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueTable> coaches = JsonConvert.DeserializeObject<List<LeagueTable>>(response.Content);
+
+                    return coaches;
+                }
                 //}
 
                 //return null;
@@ -242,6 +451,41 @@ namespace TruSport.Services
                 if (response.IsSuccessful)
                 {
                     List<LeagueTable> coaches = JsonConvert.DeserializeObject<List<LeagueTable>>(response.Content);
+
+                    return coaches;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketLeagueTable>> GetCricketLeagueTableByLeague(string leagueID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/CricketLeagueTableByLeague", Method.GET);
+                request.AddParameter("leagueID", leagueID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketLeagueTable> coaches = JsonConvert.DeserializeObject<List<CricketLeagueTable>>(response.Content);
 
                     return coaches;
                 }

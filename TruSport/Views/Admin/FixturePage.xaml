@@ -23,7 +23,7 @@
             <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
             <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
             <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
-            <converter:GroupingSelectionConverter x:Key="groupingSelectionConverter"/>
+            <converter:GroupingSelectionFootballConverter x:Key="groupingSelectionConverter"/>
             <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
             <DataTemplate x:Name="PastItemTemplate"  x:Key="PastItemTemplate">
                 <StackLayout HorizontalOptions="FillAndExpand"
@@ -90,7 +90,7 @@
                                                   WidthRequest="30"
                                                   
                                                   Aspect="AspectFit" />-->
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
                         <ff:CachedImage Source="{Binding HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontrack.png"
                                         LoadingPlaceholder="ontrack.png"
@@ -117,7 +117,7 @@
                                                   HorizontalOptions="Center"
                                                   VerticalOptions="Center"
                                                   Aspect="AspectFit"/>-->
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
                         <ff:CachedImage Source="{Binding AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontrack.png"
                                         LoadingPlaceholder="ontrack.png"

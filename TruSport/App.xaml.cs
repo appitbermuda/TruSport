@@ -12,6 +12,7 @@ using System.IO;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Essentials;
+using TruSport.Views.Cricket;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace TruSport
@@ -35,7 +36,8 @@ namespace TruSport
         {
             //Register Syncfusion license
             //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTUxNzhAMzEzNjJlMzQyZTMwZkJVNlFpZWo2ajNrRCtTdllpYWpUbDlYRUdIZyswTUl1MWN6aHo2M3lUQT0=");
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTI3MjQ0QDMxMzcyZTMyMmUzMEVXdDlpZGx1eTg4YnVPVkwzY0V5cE9wTk1jT3FhYXJkTmxxRHNMR1ZxV0E9");
+            //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjUwNTkxQDMxMzgyZTMxMmUzMFc0QlJSUWl1VnVJa3UrM0JRSFBvK0hwajdNb0JtM3NzN0c0ODNlRHI4UDQ9");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mjc2MzQ3QDMxMzgyZTMxMmUzMEJqVi9DRlJZTVk3QThlVXVzTU5LRXVmeERPV2VqVjk5L1JUWk4yZjc1YTA9");
 
             InitializeComponent();
 
@@ -71,16 +73,22 @@ namespace TruSport
             
             Resources["fontFamily"] = Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS ? "icomoon" : "icomoon.ttf#icomoon";
 
-            
+
 
             //MainPage = new AdminMainPage();
             //MainPage = new FootballMainPage();
             //MainPage = new OnTrackPage();
-            MainPage = new NavigationPage(new OnTrackPage())
-            {
-                BackgroundColor = (Color)App.Current.Resources["primaryDarkBlueTwo"],
-                BarTextColor = Color.White,
-            };
+            //MainPage = new NavigationPage(new OnTrackPage())
+            //{
+            //    BackgroundColor = (Color)App.Current.Resources["primaryDarkBlueTwo"],
+            //    BarTextColor = Color.White,
+            //};
+
+            //MainPage = new FootballMasterDetailPage();
+
+            
+                MainPage = new NavigationPage(new MainPage());
+            
 
             //MainPage = new NavigationPage(new AdminMainPage()
             //{
@@ -140,12 +148,12 @@ namespace TruSport
 
             var userLoggedIn = await SecureStorage.GetAsync("UserLoggedIn");
             var token = await SecureStorage.GetAsync("Token");
-
-            if(userLoggedIn == null)
+            
+            //if(userLoggedIn == null)
 
 #if DEBUG
-                //await SecureStorage.SetAsync("TeamID", "fb9e133c-f062-4bd2-947a-b3db229464ae");
-                //AppCenter.Start("7e262408-f3ac-48de-90ea-44ae3d91643b", typeof(Push));
+            //await SecureStorage.SetAsync("TeamID", "fb9e133c-f062-4bd2-947a-b3db229464ae");
+            //AppCenter.Start("7e262408-f3ac-48de-90ea-44ae3d91643b", typeof(Push));
 #else
             //AppCenter.Start("b77a4a09-aacb-4224-82cc-64a8d8e3e9d6", typeof(Push));
             
@@ -160,9 +168,30 @@ namespace TruSport
             //await Push.SetEnabledAsync(true);
 
             bool isEnabled = await Push.IsEnabledAsync();
-            
+
+            VersionTracking.Track();
+
 
             // Handle when your app starts
+            if (App.Database != null)
+            {
+                var sport = await App.Database.GetDefaultSport();
+
+                if (sport == null || String.IsNullOrEmpty(sport.Sport))
+                    MainPage = new NavigationPage(new MainPage());
+                else
+                {
+                    if (sport.Sport.ToLower() == "cricket")
+                        MainPage = new CricketMasterDetailPage();
+                    else
+                        MainPage = new FootballMasterDetailPage();
+                }
+            }
+            else
+            {
+                MainPage = new NavigationPage(new MainPage());
+            }
+
         }
 
         protected override void OnSleep()
@@ -184,6 +213,30 @@ namespace TruSport
 
             //App.Current.MainPage = new FootballMainPage();  
             // Handle when your app resumes
+
+
+            //var sport = await SecureStorage.GetAsync("Sport");
+
+            //if (String.IsNullOrEmpty(sport))
+            //    await SecureStorage.SetAsync("Sport", "Football");
+        }
+
+        public static Color LookupColor(string key)
+        {
+            try
+            {
+                Application.Current.Resources.TryGetValue(key, out var newColor);
+                return (Color)newColor;
+            }
+            catch
+            {
+                return Color.White;
+            }
+        }
+
+        public static string AppTheme
+        {
+            get; set;
         }
     }
 }

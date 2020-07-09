@@ -13,5 +13,6 @@ namespace TruSport.Model
         public string SeasonID { get; set; }
         public string SeasonDate { get; set; }
         public int Goals { get; set; }
+        public int Stat { get; set; }
     }
 }

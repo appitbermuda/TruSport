@@ -1,13 +1,11 @@
 ﻿using System;
-using Rg.Plugins.Popup.Pages;
-using Rg.Plugins.Popup.Services;
 using TruSport.Data;
 using TruSport.Model;
 using Xamarin.Forms;
 
 namespace TruSport.Views.Football
 {
-    public class MatchStatsPlayerPopUpPage : PopupPage
+    public class MatchStatsPlayerPopUpPage : ContentPage
     {
         ScrollView MainScrollView;
         AbsoluteLayout MainAbsoluteLayout;
@@ -83,7 +81,7 @@ namespace TruSport.Views.Football
             var closeTapGestureRecognizer = new TapGestureRecognizer();
             closeTapGestureRecognizer.Tapped += async (sender, e) => 
             {
-                await PopupNavigation.Instance.PopAsync();
+                
             };
             MainContentView.GestureRecognizers.Add(closeTapGestureRecognizer);
 

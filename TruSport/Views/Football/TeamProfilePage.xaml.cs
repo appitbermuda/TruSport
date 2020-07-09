@@ -15,7 +15,11 @@ namespace TruSport.Views.Football
 
         public TeamProfilePage()
         {
+            //teamProfilePageViewModel = new TeamProfilePageViewModel(Navigation);
+
             InitializeComponent();
+
+            this.BindingContext = teamProfilePageViewModel;
 
             //loader.Easing = Easing.Linear;
             //tableloader.Easing = Easing.Linear;
@@ -35,7 +39,7 @@ namespace TruSport.Views.Football
                 PropertyName = "PreviousTeam",
                 KeySelector = (object obj1) =>
                 {
-                    var item = (obj1 as Transfers);
+                    var item = (obj1 as Transfer);
                     return item.PreviousTeam;
                 }
             });
@@ -43,9 +47,11 @@ namespace TruSport.Views.Football
 
         public TeamProfilePage(Team Team)
         {
-           teamProfilePageViewModel = new TeamProfilePageViewModel(Navigation, Team);
-            this.BindingContext = teamProfilePageViewModel;
+            teamProfilePageViewModel = new TeamProfilePageViewModel(Navigation, Team);
+            
             InitializeComponent();
+
+            this.BindingContext = teamProfilePageViewModel;
 
             if (Team.Alias == null || Team.Alias == "")
                 TitleLabel.Text = Team.Name;
@@ -67,7 +73,7 @@ namespace TruSport.Views.Football
                 PropertyName = "PreviousTeam",
                 KeySelector = (object obj1) =>
                 {
-                    var item = (obj1 as Transfers);
+                    var item = (obj1 as Transfer);
                     return item.PreviousTeam;
                 }
             });
@@ -87,80 +93,11 @@ namespace TruSport.Views.Football
 
         void Handle_SelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
         {
-            if (e.Index == 0)
-            {
-                ProfileLabel.TextColor = Color.White;
-                FixtureLabel.TextColor = Color.Gray;
-                PlayerLabel.TextColor = Color.Gray;
-                TableLabel.TextColor = Color.Gray;
-                TransferLabel.TextColor = Color.Gray;
-
-                //ProfileSelected.IsVisible = true;
-
-                //PlayerSelected.IsVisible = false;
-                //TableSelected.IsVisible = false;
-                //FixtureSelected.IsVisible = false;
-            }
-            else if (e.Index == 1)
-            {
-                PlayerLabel.TextColor = Color.White;
-                ProfileLabel.TextColor = Color.Gray;
-                FixtureLabel.TextColor = Color.Gray;
-                TableLabel.TextColor = Color.Gray;
-                TransferLabel.TextColor = Color.Gray;
-
-                //ProfileSelected.IsVisible = false;
-                //PlayerSelected.IsVisible = true;
-                //TableSelected.IsVisible = false;
-                //FixtureSelected.IsVisible = false;
-            }
-            else if (e.Index == 2)
-            {
-                TableLabel.TextColor = Color.White;
-                ProfileLabel.TextColor = Color.Gray;
-                PlayerLabel.TextColor = Color.Gray;
-                FixtureLabel.TextColor = Color.Gray;
-                TransferLabel.TextColor = Color.Gray;
-
-                //ProfileSelected.IsVisible = false;
-                //PlayerSelected.IsVisible = false;
-                //TableSelected.IsVisible = true;
-                //FixtureSelected.IsVisible = false;
-            }
-            else if (e.Index == 3)
-            {
-                FixtureLabel.TextColor = Color.White;
-                ProfileLabel.TextColor = Color.Gray;
-                PlayerLabel.TextColor = Color.Gray;
-                TableLabel.TextColor = Color.Gray;
-                TransferLabel.TextColor = Color.Gray;
-
-                //ProfileSelected.IsVisible = false;
-                //PlayerSelected.IsVisible = false;
-                //TableSelected.IsVisible = false;
-                //FixtureSelected.IsVisible = true;
-            }
-            else if (e.Index == 4)
-            {
-                TransferLabel.TextColor = Color.White;
-                FixtureLabel.TextColor = Color.Gray;
-                ProfileLabel.TextColor = Color.Gray;
-                PlayerLabel.TextColor = Color.Gray;
-                TableLabel.TextColor = Color.Gray;
-                
-
-                //ProfileSelected.IsVisible = false;
-                //PlayerSelected.IsVisible = false;
-                //TableSelected.IsVisible = false;
-                //FixtureSelected.IsVisible = true;
-            }
-
+            
             if (e.Index == 3)
             {
                 try
                 {
-                    //var fixture = teamProfilePageViewModel.FixtureCollection.Where(x => x.Date < DateTime.Now.AddMonths(-1)).OrderByDescending(x => x.Date).ThenBy(x => x.Time).FirstOrDefault();
-                    //var fixture = teamProfilePageViewModel.FixtureCollection.Where(x => x.Date < DateTime.Now.AddDays(-1)).OrderByDescending(x => x.Date).ThenBy(x => x.Time).FirstOrDefault();
                     var fixture = teamProfilePageViewModel.FixtureCollection.Where(x => x.Date < DateTime.Now.AddDays(-1)).OrderByDescending(x => x.Date).ThenBy(x => x.Time).FirstOrDefault();
                     var fixtureIndex = teamProfilePageViewModel.FixtureCollection.IndexOf(fixture);
 
@@ -181,9 +118,34 @@ namespace TruSport.Views.Football
                         //FixtureListView.ScrollTo(teamProfilePageViewModel.FixtureCollection[index], Syncfusion.ListView.XForms.ScrollToPosition.Start, true);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 { }
             }
+        }
+
+        void PositionContainer_Tapped(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                TeamProfileTab.SelectedIndex = TeamProfileTab.Items.IndexOf(TeamProfileTab.Items.FirstOrDefault(x => x.Title == "Table"));
+            }
+            catch(Exception ex)
+            { }
+        }
+
+        void FormContainer_Tapped(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                TeamProfileTab.SelectedIndex = TeamProfileTab.Items.IndexOf(TeamProfileTab.Items.FirstOrDefault(x => x.Title == "Fixtures"));
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        async void BackButton_Clicked(System.Object sender, System.EventArgs e)
+        {
+            await Navigation.PopAsync();
         }
     }
 }

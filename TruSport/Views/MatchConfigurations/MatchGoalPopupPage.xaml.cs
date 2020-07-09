@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Rg.Plugins.Popup.Pages;
-using Rg.Plugins.Popup.Services;
 using TruSport.Model;
 using TruSport.ViewModel;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
-using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+//using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace TruSport.Views.MatchConfigurations
 {
