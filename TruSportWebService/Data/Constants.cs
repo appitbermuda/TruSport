@@ -3,6 +3,9 @@ namespace OnTrackWebService.Data
 {
     public class Constants
     {
+        public static string SETTING_CRICKET_TBD_ID = "932AEB43-1017-4615-BB4B-F88A913C2117";
+        public static string SETTING_FOOTBALL_TBD_ID = "BA7124FE-A966-428A-A46A-64AF78B15D62";
+
         public static string FromAddress = "ontrackbda@gmail.com";
         public static string BCCAddress = "ontrackbda@gmail.com";
         public static string NoReplyFromAddress = "no-reply_ontrackbda@gmail.com";

@@ -42,6 +42,48 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values
+        [HttpGet]
+        [Route("Cricket")]
+        public async Task<IActionResult> CricketTransfer()
+        {
+            try
+            {
+
+                IEnumerable<Transfer> transfers = await _transferRepository.Cricket();
+
+                if (transfers != null)
+                    return Ok(transfers);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Transfer");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("Football")]
+        public async Task<IActionResult> FootballTransfer()
+        {
+            try
+            {
+
+                IEnumerable<Transfer> transfers = await _transferRepository.Football();
+
+                if (transfers != null)
+                    return Ok(transfers);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Transfer");
+            }
+
+            return NoContent();
+        }
+
         [HttpGet]
         [Route("TeamTransfers")]
         public async Task<IActionResult> TransfersByTeam(string teamID)

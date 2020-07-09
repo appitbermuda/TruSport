@@ -48,13 +48,13 @@ namespace OnTrackWebService
 
 
             //#if DEBUG
-            //services.AddDbContext<OnTrackContext>
-            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
-
-
-            //#else
             services.AddDbContext<OnTrackContext>
-                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
+                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
+
+
+            ////#else
+            //services.AddDbContext<OnTrackContext>
+            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
             //#endif
 
@@ -110,8 +110,6 @@ namespace OnTrackWebService
             services.AddScoped<IDisposable, UserRepository>();
             services.AddScoped<IPushNotificationRepository<Push>, PushNotificationRepository>();
             services.AddScoped<IOnTrackRepository<UserType>, UserTypeRepository>();
-
-            
 
             //string domain = $"https://{Configuration["Auth0:Domain"]}/";
             //services.AddAuthentication(options =>

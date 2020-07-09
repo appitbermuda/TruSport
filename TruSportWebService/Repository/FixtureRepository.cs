@@ -25,6 +25,7 @@ namespace OnTrackWebService.Repository
         TeamRepository teamRepository;
         LeagueRepository leagueRepository;
         SeasonRepository seasonRepository;
+        SettingRepository settingRepository;
 
         public FixtureRepository(OnTrackContext context)
         {
@@ -33,6 +34,7 @@ namespace OnTrackWebService.Repository
             teamRepository = new TeamRepository(context);
             leagueRepository = new LeagueRepository(context);
             seasonRepository = new SeasonRepository(context);
+            settingRepository = new SettingRepository(context);
         }
 
         public Task Delete(string id)
@@ -1601,7 +1603,7 @@ namespace OnTrackWebService.Repository
                 Team homeTeam = null;
                 Team awayTeam = null;
                 Season season = null;
-
+                string TBD = await settingRepository.GetString(Constants.SETTING_CRICKET_TBD_ID);
                 //Stream reader = file.OpenReadStream();
 
                 using (var reader = new StreamReader(file.OpenReadStream()))
@@ -1634,8 +1636,8 @@ namespace OnTrackWebService.Repository
                             {
                                 Date = record.Date,
                                 Time = record.Time.AddHours(4).ToString("HH:mm:ss"),
-                                HomeTeamID = homeTeam.ID,
-                                AwayTeamID = awayTeam.ID,
+                                HomeTeamID = homeTeam != null ? homeTeam.ID : TBD,
+                                AwayTeamID = awayTeam != null ? awayTeam.ID : TBD,
                                 LeagueID = league.ID,
                                 MatchTypeID = matchType.ID,
                                 FieldID = field.ID,
@@ -1648,6 +1650,19 @@ namespace OnTrackWebService.Repository
                             errorFixtures.Add(record);
 
                         }
+                    }
+
+                    try
+                    {
+                        await AddFixtures(fixtures);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ImportCricketFixtures
+                        {
+                            Message = "Error importing schedule to database.",
+                            Exception = ex.Message
+                        };
                     }
                 }
 
@@ -1820,6 +1835,21 @@ namespace OnTrackWebService.Repository
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Update Fixture");
+            }
+        }
+
+
+        public async Task AddFixtures(List<CricketFixture> items)
+        {
+            try
+            {
+                await _context.CricketFixtures.AddRangeAsync(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Fixtures");
             }
         }
 

@@ -64,6 +64,34 @@ namespace OnTrackWebService.Repository
             return await _context.Settings.FirstOrDefaultAsync(e => e.ID == id);
         }
 
+        public async Task<string> GetString(string id)
+        {
+            Setting setting = await _context.Settings.FirstOrDefaultAsync(e => e.ID == id);
+
+            return setting.Value;
+        }
+
+        public async Task<bool> GetBoolean(string id)
+        {
+            Setting setting = await _context.Settings.FirstOrDefaultAsync(e => e.ID == id);
+
+            return Convert.ToBoolean(setting.Value);
+        }
+
+        public async Task<int> GetInt(string id)
+        {
+            Setting setting = await _context.Settings.FirstOrDefaultAsync(e => e.ID == id);
+
+            return Convert.ToInt32(setting.Value);
+        }
+
+        public async Task<decimal> GetDecimal(string id)
+        {
+            Setting setting = await _context.Settings.FirstOrDefaultAsync(e => e.ID == id);
+
+            return Convert.ToDecimal(setting.Value);
+        }
+
         public async Task<string> Insert(Setting item)
         {
             _context.Settings.Add(item);

@@ -45,6 +45,46 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("Cricket")]
+        public async Task<IActionResult> CricketSeasons()
+        {
+            try
+            {
+
+                IEnumerable<Season> Seasons = await _SeasonRepository.GetCricketSeason();
+
+                if (Seasons != null)
+                    return Ok(Seasons);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Season");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("Football")]
+        public async Task<IActionResult> FootballSeasons()
+        {
+            try
+            {
+
+                IEnumerable<Season> Seasons = await _SeasonRepository.GetFootballSeason();
+
+                if (Seasons != null)
+                    return Ok(Seasons);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Season");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("TeamSeasons")]
         public async Task<IActionResult> SeasonsByTeam(string teamID)
         {

@@ -1,68 +1,46 @@
-﻿<Properties StartupConfiguration="{2B8BBBC2-64F1-4CA8-93A4-CE0C0FCA282F}|Default">
+﻿<Properties StartupConfiguration="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}|Default">
   <MonoDevelop.Ide.ItemProperties.TruSport.Android AndroidDesignerPreferredTheme="Theme.AppCompat.Light.NoActionBar" PreferredExecutionTarget="Android.Android_Accelerated_x86" />
-  <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.C8B65E48-C5AF-4B69-B36E-E43EAB047500" Xamarin.HotReload.DebuggerTimeoutException.TruSport.iOS.HideInfoBar="True" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Repository/TeamRepository.cs">
+  <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget." Xamarin.HotReload.DebuggerTimeoutException.TruSport.iOS.HideInfoBar="True" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Controllers/MatchController.cs">
     <Files>
-      <File FileName="TruSportWebService/Repository/TeamRepository.cs" Line="283" Column="39" />
-      <File FileName="TruSport/ViewModel/Football/TeamPageViewModel.cs" />
-      <File FileName="TruSport/Views/Football/TeamPage.xaml" />
-      <File FileName="TruSport/Views/Football/TeamPage.xaml.cs" />
+      <File FileName="TruSport/Services/FixtureService.cs" Line="171" Column="1" />
       <File FileName="TruSport/ViewModel/Football/TeamProfilePageViewModel.cs" />
       <File FileName="TruSport/Services/LeagueTableService.cs" />
-      <File FileName="TruSportWebService/Controllers/LeagueTableController.cs" />
-      <File FileName="TruSportWebService/Repository/LeagueTableRepository.cs" />
-      <File FileName="TruSport/Views/Football/TablePage.xaml" />
-      <File FileName="TruSport/Views/Football/TeamProfilePage.xaml" />
-      <File FileName="TruSport/Views/Cricket/TeamProfilePage.xaml" />
-      <File FileName="TruSport/Views/Cricket/CompetitionDetailsPage.xaml" />
-      <File FileName="TruSport/Views/Football/CompetitionDetailsPage.xaml" />
-      <File FileName="TruSport/Styles/LightTheme.xaml" />
-      <File FileName="TruSport/Styles/DarkTheme.xaml" />
-      <File FileName="TruSport/Views/Football/FixturePage.xaml" />
-      <File FileName="TruSport/Converters/Converters.cs" />
-      <File FileName="TruSport/Templates/CricketFixtureList.xaml" />
-      <File FileName="TruSport/Templates/FixtureList.xaml" />
-      <File FileName="TruSport/Views/MainPage.xaml" />
-      <File FileName="TruSport.iOS/Info.plist" />
-      <File FileName="TruSport.Android/MainActivity.cs" />
-      <File FileName="TruSport.Android/Properties/AndroidManifest.xml" />
-      <File FileName="TruSport.Android/SplashActivity.cs" />
-      <File FileName="TruSport.Android/Resources/values/styles.xml" />
-      <File FileName="TruSport.Android/Resources/drawable/splash_screen.xml" />
+      <File FileName="TruSport/Services/TeamService.cs" />
+      <File FileName="TruSportWebService/Repository/TeamRepository.cs" />
+      <File FileName="TruSportWebService/Startup.cs" />
+      <File FileName="TruSportWebService/Program.cs" />
+      <File FileName="TruSportWebService/OwinStartup.cs" />
+      <File FileName="TruSportWebService/appsettings.json" />
+      <File FileName="TruSportWebService/Models/CricketFixture.cs" />
+      <File FileName="TruSportWebService/Repository/FixtureRepository.cs" Line="625" Column="9" />
+      <File FileName="TruSport/Templates/CricketFixtureDataTemplateSelector.cs" Line="16" Column="42" />
+      <File FileName="TruSport/Model/Model.cs" Line="53" Column="5" />
+      <File FileName="TruSport/Templates/CricketFixtureList.xaml" Line="3" Column="17" />
+      <File FileName="TruSport/Templates/CricketFixtureList.xaml.cs" Line="19" Column="6" />
+      <File FileName="TruSport/Templates/CricketScoreFixtureList.xaml.cs" Line="19" Column="6" />
+      <File FileName="TruSport/Templates/CricketScoreFixtureList.xaml" Line="17" Column="85" />
+      <File FileName="TruSport/Converters/Converters.cs" Line="696" Column="6" />
+      <File FileName="TruSportWebService/Controllers/FixtureController.cs" Line="301" Column="78" />
+      <File FileName="TruSportWebService/Controllers/MatchController.cs" Line="2" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="TruSport" expanded="True">
             <Node name="OnTrackWebService" expanded="True">
-              <Node name="Repository" expanded="True">
-                <Node name="TeamRepository.cs" selected="True" />
+              <Node name="Controllers" expanded="True">
+                <Node name="MatchController.cs" selected="True" />
               </Node>
             </Node>
             <Node name="TruSport" expanded="True">
-              <Node name="Constants" expanded="True" />
               <Node name="Converters" expanded="True" />
-              <Node name="Services" expanded="True" />
-              <Node name="Styles" expanded="True" />
-              <Node name="Templates" expanded="True" />
-              <Node name="ViewModel" expanded="True">
-                <Node name="Football" expanded="True" />
-              </Node>
-              <Node name="Views" expanded="True">
-                <Node name="Cricket" expanded="True" />
-                <Node name="Football" expanded="True">
-                  <Node name="TeamPage.xaml" expanded="True" />
-                </Node>
+              <Node name="Model" expanded="True" />
+              <Node name="Templates" expanded="True">
+                <Node name="CricketFixtureList.xaml" expanded="True" />
+                <Node name="CricketScoreFixtureList.xaml" expanded="True" />
               </Node>
             </Node>
-            <Node name="TruSport.Android" expanded="True">
-              <Node name="Properties" expanded="True" />
-              <Node name="Resources" expanded="True">
-                <Node name="drawable" expanded="True" />
-                <Node name="values" expanded="True" />
-              </Node>
-            </Node>
-            <Node name="TruSport.iOS" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -96,7 +74,10 @@
       <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Controllers/TeamController.cs" relfile="TruSportWebService/Controllers/TeamController.cs" line="39" column="1" />
       <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Repository/TeamRepository.cs" relfile="TruSportWebService/Repository/TeamRepository.cs" line="467" column="1" />
       <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Repository/LeagueTableRepository.cs" relfile="TruSportWebService/Repository/LeagueTableRepository.cs" line="52" column="1" />
-      <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Repository/TeamRepository.cs" relfile="TruSportWebService/Repository/TeamRepository.cs" line="301" column="1" />
+      <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Controllers/UserController.cs" relfile="TruSportWebService/Controllers/UserController.cs" line="116" column="1" />
+      <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Repository/UserRepository.cs" relfile="TruSportWebService/Repository/UserRepository.cs" line="111" column="1" />
+      <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1657" column="1" />
+      <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1648" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations>

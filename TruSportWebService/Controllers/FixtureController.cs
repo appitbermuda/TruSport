@@ -397,7 +397,7 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
-        [Route("CricketTeamForn")]
+        [Route("CricketTeamForm")]
         public async Task<IActionResult> GetCricketFormByTeam(string teamID)
         {
             try

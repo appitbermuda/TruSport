@@ -9,7 +9,6 @@
     <Color x:Key="GroupHeaderBackgroundColor">#1d2462</Color>
     <Color x:Key="frameBackgroundColor">#F9F9F9</Color>
     <Color x:Key="controlHeaderBackgroundColor">#F5F5F5</Color>
-    <!--DDDDDD-->
     <Color x:Key="controlElementBackgroundColor">#F0F0F0</Color>
     <Color x:Key="TextPrimaryColor">#000000</Color>
     <Color x:Key="TextSecondaryColor">#000000</Color>
