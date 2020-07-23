@@ -11,6 +11,10 @@ namespace OnTrackWebService.Models
         public string SeasonID { get; set; }
         public int? GamesPlayed { get; set; }
         public bool IsActive { get; set; }
+        public int? Runs { get; set; }
+        public int? Wickets { get; set; }
+        public int? BallsFaced { get; set; }
+        public int? RunsConceded { get; set; }
 
         [ForeignKey("PlayerID")]
         public Player Player { get; set; }

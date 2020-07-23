@@ -46,6 +46,9 @@ namespace OnTrackWebService.Models
         public string PostOrCanc => IsPostponed ? "Post." : IsCancelled ? "Canc." : String.Empty;
 
         [NotMapped]
+        public bool IsPostponedOrCancelled => IsPostponed || IsCancelled;
+
+        [NotMapped]
         public DateTime FixtureTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? Date.AddDays(1).Add(TimeSpan.Parse(Time)) : Date.Add(TimeSpan.Parse(Time));
 
         [NotMapped]

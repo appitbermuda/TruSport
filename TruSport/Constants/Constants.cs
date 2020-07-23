@@ -3,7 +3,7 @@ namespace TruSport
 {
     public static class Constants
     {
-        public static string OnTrackEmail = "support@ontrackbda.com";
+        public static string OnTrackEmail = "sports@ontrackbda.com";
         //public static string OnTrackEmail = "ontrackbda@gmail.com";
         public static string ApplicationURL = @"https://trusport.azurewebsites.net"; 
         public static string AdMobDeveloperBannerID = "ca-app-pub-3940256099942544/2934735716";

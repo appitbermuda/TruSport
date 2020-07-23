@@ -57,6 +57,7 @@ namespace OnTrackWebService.Models
         public string SeasonID { get; set; }
         public string SeasonDate { get; set; }
         public int Stat { get; set; }
+        public decimal Rate { get; set; }
     }
 
     public class WicketsByPlayer
@@ -71,6 +72,7 @@ namespace OnTrackWebService.Models
         public string SeasonID { get; set; }
         public string SeasonDate { get; set; }
         public int Stat { get; set; }
+        public decimal Rate { get; set; }
     }
 
     public class GoalsScoredByTeam

@@ -336,7 +336,7 @@ namespace TruSport.ViewModels
 
                 IsFootball = true;
 
-                if (awards != null)
+                if (awards != null && awards.Count > 0)
                 {
                     HasAwards = true;
                     AwardCollection = new ObservableCollection<Award>(awards);

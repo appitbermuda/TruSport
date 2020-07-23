@@ -826,7 +826,7 @@ namespace TruSport.Model
         [Ignore]
         public ObservableCollection<MatchInning> MatchInnings { get; set; }
 
-        //[Ignore]
+        [Ignore]
         public string HomeTeamScore { get; set; }
 
         [Ignore]

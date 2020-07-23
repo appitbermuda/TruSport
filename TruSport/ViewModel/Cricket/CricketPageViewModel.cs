@@ -334,9 +334,9 @@ namespace TruSport.ViewModels.Cricket
                 IsCricket = true;
 
                 var _showPOW = await SecureStorage.GetAsync("ShowPOW");
-                ShowPOW = ((_showPOW != null ? Convert.ToBoolean(_showPOW) : true) && awards != null);
+                ShowPOW = ((_showPOW != null ? Convert.ToBoolean(_showPOW) : true) && (awards != null && awards.Count > 0));
 
-                if(awards != null)
+                if(awards != null && awards.Count > 0)
                 {
                     HasAwards = true;
                     AwardCollection = new ObservableCollection<Award>(awards);

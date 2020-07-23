@@ -543,7 +543,7 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<spLiveFixtures> fixtures = await _fixtureRepository.GetLiveCricket();
+                IEnumerable<spLiveCricketFixtures> fixtures = await _fixtureRepository.GetLiveCricket();
 
                 if (fixtures != null)
                     return Ok(fixtures);

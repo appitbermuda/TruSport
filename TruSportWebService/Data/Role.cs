@@ -3,9 +3,10 @@ namespace OnTrackWebService.Data
 {
     public static class Roles
     {
-        public const string AllUsers = "Administrator,Team Administrator,Match Commissioner";
+        public const string AllUsers = "Administrator,Team Manager (Football),Team Manager (Cricket),Score Administrator (Football),Score Administrator (Cricket),Match Commissioner (Football)";
         public const string Admin = "Administrator";
-        public const string TeamAdmin = "Administrator,Team Administrator";
-        public const string MatchCommissioner = "Administrator,Match Commissioner";
+        public const string TeamAdmin = "Administrator,Team Manager (Football),Team Manager (Cricket)";
+        public const string ScoreAdmin = "Administrator,Score Administrator (Football),Score Administrator (Cricket)";
+        public const string MatchCommissioner = "Administrator,Match Commissioner (Football)";
     }
 }

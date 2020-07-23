@@ -78,6 +78,7 @@ namespace OnTrackWebService.Models
         public int Loss { get; set; }
         public int Draws { get; set; }
         public int Points { get; set; }
+        public decimal NetRunRate { get; set; }
 
         [NotMapped]
         public bool IsSelectedTeam { get; set; }

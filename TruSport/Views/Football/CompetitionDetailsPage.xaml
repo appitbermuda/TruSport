@@ -209,7 +209,7 @@
                                                   WidthRequest="30"
                                                   
                                                   Aspect="AspectFit" />-->
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontrack.png"
                                         LoadingPlaceholder="ontrack.png"
@@ -236,7 +236,7 @@
                                                   HorizontalOptions="Center"
                                                   VerticalOptions="Center"
                                                   Aspect="AspectFit"/>-->
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontrack.png"
                                         LoadingPlaceholder="ontrack.png"

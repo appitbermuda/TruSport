@@ -12,6 +12,14 @@ namespace OnTrackWebService.Data
         public const string Url = "https://api.appcenter.ms/v0.1/apps/";
         public const string ApiKeyName = "X-API-Token";
         public const string ApiKey = "906a76bb025114bb6f621d1950b42cfb54601d45";
+
+        public const string CricHQApiKeyName = "api_token";
+        public const string CricHQApiKey = "d0c6af03ac033fa8e8dafd411105c42e";
+        public const string CricHQEndpoint = "https://www.crichq.com/api/v2/public/";
+        public const string CricHQFixturesEndpoint = "match_center/upcoming?query=bermuda";
+        public const string CricHQLiveEndpoint = "in_progress?query=bermuda&competition_match_level_id=0";
+
+
         public const string Organization = "techReef";
         public const string Android = "OnTrack-1";
         public const string IOS = "OnTrack";

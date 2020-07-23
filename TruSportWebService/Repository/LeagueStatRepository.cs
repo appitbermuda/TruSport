@@ -66,8 +66,8 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
-                return await _context.RunsByPlayer.OrderByDescending(e => e.Stat).ToListAsync();
+                var runsStats = await _context.RunsByPlayer.ToListAsync();
+                return runsStats.OrderByDescending(e => e.Stat).ThenByDescending(e => e.Rate).ToList();
             }
             catch (Exception ex)
             {
@@ -81,8 +81,8 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
-                return await _context.WicketsByPlayer.OrderByDescending(e => e.Stat).ToListAsync();
+                var wicketsStats = await _context.WicketsByPlayer.ToListAsync();
+                return wicketsStats.OrderByDescending(e => e.Stat).ThenBy(e => e.Rate).ToList();
             }
             catch (Exception ex)
             {

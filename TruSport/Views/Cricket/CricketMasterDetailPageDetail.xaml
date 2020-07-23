@@ -95,7 +95,7 @@
                             <StackLayout Grid.Row="1" HorizontalOptions="CenterAndExpand">
                                 <Image Source="{Binding Image, Converter={StaticResource cricketImageConverter}}"  HeightRequest="300" WidthRequest="300" Aspect="AspectFit" />
                             </StackLayout>
-                            <StackLayout Grid.Row="2" HorizontalOptions="CenterAndExpand">
+                            <StackLayout Grid.Row="2" HorizontalOptions="CenterAndExpand" Padding="0,20,0,0" >
                                 <Label Text="{Binding Player.Name}"
                                        HorizontalTextAlignment="Center"
                                        FontSize="Small"

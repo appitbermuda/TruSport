@@ -29,6 +29,11 @@ namespace OnTrackWebService.Repository
 
         public async Task<IEnumerable<UserType>> GetAll()
         {
+            return await _context.UserTypes.ToListAsync();
+        }
+
+        public async Task<IEnumerable<UserType>> GetSelectable()
+        {
             return await _context.UserTypes.Where(e => e.IsSelectable).ToListAsync();
         }
 

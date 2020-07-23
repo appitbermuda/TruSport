@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnTrackWebService.Models
 {
-    public class Transfers
+    public class vTransfers
     {
         public string PlayerID { get; set; }
         public string PlayerName { get; set; }

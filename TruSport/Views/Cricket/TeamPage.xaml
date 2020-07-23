@@ -35,7 +35,7 @@
                         <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
                     <StackLayout Grid.Column="0" Padding="0,5" VerticalOptions="Center">
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
                                         ErrorPlaceholder="bcblogo.png"
                                         LoadingPlaceholder="bcblogo.png"
