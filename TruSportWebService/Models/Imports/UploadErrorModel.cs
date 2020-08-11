@@ -18,4 +18,12 @@ namespace OnTrackWebService.Models.Imports
         public List<Fixtures> ErrorRows { get; set; }
         public byte[] ErrorFile { get; set; }
     }
+
+    public class ImportTransfers
+    {
+        public string Message { get; set; }
+        public string Exception { get; set; }
+        public List<Transfers> ErrorRows { get; set; }
+        public byte[] ErrorFile { get; set; }
+    }
 }

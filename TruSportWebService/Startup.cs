@@ -46,17 +46,15 @@ namespace OnTrackWebService
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
+            //#if DEBUG
+            //services.AddDbContext<OnTrackContext>
+            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
-//#if DEBUG
-//            services.AddDbContext<OnTrackContext>
-//                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
-
-
-//#else
+            //#else
             services.AddDbContext<OnTrackContext>
                 (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
-//#endif
+            //#endif
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
