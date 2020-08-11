@@ -1441,6 +1441,110 @@ namespace OnTrackWebService.Repository
                 .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.FixtureTime < DateTime.Now && (e.MatchInnings != null && e.MatchInnings.Count > 0)).OrderByDescending(f => f.Date).Take(6).ToListAsync();
 
                 fixtures.ForEach(e => e.SelectedTeamID = teamID);
+                
+                fixtures.ForEach(e => e.MatchResult =
+                    (e.MatchInnings != null && e.MatchInnings.Count > 0) && e.IsCancelled && !e.IsPostponed ? "Match abandoned" : ""
+                );
+
+                foreach (var fixture in fixtures.Where(e => e.MatchInnings != null && e.MatchInnings.Count > 0))
+                {
+                    string homeTeamscore = "";
+
+                    List<InningScore> inningScores = new List<InningScore>();
+                    int homeTeamRuns = 0;
+                    int awayTeamRuns = 0;
+
+                    int homeTeamWickets = 0;
+                    int awayTeamWickets = 0;
+
+                    foreach (var matchInning in fixture.MatchInnings)
+                    {
+                        if (matchInning.BattingTeamID == fixture.HomeTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.HomeTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.HomeTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run.Value,
+                                Wickets = matchInning.Wicket.Value,
+                                Overs = matchInning.Over.Value,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.HomeTeamID,
+                                Team = fixture.HomeTeam
+                            });
+                        }
+
+                        string awayTeamscore = "";
+                        if (matchInning.BattingTeamID == fixture.AwayTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.AwayTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.AwayTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run.Value,
+                                Wickets = matchInning.Wicket.Value,
+                                Overs = matchInning.Over.Value,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.AwayTeamID,
+                                Team = fixture.AwayTeam
+
+                            });
+                        }
+                    }
+
+                    if (fixture.End.HasValue && fixture.End.Value < DateTime.Now)
+                    {
+                        if (fixture.MatchType.Name == "One 50 Overs")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 50))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else if (fixture.MatchType.Name == "T20")
+                        {
+                            if (inningScores.Count > 1 && (inningScores.Any(e => e.Overs == 20) || inningScores.Any(e => e.Wickets == 10)))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs || (inningScores[0].Wickets == 10 && inningScores[1].Wickets == 10))
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                    fixture.SelectedTeamResult = (inningScores[0].Runs > inningScores[1].Runs && inningScores[0].TeamID == teamID) || (inningScores[1].Runs > inningScores[0].Runs && inningScores[1].TeamID == teamID) ? "W" : "L";
+                                }
+                                else
+                                {
+                                    if (inningScores[0].Wickets == 10 || inningScores[1].Wickets == 10)
+                                    {
+                                        fixture.MatchResult = inningScores[0].Wickets == 10 ? inningScores[1].Team.Name + " won by " + (inningScores[0].Wickets - inningScores[1].Wickets) + " wickets" : inningScores[0].Team.Name + " won by " + (inningScores[1].Wickets - inningScores[0].Wickets) + " wickets";
+                                        fixture.SelectedTeamResult = (inningScores[0].Wickets == 10 && inningScores[1].TeamID == teamID) || (inningScores[1].Wickets == 10 && inningScores[0].TeamID == teamID) ? "W" : "L";
+                                    }
+                                    else
+                                    {
+                                        fixture.MatchResult = inningScores[0].Overs != inningScores[1].Overs && inningScores[1].Runs > inningScores[0].Runs ? inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets" : inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets";
+                                        fixture.SelectedTeamResult = (inningScores[0].Overs != inningScores[1].Overs && inningScores[1].Runs > inningScores[0].Runs && inningScores[1].TeamID == teamID) || (inningScores[0].Overs != inningScores[1].Overs && inningScores[0].Runs > inningScores[1].Runs && inningScores[0].TeamID == teamID) ? "W" : "L";
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    
+                    }
+                }
                 //fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
 
                 foreach (var fixture in fixtures.Where(e => e.MatchInnings != null && e.MatchInnings.Count > 0))
