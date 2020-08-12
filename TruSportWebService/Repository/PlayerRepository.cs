@@ -24,12 +24,12 @@ namespace OnTrackWebService.Repository
 
         public async Task<Player> Get(string id)
         {
-            return await _context.Players.Include("Team").FirstOrDefaultAsync(e => e.ID == id);
+            return await _context.Players.FirstOrDefaultAsync(e => e.ID == id);
         }
 
-        public async Task<IEnumerable<Player>> GetAll()
+        public async Task<List<Player>> GetAll()
         {
-            return await _context.Players.Include("Team").ToListAsync();
+            return await _context.Players.ToListAsync();
         }
 
         public async Task<IEnumerable<Player>> GetByTeam(string teamID)
@@ -96,6 +96,11 @@ namespace OnTrackWebService.Repository
         }
 
         public Task Update(Player item)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<IEnumerable<Player>> IOnTrackRepository<Player>.GetAll()
         {
             throw new NotImplementedException();
         }
