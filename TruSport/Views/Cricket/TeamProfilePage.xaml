@@ -43,6 +43,15 @@
             <converter:ShowNoContentListConverter x:Key="showNoContentListConverter"/>
             <converter:IsNullConverter x:Key="isNullConverter"/>
             <converter:NumberExtensionConverter x:Key="numberExtensionConverter"/>
+            <DataTemplate x:Key="cricketFixtureTemplate">
+                <templates:CricketFixtureList />
+            </DataTemplate>
+            <DataTemplate x:Key="cricketScoreFixtureTemplate">
+                <templates:CricketScoreFixtureList />
+            </DataTemplate>
+            <templates:CricketFixtureDataTemplateSelector x:Key="cricketFixtureDataTemplateSelector"
+                                                        CricketFixtureTemplate="{StaticResource cricketFixtureTemplate}"
+                                                        CricketScoreFixtureTemplate="{StaticResource cricketScoreFixtureTemplate}" />
             <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
             <OnPlatform x:TypeArguments="x:String" x:Key="fontAwesomeFamily" Android="fa-regular-400.ttf#Font Awesome 5 Pro Regular" iOS="Font Awesome 5 Pro" />
             <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
@@ -1013,7 +1022,7 @@
                                              >
                             <listView:SfListView.ItemTemplate>
                                 <DataTemplate>
-                                    <templates:FormFixtureList/>
+                                    <templates:CricketFormFixtureList/>
                                 </DataTemplate>
                             </listView:SfListView.ItemTemplate>
                         </listView:SfListView>
@@ -1271,17 +1280,18 @@
                             </Grid.RowDefinitions>
                             <listView:SfListView Grid.Row="0" x:Name="FixtureListView"
                                                 ItemsSource="{Binding FixtureCollection}"
+                                                 ItemTemplate="{StaticResource cricketFixtureDataTemplateSelector}"
                                                     HorizontalOptions="FillAndExpand"
                                                     VerticalOptions="FillAndExpand"
                                                    SelectionMode="None"
                                                    ItemSpacing="0"
                                                     SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
                                                  AutoFitMode="DynamicHeight">
-                                <listView:SfListView.ItemTemplate>
+                                <!--<listView:SfListView.ItemTemplate>
                                     <DataTemplate>
                                         <templates:CricketFixtureList/>
                                     </DataTemplate>
-                                </listView:SfListView.ItemTemplate>
+                                </listView:SfListView.ItemTemplate>-->
                                     <listView:SfListView.DataSource>
                                   <data:DataSource>
                                       <data:DataSource.SortDescriptors>

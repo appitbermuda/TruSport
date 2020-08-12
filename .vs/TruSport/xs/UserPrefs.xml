@@ -1,14 +1,16 @@
 ﻿<Properties StartupConfiguration="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}|Default">
   <MonoDevelop.Ide.ItemProperties.TruSport.Android PreferredExecutionTarget="Android.Android_Accelerated_x86" />
   <MonoDevelop.Ide.ItemProperties.TruSport.iOS Xamarin.HotReload.WrongLinkerErrorInfoBar.TruSport.iOS.HideInfoBar="True" automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.D19914FB-7B67-453D-8B33-D50D20FF6CC8" Xamarin.HotReload.DebuggerTimeoutException.TruSport.iOS.HideInfoBar="True" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Repository/TransferRepository.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Repository/FixtureRepository.cs">
     <Files>
       <File FileName="TruSportWebService/Controllers/TransfersController.cs" Line="32" Column="79" />
-      <File FileName="TruSportWebService/Repository/TransferRepository.cs" Line="32" Column="50" />
+      <File FileName="TruSportWebService/Repository/TransferRepository.cs" Line="218" Column="10" />
       <File FileName="TruSport/ViewModel/Cricket/TeamProfilePageViewModel.cs" />
       <File FileName="TruSport/Services/FixtureService.cs" />
-      <File FileName="TruSportWebService/Controllers/FixtureController.cs" />
-      <File FileName="TruSportWebService/Repository/FixtureRepository.cs" />
+      <File FileName="TruSportWebService/Controllers/FixtureController.cs" Line="506" Column="92" />
+      <File FileName="TruSportWebService/Repository/LeagueStatRepository.cs" Line="244" Column="42" />
+      <File FileName="TruSportWebService/Startup.cs" Line="1" Column="1" />
+      <File FileName="TruSportWebService/Repository/FixtureRepository.cs" Line="1534" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -20,12 +22,18 @@
                 <Node name="Imports" expanded="True" />
               </Node>
               <Node name="Repository" expanded="True">
-                <Node name="TransferRepository.cs" selected="True" />
+                <Node name="FixtureRepository.cs" selected="True" />
               </Node>
             </Node>
             <Node name="TruSport" expanded="True">
               <Node name="Services" expanded="True" />
+              <Node name="Templates" expanded="True">
+                <Node name="FormFixtureList.xaml" expanded="True" />
+              </Node>
               <Node name="ViewModel" expanded="True">
+                <Node name="Cricket" expanded="True" />
+              </Node>
+              <Node name="Views" expanded="True">
                 <Node name="Cricket" expanded="True" />
               </Node>
             </Node>
@@ -42,7 +50,9 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <Debugger.DebugSourceFolders />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/craigbrown/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1760" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations>
     <MultiItemSolutionRunConfiguration Id="Multiple Projects iOS" Name="Multiple Projects iOS">

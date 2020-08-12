@@ -228,7 +228,7 @@ namespace OnTrackWebService.Repository
 
                     try
                     {
-                        await Insert(cricketPlayerSeasons);
+                        await InsertStats(cricketPlayerSeasons);
                     }
                     catch (Exception ex)
                     {
@@ -241,7 +241,7 @@ namespace OnTrackWebService.Repository
 
                     try
                     {
-                        await Update(updateCricketPlayerSeasons);
+                        await UpdateStats(updateCricketPlayerSeasons);
                     }
                     catch (Exception ex)
                     {
@@ -287,6 +287,34 @@ namespace OnTrackWebService.Repository
             }
 
 
+        }
+
+        public async Task InsertStats(List<CricketPlayerSeason> items)
+        {
+            try
+            {
+                await _context.CricketPlayerSeasons.AddRangeAsync(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Stats");
+            }
+        }
+
+        public async Task UpdateStats(List<CricketPlayerSeason> items)
+        {
+            try
+            {
+                await _context.CricketPlayerSeasons.AddRangeAsync(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Stats");
+            }
         }
 
         public Task Insert(LeagueStat item)
