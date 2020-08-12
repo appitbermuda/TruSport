@@ -765,7 +765,6 @@ namespace TruSport.Model
         public string FieldID { get; set; }
         public string LeagueID { get; set; }
         public string MatchTypeID { get; set; }
-        //public string CompetitionID { get; set; }
         public string SeasonID { get; set; }
         public DateTime Date { get; set; }
         public string Time { get; set; }

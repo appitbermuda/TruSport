@@ -374,9 +374,9 @@ namespace OnTrackWebService.Repository
 
                             inningScores.Add(new InningScore
                             {
-                                Runs = matchInning.Run.Value,
-                                Wickets = matchInning.Wicket.Value,
-                                Overs = matchInning.Over.Value,
+                                Runs = matchInning.Run ?? 0,
+                                Wickets = matchInning.Wicket ?? 0,
+                                Overs = matchInning.Over ?? 0,
                                 Inning = matchInning.Inning,
                                 TeamID = fixture.HomeTeamID,
                                 Team = fixture.HomeTeam
@@ -393,9 +393,9 @@ namespace OnTrackWebService.Repository
 
                             inningScores.Add(new InningScore
                             {
-                                Runs = matchInning.Run.Value,
-                                Wickets = matchInning.Wicket.Value,
-                                Overs = matchInning.Over.Value,
+                                Runs = matchInning.Run?? 0,
+                                Wickets = matchInning.Wicket ?? 0,
+                                Overs = matchInning.Over ?? 0,
                                 Inning = matchInning.Inning,
                                 TeamID = fixture.AwayTeamID,
                                 Team = fixture.AwayTeam
@@ -547,9 +547,9 @@ namespace OnTrackWebService.Repository
 
                             inningScores.Add(new InningScore
                             {
-                                Runs = matchInning.Run.Value,
-                                Wickets = matchInning.Wicket.Value,
-                                Overs = matchInning.Over.Value,
+                                Runs = matchInning.Run ?? 0,
+                                Wickets = matchInning.Wicket ?? 0,
+                                Overs = matchInning.Over ?? 0,
                                 Inning = matchInning.Inning,
                                 TeamID = fixture.HomeTeamID,
                                 Team = fixture.HomeTeam
@@ -566,9 +566,9 @@ namespace OnTrackWebService.Repository
 
                             inningScores.Add(new InningScore
                             {
-                                Runs = matchInning.Run.Value,
-                                Wickets = matchInning.Wicket.Value,
-                                Overs = matchInning.Over.Value,
+                                Runs = matchInning.Run ?? 0,
+                                Wickets = matchInning.Wicket ?? 0,
+                                Overs = matchInning.Over ?? 0,
                                 Inning = matchInning.Inning,
                                 TeamID = fixture.AwayTeamID,
                                 Team = fixture.AwayTeam
@@ -708,9 +708,9 @@ namespace OnTrackWebService.Repository
 
                             inningScores.Add(new InningScore
                             {
-                                Runs = matchInning.Run.Value,
-                                Wickets = matchInning.Wicket.Value,
-                                Overs = matchInning.Over.Value,
+                                Runs = matchInning.Run ?? 0,
+                                Wickets = matchInning.Wicket ?? 0,
+                                Overs = matchInning.Over ?? 0,
                                 Inning = matchInning.Inning,
                                 TeamID = fixture.HomeTeamID,
                                 Team = fixture.HomeTeam
@@ -727,9 +727,9 @@ namespace OnTrackWebService.Repository
 
                             inningScores.Add(new InningScore
                             {
-                                Runs = matchInning.Run.Value,
-                                Wickets = matchInning.Wicket.Value,
-                                Overs = matchInning.Over.Value,
+                                Runs = matchInning.Run ?? 0,
+                                Wickets = matchInning.Wicket ?? 0,
+                                Overs = matchInning.Over ?? 0,
                                 Inning = matchInning.Inning,
                                 TeamID = fixture.AwayTeamID,
                                 Team = fixture.AwayTeam
@@ -815,99 +815,20 @@ namespace OnTrackWebService.Repository
                 fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
 
                 var table = await leagueTableRepository.GetCricketTableByLeague(fixture.LeagueID);
-                table.ForEach(e => e.IsSelectedTeam = (e.TeamID == fixture.HomeTeamID || e.TeamID == fixture.AwayTeamID));
+                if (table != null)
+                {
+                    table.ForEach(e => e.IsSelectedTeam = (e.TeamID == fixture.HomeTeamID || e.TeamID == fixture.AwayTeamID));
 
-                fixture.LeagueTable = table.ToList();
+                    fixture.LeagueTable = table.ToList();
+                }
 
                 fixture.HeadToHead = await GetCricketHeadToHead(fixture.ID);
                 
                 if (fixture.CricketRosters != null && fixture.CricketRosters.Count > 0)
                 {
                     fixture.CricketRosters.ForEach(e => e.IsHomeTeam = (e.TeamID == fixture.HomeTeamID));
-
-                    //List<MatchRosterSummary> matchRosterSummaries = new List<MatchRosterSummary>();
-
-                    //foreach (var roster in matchRosters)
-                    //{
-                    //    if (roster.MatchStats.Count > 0)
-                    //    {
-                    //        for (var i = 0; i < roster.MatchStats.Count; i++)
-                    //        {
-                    //            if (roster.MatchStats[i].Goal > 0)
-                    //            {
-                    //                matchRosterSummaries.Add(new MatchRosterSummary
-                    //                {
-                    //                    FixtureID = roster.FixtureID,
-                    //                    TeamID = roster.TeamID,
-                    //                    PlayerID = roster.PlayerID,
-                    //                    Player = roster.Player,
-                    //                    AssistPlayerID = roster.MatchStats[i].AssistPlayerID,
-                    //                    AssistPlayer = roster.MatchStats[i].AssistPlayer,
-                    //                    Minute = roster.MatchStats[i].GoalTime ?? 0,
-                    //                    Goal = 1,
-                    //                    IsHomeTeam = roster.IsHomeTeam
-                    //                });
-                    //            }
-
-                    //            if (roster.MatchStats[i].YellowCard > 0)
-                    //            {
-                    //                matchRosterSummaries.Add(new MatchRosterSummary
-                    //                {
-                    //                    FixtureID = roster.FixtureID,
-                    //                    TeamID = roster.TeamID,
-                    //                    PlayerID = roster.PlayerID,
-                    //                    Player = roster.Player,
-                    //                    Minute = roster.MatchStats[i].YellowCardTime ?? 0,
-                    //                    YellowCard = 1,
-                    //                    IsHomeTeam = roster.IsHomeTeam
-                    //                });
-                    //            }
-
-                    //            if (roster.MatchStats[i].RedCard > 0)
-                    //            {
-                    //                matchRosterSummaries.Add(new MatchRosterSummary
-                    //                {
-                    //                    FixtureID = roster.FixtureID,
-                    //                    TeamID = roster.TeamID,
-                    //                    PlayerID = roster.PlayerID,
-                    //                    Player = roster.Player,
-                    //                    Minute = roster.MatchStats[i].RedCardTime ?? 0,
-                    //                    RedCard = 1,
-                    //                    IsHomeTeam = roster.IsHomeTeam
-                    //                });
-                    //            }
-                    //        }
-                    //    }
-
-                    //    if (roster.SubstitutePlayerID != null && roster.IsStarter)
-                    //    {
-                    //        matchRosterSummaries.Add(new MatchRosterSummary
-                    //        {
-                    //            FixtureID = roster.FixtureID,
-                    //            TeamID = roster.TeamID,
-                    //            PlayerID = roster.PlayerID,
-                    //            Player = roster.Player,
-                    //            SubstitutePlayerID = roster.SubstitutePlayerID,
-                    //            SubsitutePlayer = roster.SubstitutePlayer,
-                    //            Minute = roster.SubstituteTime ?? 0,
-                    //            IsSub = true,
-                    //            IsHomeTeam = roster.IsHomeTeam
-                    //        });
-
-                    //    }
-                    //}
-
-                    //if (matchRosterSummaries.Any(e => e.Minute == -1))
-                    //    fixture.MatchRosterSummary = matchRosterSummaries;
-                    //else
-                    //    fixture.MatchRosterSummary = matchRosterSummaries.OrderBy(e => e.Minute).ToList();
-
-                    //var matchStats = await _context.MatchStats
-                    //   .Where(e => matchRosters.Any(m => m.ID == e.MatchRosterID)).ToListAsync();
-
                 }
 
-                
                 fixture.MatchResult = (fixture.MatchInnings != null && fixture.MatchInnings.Count > 0) && fixture.IsCancelled && !fixture.IsPostponed ? "Match abandoned" : "";
 
                 if (fixture.End != null && fixture.End < DateTime.Now)
@@ -935,9 +856,9 @@ namespace OnTrackWebService.Repository
 
                                 inningScores.Add(new InningScore
                                 {
-                                    Runs = matchInning.Run.Value,
-                                    Wickets = matchInning.Wicket.Value,
-                                    Overs = matchInning.Over.Value,
+                                    Runs = matchInning.Run ?? 0,
+                                    Wickets = matchInning.Wicket ?? 0,
+                                    Overs = matchInning.Over ?? 0,
                                     Inning = matchInning.Inning,
                                     TeamID = fixture.HomeTeamID,
                                     Team = fixture.HomeTeam
@@ -954,9 +875,9 @@ namespace OnTrackWebService.Repository
 
                                 inningScores.Add(new InningScore
                                 {
-                                    Runs = matchInning.Run.Value,
-                                    Wickets = matchInning.Wicket.Value,
-                                    Overs = matchInning.Over.Value,
+                                    Runs = matchInning.Run ?? 0,
+                                    Wickets = matchInning.Wicket ?? 0,
+                                    Overs = matchInning.Over ?? 0,
                                     Inning = matchInning.Inning,
                                     TeamID = fixture.AwayTeamID,
                                     Team = fixture.AwayTeam
@@ -1626,6 +1547,111 @@ namespace OnTrackWebService.Repository
                 }
                 //fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
 
+                foreach (var fixture in fixtures.Where(e => e.MatchInnings != null && e.MatchInnings.Count > 0))
+                {
+
+                    string homeTeamscore = "";
+
+                    List<InningScore> inningScores = new List<InningScore>();
+                    int homeTeamRuns = 0;
+                    int awayTeamRuns = 0;
+
+                    int homeTeamWickets = 0;
+                    int awayTeamWickets = 0;
+
+                    foreach (var matchInning in fixture.MatchInnings)
+                    {
+                        if (matchInning.BattingTeamID == fixture.HomeTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.HomeTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.HomeTeamScore += String.Format("{0}/{1} ", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run ?? 0,
+                                Wickets = matchInning.Wicket ?? 0,
+                                Overs = matchInning.Over ?? 0,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.HomeTeamID,
+                                Team = fixture.HomeTeam
+                            });
+                        }
+
+                        string awayTeamscore = "";
+                        if (matchInning.BattingTeamID == fixture.AwayTeamID)
+                        {
+                            if (fixture.MatchType.Name == "One 50 Overs" || fixture.MatchType.Name == "T20")
+                                fixture.AwayTeamScore += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
+                            else
+                                fixture.AwayTeamScore += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
+
+                            inningScores.Add(new InningScore
+                            {
+                                Runs = matchInning.Run ?? 0,
+                                Wickets = matchInning.Wicket ?? 0,
+                                Overs = matchInning.Over ?? 0,
+                                Inning = matchInning.Inning,
+                                TeamID = fixture.AwayTeamID,
+                                Team = fixture.AwayTeam
+
+                            });
+                        }
+                    }
+
+                    if (fixture.End.HasValue && fixture.End.Value < DateTime.Now)
+                    {
+                        if (fixture.MatchType.Name == "One 50 Overs")
+                        {
+                            if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 50))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs)
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                                }
+                            }
+                        }
+                        else if (fixture.MatchType.Name == "T20")
+                        {
+                            if (inningScores.Count > 1 && (inningScores.Any(e => e.Overs == 20) || inningScores.Any(e => e.Wickets == 10)))
+                            {
+                                if (inningScores[0].Overs == inningScores[1].Overs || (inningScores[0].Wickets == 10 && inningScores[1].Wickets == 10))
+                                {
+                                    fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                                    fixture.SelectedTeamResult = inningScores[0].TeamID == teamID && inningScores[0].Runs > inningScores[1].Runs ? "W" : inningScores[1].TeamID == teamID && inningScores[1].Runs > inningScores[0].Runs ? "W" : inningScores[1].Runs == inningScores[0].Runs ? "D" : "L";
+                                }
+                                else
+                                {
+                                    if (inningScores[0].Wickets == 10)
+                                    {
+                                        fixture.MatchResult = inningScores[1].Team.Name + " won by " + (inningScores[0].Wickets - inningScores[1].Wickets) + " wickets";
+                                        fixture.SelectedTeamResult = inningScores[1].TeamID == teamID ? "W" : "L";
+                                    }
+                                    else if (inningScores[1].Wickets == 10)
+                                    {
+                                        fixture.MatchResult = inningScores[0].Team.Name + " won by " + (inningScores[1].Wickets - inningScores[0].Wickets) + " wickets";
+                                        fixture.SelectedTeamResult = inningScores[0].TeamID == teamID ? "W" : "L";
+                                    }
+                                    else
+                                    {
+                                        fixture.MatchResult = inningScores[0].Overs != inningScores[1].Overs && inningScores[1].Runs > inningScores[0].Runs ? inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets" : inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets";
+                                        fixture.SelectedTeamResult = inningScores[1].TeamID == teamID && inningScores[1].Overs != inningScores[0].Overs && inningScores[1].Runs > inningScores[0].Runs ? "W" : inningScores[0].TeamID == teamID && inningScores[1].Overs != inningScores[0].Overs && inningScores[0].Runs > inningScores[1].Runs ? "W" : inningScores[1].Overs != inningScores[0].Overs && inningScores[1].Runs == inningScores[0].Runs ? "D" : "L";
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+
                 return fixtures;
             }
             catch (Exception ex)
@@ -2048,107 +2074,53 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                _context.Database.BeginTransaction();
-
                 var currentFixture = await _context.CricketFixtures.FirstOrDefaultAsync(e => e.ID == item.ID && e.MatchInnings.Count > 1);
 
-                if(currentFixture != null && !currentFixture.End.HasValue && item.End.HasValue)
+                if (currentFixture != null && !currentFixture.End.HasValue && item.End.HasValue)
                 {
-                    if (item.MatchType.Name == "One 50 Overs")
+                    try
                     {
-                        //if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 50))
-                        //{
-                        //    if (inningScores[0].Overs == inningScores[1].Overs)
-                        //    {
-                        //        fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
-                        //    }
-                        //    else
-                        //    {
-                        //        fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
-                        //    }
-                        //}
-                    }
-                    else if (item.MatchType.Name == "T20")
-                    {
-                        if (currentFixture.MatchInnings.Count > 1 && (currentFixture.MatchInnings.Any(e => e.Over == 20) || currentFixture.MatchInnings.Any(e => e.Wicket == 10)))
+                        _context.Database.BeginTransaction();
+
+                        if (item.MatchType.Name == "One 50 Overs")
                         {
-                            var cricketLeagueStanding = await _context.CricketLeagueStandings.Where(e => e.TeamID == currentFixture.HomeTeamID || e.TeamID == currentFixture.AwayTeamID).ToListAsync();
-
-                            if (currentFixture.MatchInnings[0].Over == currentFixture.MatchInnings[1].Over || (currentFixture.MatchInnings[0].Wicket == 10 && currentFixture.MatchInnings[1].Wicket == 10))
+                            //if (inningScores.Count > 1 && inningScores.Any(e => e.Overs == 50))
+                            //{
+                            //    if (inningScores[0].Overs == inningScores[1].Overs)
+                            //    {
+                            //        fixture.MatchResult = inningScores[0].Runs > inningScores[1].Runs ? inningScores[0].Team.Name + " won by " + (inningScores[0].Runs - inningScores[1].Runs) + " runs" : inningScores[1].Team.Name + " won by " + (inningScores[1].Runs - inningScores[0].Runs) + " runs";
+                            //    }
+                            //    else
+                            //    {
+                            //        fixture.MatchResult = inningScores[0].Overs < inningScores[1].Overs ? inningScores[0].Team.Name + " won by " + (10 - inningScores[0].Wickets) + " wickets" : inningScores[1].Team.Name + " won by " + (10 - inningScores[1].Wickets) + " wickets";
+                            //    }
+                            //}
+                        }
+                        else if (item.MatchType.Name == "T20")
+                        {
+                            if (currentFixture.MatchInnings.Count > 1 && (currentFixture.MatchInnings.Any(e => e.Over == 20) || currentFixture.MatchInnings.Any(e => e.Wicket == 10)))
                             {
-                                if(currentFixture.MatchInnings[0].Run > currentFixture.MatchInnings[1].Run)
+                                var cricketLeagueStanding = await _context.CricketLeagueStandings.Where(e => e.TeamID == currentFixture.HomeTeamID || e.TeamID == currentFixture.AwayTeamID).ToListAsync();
+
+                                if (currentFixture.MatchInnings[0].Over == currentFixture.MatchInnings[1].Over || (currentFixture.MatchInnings[0].Wicket == 10 && currentFixture.MatchInnings[1].Wicket == 10))
                                 {
-                                    var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
-                                    winningTeam.Played = winningTeam.Played + 1;
-                                    winningTeam.Wins = winningTeam.Wins + 1;
-                                    winningTeam.Points = winningTeam.Points + 10;
+                                    if (currentFixture.MatchInnings[0].Run > currentFixture.MatchInnings[1].Run)
+                                    {
+                                        var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
+                                        winningTeam.Played = winningTeam.Played + 1;
+                                        winningTeam.Wins = winningTeam.Wins + 1;
+                                        winningTeam.Points = winningTeam.Points + 10;
 
-                                    var losingTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
-                                    losingTeam.Played = losingTeam.Played + 1;
-                                    losingTeam.Loss = losingTeam.Loss + 1;
+                                        var losingTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
+                                        losingTeam.Played = losingTeam.Played + 1;
+                                        losingTeam.Loss = losingTeam.Loss + 1;
 
-                                    _context.CricketLeagueStandings.Update(winningTeam);
+                                        _context.CricketLeagueStandings.Update(winningTeam);
 
-                                    _context.CricketLeagueStandings.Update(losingTeam);
+                                        _context.CricketLeagueStandings.Update(losingTeam);
 
-                                }
-                                else
-                                {
-                                    var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
-                                    winningTeam.Played = winningTeam.Played + 1;
-                                    winningTeam.Wins = winningTeam.Wins + 1;
-                                    winningTeam.Points = winningTeam.Points + 10;
-
-                                    var losingTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
-                                    losingTeam.Played = losingTeam.Played + 1;
-                                    losingTeam.Loss = losingTeam.Loss + 1;
-
-                                    _context.CricketLeagueStandings.Update(winningTeam);
-
-                                    _context.CricketLeagueStandings.Update(losingTeam);
-                                }
-
-                                //fixture.MatchResult = currentFixture.MatchInnings[0].Runs > currentFixture.MatchInnings[1].Runs ? currentFixture.MatchInnings[0].Team.Name + " won by " + (currentFixture.MatchInnings[0].Runs - currentFixture.MatchInnings[1].Runs) + " runs" : currentFixture.MatchInnings[1].Team.Name + " won by " + (currentFixture.MatchInnings[1].Runs - currentFixture.MatchInnings[0].Runs) + " runs";
-                            }
-                            else
-                            {
-                                if (currentFixture.MatchInnings[0].Wicket == 10)
-                                {
-                                    var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
-                                    winningTeam.Played = winningTeam.Played + 1;
-                                    winningTeam.Wins = winningTeam.Wins + 1;
-                                    winningTeam.Points = winningTeam.Points + 10;
-
-                                    var losingTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
-                                    losingTeam.Played = losingTeam.Played + 1;
-                                    losingTeam.Loss = losingTeam.Loss + 1;
-
-                                    _context.CricketLeagueStandings.Update(winningTeam);
-
-                                    _context.CricketLeagueStandings.Update(losingTeam);
-
-                                    //fixture.MatchResult = currentFixture.MatchInnings[1].Team.Name + " won by " + (currentFixture.MatchInnings[0].Wicket - currentFixture.MatchInnings[1].Wicket) + " wickets";
-                                }
-                                else if (currentFixture.MatchInnings[1].Wicket == 10)
-                                {
-                                    var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
-                                    winningTeam.Played = winningTeam.Played + 1;
-                                    winningTeam.Wins = winningTeam.Wins + 1;
-                                    winningTeam.Points = winningTeam.Points + 10;
-
-                                    var losingTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
-                                    losingTeam.Played = losingTeam.Played + 1;
-                                    losingTeam.Loss = losingTeam.Loss + 1;
-
-                                    _context.CricketLeagueStandings.Update(winningTeam);
-
-                                    _context.CricketLeagueStandings.Update(losingTeam);
-
-                                    //fixture.MatchResult = currentFixture.MatchInnings[0].Team.Name + " won by " + (currentFixture.MatchInnings[1].Wicket - currentFixture.MatchInnings[0].Wicket) + " wickets";
-                                }
-                                else
-                                {
-                                    if(currentFixture.MatchInnings[0].Over < currentFixture.MatchInnings[1].Over)
+                                    }
+                                    else
                                     {
                                         var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
                                         winningTeam.Played = winningTeam.Played + 1;
@@ -2163,7 +2135,29 @@ namespace OnTrackWebService.Repository
 
                                         _context.CricketLeagueStandings.Update(losingTeam);
                                     }
-                                    else
+
+                                    //fixture.MatchResult = currentFixture.MatchInnings[0].Runs > currentFixture.MatchInnings[1].Runs ? currentFixture.MatchInnings[0].Team.Name + " won by " + (currentFixture.MatchInnings[0].Runs - currentFixture.MatchInnings[1].Runs) + " runs" : currentFixture.MatchInnings[1].Team.Name + " won by " + (currentFixture.MatchInnings[1].Runs - currentFixture.MatchInnings[0].Runs) + " runs";
+                                }
+                                else
+                                {
+                                    if (currentFixture.MatchInnings[0].Wicket == 10)
+                                    {
+                                        var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
+                                        winningTeam.Played = winningTeam.Played + 1;
+                                        winningTeam.Wins = winningTeam.Wins + 1;
+                                        winningTeam.Points = winningTeam.Points + 10;
+
+                                        var losingTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
+                                        losingTeam.Played = losingTeam.Played + 1;
+                                        losingTeam.Loss = losingTeam.Loss + 1;
+
+                                        _context.CricketLeagueStandings.Update(winningTeam);
+
+                                        _context.CricketLeagueStandings.Update(losingTeam);
+
+                                        //fixture.MatchResult = currentFixture.MatchInnings[1].Team.Name + " won by " + (currentFixture.MatchInnings[0].Wicket - currentFixture.MatchInnings[1].Wicket) + " wickets";
+                                    }
+                                    else if (currentFixture.MatchInnings[1].Wicket == 10)
                                     {
                                         var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
                                         winningTeam.Played = winningTeam.Played + 1;
@@ -2177,31 +2171,76 @@ namespace OnTrackWebService.Repository
                                         _context.CricketLeagueStandings.Update(winningTeam);
 
                                         _context.CricketLeagueStandings.Update(losingTeam);
+
+                                        //fixture.MatchResult = currentFixture.MatchInnings[0].Team.Name + " won by " + (currentFixture.MatchInnings[1].Wicket - currentFixture.MatchInnings[0].Wicket) + " wickets";
                                     }
+                                    else
+                                    {
+                                        if (currentFixture.MatchInnings[0].Over < currentFixture.MatchInnings[1].Over)
+                                        {
+                                            var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
+                                            winningTeam.Played = winningTeam.Played + 1;
+                                            winningTeam.Wins = winningTeam.Wins + 1;
+                                            winningTeam.Points = winningTeam.Points + 10;
 
-                                    //fixture.MatchResult = currentFixture.MatchInnings[0].Over < currentFixture.MatchInnings[1].Over ? currentFixture.MatchInnings[1].Team.Name + " won by " + (currentFixture.MatchInnings[0].Wicket - currentFixture.MatchInnings[1].Wicket) + " wickets" : currentFixture.MatchInnings[0].Team.Name + " won by " + (currentFixture.MatchInnings[1].Wicket - currentFixture.MatchInnings[0].Wicket) + " wickets";
+                                            var losingTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
+                                            losingTeam.Played = losingTeam.Played + 1;
+                                            losingTeam.Loss = losingTeam.Loss + 1;
+
+                                            _context.CricketLeagueStandings.Update(winningTeam);
+
+                                            _context.CricketLeagueStandings.Update(losingTeam);
+                                        }
+                                        else
+                                        {
+                                            var winningTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[0].BattingTeamID);
+                                            winningTeam.Played = winningTeam.Played + 1;
+                                            winningTeam.Wins = winningTeam.Wins + 1;
+                                            winningTeam.Points = winningTeam.Points + 10;
+
+                                            var losingTeam = cricketLeagueStanding.FirstOrDefault(e => e.TeamID == currentFixture.MatchInnings[1].BattingTeamID);
+                                            losingTeam.Played = losingTeam.Played + 1;
+                                            losingTeam.Loss = losingTeam.Loss + 1;
+
+                                            _context.CricketLeagueStandings.Update(winningTeam);
+
+                                            _context.CricketLeagueStandings.Update(losingTeam);
+                                        }
+
+                                        //fixture.MatchResult = currentFixture.MatchInnings[0].Over < currentFixture.MatchInnings[1].Over ? currentFixture.MatchInnings[1].Team.Name + " won by " + (currentFixture.MatchInnings[0].Wicket - currentFixture.MatchInnings[1].Wicket) + " wickets" : currentFixture.MatchInnings[0].Team.Name + " won by " + (currentFixture.MatchInnings[1].Wicket - currentFixture.MatchInnings[0].Wicket) + " wickets";
+                                    }
                                 }
+
+                                _context.SaveChanges();
                             }
-
-                            _context.SaveChanges();
                         }
-                    }
-                    else
-                    {
+                        else
+                        {
 
+                        }
+
+                        item.End = DateTime.Now.ToUniversalTime();
+
+                        _context.CricketFixtures.Update(item);
+
+                        _context.SaveChanges();
+
+                        _context.Database.CommitTransaction();
+                    }
+                    catch (Exception ex)
+                    {
+                        _context.Database.RollbackTransaction();
+                        Debug.WriteLine(ex.Message, "Update Fixture Transaction");
                     }
                 }
-
-
-                _context.CricketFixtures.Update(item);
-
-                _context.SaveChanges();
-
-                _context.Database.CommitTransaction();
+                else
+                {
+                    _context.CricketFixtures.Update(item);
+                    _context.SaveChanges();
+                }                
             }
             catch (Exception ex)
             {
-                _context.Database.RollbackTransaction();
                 Debug.WriteLine(ex.Message, "Update Fixture");
             }
         }
