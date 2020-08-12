@@ -5,10 +5,10 @@
     <Files>
       <File FileName="TruSportWebService/Controllers/TransfersController.cs" Line="32" Column="79" />
       <File FileName="TruSportWebService/Repository/TransferRepository.cs" Line="32" Column="50" />
-      <File FileName="TruSport/ViewModel/Cricket/TeamProfilePageViewModel.cs" Line="238" Column="59" />
-      <File FileName="TruSport/Services/FixtureService.cs" Line="629" Column="49" />
-      <File FileName="TruSportWebService/Controllers/FixtureController.cs" Line="406" Column="88" />
-      <File FileName="TruSportWebService/Repository/FixtureRepository.cs" Line="1615" Column="293" />
+      <File FileName="TruSport/ViewModel/Cricket/TeamProfilePageViewModel.cs" />
+      <File FileName="TruSport/Services/FixtureService.cs" />
+      <File FileName="TruSportWebService/Controllers/FixtureController.cs" />
+      <File FileName="TruSportWebService/Repository/FixtureRepository.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
