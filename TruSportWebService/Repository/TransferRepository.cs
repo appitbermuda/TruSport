@@ -120,8 +120,6 @@ namespace OnTrackWebService.Repository
                     {
                         try
                         {
-                            //newTeamName =
-
                             if (!String.IsNullOrEmpty(record.League))
                             {
                                 league = leagues.FirstOrDefault(e => e.Name == record.League.Trim());
@@ -129,7 +127,7 @@ namespace OnTrackWebService.Repository
                             }
                             else
                             {
-                                newTeam = teams.FirstOrDefault(e => e.Name.Replace("'", "") == record.NewTeam.Replace("'", "").Trim() || e.Alias == record.NewTeam.Trim());
+                                newTeam = teams.FirstOrDefault(e => (e.Name.Replace("'", "") == record.NewTeam.Replace("'", "").Trim() || e.Alias == record.NewTeam.Trim()) && (e.League.Name == "Premier Division" || e.League.Name == "First Division"));
                             }
 
                             season = seasons.FirstOrDefault(e => e.Key == record.Season);
