@@ -149,6 +149,7 @@ namespace OnTrackWebService.Repository
                         try
                         {
                             //newTeamName =
+                            team = teams.FirstOrDefault(e => (e.Name.Replace("'", "").Replace("-","") == record.Team.Replace("'", "").Replace("-", "").Trim() || e.Alias == record.Team.Trim()));
                             team = teams.FirstOrDefault(e => e.Name == record.Team || e.Alias == record.Team);
                             player = players.FirstOrDefault(e => e.FirstName.ToLower() == record.Firstname && e.LastName.ToLower() == record.Lastname);
 
@@ -285,8 +286,6 @@ namespace OnTrackWebService.Repository
                     Exception = ex.Message
                 };
             }
-
-
         }
 
         public async Task InsertStats(List<CricketPlayerSeason> items)
@@ -307,7 +306,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                await _context.CricketPlayerSeasons.AddRangeAsync(items);
+                _context.CricketPlayerSeasons.UpdateRange(items);
 
                 await _context.SaveChangesAsync();
             }
