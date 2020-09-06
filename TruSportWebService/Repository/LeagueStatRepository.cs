@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Data;
@@ -142,6 +143,11 @@ namespace OnTrackWebService.Repository
                 using (var reader = new StreamReader(file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
+
                     var records = csv.GetRecords<RunStats>();
 
                     foreach (var record in records)
@@ -150,8 +156,8 @@ namespace OnTrackWebService.Repository
                         {
                             //newTeamName =
                             team = teams.FirstOrDefault(e => (e.Name.Replace("'", "").Replace("-","") == record.Team.Replace("'", "").Replace("-", "").Trim() || e.Alias == record.Team.Trim()));
-                            team = teams.FirstOrDefault(e => e.Name == record.Team || e.Alias == record.Team);
-                            player = players.FirstOrDefault(e => e.FirstName.ToLower() == record.Firstname && e.LastName.ToLower() == record.Lastname);
+                            //team = teams.FirstOrDefault(e => e.Name == record.Team || e.Alias == record.Team);
+                            player = players.FirstOrDefault(e => e.FirstName.ToLower() == record.Firstname.ToLower() && e.LastName.ToLower() == record.Lastname.ToLower());
 
                             if(player == null)
                             {
@@ -227,30 +233,36 @@ namespace OnTrackWebService.Repository
                         }
                     }
 
-                    try
+                    if (cricketPlayerSeasons != null && cricketPlayerSeasons.Count > 0)
                     {
-                        await InsertStats(cricketPlayerSeasons);
-                    }
-                    catch (Exception ex)
-                    {
-                        return new ImportRunStats
+                        try
                         {
-                            Message = "Error importing run stats to database.",
-                            Exception = ex.Message
-                        };
+                            await InsertStats(cricketPlayerSeasons);
+                        }
+                        catch (Exception ex)
+                        {
+                            return new ImportRunStats
+                            {
+                                Message = "Error importing run stats to database.",
+                                Exception = ex.Message
+                            };
+                        }
                     }
 
-                    try
+                    if (updateCricketPlayerSeasons != null && updateCricketPlayerSeasons.Count > 0)
                     {
-                        await UpdateStats(updateCricketPlayerSeasons);
-                    }
-                    catch (Exception ex)
-                    {
-                        return new ImportRunStats
+                        try
                         {
-                            Message = "Error updating run stats in database.",
-                            Exception = ex.Message
-                        };
+                            await UpdateStats(updateCricketPlayerSeasons);
+                        }
+                        catch (Exception ex)
+                        {
+                            return new ImportRunStats
+                            {
+                                Message = "Error updating run stats in database.",
+                                Exception = ex.Message
+                            };
+                        }
                     }
                 }
 
@@ -281,6 +293,184 @@ namespace OnTrackWebService.Repository
             catch (Exception ex)
             {
                 return new ImportRunStats
+                {
+                    Message = "Error importing stats!",
+                    Exception = ex.Message
+                };
+            }
+        }
+
+        public async Task<ImportWicketStats> UploadWicketStats(IFormFile file)
+        {
+            try
+            {
+                List<WicketStats> errorStats = new List<WicketStats>();
+                List<CricketPlayerSeason> cricketPlayerSeasons = new List<CricketPlayerSeason>();
+                List<CricketPlayerSeason> updateCricketPlayerSeasons = new List<CricketPlayerSeason>();
+                List<Team> teams = await teamRepository.GetCricketTeams();
+                List<Player> players = await playerRepository.GetAll();
+                Sport sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Cricket");
+                List<Season> seasons = await seasonRepository.GetCricketSeason();
+                string newTeamName = String.Empty;
+                Team team = null;
+                Season season = seasons.FirstOrDefault(e => e.IsCurrent);
+                Player player = null;
+
+                //Stream reader = file.OpenReadStream();
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
+
+                    var records = csv.GetRecords<WicketStats>();
+
+                    foreach (var record in records)
+                    {
+                        try
+                        {
+                            //newTeamName =
+                            team = teams.FirstOrDefault(e => (e.Name.Replace("'", "").Replace("-", "") == record.Team.Replace("'", "").Replace("-", "").Trim() || e.Alias == record.Team.Trim()));
+                            //team = teams.FirstOrDefault(e => e.Name == record.Team || e.Alias == record.Team);
+                            player = players.FirstOrDefault(e => e.FirstName.ToLower().Trim() == record.Firstname.ToLower() && e.LastName.ToLower().Trim() == record.Lastname.ToLower());
+
+                            if (player == null)
+                            {
+                                if (team != null)
+                                {
+                                    Player newPlayer = new Player
+                                    {
+                                        FirstName = record.Firstname,
+                                        LastName = record.Lastname
+                                    };
+
+                                    _context.Players.Add(newPlayer);
+                                    _context.SaveChanges();
+
+                                    CricketPlayerSeason newCricketPlayerSeason = new CricketPlayerSeason
+                                    {
+                                        PlayerID = newPlayer.ID,
+                                        TeamID = team.ID,
+                                        SeasonID = season.ID,
+                                        GamesPlayed = record.GamesPlayed,
+                                        IsActive = true,
+                                        Wickets = record.Wickets,
+                                        RunsConceded = record.RunsConceded
+                                    };
+
+                                    cricketPlayerSeasons.Add(newCricketPlayerSeason);
+                                }
+                                else
+                                {
+                                    errorStats.Add(record);
+                                }
+                            }
+                            else
+                            {
+                                CricketPlayerSeason playerSeason = await _context.CricketPlayerSeasons.FirstOrDefaultAsync(e => e.PlayerID == player.ID);
+
+                                if (playerSeason == null)
+                                {
+                                    CricketPlayerSeason newCricketPlayerSeason = new CricketPlayerSeason
+                                    {
+                                        PlayerID = player.ID,
+                                        TeamID = team.ID,
+                                        SeasonID = season.ID,
+                                        GamesPlayed = record.GamesPlayed,
+                                        IsActive = true,
+                                        Wickets = record.Wickets,
+                                        RunsConceded = record.RunsConceded
+                                    };
+
+                                    //_context.CricketPlayerSeasons.Add(newCricketPlayerSeason);
+                                    //_context.SaveChanges();
+
+                                    cricketPlayerSeasons.Add(newCricketPlayerSeason);
+                                }
+                                else
+                                {
+                                    playerSeason.GamesPlayed = record.GamesPlayed;
+                                    playerSeason.Wickets = record.Wickets;
+                                    playerSeason.RunsConceded = record.RunsConceded;
+
+                                    //_context.CricketPlayerSeasons.Update(playerSeason);
+                                    //_context.SaveChanges();
+
+                                    updateCricketPlayerSeasons.Add(playerSeason);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorStats.Add(record);
+
+                        }
+                    }
+
+                    if (cricketPlayerSeasons != null && cricketPlayerSeasons.Count > 0)
+                    {
+                        try
+                        {
+                            await InsertStats(cricketPlayerSeasons);
+                        }
+                        catch (Exception ex)
+                        {
+                            return new ImportWicketStats
+                            {
+                                Message = "Error importing wicket stats to database.",
+                                Exception = ex.Message
+                            };
+                        }
+                    }
+
+                    if (updateCricketPlayerSeasons != null && updateCricketPlayerSeasons.Count > 0)
+                    {
+                        try
+                        {
+                            await UpdateStats(updateCricketPlayerSeasons);
+                        }
+                        catch (Exception ex)
+                        {
+                            return new ImportWicketStats
+                            {
+                                Message = "Error updating wicket stats in database.",
+                                Exception = ex.Message
+                            };
+                        }
+                    }
+                }
+
+                if (errorStats != null && errorStats.Count > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorStats);
+                        streamWriter.Flush();
+
+                        return new ImportWicketStats
+                        {
+                            Message = "Successfully imported wicket stats with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorStats,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportWicketStats
+                {
+                    Message = "Successfully imported wicket stats!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportWicketStats
                 {
                     Message = "Error importing stats!",
                     Exception = ex.Message

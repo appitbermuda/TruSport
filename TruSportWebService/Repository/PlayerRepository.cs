@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -39,17 +40,98 @@ namespace OnTrackWebService.Repository
 
         public async Task<IEnumerable<PlayerSeason>> GetPlayers()
         {
-            return await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
+            try
+            {
+                var players = await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetCricketPlayersByTeam");
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<PlayerSeason>> GetPlayersByTeam(string teamID)
         {
-            return await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
+            try
+            {
+                var players = await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetPlayersByTeam");
+            }
+
+            return null;
         }
 
         public async Task<PlayerSeason> GetPlayer(string playerID)
         {
-            return await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
+            try
+            {
+                var players = await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetPlayer");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketPlayerSeason>> GetCricketPlayers()
+        {
+            try
+            {
+                var players = await _context.CricketPlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
+
+                return players;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetCricketPlayers");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CricketPlayerSeason>> GetCricketPlayersByTeam(string teamID)
+        {
+            try
+            {
+                var players = await _context.CricketPlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetCricketPlayersByTeam");
+            }
+
+            return null;
+        }
+
+        public async Task<CricketPlayerSeason> GetCricketPlayer(string playerID)
+        {
+            try
+            {
+                var players = await _context.CricketPlayerSeasons.Include("Team").Include("Player").Include("Season").FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetCricketPlayer");
+            }
+
+            return null;
         }
 
         public Task Insert(Player item)
@@ -62,8 +144,6 @@ namespace OnTrackWebService.Repository
             try
             {
                     var _player = player.Player;
-
-
 
                     _context.Players.Update(_player);
                     await _context.SaveChangesAsync();
@@ -85,6 +165,44 @@ namespace OnTrackWebService.Repository
                 player.TeamID = null;
 
                 _context.PlayerSeasons.Update(player);
+
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async Task Update(CricketPlayerSeason player)
+        {
+            try
+            {
+                var _player = player.Player;
+
+
+
+                _context.Players.Update(_player);
+                await _context.SaveChangesAsync();
+
+                _context.CricketPlayerSeasons.Update(player);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async Task RemovePlayer(CricketPlayerSeason player)
+        {
+            try
+            {
+                player.TeamID = null;
+
+                _context.CricketPlayerSeasons.Update(player);
 
                 await _context.SaveChangesAsync();
 

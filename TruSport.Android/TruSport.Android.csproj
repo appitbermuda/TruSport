@@ -20,6 +20,9 @@
     </NuGetPackageImportStamp>
     <AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
+    <PropertyGroup>
+        <AndroidEnableAssemblyCompression>false</AndroidEnableAssemblyCompression>
+        </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>

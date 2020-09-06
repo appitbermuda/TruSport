@@ -130,7 +130,7 @@
                                               </Grid.GestureRecognizers>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="70"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
                                                 <BoxView  Grid.ColumnSpan="2"/>
                                                 <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
@@ -279,8 +279,8 @@
                                                   <TapGestureRecognizer Command="{Binding Path=BindingContext.LeagueSelectedCommand, Source={x:Reference UpcomingFixtureList}}" CommandParameter="{Binding .}"/>
                                               </Grid.GestureRecognizers>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="2*"/>
                                                     <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
                                                 <BoxView Grid.ColumnSpan="2"/>
                                                 <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
@@ -377,7 +377,7 @@
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="70"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
                                                 <BoxView BackgroundColor="{StaticResource primaryDarkBlueTwo}"  Grid.ColumnSpan="2"/>
                                                 <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">

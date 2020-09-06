@@ -5,8 +5,8 @@
                              VerticalOptions="FillAndExpand" Padding="8,8,8,8">
                     <Frame Padding="0" CornerRadius="10" BackgroundColor="Transparent" >
                         <Frame Padding="0" CornerRadius="10" IsClippedToBounds="True" BackgroundColor="{DynamicResource frameBackgroundColor}">
-                <Grid x:Name="grid" Padding="0,0,0,0"
-                      RowSpacing="5"
+                <Grid x:Name="grid" Padding="0,0,0,10"
+                      RowSpacing="10"
                       ColumnSpacing="1"
                       BackgroundColor="Transparent"
                       VerticalOptions="FillAndExpand"
@@ -20,18 +20,20 @@
                             <converters:TeamNameConverter x:Key="teamNameConverter"/>
                             <converters:CricketHomeTeamScoreConverter x:Key="cricketHomeTeamScoreConverter"/>
                             <converters:CricketAwayTeamScoreConverter x:Key="cricketAwayTeamScoreConverter"/>
+                            <converters:SelectedTeamResultConverter x:Key="selectedTeamResultConverter"/>
                         </ResourceDictionary>
                     </Grid.Resources>
                 <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="1" />
-                            <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                            <!--<RowDefinition Height="1" />-->
+                            <!--<RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />-->
                     </Grid.RowDefinitions>
                     <Label x:Name="SelectedTeamIDLabel" IsVisible="false"
                                         Text="{Binding SelectedTeamID}"/>
@@ -47,7 +49,7 @@
                                 </StackLayout>
                         </StackLayout>
                         </Frame>
-                    <Frame Grid.Row="0" Grid.Column="1" Padding="10,0" HeightRequest="30" CornerRadius="15" HasShadow="False" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="End">
+                    <Frame Grid.Row="0" Grid.Column="2" Padding="10,0" HeightRequest="30" CornerRadius="15" HasShadow="False" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="End">
                     <StackLayout Spacing="5" Padding="5,10"
                                  HorizontalOptions="FillAndExpand"
                                      Orientation="Horizontal">
@@ -59,8 +61,22 @@
                                 </StackLayout>
                         </StackLayout>
                         </Frame>
-                    <Frame Grid.Row="2" Grid.ColumnSpan="2" BackgroundColor="{Binding SelectedTeamResult, Converter={StaticResource selectedTeamResultConverter}}" HorizontalOptions="Center" VerticalOptions="Center" Padding="5,0" CornerRadius="5">
-                    <StackLayout VerticalOptions="CenterAndExpand"
+                    <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="{Binding SelectedTeamResult, Converter={StaticResource selectedTeamResultConverter}}" HorizontalOptions="Center" VerticalOptions="Center" Padding="5,0" CornerRadius="5">
+                        <StackLayout VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="Center"
+                                         Orientation="Vertical"
+                                 Padding="5,2"
+                                 Spacing="5">
+                        <Label 
+                                   x:Name="TeamResult"
+                                   FontSize="Small"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"
+                                                  VerticalOptions="Center"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding SelectedTeamResult}" />
+                            </StackLayout>
+                        <!--<StackLayout VerticalOptions="CenterAndExpand"
                                      HorizontalOptions="Center"
                                          Orientation="Vertical"
                                  Padding="5,2"
@@ -86,13 +102,13 @@
                                         Text="{Binding AwayTeamScore}"/>
                                 
                         </StackLayout>
-                    </StackLayout>
+                    </StackLayout>-->
                         </Frame>
 
                             <StackLayout Grid.Row="1" Grid.Column="0"
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand"
-                                 Padding="5,2"
+                                 Padding="15,2,5,2"
                                  Spacing="0">
                                 <Label x:Name="HomeTeamAlias" Text="{Binding HomeTeam.Alias}" IsVisible="false"/>
                             <Label x:Name="HomeTeamNameLabel"
@@ -114,10 +130,10 @@
                                 </Label.FontSize>
                             </Label>
                         </StackLayout>
-                            <StackLayout Grid.Row="1" Grid.Column="1"
+                            <StackLayout Grid.Row="1" Grid.Column="2"
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand"
-                                 Padding="5,2"
+                                 Padding="5,2,15,2"
                                  Spacing="0">
                                 <Label x:Name="AwayTeamAlias" Text="{Binding AwayTeam.Alias}" IsVisible="false"/>
                             <Label x:Name="AwayTeamNameLabel"

@@ -25,7 +25,7 @@ namespace TruSport.ViewModels.Cricket
         private ObservableCollection<CricketFixture> fixtureCollection;
         private ObservableCollection<CricketFixture> formCollection;
         private ObservableCollection<Coach> coachCollection;
-        private ObservableCollection<PlayerSeason> playerCollection;
+        private ObservableCollection<CricketPlayerSeason> playerCollection;
         private ObservableCollection<CricketLeagueTable> tableCollection;
         private CricketLeagueTable tableItem;
         private Team teamItem;
@@ -55,7 +55,7 @@ namespace TruSport.ViewModels.Cricket
             Navigation = navigation;
             FixtureCollection = new ObservableCollection<CricketFixture>();
             FormCollection = new ObservableCollection<CricketFixture>();
-            PlayerCollection = new ObservableCollection<PlayerSeason>();
+            PlayerCollection = new ObservableCollection<CricketPlayerSeason>();
             TableCollection = new ObservableCollection<CricketLeagueTable>();
             CoachCollection = new ObservableCollection<Coach>();
             TransferCollection = new ObservableCollection<Transfers>();
@@ -128,7 +128,7 @@ namespace TruSport.ViewModels.Cricket
             set { Set(ref formCollection, value); }
         }
 
-        public ObservableCollection<PlayerSeason> PlayerCollection
+        public ObservableCollection<CricketPlayerSeason> PlayerCollection
         {
             get { return playerCollection; }
             set { Set(ref playerCollection, value); }
@@ -223,9 +223,9 @@ namespace TruSport.ViewModels.Cricket
                 //if(_team.TeamSeasons[0].Players != null)
                 //    PlayerCollection = new ObservableCollection<PlayerSeason>(_team.Players.OrderBy(e => e.Player.LastName));
 
-                var players = await playerService.GetTeamPlayers(Team.ID);
+                var players = await playerService.GetCricketTeamPlayers(Team.ID);
                 if (players != null)
-                    PlayerCollection = new ObservableCollection<PlayerSeason>(players.Where(e => e.Season.IsCurrent).OrderBy(e => e.Player.LastName));
+                    PlayerCollection = new ObservableCollection<CricketPlayerSeason>(players.Where(e => e.Season.IsCurrent).OrderBy(e => e.Player.LastName));
 
 
                 var fixtures = await fixtureService.GetCricketTeamFixtures(Team.ID);
@@ -260,7 +260,7 @@ namespace TruSport.ViewModels.Cricket
                 //var transfers = await transferService.GetTransfers();
                 //transfers = transfers.Where(e => e.NewTeam == Team.Name).ToList();
 
-                if (TeamItem.TeamSeasons.FirstOrDefault(e => e.Season.IsCurrent).Transfers.Count > 0)
+                if (TeamItem.TeamSeasons.FirstOrDefault(e => e.Season.IsCurrent).Transfers?.Count > 0)
                     NoTransfers = false;
                 else
                     NoTransfers = true;

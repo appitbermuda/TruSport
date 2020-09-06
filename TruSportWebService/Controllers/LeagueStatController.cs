@@ -203,7 +203,7 @@ namespace OnTrackWebService.Controllers
 
 
         [HttpPost]
-        [Route("UploadRunStat")]
+        [Route("UploadRunStats")]
         public async Task<IActionResult> UploadRunStat([FromForm(Name = "file")] IFormFile file)
         {
             try
@@ -224,14 +224,14 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpPost]
-        [Route("UploadWicketStat")]
+        [Route("UploadWicketStats")]
         public async Task<IActionResult> UploadWicketStat([FromForm(Name = "file")] IFormFile file)
         {
             try
             {
                 if (file != null)
                 {
-                    ImportWicketStats fileUploadResponse = await _leagueStatRepository.UploadWickStats(file);
+                    ImportWicketStats fileUploadResponse = await _leagueStatRepository.UploadWicketStats(file);
 
                     return Ok(fileUploadResponse);
                 }

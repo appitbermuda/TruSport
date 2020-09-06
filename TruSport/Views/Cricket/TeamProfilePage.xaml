@@ -132,11 +132,11 @@
                       VerticalOptions="FillAndExpand"
                       HorizontalOptions="FillAndExpand">    
                 <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="5"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="30"/>
-                        <ColumnDefinition Width="30"/>
-                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="40"/>
                         <!--<ColumnDefinition Width="30"/>-->
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -153,20 +153,18 @@
                                         Text="{Binding JerseyNumber}"/>
                         </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="1"
-                                     Spacing="5"
+                                     Spacing="4"
                                      Orientation="Horizontal"
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand"
                                  Padding="0">
                                 <Label x:Name="FirstNameLabel"
                                    FontSize="12"
-                                       FontAttributes="Bold"
                                        Text="{Binding Player.FirstName}"
                                    TextColor="{DynamicResource TextPrimaryColor}"/>
                             <Label x:Name="LastNameLabel"
                                    FontSize="12"
-                                   FontAttributes="Bold"
-                                       Text="{Binding Player.LastName}"
+                                   Text="{Binding Player.LastName}"
                                    TextColor="{DynamicResource TextPrimaryColor}"/>
                         </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="2"
@@ -181,7 +179,7 @@
                            <StackLayout Grid.Row="0" Grid.Column="3"
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand">
-                            <Label x:Name="GoalsLabel"
+                            <Label x:Name="RunsLabel"
                                    FontSize="12"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    HorizontalTextAlignment="Center"
@@ -190,7 +188,7 @@
                         <StackLayout Grid.Row="0" Grid.Column="4"
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand">
-                            <Label x:Name="YellowCardsLabel"
+                            <Label x:Name="WicketsLabel"
                                    FontSize="12"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    HorizontalTextAlignment="Center"
@@ -1069,11 +1067,11 @@
                               VerticalOptions="FillAndExpand"
                               HorizontalOptions="FillAndExpand">    
                         <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="5"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="40"/>
                                 <!--<ColumnDefinition Width="30"/>-->
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -1084,19 +1082,19 @@
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand"
                                  Padding="0">
-                                <Label
-                                   FontSize="13"
+                                <!--<Label
+                                   FontSize="Micro"
                                        Text="#"
                                        FontAttributes="Bold"
                                     HorizontalTextAlignment="Center"
-                                   TextColor="{DynamicResource TextPrimaryColor}"/>
+                                   TextColor="{DynamicResource TextPrimaryColor}"/>-->
                         </StackLayout>
                             <StackLayout Grid.Row="0" Grid.Column="1"
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand"
                                  Padding="0">
                                 <Label
-                                   FontSize="13"
+                                   FontSize="Micro"
                                        Text="NAME"
                                        FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimaryColor}"/>
@@ -1105,7 +1103,7 @@
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand">
                             <Label
-                                   FontSize="13"
+                                   FontSize="Micro"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
@@ -1115,21 +1113,21 @@
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand">
                             <Label
-                                   FontSize="13"
+                                   FontSize="Micro"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
-                                        Text="R"/>
+                                        Text="Runs"/>
                         </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="4"
                                  VerticalOptions="Center"
                                      HorizontalOptions="FillAndExpand">
                             <Label
-                                   FontSize="13"
+                                   FontSize="Micro"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
-                                        Text="W"/>
+                                        Text="Wkts"/>
                         </StackLayout>
                         <!--<StackLayout Grid.Row="0" Grid.Column="5"
                                  VerticalOptions="Center"
@@ -1312,7 +1310,7 @@
                                               </Grid.GestureRecognizers>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="70"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
                                                 <BoxView  Grid.ColumnSpan="2"/>
                                                 <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
