@@ -25,12 +25,14 @@ namespace OnTrackWebService.Repository
 
         public async Task<Inventory> Get(string id)
         {
-            return await _context.Inventorys.FirstOrDefaultAsync(e => e.ID == id);
+            return await _context.Inventorys
+                .Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == id);
         }
 
         public async Task<IEnumerable<Inventory>> GetAll()
         {
-            return await _context.Inventorys.ToListAsync();
+            return await _context.Inventorys
+                .Include(e => e.Product).ToListAsync();
         }
 
         public async Task Insert(Inventory item)

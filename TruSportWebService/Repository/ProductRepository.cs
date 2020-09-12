@@ -25,12 +25,20 @@ namespace OnTrackWebService.Repository
 
         public async Task<Product> Get(string id)
         {
-            return await _context.Products.Include(e => e.ProductType).FirstOrDefaultAsync(e => e.ID == id);
+            return await _context.Products
+                .Include(e => e.ProductType).ThenInclude(e => e.MatchType)
+                .Include(e => e.ProductType).ThenInclude(e => e.Sport)
+                .Include(e => e.Inventory)
+                .Include(e => e.Team).FirstOrDefaultAsync(e => e.ID == id);
         }
 
         public async Task<IEnumerable<Product>> GetAll()
         {
-            return await _context.Products.Include(e => e.ProductType).ToListAsync();
+            return await _context.Products
+                .Include(e => e.ProductType).ThenInclude(e => e.MatchType)
+                .Include(e => e.ProductType).ThenInclude(e => e.Sport)
+                .Include(e => e.Inventory)
+                .Include(e => e.Team).ToListAsync();
         }
 
         public async Task Insert(Product item)

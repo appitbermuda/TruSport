@@ -60,4 +60,7 @@
   <ItemGroup>
     <Compile Remove="Models\User %28copy%29.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Protos\api.proto" />
+  </ItemGroup>
 </Project>

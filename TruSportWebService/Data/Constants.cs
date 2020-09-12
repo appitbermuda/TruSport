@@ -5,6 +5,7 @@ namespace OnTrackWebService.Data
     {
         public static string SETTING_CRICKET_TBD_ID = "932AEB43-1017-4615-BB4B-F88A913C2117";
         public static string SETTING_FOOTBALL_TBD_ID = "BA7124FE-A966-428A-A46A-64AF78B15D62";
+        public static string SETTING_PROCESSING_FEE_ID = "E1D4E89C-B118-4155-9D8C-D82791879757";
 
         public static string FromAddress = "ontrackbda@gmail.com";
         public static string BCCAddress = "ontrackbda@gmail.com";
@@ -19,6 +20,11 @@ namespace OnTrackWebService.Data
         public const string CricHQFixturesEndpoint = "match_center/upcoming?query=bermuda";
         public const string CricHQLiveEndpoint = "in_progress?query=bermuda&competition_match_level_id=0";
 
+        public static string ProcessingPW = "v2fAD5x3";
+        public static string AcquirerId = "464748";
+        public static string Currency = "840";
+        public static string MerchantId = "33302800";
+        public static string OrderNumberPrefix = "OT_TIX_";
 
         public const string Organization = "techReef";
         public const string Android = "OnTrack-1";

@@ -8,6 +8,7 @@ namespace OnTrackWebService.Models.Shop
     {
         public string ID { get; set; }
         public string ProductTypeID { get; set; }
+        public string TeamID { get; set; }
         public string Name { get; set; }
         public string Color { get; set; }
         public string Image { get; set; }
@@ -15,5 +16,10 @@ namespace OnTrackWebService.Models.Shop
 
         [ForeignKey("ProductTypeID")]
         public ProductType ProductType { get; set; }
+
+        [ForeignKey("TeamID")]
+        public Team Team { get; set; }
+
+        public virtual Inventory Inventory { get; set; }
     }
 }

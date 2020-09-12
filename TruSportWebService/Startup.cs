@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Shop;
 using OnTrackWebService.Repository;
 using Owin;
 
@@ -91,7 +92,8 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<League>, LeagueRepository>();
             services.AddScoped<IOnTrackRepository<LeagueStat>, LeagueStatRepository>();
             services.AddScoped<IOnTrackRepository<LTable>, LeagueTableRepository>();
-            //services.AddScoped<IOnTrackRepository<Transfer>, TransfersRepository>();
+            services.AddScoped<IOnTrackRepository<Inventory>, InventoryRepository>();
+            services.AddScoped<IOnTrackRepository<MatchTicket>, MatchTicketRepository>();
             services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
             services.AddScoped<IOnTrackRepository<Match>, MatchRepository>();
             services.AddScoped<IOnTrackRepository<MatchInning>, MatchInningRepository>();

@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using OnTrackWebService.Interfaces;
+using OnTrackWebService.Repository;
+using OnTrackWebService.Models;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using OnTrackWebService.Data;
+using OnTrackWebService.Models.Shop;
+
+namespace OnTrackWebService.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MatchTicketController : ControllerBase
+    {
+        private readonly MatchTicketRepository _matchTicketRepository;
+
+        public MatchTicketController(IOnTrackRepository<MatchTicket> matchTicketRepository)
+        {
+            _matchTicketRepository = (MatchTicketRepository)matchTicketRepository;
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> MatchTickets()
+        {
+            try
+            {
+
+                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.GetAll();
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("Get")]
+        public async Task<IActionResult> Get(string id)
+        {
+            try
+            {
+                MatchTicket matchTicket = await _matchTicketRepository.Get(id);
+
+                if (matchTicket != null)
+                    return Ok(matchTicket);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpPost]
+        [Route("Purchase")]
+        public async Task<IActionResult> Purchase([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
+                {
+                    //Authorize.Request request = new Authorize.Request();
+                    //var response = await request.Payment(paymentAuthorize);
+
+                    //return Ok(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpPost]
+        [Route("Insert")]
+        public async Task<IActionResult> Post([FromBody] MatchTicket matchTicket)
+        {
+            try
+            {
+                await _matchTicketRepository.Insert(matchTicket);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpPost]
+        [Route("Update")]
+        public async Task<IActionResult> Update([FromBody] MatchTicket matchTicket)
+        {
+            try
+            {
+                await _matchTicketRepository.Update(matchTicket);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // DELETE api/values/5
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                await _matchTicketRepository.Delete(id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+    }
+}
