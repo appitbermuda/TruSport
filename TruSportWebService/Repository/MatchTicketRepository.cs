@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -103,6 +104,108 @@ namespace OnTrackWebService.Repository
             { }
 
             return matchTickets;
+        }
+
+        public async Task<PaymentResponse> Purchase(PaymentAuthorize paymentAuthorization)
+        {
+            _context.Database.BeginTransaction();
+
+            Request request = new Request();
+            PaymentResponse paymentResponse = new PaymentResponse();
+            paymentResponse.IsApproved = false;
+
+            try
+            {
+                var processingFee = await _context.Settings.FirstOrDefaultAsync(e => e.ID == Constants.SETTING_PROCESSING_FEE_ID);
+
+                Decimal ProcessingFeeAmount = Convert.ToDecimal(processingFee);
+                Decimal PaymentAmount = 0.0m;
+
+                string payment = String.Format("{0,0:N2}", Decimal.Parse(paymentAuthorization.Amount) / 100.0m);
+
+                Setting ProcessingFee = await _context.Settings.FirstOrDefaultAsync(e => e.Key == "Processing Fee");
+                ProcessingFeeAmount = Convert.ToDecimal(ProcessingFee.Value);
+
+                //string topUp = topUpPayment.Amount;
+                //topUp.Insert(topUp.Length - 2, ".");
+                PaymentAmount = Convert.ToDecimal(payment);
+
+
+                var response = await request.Payment(paymentAuthorization);
+
+                if (response.CreditCardTransactionResults.ResponseCode == "1")
+                {
+                    Order order = new Order
+                    {
+                        Total = PaymentAmount + ProcessingFeeAmount,
+                        CustomerID = paymentAuthorization.CustomerID,
+                        Authorisation = response.CreditCardTransactionResults.AuthCode,
+                        Date = DateTime.Now
+                    };
+
+                    _context.Orders.Add(order);
+
+                    OrderDetail orderDetail = new OrderDetail
+                    {
+                        ProductID = paymentAuthorization.ProductID,
+                        Qty = 1,
+                        Subtotal = PaymentAmount,
+                        OrderID = order.ID
+                    };
+
+                    _context.OrderDetails.Add(orderDetail);
+                    await _context.SaveChangesAsync();
+
+
+                    //var accountBalance = await _context.AccountBalances.FirstOrDefaultAsync(e => e.UserID == paymentAuthorization.CustomerID);
+
+                    //if (accountBalance == null)
+                    //{
+                    //    AccountBalance balance = new AccountBalance
+                    //    {
+                    //        UserID = topUpPayment.UserID,
+                    //        Balance = TopUpAmount
+                    //    };
+
+                    //    _context.AccountBalances.Add(accountBalance);
+                    //    await _context.SaveChangesAsync();
+                    //}
+                    //else
+                    //{
+                    //    accountBalance.Balance = accountBalance.Balance + TopUpAmount;
+
+                    //    _context.AccountBalances.Update(accountBalance);
+                    //    await _context.SaveChangesAsync();
+                    //}
+
+                    _context.Database.CommitTransaction();
+                    paymentResponse.IsApproved = true;
+
+                    try
+                    {
+                        var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
+                        //await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.ReferenceNumber, PaymentAmount, ProcessingFeeAmount);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message, "Payment Email");
+                    }
+                }
+
+                paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
+                paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
+
+                return paymentResponse;
+            }
+            catch (Exception ex)
+            {
+                _context.Database.RollbackTransaction();
+                Debug.WriteLine(ex.Message, "Payment");
+            }
+
+            paymentResponse.Description = "There was an issue with your payment, please try again.";
+
+            return paymentResponse;
         }
 
         public async Task Insert(MatchTicket item)

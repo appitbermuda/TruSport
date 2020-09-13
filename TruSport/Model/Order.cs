@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using SQLite;
 
-namespace OnTrackWebService.Models.Shop
+namespace TruSport.Model
 {
     public class Order
     {
@@ -14,7 +14,7 @@ namespace OnTrackWebService.Models.Shop
         public decimal Total { get; set; }
         public string Authorisation { get; set; }
 
-        [ForeignKey("CustomerID")]
+        [Ignore]
         public Customer Customer { get; set; }
 
         public virtual List<OrderDetail> OrderDetails { get; set; }

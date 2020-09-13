@@ -12,7 +12,6 @@ namespace TruSport.ViewModels
 {
     public class FlyerViewModel : BaseViewModel
     {
-        
         private ObservableCollection<Flyer> flyerCollection;
         private string title;
         private double screenWidth;

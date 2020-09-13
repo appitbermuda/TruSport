@@ -1,32 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Owin;
-using Microsoft.Owin.Builder;
-using Microsoft.Owin.Security.OAuth;
+//using Microsoft.Owin;
 using Newtonsoft.Json;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
 using OnTrackWebService.Models.Shop;
 using OnTrackWebService.Repository;
-using Owin;
+//using Owin;
 
-[assembly: OwinStartup(typeof(OnTrackWebService.Startup))]
+//[assembly: OwinStartup(typeof(OnTrackWebService.Startup))]
 namespace OnTrackWebService
 {
     public class Startup
@@ -43,8 +33,17 @@ namespace OnTrackWebService
         {
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddCors();
-            services.AddMvc().AddJsonOptions(options => {
+            //services.AddMvc().AddJsonOptions(options => {
+            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            //});
+
+            services.AddMvc().AddMvcOptions(options =>
+            {
+                options.EnableEndpointRouting = false;
+            });
+            services.AddMvc().AddNewtonsoftJson(options => {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+
             });
 
             //#if DEBUG

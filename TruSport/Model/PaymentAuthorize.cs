@@ -1,5 +1,5 @@
 ﻿using System;
-namespace OnTrackWebService.Models.Shop
+namespace TruSport.Model
 {
     public class PaymentAuthorize
     {

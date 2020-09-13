@@ -75,10 +75,9 @@ namespace OnTrackWebService.Controllers
             {
                 if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
                 {
-                    //Authorize.Request request = new Authorize.Request();
-                    //var response = await request.Payment(paymentAuthorize);
+                    PaymentResponse authorized = await _matchTicketRepository.Purchase(paymentAuthorize); 
 
-                    //return Ok(response);
+                    return Ok(authorized);
                 }
             }
             catch (Exception ex)

@@ -1925,7 +1925,7 @@ namespace OnTrackWebService.Repository
             {
                 string sqlQuery = "EXEC [dbo].[spLiveFixtures] ";
 
-                var fixtures = await _context.Query<spLiveFixtures>().FromSql(sqlQuery).ToListAsync();
+                var fixtures = await _context.Set<spLiveFixtures>().FromSqlRaw(sqlQuery).ToListAsync();
 
                 return fixtures;
 
@@ -1944,7 +1944,7 @@ namespace OnTrackWebService.Repository
             {
                 string sqlQuery = "EXEC [dbo].[spLiveCricketFixtures] ";
 
-                var fixtures = await _context.Query<spLiveCricketFixtures>().FromSql(sqlQuery).ToListAsync();
+                var fixtures = await _context.Set<spLiveCricketFixtures>().FromSqlRaw(sqlQuery).ToListAsync();
 
                 return fixtures;
 
@@ -1963,7 +1963,7 @@ namespace OnTrackWebService.Repository
             {
                 string sqlQuery = "EXEC [dbo].[spLiveFootballFixtures] ";
 
-                var fixtures = await _context.Query<spLiveFixtures>().FromSql(sqlQuery).ToListAsync();
+                var fixtures = await _context.Set<spLiveFixtures>().FromSqlRaw(sqlQuery).ToListAsync();
 
                 return fixtures;
 

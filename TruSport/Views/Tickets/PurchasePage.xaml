@@ -1,5 +1,30 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TruSport.Views.Tickets.PurchasePage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions" x:Class="TruSport.Views.Tickets.PurchasePage">
     <ContentPage.Content>
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <listView:SfListView x:Name="MatchTicketsList"
+                                    ItemsSource="{Binding MatchTicketCollection}"
+                                    ItemTemplate="{StaticResource MatchTicketItemTemplate}"
+                                    SelectionMode="None"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    ItemSpacing="5"
+                                 Padding="1"
+                                    SelectionBackgroundColor="{StaticResource primaryPink}"
+                                    AutoFitMode="DynamicHeight"        
+                                />
+            <StackLayout IsVisible="{Binding NoTickets}" Padding="10" HorizontalOptions="Center">
+                <Label HorizontalTextAlignment="Center" TextColor="{DynamicResource TextPrimaryColor}" Text="There are currently no match tickets available." FontSize="Small"/>
+            </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+            <model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>
