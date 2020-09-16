@@ -17,6 +17,7 @@ namespace OnTrackWebService.Models.Shop
         [ForeignKey("CustomerID")]
         public Customer Customer { get; set; }
 
-        public virtual List<OrderDetail> OrderDetails { get; set; }
+        //public virtual List<OrderDetail> OrderDetails { get; set; }
+        public virtual OrderDetail OrderDetail { get; set; }
     }
 }
