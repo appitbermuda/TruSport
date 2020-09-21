@@ -8,6 +8,7 @@
     <Color x:Key="listSelectedBackgroundColor">#F0F0F0</Color>
     <Color x:Key="headerBackgroundColor">#F5F5F5</Color>
     <Color x:Key="GroupHeaderBackgroundColor">#1d2462</Color>
+    <Color x:Key="buttonBackgroundColor">#1d2462</Color>
     <Color x:Key="frameBackgroundColor">#F9F9F9</Color>
     <Color x:Key="controlHeaderBackgroundColor">#F5F5F5</Color>
     <Color x:Key="controlElementBackgroundColor">#F0F0F0</Color>
