@@ -5,9 +5,9 @@ using Xamarin.Forms;
 
 namespace TruSport.Views.Tickets
 {
-    public partial class SignInPage : ContentPage
+    public partial class CreditCardPage : ContentPage
     {
-        public SignInPage()
+        public CreditCardPage()
         {
             InitializeComponent();
         }

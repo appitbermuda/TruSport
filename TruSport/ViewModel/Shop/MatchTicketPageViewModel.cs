@@ -10,7 +10,7 @@ namespace TruSport.ViewModel.Shop
 {
     public class MatchTicketPageViewModel : BaseViewModel
     {
-        private ObservableCollection<MatchTicket> _matchTicketCollection;
+        private ObservableCollection<FixtureProduct> _matchTicketCollection;
         private ObservableCollection<Fixture> _fixtureCollection;
         private ObservableCollection<Product> _productCollection;
         private bool _noTickets;
@@ -23,11 +23,12 @@ namespace TruSport.ViewModel.Shop
         public MatchTicketPageViewModel(INavigation navigation)
         {
             matchTicketService = new MatchTicketService();
+            MatchTicketCollection = new ObservableCollection<FixtureProduct>();
 
             GenerateSource();
         }
 
-        public ObservableCollection<MatchTicket> MatchTicketCollection
+        public ObservableCollection<FixtureProduct> MatchTicketCollection
         {
             get { return _matchTicketCollection; }
             set { this._matchTicketCollection = value; }
@@ -53,7 +54,7 @@ namespace TruSport.ViewModel.Shop
                 IsActivityIndicatorVisible = true;
 
                 var matchTickets = await matchTicketService.GetMatchTickets();
-                MatchTicketCollection = new ObservableCollection<MatchTicket>(matchTickets);
+                MatchTicketCollection = new ObservableCollection<FixtureProduct>(matchTickets);
 
                 if (MatchTicketCollection.Count == 0)
                     NoTickets = true;

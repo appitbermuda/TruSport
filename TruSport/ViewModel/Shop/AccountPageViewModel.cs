@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using TruSport.Model;
 using TruSport.ViewModels;
 using Xamarin.Essentials;
@@ -7,6 +8,7 @@ namespace TruSport.ViewModel.Shop
 {
     public class AccountPageViewModel : BaseViewModel
     {
+        private ObservableCollection<CreditCard> _creditCardCollection;
         private Customer _customer;
         private bool _isActivityIndicatorVisible;
 
@@ -22,6 +24,12 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _customer, value); }
         }
 
+        public ObservableCollection<CreditCard> CreditCardCollection
+        {
+            get { return _creditCardCollection; }
+            set { Set(ref _creditCardCollection, value); }
+        }
+
         public bool IsActivityIndicatorVisible
         {
             get { return _isActivityIndicatorVisible; }
@@ -35,20 +43,15 @@ namespace TruSport.ViewModel.Shop
             var current = Connectivity.NetworkAccess;
             if (current == NetworkAccess.Internet)
             {
-                //var customer = 
 
-                //var flyers = await flyerService.GetFlyers();
+                var email = await SecureStorage.GetAsync("Email");
+                var customer = App.Database.GetCustomerByIDAsync(email);
 
-                //FlyerCollection = new ObservableCollection<Flyer>(flyers);
-
-                //if (FlyerCollection.Count == 0)
-                //    NoFlyers = true;
+                var creditCards = App.Database.GetCreditCards(email);
 
             }
 
             IsActivityIndicatorVisible = false;
-
-            //ItemTapCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(ItemTapped);
         }
     }
 }

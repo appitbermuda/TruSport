@@ -17,6 +17,8 @@ namespace TruSport.Data
         {
             database = new SQLiteAsyncConnection(dbPath);
             database.CreateTableAsync<Coach>().Wait();
+            database.CreateTableAsync<Customer>().Wait();
+            database.CreateTableAsync<CreditCard>().Wait();
             database.CreateTableAsync<Token>().Wait();
             database.CreateTableAsync<NotiAlert>().Wait();
             database.CreateTableAsync<CricketFixture>().Wait();
@@ -32,6 +34,32 @@ namespace TruSport.Data
             database.CreateTableAsync<Team>().Wait();
             database.CreateTableAsync<User>().Wait();
             database.CreateTableAsync<UserType>().Wait();
+        }
+
+        //Coach
+        public async Task<List<CreditCard>> GetCreditCards(string email)
+        {
+            return await database.Table<CreditCard>().ToListAsync();
+        }
+
+        public async Task<CreditCard> GetCreditCard(int ID)
+        {
+            return await database.Table<CreditCard>().FirstOrDefaultAsync(e => e.ID == ID);
+        }
+
+        public Task<int> Insert(CreditCard item)
+        {
+            return database.InsertAsync(item);
+        }
+
+        public Task<int> Update(CreditCard item)
+        {
+            return database.UpdateAsync(item);
+        }
+
+        public Task<int> Delete(int ID)
+        {
+            return database.DeleteAsync<CreditCard>(ID);
         }
 
         //Coach
@@ -697,6 +725,82 @@ namespace TruSport.Data
         public Task<int> DeleteUser(User item)
         {
             return database.DeleteAsync(item);
+        }
+
+        //Customer
+        public async Task<Customer> GetCustomerByIDAsync(string email)
+        {
+            return await database.Table<Customer>().Where(i => i.Email == email).FirstOrDefaultAsync();
+        }
+
+        //public async Task<bool> IsUserLoggedIn()
+        //{
+        //    //User user = await database.Table<User>().Where(i => i.IsLoggedIn == true).FirstOrDefaultAsync();
+
+        //    //if (user != null)
+        //    //{
+        //    //    App.UserID = user.ID;
+        //    //    App.UserFirstName = user.FirstName;
+        //    //    App.UserLastName = user.LastName;
+        //    //    App.UserFullName = user.FirstName + " " + user.LastName;
+        //    //    App.UserType = user.UserTypeID;
+        //    //    return true;
+        //    //}
+
+        //    return false;
+        //}
+
+        public Task<int> SaveCustomer(Customer item)
+        {
+            return database.InsertAsync(item);
+        }
+
+        public async Task<int> UpdateCustomer(Customer item)
+        {
+            var thisCustomerExist = await database.Table<Customer>().Where(e => e.ID == item.ID).FirstOrDefaultAsync();
+
+            if (thisCustomerExist != null)
+                return await database.UpdateAsync(item);
+            else
+                return await database.InsertAsync(item);
+        }
+
+        public Task<int> DeleteCustomer(Customer item)
+        {
+            return database.DeleteAsync(item);
+        }
+
+        public async Task<bool> SignIn(Customer customer)
+        {
+            try
+            {
+                await database.InsertAsync(customer);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> CustomerAuthenticated(string email)
+        {
+            try
+            {
+                var user = await database.Table<Customer>().FirstOrDefaultAsync(e => e.Email == email);
+
+                if (user != null)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
         }
 
         //User Type

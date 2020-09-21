@@ -92,7 +92,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<LeagueStat>, LeagueStatRepository>();
             services.AddScoped<IOnTrackRepository<LTable>, LeagueTableRepository>();
             services.AddScoped<IOnTrackRepository<Inventory>, InventoryRepository>();
-            services.AddScoped<IOnTrackRepository<MatchTicket>, MatchTicketRepository>();
+            services.AddScoped<IOnTrackRepository<FixtureProduct>, MatchTicketRepository>();
             services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
             services.AddScoped<IOnTrackRepository<Match>, MatchRepository>();
             services.AddScoped<IOnTrackRepository<MatchInning>, MatchInningRepository>();

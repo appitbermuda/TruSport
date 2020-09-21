@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Xamarin.Forms;
 using TruSport.Services;
 using Xamarin.Essentials;
+using TruSport.Views.Tickets;
 
 namespace TruSport.ViewModels
 {
@@ -331,6 +332,7 @@ namespace TruSport.ViewModels
 
                                 //await App.Database.SaveUser(localUser);
 
+                                await SecureStorage.SetAsync("Email", thisUser.Email);
                                 await SecureStorage.SetAsync("Token", thisUser.Token);
                                 await SecureStorage.SetAsync("UserLoggedIn", "true");
                                 await SecureStorage.SetAsync("UserRole", thisUser.UserType.Name);
@@ -354,7 +356,7 @@ namespace TruSport.ViewModels
                                 //await Navigation.PopAsync();
                                 //await Navigation.PushAsync(new NavigationPage(new MapPage()));
 
-                                App.Current.MainPage = new FootballMasterDetailPage();
+                                await Navigation.PopAsync();
                             }
                             else
                             {
@@ -448,7 +450,9 @@ namespace TruSport.ViewModels
 
                                             //Navigation.InsertPageBefore(new FootballMasterDetailPage(), Navigation.NavigationStack.First());
                                             //await Navigation.PopToRootAsync();
-                                            App.Current.MainPage = new FootballMasterDetailPage();
+                                            //App.Current.MainPage = new FootballMasterDetailPage();
+
+                                            await Navigation.PopAsync();
                                         }
                                         else
                                         {

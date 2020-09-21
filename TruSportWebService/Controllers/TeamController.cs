@@ -45,6 +45,26 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> AllTeams()
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetAll();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("AllTeamsBySeason")]
         public async Task<IActionResult> Teams(int Season)
         {

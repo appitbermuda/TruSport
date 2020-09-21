@@ -84,6 +84,24 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("Validate")]
+        public async Task<IActionResult> Validate(string email)
+        {
+            try
+            {
+                bool validateUser = await _userRepository.Validate(email);
+
+                return Ok(validateUser);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
         // POST api/values
         [HttpPost]
         [Route("SignUp")]

@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models.Shop
 {
     public class Order
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string CustomerID { get; set; }
         public string OrderNumber { get; set; }

@@ -15,6 +15,7 @@ namespace OnTrackWebService.Models
 
     public class Transfer
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string PlayerName { get; set; }
         public string PreviousTeam { get; set; }

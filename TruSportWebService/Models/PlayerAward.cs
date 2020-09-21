@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models
 {
     public class Award
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string PlayerID { get; set; }
         public string AwardTypeID { get; set; }

@@ -5,6 +5,7 @@ namespace OnTrackWebService.Models
 {
     public class CricketLeagueStanding
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string TeamID { get; set; }
         public string SeasonID { get; set; }

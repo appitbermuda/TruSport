@@ -27,6 +27,33 @@ namespace TruSport.Converters
             }
         }
 
+    public class CardNumberConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var cardNumber = (string)value;
+
+            if (cardNumber != null)
+            {
+                cardNumber = cardNumber.Replace("-", "");
+
+                if (cardNumber.Length == 16)
+                {
+                    var first4 = cardNumber.Substring(0, 4);
+                    var last4 = cardNumber.Substring(cardNumber.Length - 4, 4);
+                    return first4 + "-****-****-" + last4;
+                }
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (string)value;
+        }
+    }
+
     public class EntryValidationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

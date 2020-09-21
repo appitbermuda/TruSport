@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models
 {
     public class CricketScore
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string FixtureID { get; set; }
         public string BattingTeamID { get; set; }
@@ -33,6 +34,7 @@ namespace OnTrackWebService.Models
 
     public class CricketMatch
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string FixtureID { get; set; }
         public string TeamID { get; set; }

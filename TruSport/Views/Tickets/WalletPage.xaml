@@ -1,5 +1,98 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TruSport.Views.Tickets.WalletPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" x:Class="TruSport.Views.Tickets.CreditCardPage">
     <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="100"/>
+                </Grid.RowDefinitions>
+                <StackLayout VerticalOptions="EndAndExpand">
+                <StackLayout.Padding>
+               <OnPlatform x:TypeArguments="Thickness">
+                 <On Platform="Android" Value="0, 0, 10, 0"/>
+                 <On Platform="iOS" Value="0, 0, 0, 0"/>
+                </OnPlatform>
+              </StackLayout.Padding>
+            <Grid HorizontalOptions="FillAndExpand" Padding="10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.ColumnSpan="2" Text="{Binding Title}"
+                   TextColor="{DynamicResource navModalTextColor}"
+                   FontAttributes="Bold"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="Center"/>
+                <Button Text="X" WidthRequest="40" TextColor="{DynamicResource navModalTextColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="Start" BackgroundColor="Transparent" Command="{Binding CloseClickedCommand}"/>                
+                </Grid>
+            </StackLayout>
+                <StackLayout Grid.Row="1" BackgroundColor="{DynamicResource backgroundColor}">
+                    <ScrollView>
+            <Grid Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <!--<StackLayout Grid.Row="0" Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                    <Label Text="Scan Card" FontAttributes="Bold" FontSize="Micro" VerticalOptions="CenterAndExpand" />
+                    <Button Text="" CornerRadius="10" TextColor="Black" FontFamily="{StaticResource fontAwesomeSolidFamily}" BackgroundColor="WhiteSmoke" FontSize="Large" Command="{Binding CameraClickedCommand}"/>
+                </StackLayout>-->
+                <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
+                <inputLayout:SfTextInputLayout Hint="Number"
+                                               UnfocusedColor="Gray"
+                                               FocusedColor="{DynamicResource GroupHeaderBackgroundColor}"
+                                               ContainerType="None">
+                    <Entry Text="{Binding CardNumber}" TextColor="{DynamicResource TextPrimaryColor}"
+                           Keyboard="Numeric">
+                        <Entry.Behaviors>
+                            <extension:MaskedBehavior Mask="XXXX-XXXX-XXXX-XXXX"/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </inputLayout:SfTextInputLayout>
+            </StackLayout>
+            <StackLayout Grid.Row="2" Grid.Column="0">
+                 <inputLayout:SfTextInputLayout Hint="Expiry (MM/YY)"
+                                                UnfocusedColor="Gray"
+                                                FocusedColor="{DynamicResource GroupHeaderBackgroundColor}"
+                                               ContainerType="None">
+                    <Entry Text="{Binding Expiry}" TextColor="{DynamicResource TextPrimaryColor}"
+                           Keyboard="Numeric">
+                         <Entry.Behaviors>
+                            <extension:MaskedBehavior Mask="XX/XX"/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </inputLayout:SfTextInputLayout>
+            </StackLayout>
+                <StackLayout Grid.Row="2" Grid.Column="1">
+                 <inputLayout:SfTextInputLayout Hint="CVV"
+                                                UnfocusedColor="Gray" 
+                                                FocusedColor="{DynamicResource GroupHeaderBackgroundColor}"
+                                               ContainerType="None">
+                    <Entry Text="{Binding CVV}" TextColor="{DynamicResource TextPrimaryColor}" MaxLength="3" IsPassword="True"
+                           Keyboard="Numeric"/>
+                </inputLayout:SfTextInputLayout>
+            </StackLayout>
+                <StackLayout Grid.Row="3" Grid.ColumnSpan="2">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                 <Label Text="Default?" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" VerticalTextAlignment="Center" />
+                        <Switch IsToggled="{Binding IsDefault}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"/>
+                        </StackLayout>
+            </StackLayout>
+            </Grid>
+                        </ScrollView>
+                    </StackLayout>
+                <StackLayout Grid.Row="2" Padding="20,0" IsVisible="{Binding IsDeleteEnabled}" VerticalOptions="StartAndExpand">
+                    <Button Text="Save Card" TextColor="White" BackgroundColor="{DynamicResource buttonBackgroundColor}" CornerRadius="25" HeightRequest="50" Command="{Binding SaveCommand}"/>
+                </StackLayout>
+            </Grid>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

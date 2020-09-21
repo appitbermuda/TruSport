@@ -15,7 +15,7 @@ namespace TruSport.Services
         {
         }
 
-        public async Task<List<MatchTicket>> GetMatchTickets()
+        public async Task<List<FixtureProduct>> GetMatchTickets()
         {
             try
             {
@@ -34,7 +34,7 @@ namespace TruSport.Services
 
                     if (response.IsSuccessful)
                     {
-                        List<MatchTicket> matchTickets = JsonConvert.DeserializeObject<List<MatchTicket>>(response.Content);
+                        List<FixtureProduct> matchTickets = JsonConvert.DeserializeObject<List<FixtureProduct>>(response.Content);
 
                         return matchTickets;
                     }

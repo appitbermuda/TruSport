@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models
 {
     public class CricketFixture
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string HomeTeamID { get; set; }
         public string AwayTeamID { get; set; }

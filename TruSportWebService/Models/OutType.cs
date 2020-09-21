@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models
 {
     public class OutType
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string Name { get; set; }
         public string Initial { get; set; }

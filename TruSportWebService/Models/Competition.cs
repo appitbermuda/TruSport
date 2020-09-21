@@ -5,6 +5,7 @@ namespace OnTrackWebService.Models
 {
     public class Competition
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string Name { get; set; }
         public string SportID { get; set; }

@@ -5,6 +5,7 @@ namespace OnTrackWebService.Models
 {
     public class Season
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public int Key { get; set; }
         public string Date { get; set; }

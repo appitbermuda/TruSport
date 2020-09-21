@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -24,12 +25,34 @@ namespace OnTrackWebService.Repository
 
         public async Task<Sport> Get(string id)
         {
-            return await _context.Sports.FirstOrDefaultAsync(e => e.ID == id);
+            try
+            {
+                 var sport = await _context.Sports.FirstOrDefaultAsync(e => e.ID == id);
+
+                return sport;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Sport");
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<Sport>> GetAll()
         {
-            return await _context.Sports.ToListAsync();
+            try
+            {
+                var sports = await _context.Sports.ToListAsync();
+
+                return sports;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Sport");
+            }
+
+            return null;
         }
 
         public Task<IEnumerable<Sport>> GetByTeam(string teamID)

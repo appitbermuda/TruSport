@@ -44,8 +44,10 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Roles
+                List<Role> roles =  await _context.Roles
                     .Include(e => e.Sport).ToListAsync();
+
+                return roles;
             }
             catch (Exception ex)
             {

@@ -19,7 +19,7 @@ namespace OnTrackWebService.Controllers
     {
         private readonly MatchTicketRepository _matchTicketRepository;
 
-        public MatchTicketController(IOnTrackRepository<MatchTicket> matchTicketRepository)
+        public MatchTicketController(IOnTrackRepository<FixtureProduct> matchTicketRepository)
         {
             _matchTicketRepository = (MatchTicketRepository)matchTicketRepository;
         }
@@ -32,7 +32,7 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.GetAll();
+                IEnumerable<FixtureProduct> matchTickets = await _matchTicketRepository.GetAll();
 
                 if (matchTickets != null)
                     return Ok(matchTickets);
@@ -52,7 +52,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                MatchTicket matchTicket = await _matchTicketRepository.Get(id);
+                FixtureProduct matchTicket = await _matchTicketRepository.Get(id);
 
                 if (matchTicket != null)
                     return Ok(matchTicket);
@@ -60,6 +60,48 @@ namespace OnTrackWebService.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("TodayByTeam")]
+        public async Task<IActionResult> MatchTickets(string teamID)
+        {
+            try
+            {
+
+                FixtureProduct matchTicket = await _matchTicketRepository.GetTodayByTeam(teamID);
+
+                if (matchTicket != null)
+                    return Ok(matchTicket);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("Team")]
+        public async Task<IActionResult> TeamMatchTickets(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<FixtureProduct> matchTickets = await _matchTicketRepository.Team(teamID);
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
             }
 
             return NoContent();
@@ -92,7 +134,7 @@ namespace OnTrackWebService.Controllers
         [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("Insert")]
-        public async Task<IActionResult> Post([FromBody] MatchTicket matchTicket)
+        public async Task<IActionResult> Post([FromBody] FixtureProduct matchTicket)
         {
             try
             {
@@ -110,7 +152,7 @@ namespace OnTrackWebService.Controllers
         [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("Update")]
-        public async Task<IActionResult> Update([FromBody] MatchTicket matchTicket)
+        public async Task<IActionResult> Update([FromBody] FixtureProduct matchTicket)
         {
             try
             {

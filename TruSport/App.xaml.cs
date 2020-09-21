@@ -19,6 +19,7 @@ namespace TruSport
 {
     public partial class App : Application
     {
+        public static bool IsLoggedIn { get; set; }
         public static string UserFullName;
         public static string UserFirstName;
         public static string UserLastName;
@@ -26,7 +27,6 @@ namespace TruSport
         public static double ScreenWidth;
         public static string UserID;
         public static string UserType;
-        public static bool IsLoggedIn;
         public static string DeviceID;
 
         

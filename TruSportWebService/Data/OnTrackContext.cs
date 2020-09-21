@@ -18,6 +18,7 @@ namespace OnTrackWebService.Data
         public DbSet<Field> Fields { get; set; }
         public DbSet<Fielding> Fieldings { get; set; }
         public DbSet<Fixture> Fixtures { get; set; }
+        public DbSet<FixtureProduct> FixtureProducts { get; set; }
         public DbSet<CricketFixture> CricketFixtures { get; set; }
         public DbSet<CricketRoster> CricketRosters { get; set; }
         public DbSet<CricketPlayerSeason> CricketPlayerSeasons { get; set; }
@@ -72,10 +73,26 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<Order>().ToTable("Order");
             modelBuilder.Entity<OrderDetail>().ToTable("OrderDetail");
             modelBuilder.Entity<ProductType>().ToTable("ProductType");
+            modelBuilder.Entity<FixtureProduct>().ToTable("FixtureProduct");
             modelBuilder.Entity<Product>().ToTable("Product");
             modelBuilder.Entity<Field>().ToTable("Field");
-            modelBuilder.Entity<Fixture>().ToTable("Fixture");
-            modelBuilder.Entity<CricketFixture>().ToTable("CricketFixture");
+            //modelBuilder.Entity<Fixture>().ToTable("Fixture");
+            //modelBuilder.Entity<CricketFixture>().ToTable("CricketFixture");
+
+            modelBuilder.Entity<Fixture>().ToTable("Fixture")
+                    .HasOne(x => x.HomeTeam)
+                    .WithMany();
+            modelBuilder.Entity<Fixture>().ToTable("Fixture")
+                    .HasOne(x => x.AwayTeam)
+                    .WithMany();
+
+            modelBuilder.Entity<CricketFixture>().ToTable("CricketFixture")
+                    .HasOne(x => x.HomeTeam)
+                    .WithMany();
+            modelBuilder.Entity<CricketFixture>().ToTable("CricketFixture")
+                    .HasOne(x => x.AwayTeam)
+                    .WithMany();
+
             modelBuilder.Entity<Batting>().ToTable("Batting");
             modelBuilder.Entity<Fielding>().ToTable("Fielding");
             modelBuilder.Entity<CricketPlayerSeason>().ToTable("CricketPlayerSeason");
@@ -84,6 +101,10 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<CricketRoster>().ToTable("CricketRoster");
             modelBuilder.Entity<Flyer>().ToTable("Flyer");
             modelBuilder.Entity<Role>().ToTable("Role");
+
+            //modelBuilder.Entity<Role>()
+            //        .HasOne(x => x.Sport)
+            //        .WithMany();
             //modelBuilder.Entity<Transfer>().ToTable("Transfer");
             //modelBuilder.Entity<Fixture>()
             //    .HasOne(ht => ht.HomeTeam)

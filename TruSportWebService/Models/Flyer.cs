@@ -5,6 +5,7 @@ namespace OnTrackWebService.Models
 {
     public class Flyer
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string Name { get; set; }
         public DateTime ExpiryDate { get; set; }

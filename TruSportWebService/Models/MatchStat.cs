@@ -5,6 +5,7 @@ namespace OnTrackWebService.Models
 {
     public class MatchStat
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string MatchRosterID { get; set; }
         public string AssistPlayerID { get; set; }
