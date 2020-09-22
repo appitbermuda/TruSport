@@ -107,6 +107,26 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values
+        [HttpGet]
+        [Route("Scan")]
+        public async Task<IActionResult> Scan(string OrderId)
+        {
+            try
+            {
+
+                bool validated = await _matchTicketRepository.Scan(OrderId);
+
+                return Ok(validated);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
         // POST api/values
         [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]

@@ -7,7 +7,7 @@ namespace TruSport.Model
     {
         public string ID { get; set; }
         public string OrderID { get; set; }
-        public string ProductID { get; set; }
+        public string FixtureProductID { get; set; }
         public int Qty { get; set; }
         public decimal Subtotal { get; set; }
 
@@ -15,6 +15,6 @@ namespace TruSport.Model
         public Order Order { get; set; }
 
         [Ignore]
-        public Product Product { get; set; }
+        public FixtureProduct FixtureProduct { get; set; }
     }
 }

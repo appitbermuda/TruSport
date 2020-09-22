@@ -26,16 +26,59 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("MatchDay")]
+        public async Task<IActionResult> MatchDayOrders(string Email)
+        {
+            try
+            {
+
+                IEnumerable<CustomerOrder> orders = await _orderRepository.GetMatchDayOrders(Email);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+
+        // GET api/values
+        [HttpGet]
+        [Route("History")]
+        public async Task<IActionResult> History(string Email)
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.GetOrderHistory(Email);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("AllOrders")]
         public async Task<IActionResult> Orders()
         {
             try
             {
 
-                IEnumerable<Order> orderes = await _orderRepository.GetAll();
+                IEnumerable<Order> orders = await _orderRepository.GetAll();
 
-                if (orderes != null)
-                    return Ok(orderes);
+                if (orders != null)
+                    return Ok(orders);
             }
             catch (Exception ex)
             {

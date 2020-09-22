@@ -14,6 +14,8 @@ namespace OnTrackWebService.Models.Shop
         public decimal Discount { get; set; }
         public decimal Total { get; set; }
         public string Authorisation { get; set; }
+        public bool Validated { get; set; }
+        public DateTime? ValidatedTime { get; set; }
 
         [ForeignKey("CustomerID")]
         public Customer Customer { get; set; }

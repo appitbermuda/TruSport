@@ -15,7 +15,7 @@ namespace TruSport.Services
         {
         }
 
-        public async Task<List<Order>> GetMatchDayOrder(string Email)
+        public async Task<List<CustomerOrder>> GetMatchDayOrder(string Email)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace TruSport.Services
 
                     if (response.IsSuccessful)
                     {
-                        List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(response.Content);
+                        List<CustomerOrder> orders = JsonConvert.DeserializeObject<List<CustomerOrder>>(response.Content);
 
                         return orders;
                     }

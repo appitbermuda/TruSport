@@ -2,7 +2,6 @@
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:tickets="clr-namespace:TruSport.Views.Tickets" x:Class="TruSport.Views.Tickets.TicketTabbedPage" Title="Tickets">
     <!--Pages can be added as references or inline-->
     
-    <tickets:WalletPage Title="Wallet"/>
     <tickets:PurchasePage Title="Match's" />
     <tickets:ActiveTicketsPage Title="Active" />
     <tickets:AccountPage Title="My Account" />

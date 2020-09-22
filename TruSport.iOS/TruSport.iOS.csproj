@@ -115,6 +115,7 @@
     <None Include="Entitlements.plist" Condition=" '$(Configuration)' == 'Debug' " />
     <Compile Include="ExtendedFrameRenderer.cs" />
     <Compile Include="ExtendedSwitchCellRenderer.cs" />
+    <Compile Include="ExtendedTicketTabbedPageRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -221,6 +222,15 @@
     </PackageReference>
     <PackageReference Include="Xamarin.Azure.NotificationHubs.iOS">
       <Version>2.0.4</Version>
+    </PackageReference>
+    <PackageReference Include="ZXing.Net.Mobile">
+      <Version>2.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="ZXing.Net.Mobile.Forms">
+      <Version>2.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="Plugin.Permissions">
+      <Version>6.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

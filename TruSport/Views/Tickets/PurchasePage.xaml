@@ -1,5 +1,50 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions" x:Class="TruSport.Views.Tickets.PurchasePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Name="MatchTicketItemTemplate" x:Key="MatchTicketItemTemplate">
+                <StackLayout Padding="0"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="5">
+                        <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                            <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsClippedToBounds="True" HasShadow="False">
+                        <Grid VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand"
+                              RowSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
+                            <StackLayout Padding="15,10" VerticalOptions="Center">
+                                <Label Text="{Binding CardNumber, Converter={StaticResource cardNumberConverter}}"
+                                       FontSize="Medium"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start"/>
+                            </StackLayout>
+                            <StackLayout Grid.Column="1" Padding="15,10" VerticalOptions="Center">
+                                <Label Text="{Binding Expiry, StringFormat='Exp: {0}'}"
+                                       FontSize="Small"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                        </Frame>
+                </Grid>
+                    </StackLayout>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
             <Grid.RowDefinitions>
@@ -9,12 +54,13 @@
             <listView:SfListView x:Name="MatchTicketsList"
                                     ItemsSource="{Binding MatchTicketCollection}"
                                     ItemTemplate="{StaticResource MatchTicketItemTemplate}"
-                                    SelectionMode="None"
+                                    SelectionChangedCommand="{Binding TicketSelectedCommand}"
+                                    SelectionChangedCommandParameter="{x:Reference MatchTicketsList}"
                                     HorizontalOptions="FillAndExpand"
                                     VerticalOptions="FillAndExpand"
                                     ItemSpacing="5"
-                                 Padding="1"
-                                    SelectionBackgroundColor="{StaticResource primaryPink}"
+                                    Padding="1"
+                                    SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
                                     AutoFitMode="DynamicHeight"        
                                 />
             <StackLayout IsVisible="{Binding NoTickets}" Padding="10" HorizontalOptions="Center">

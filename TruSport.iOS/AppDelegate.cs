@@ -56,6 +56,7 @@ namespace TruSport.iOS
             // Initialize Azure Mobile Apps
             Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
 
+            ZXing.Net.Mobile.Forms.iOS.Platform.Init();
             //UIView statusBar = UIApplication.SharedApplication.ValueForKey(new NSString("statusBarWindow")).ValueForKey(new NSString("statusBar")) as UIView;
             //statusBar.TintColor = UIColor.White;
             Syncfusion.XForms.iOS.TabView.SfTabViewRenderer.Init();

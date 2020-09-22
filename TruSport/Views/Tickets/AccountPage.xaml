@@ -1,5 +1,196 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TruSport.Views.Tickets.AccountPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:converters="clr-namespace:TruSport.Converters" x:Class="TruSport.Views.Tickets.AccountPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converters:CardNumberConverter x:Key="cardNumberConverter"/>
+            <DataTemplate x:Name="CardItemTemplate" x:Key="CardItemTemplate">
+                <StackLayout Padding="0"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="5">
+                        <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                            <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsClippedToBounds="True" HasShadow="False">
+                        <Grid VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand"
+                              RowSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
+                            <StackLayout
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="{Binding CardNumber, Converter={StaticResource cardNumberConverter}}"
+                                       FontSize="Medium"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Column="1"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="{Binding Expiry, StringFormat='Exp: {0}'}"
+                                       FontSize="Small"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                        </Frame>
+                </Grid>
+                    </StackLayout>
+                    </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="OrderItemTemplate" x:Key="OrderItemTemplate">
+                <StackLayout Padding="0"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="5">
+                        <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                            <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsClippedToBounds="True" HasShadow="False">
+                        <Grid VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand"
+                              RowSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
+                            <StackLayout
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="{Binding CardNumber, Converter={StaticResource cardNumberConverter}}"
+                                       FontSize="Medium"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Column="1"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="{Binding Expiry, StringFormat='Exp: {0}'}"
+                                       FontSize="Small"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                        </Frame>
+                </Grid>
+                    </StackLayout>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}" Spacing="50">
+            <StackLayout>
+                <Grid x:Name="ProfileGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0" ColumnSpacing="0" Padding="10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1"/>
+                </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Padding="0,30" Grid.ColumnSpan="2">
+                        <Label Text="{Binding Customer.Name}" FontAttributes="Bold" FontSize="Large" HorizontalTextAlignment="Center" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" HeightRequest="50" Grid.Column="0" Orientation="Horizontal">
+                        <Label Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" FontSize="Small" TextColor="LightGray" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" HeightRequest="50" Grid.Column="1" Orientation="Horizontal">
+                        <Label Text="{Binding Customer.Email}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    <BoxView Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
+
+                    <StackLayout Grid.Row="3" HeightRequest="50" Grid.Column="0" Orientation="Horizontal">
+                        <Label Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" FontSize="Small" TextColor="LightGray" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="3" HeightRequest="50" Grid.Column="1">
+                        <Label Text="{Binding Customer.Phone}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    <BoxView Grid.Row="4" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
+            </Grid>
+                </StackLayout>
+            <StackLayout>
+                <Grid x:Name="WalletGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                    <StackLayout BackgroundColor="WhiteSmoke" Padding="10,0" Orientation="Horizontal">
+                        <Label Text="Wallet" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                        <Button Text="" FontSize="25" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Command="{Binding AddCreditCardCommand}"/>
+                    </StackLayout>
+                <listView:SfListView x:Name="CreditCardList"
+                                        ItemsSource="{Binding CreditCardCollection}"
+                                        ItemTemplate="{StaticResource CreditCardItemTemplate}"
+                                        SelectionMode="None"
+                                        SelectionChangedCommand="{Binding CreditCardSelectedCommand}"
+                                        SelectionChangedCommandParameter="{x:Reference CreditCardList}"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="FillAndExpand"
+                                        ItemSpacing="5"
+                                        Padding="1"
+                                        SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                                        ItemSize="60"
+                                     HeightRequest="{Binding WalletHeight}"
+                                    />
+                <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsWalletActivityIndicatorVisible}" IsRunning="{Binding IsWalletActivityIndicatorVisible}"/>
+            </Grid>
+                </StackLayout>
+            <StackLayout>
+                <Grid x:Name="OrderGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                    <StackLayout BackgroundColor="WhiteSmoke" Padding="10,0" Orientation="Horizontal">
+                        <Label Text="Order History" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                <listView:SfListView x:Name="OrderHistoryList"
+                                        ItemsSource="{Binding OrderCollection}"
+                                        ItemTemplate="{StaticResource OrderItemTemplate}"
+                                        SelectionMode="None"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="FillAndExpand"
+                                        ItemSpacing="5"
+                                        Padding="1"
+                                        SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                                        AutoFitMode="DynamicHeight"
+                                    />
+                <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsOrderActivityIndicatorVisible}" IsRunning="{Binding IsOrderActivityIndicatorVisible}"/>
+            </Grid>
+                </StackLayout>
+            <!--<StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                            <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                        </StackLayout>-->
+                <!--<model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>-->
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

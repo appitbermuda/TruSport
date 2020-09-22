@@ -18,6 +18,7 @@ namespace TruSport.Data
             database = new SQLiteAsyncConnection(dbPath);
             database.CreateTableAsync<Coach>().Wait();
             database.CreateTableAsync<Customer>().Wait();
+            database.CreateTableAsync<CustomerOrder>().Wait();
             database.CreateTableAsync<CreditCard>().Wait();
             database.CreateTableAsync<Token>().Wait();
             database.CreateTableAsync<NotiAlert>().Wait();
@@ -26,6 +27,8 @@ namespace TruSport.Data
             database.CreateTableAsync<Favourite>().Wait();
             database.CreateTableAsync<Field>().Wait();
             database.CreateTableAsync<Fixture>().Wait();
+            database.CreateTableAsync<Product>().Wait();
+            database.CreateTableAsync<Order>().Wait();
             database.CreateTableAsync<League>().Wait();
             database.CreateTableAsync<Match>().Wait();
             database.CreateTableAsync<MatchType>().Wait();
@@ -60,6 +63,54 @@ namespace TruSport.Data
         public Task<int> Delete(int ID)
         {
             return database.DeleteAsync<CreditCard>(ID);
+        }
+
+        //Order
+        public async Task<List<CustomerOrder>> GetMatchDayOrder(string email)
+        {
+            List<CustomerOrder> orders = new List<CustomerOrder>();
+            try
+            {
+                var customer = await GetCustomerByIDAsync(email);
+                orders = await database.Table<CustomerOrder>().Where(e => e.CustomerID == customer.ID).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetMatchDayOrder");
+            }
+
+            return orders;
+        }
+
+        public async Task<List<Order>> GetOrderHistory(string email)
+        {
+            List<Order> orders = new List<Order>();
+            try
+            {
+                var customer = await GetCustomerByIDAsync(email);
+                orders = await database.Table<Order>().Where(e => e.CustomerID == customer.ID).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetMatchDayOrder");
+            }
+
+            return orders;
+        }
+
+        public Task<int> Insert(Order item)
+        {
+            return database.InsertAsync(item);
+        }
+
+        public Task<int> DeleteOrder(int ID)
+        {
+            return database.DeleteAsync<Order>(ID);
+        }
+
+        public Task<int> DeleteOrders()
+        {
+            return database.DeleteAllAsync<Order>();
         }
 
         //Coach

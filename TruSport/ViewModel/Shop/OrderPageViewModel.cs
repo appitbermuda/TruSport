@@ -52,19 +52,29 @@ namespace TruSport.ViewModel.Shop
                 NoTickets = false;
                 IsActivityIndicatorVisible = true;
 
-                var email = await SecureStorage.GetAsync("Email");
-                var matchTickets = await orderService.GetOrderHistory(email);
-                OrderCollection = new ObservableCollection<Order>(matchTickets);
+                var current = Connectivity.NetworkAccess;
+                if (current == NetworkAccess.Internet)
+                {
+                    var email = await SecureStorage.GetAsync("Email");
+                    var matchTickets = await orderService.GetOrderHistory(email);
+                    OrderCollection = new ObservableCollection<Order>(matchTickets);
 
-                if (OrderCollection.Count == 0)
-                    NoTickets = true;
-
-                IsActivityIndicatorVisible = false;
+                    if (OrderCollection.Count == 0)
+                        NoTickets = true;
+                }
+                else
+                {
+                    var email = await SecureStorage.GetAsync("Email");
+                    var matchTickets = await App.Database.GetOrderHistory(email);
+                    OrderCollection = new ObservableCollection<Order>(matchTickets);
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Orders");
             }
+
+            IsActivityIndicatorVisible = false;
         }
     }
 }

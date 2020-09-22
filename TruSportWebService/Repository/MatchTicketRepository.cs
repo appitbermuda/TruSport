@@ -193,6 +193,30 @@ namespace OnTrackWebService.Repository
             return fixtureProducts;
         }
 
+        public async Task<bool> Scan(string OrderId)
+        {
+            try
+            {
+                var order = await _context.Orders
+                    .FirstOrDefaultAsync(e => e.ID == OrderId && !e.Validated);
+
+
+                if (order != null)
+                {
+                    order.Validated = true;
+                    order.ValidatedTime = DateTime.Now.ToUniversalTime();
+                    _context.Orders.Update(order);
+                    await _context.SaveChangesAsync();
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            { }
+
+            return false;
+        }
+
         public async Task<FixtureProduct> GetTodayByTeam(string teamID)
         {
             FixtureProduct fixtureProduct = new FixtureProduct();
@@ -290,7 +314,7 @@ namespace OnTrackWebService.Repository
 
                     OrderDetail orderDetail = new OrderDetail
                     {
-                        ProductID = paymentAuthorization.ProductID,
+                        FixtureProductID = paymentAuthorization.FixtureProductID,
                         Qty = 1,
                         Subtotal = PaymentAmount,
                         OrderID = order.ID

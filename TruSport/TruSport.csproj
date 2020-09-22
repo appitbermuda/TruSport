@@ -38,6 +38,9 @@
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.11.982" />
     <PackageReference Include="Syncfusion.Xamarin.SfCalendar" Version="18.1.0.42" />
+    <PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />
+    <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
+    <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

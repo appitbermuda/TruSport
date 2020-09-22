@@ -17,6 +17,7 @@ using Xamarin.Forms;
 using TruSport.Styles;
 using Android.Content.Res;
 using Android.Support.V7.App;
+using Plugin.Permissions;
 
 namespace TruSport.Droid
 {
@@ -47,6 +48,7 @@ namespace TruSport.Droid
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             Xamarin.Essentials.Platform.Init(this, bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
+            ZXing.Net.Mobile.Forms.Android.Platform.Init();
 
             ImageCircleRenderer.Init();
 
@@ -60,6 +62,10 @@ namespace TruSport.Droid
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            global::ZXing.Net.Mobile.Android.PermissionsHandler.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }

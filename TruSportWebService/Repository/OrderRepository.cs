@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,87 @@ namespace OnTrackWebService.Repository
         public async Task<Order> Get(string id)
         {
             return await _context.Orders.Include(e => e.Customer).Include(e => e.OrderDetail).FirstOrDefaultAsync(e => e.ID == id);
+        }
+
+        public async Task<IEnumerable<CustomerOrder>> GetMatchDayOrders(string email)
+        {
+            List<CustomerOrder> matchDayOrders = new List<CustomerOrder>();
+            try
+            {
+                var orderDetails = await _context.OrderDetails
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .Where(e => e.Order.Customer.Email == email && e.Order.Date.Date >= DateTime.Now.Date.AddDays(-1)).ToListAsync();
+
+
+
+                foreach (var orderDetail in orderDetails)
+                {
+                    matchDayOrders.Add(new CustomerOrder
+                    {
+                        OrderID = orderDetail.OrderID,
+                        FixtureProductID = orderDetail.FixtureProductID,
+                        CustomerID = orderDetail.Order.CustomerID,
+                        OrderNumber = orderDetail.Order.OrderNumber,
+                        FirstName = orderDetail.Order.Customer.FirstName,
+                        LastName = orderDetail.Order.Customer.LastName,
+                        Email = orderDetail.Order.Customer.Email,
+                        Phone = orderDetail.Order.Customer.Phone,
+                        FixtureDate = orderDetail.FixtureProduct.Fixture.Date,
+                        FixtureTime = orderDetail.FixtureProduct.Fixture.Time,
+                        FieldName = orderDetail.FixtureProduct.Fixture.Field.Name,
+                        HomeTeamName = orderDetail.FixtureProduct.Fixture.HomeTeam.Alias ?? orderDetail.FixtureProduct.Fixture.HomeTeam.Name,
+                        AwayTeamName = orderDetail.FixtureProduct.Fixture.AwayTeam.Alias ?? orderDetail.FixtureProduct.Fixture.AwayTeam.Name,
+                        HomeTeamLogo = orderDetail.FixtureProduct.Fixture.HomeTeam.TeamLogo,
+                        AwayTeamLogo = orderDetail.FixtureProduct.Fixture.AwayTeam.TeamLogo,
+                        Validated = orderDetail.Order.Validated
+                    });
+                }
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return matchDayOrders;
+        }
+
+        public async Task<IEnumerable<Order>> GetOrderHistory(string email)
+        {
+            List<Order> orders = new List<Order>();
+
+            try
+            {
+                var orderDetails = await _context.OrderDetails
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .Where(e => e.Order.Customer.Email == email && e.Order.Date.Date >= DateTime.Now.Date.AddDays(-1)).ToListAsync();
+
+
+                foreach(var orderDetail in orderDetails)
+                {
+                    orderDetail.Order.OrderDetail = orderDetail;
+
+                    orders.Add(orderDetail.Order);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order History");
+            }
+
+            return orders;
         }
 
         public async Task<IEnumerable<Order>> GetAll()
@@ -69,13 +151,13 @@ namespace OnTrackWebService.Repository
 
                     foreach (var orderItems in item.OrderDetails)
                     {
-                        var product = await _context.Products.FirstOrDefaultAsync(e => e.ID == orderItems.ProductID);
+                        var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == orderItems.FixtureProductID);
 
                         OrderDetail orderDetail = new OrderDetail();
                         orderDetail.OrderID = order.ID;
-                        orderDetail.ProductID = orderItems.ProductID;
+                        orderDetail.FixtureProductID = orderItems.FixtureProductID;
                         orderDetail.Qty = orderItems.Qty;
-                        orderDetail.Subtotal = product.Price * orderItems.Qty;
+                        orderDetail.Subtotal = fixtureProduct.Product.Price * orderItems.Qty;
 
                         _context.OrderDetails.Add(orderDetail);
                         await _context.SaveChangesAsync();
