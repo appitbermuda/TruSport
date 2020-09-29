@@ -3,6 +3,7 @@ namespace TruSport
 {
     public static class Constants
     {
+        public static string CryptoPW = "Ontr@ckTick3tingPlatf0rm2020!";
         public static string OnTrackEmail = "sports@ontrackbda.com";
         //public static string OnTrackEmail = "ontrackbda@gmail.com";
         public static string ApplicationURL = @"https://trusport.azurewebsites.net"; 
@@ -29,9 +30,9 @@ namespace TruSport
         public static string APNTemplateBody { get; set; } = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
 
 #if DEBUG
-        //public const string APIEndpoint = "http://localhost:40139/api/";
+        public const string APIEndpoint = "http://localhost:40139/api/";
         //public const string APIEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
-        public const string APIEndpoint = "https://ontrackservice.azurewebsites.net/api/";
+        //public const string APIEndpoint = "https://ontrackservice.azurewebsites.net/api/";
         //public const string ChatEndpoint = "http://localhost:26585/chatHub";
         public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";
         public static string ListenConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=TPTAMlyAdTjqLH7eemrlPunhzKEy5yt3BMkxosyrkSY=";

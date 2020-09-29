@@ -21,6 +21,7 @@ namespace OnTrackWebService.Models.Shop
         public Customer Customer { get; set; }
 
         //public virtual List<OrderDetail> OrderDetails { get; set; }
+        [NotMapped]
         public virtual OrderDetail OrderDetail { get; set; }
     }
 }

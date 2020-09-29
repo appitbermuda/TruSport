@@ -42,22 +42,100 @@ namespace TruSport.Data
         //Coach
         public async Task<List<CreditCard>> GetCreditCards(string email)
         {
-            return await database.Table<CreditCard>().ToListAsync();
+            try
+            {
+                //PasswordHasher passwordHasher = new PasswordHasher();
+                
+                var creditCards = await database.Table<CreditCard>().Where(e => e.Email == email).ToListAsync();
+
+                return creditCards;
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return null;
         }
 
         public async Task<CreditCard> GetCreditCard(int ID)
         {
-            return await database.Table<CreditCard>().FirstOrDefaultAsync(e => e.ID == ID);
+            try
+            {
+                //PasswordHasher passwordHasher = new PasswordHasher();
+
+                var creditCard = await database.Table<CreditCard>().FirstOrDefaultAsync(e => e.ID == ID);
+
+                //creditCard.CardNumber = passwordHasher.DecryptString(creditCard.CardNumber);
+
+                return creditCard;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
         }
 
-        public Task<int> Insert(CreditCard item)
+        public async Task<int> Insert(CreditCard item)
         {
-            return database.InsertAsync(item);
+            try
+            {
+                if(item.IsDefault)
+                {
+                    var creditcards = await database.Table<CreditCard>().Where(e => e.Email == item.Email).ToListAsync();
+
+                    if (creditcards != null && creditcards.Count > 0)
+                    {
+                        creditcards.ForEach(e => e.IsDefault = false);
+
+                        await database.UpdateAllAsync(creditcards);
+                    }
+                }
+
+                item.Last4 = "****-****-****-" + item.CardNumber.Substring(item.CardNumber.Length - 4, 4);
+                //PasswordHasher passwordHasher = new PasswordHasher();
+                //item.CardNumber = passwordHasher.EncryptString(item.CardNumber);
+
+                await database.InsertAsync(item);
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Insert Card");
+            }
+
+            return -1;
         }
 
-        public Task<int> Update(CreditCard item)
+        public async Task<int> Update(CreditCard item)
         {
-            return database.UpdateAsync(item);
+            try
+            {
+                if (item.IsDefault)
+                {
+                    var creditcards = await database.Table<CreditCard>().Where(e => e.Email == item.Email).ToListAsync();
+
+                    if (creditcards != null && creditcards.Count > 0)
+                    {
+                        creditcards.ForEach(e => e.IsDefault = false);
+
+                        await database.UpdateAllAsync(creditcards);
+                    }
+                }
+
+                item.Last4 = "****-****-****-" + item.CardNumber.Substring(item.CardNumber.Length - 4, 4);
+                //PasswordHasher passwordHasher = new PasswordHasher();
+                //item.CardNumber = passwordHasher.EncryptString(item.CardNumber);
+
+                await database.UpdateAsync(item);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Insert Card");
+            }
+
+            return -1;
         }
 
         public Task<int> Delete(int ID)
@@ -826,6 +904,22 @@ namespace TruSport.Data
             try
             {
                 await database.InsertAsync(customer);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> SignOut()
+        {
+            try
+            {
+                await database.DeleteAllAsync<User>();
 
                 return true;
             }

@@ -24,6 +24,7 @@ namespace OnTrackWebService.Data
         public DbSet<CricketPlayerSeason> CricketPlayerSeasons { get; set; }
         public DbSet<CricketLeagueStanding> CricketLeagueStandings { get; set; }
         public DbSet<CricketScore> CricketScores { get; set; }
+        public DbSet<ContactTrace> ContactTraces { get; set; }
         public DbSet<Flyer> Flyers { get; set; }
         public DbSet<Inventory> Inventorys { get; set; }
         public DbSet<League> Leagues { get; set; }
@@ -69,6 +70,7 @@ namespace OnTrackWebService.Data
         {
             modelBuilder.Entity<Coach>().ToTable("Coach");
             modelBuilder.Entity<Customer>().ToTable("Customer");
+            modelBuilder.Entity<ContactTrace>().ToTable("ContactTrace");
             modelBuilder.Entity<Inventory>().ToTable("Inventory");
             modelBuilder.Entity<Order>().ToTable("Order");
             modelBuilder.Entity<OrderDetail>().ToTable("OrderDetail");

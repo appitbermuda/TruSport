@@ -32,7 +32,7 @@ namespace TruSport.ViewModel.Shop
         public ObservableCollection<CustomerOrder> OrderCollection
         {
             get { return _orderCollection; }
-            set { this._orderCollection = value; }
+            set { Set(ref _orderCollection, value); }
         }
 
         public bool NoTickets

@@ -6,6 +6,7 @@ using Syncfusion.ListView.XForms;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
+using TruSport.Views;
 using TruSport.Views.Tickets;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -36,8 +37,10 @@ namespace TruSport.ViewModel.Shop
 
             CreditCardSelectedCommand = new Command<object>(CreditCardSelected);
             AddCreditCardCommand = new Command(async () => await AddNewCard());
+            SignOutCommand = new Command(async () => await SignOut());
         }
 
+        public Command SignOutCommand { get; set; }
         public Command AddCreditCardCommand { get; set; }
 
         private Command<Object> cardSelectionChangedCommand;
@@ -146,6 +149,31 @@ namespace TruSport.ViewModel.Shop
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+            }
+        }
+
+        async Task SignOut()
+        {
+            try
+            {
+                SecureStorage.RemoveAll();
+                await App.Database.SignOut();
+
+                if (Application.Current.MainPage is MasterDetailPage mdp)
+                {
+                    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
+                    page.Title = "Tickets";
+
+                    mdp.Detail = new NavigationPage(page)
+                    {
+                        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                        BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                    };
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Sign Out");
             }
         }
     }

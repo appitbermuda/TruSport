@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using SQLite;
+
 namespace TruSport.Model
 {
     public class PaymentAuthorize
@@ -9,5 +12,8 @@ namespace TruSport.Model
         public string CVV { get; set; }
         public string Expiry { get; set; }
         public string Amount { get; set; }
+
+        [Ignore]
+        public List<ContactTrace> ContactTraces { get; set; }
     }
 }

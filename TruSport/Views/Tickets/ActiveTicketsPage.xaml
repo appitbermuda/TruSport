@@ -207,7 +207,7 @@
             </Grid.RowDefinitions>
             <listView:SfListView x:Name="MyTicketsList"
                                     ItemsSource="{Binding MyTicketCollection}"
-                                    ItemTemplate="{StaticResource MyTicketItemTemplate}"
+                                    ItemTemplate="{StaticResource MatchTicketItemTemplate}"
                                     SelectionChangedCommand="{Binding TicketSelectedCommand}"
                                     SelectionChangedCommandParameter="{x:Reference MyTicketsList}"
                                     HorizontalOptions="FillAndExpand"

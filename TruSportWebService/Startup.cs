@@ -43,7 +43,6 @@ namespace OnTrackWebService
             });
             services.AddMvc().AddNewtonsoftJson(options => {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-
             });
 
             //#if DEBUG
@@ -83,6 +82,7 @@ namespace OnTrackWebService
             });
 
             services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
+            services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
             services.AddScoped<IEmailRepository<string>, EmailRepository>();
             services.AddScoped<INewsRepository<RssFeedItem>, NewsRepository>();
             services.AddScoped<IOnTrackRepository<Field>, FieldRepository>();
@@ -108,6 +108,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<Season>, SeasonRepository>();
             services.AddScoped<IOnTrackRepository<Sport>, SportRepository>();
             services.AddScoped<IDisposable, UserRepository>();
+            services.AddScoped<IDisposable, CustomerRepository>();
             services.AddScoped<IPushNotificationRepository<Push>, PushNotificationRepository>();
             services.AddScoped<IOnTrackRepository<UserType>, UserTypeRepository>();
             //services.AddSingleton<BackgroundWorker>();

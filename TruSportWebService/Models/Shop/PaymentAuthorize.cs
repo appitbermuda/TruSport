@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace OnTrackWebService.Models.Shop
 {
     public class PaymentAuthorize
@@ -9,5 +12,8 @@ namespace OnTrackWebService.Models.Shop
         public string CVV { get; set; }
         public string Expiry { get; set; }
         public string Amount { get; set; }
-    }
+
+        [NotMapped]
+        public List<ContactTrace> ContactTraces { get; set; }
+    }    
 }

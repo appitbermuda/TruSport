@@ -3,12 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:extension="clr-namespace:TruSport.Extensions"
              x:Class="TruSport.Views.SignInPage"
-             Title="Sign In">
+             Title="Sign In"
+             NavigationPage.HasNavigationBar="False">
  <ContentPage.Content>
-        <ScrollView>
+     <StackLayout>
+     <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+         <StackLayout>
+                <Grid Padding="10,50,10,10" BackgroundColor="{DynamicResource navBackgroundColor}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.ColumnSpan="3" Spacing="0">   
+                        <Label Text="Sign In" TextColor="{DynamicResource navTextColor}" FontSize="Small" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>                        
+                    </StackLayout>
+                    <Button Text="" TextColor="{DynamicResource navTextColor}" FontSize="25" Clicked="Menu_Clicked" FontFamily="{StaticResource fontAwesomeRegularFamily}"/>
+                </Grid>
+            </StackLayout>
+        <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">
         <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Padding="20,0">
             <StackLayout Margin="20,50">
-                <Image Source="OnTrack_WordMark.png"/>
+                <Label Text="TICKETS" TextColor="{DynamicResource buttonBackgroundColor}" FontSize="50" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
             </StackLayout>
             <Grid HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
@@ -40,5 +60,7 @@
             </Grid>
         </StackLayout>
             </ScrollView>
+         </Grid>
+         </StackLayout>
     </ContentPage.Content>
     </ContentPage>

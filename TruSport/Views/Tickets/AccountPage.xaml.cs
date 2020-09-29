@@ -17,6 +17,19 @@ namespace TruSport.Views.Tickets
             InitializeComponent();
         }
 
+        void Menu_Clicked(System.Object sender, System.EventArgs e)
+        {
+            if (Application.Current.MainPage is MasterDetailPage mdp)
+            {
+                var page = (Page)Activator.CreateInstance(typeof(Tickets.TicketTabbedPage));
+                page.Title = "Tickets";
 
+                mdp.Detail = new NavigationPage(page)
+                {
+                    BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                    BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                };
+            }
+        }
     }
 }

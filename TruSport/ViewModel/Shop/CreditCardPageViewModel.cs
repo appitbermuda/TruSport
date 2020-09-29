@@ -25,6 +25,7 @@ namespace TruSport.ViewModel.Shop
             GenerateSource();
 
             SaveCommand = new Command(async () => await Save());
+            CloseClickedCommand = new Command(async () => await Close());
         }
 
         public CreditCardPageViewModel(INavigation navigation, int creditCardID)
@@ -35,9 +36,11 @@ namespace TruSport.ViewModel.Shop
             GenerateSource(creditCardID);
 
             SaveCommand = new Command(async () => await Save());
+            CloseClickedCommand = new Command(async () => await Close());
         }
 
         public Command SaveCommand { get; set; }
+        public Command CloseClickedCommand { get; set; }
 
         public Customer Customer
         {
@@ -69,7 +72,14 @@ namespace TruSport.ViewModel.Shop
                 Customer = await App.Database.GetCustomerByIDAsync(email);
 
                 if (Customer != null)
+                {
                     CreditCard = new CreditCard();
+
+                    var creditCards = await App.Database.GetCreditCards(email);
+
+                    if (creditCards == null || creditCards.Count == 0)
+                        CreditCard.IsDefault = true;
+                }
                 else
                     await Navigation.PopModalAsync();
 
@@ -102,17 +112,21 @@ namespace TruSport.ViewModel.Shop
 
         async Task Save()
         {
+            IsActivityIndicatorVisible = true;
             try
             {
                 bool CardNumberValid = false;
                 bool ExpiryValid = false;
                 bool CvvValid = false;
 
-                DateTime expiryDate = new DateTime(Convert.ToInt32(20 + CreditCard.Expiry.Substring(3, 2)), Convert.ToInt32(CreditCard.Expiry.Substring(0, 2)), 1);
+                CreditCard.CardNumber = CreditCard.CardNumber.Replace("-", "");
+                CreditCard.Expiry = CreditCard.Expiry.Replace("/", "");
+
+                DateTime expiryDate = new DateTime(Convert.ToInt32(20 + CreditCard.Expiry.Substring(2, 2)), Convert.ToInt32(CreditCard.Expiry.Substring(0, 2)), 1);
                 bool expired = DateTime.Now > expiryDate.AddMonths(1);
 
-                CardNumberValid = (!String.IsNullOrEmpty(CreditCard.CardNumber) && CreditCard.CardNumber.Length == 16);
-                ExpiryValid = (!String.IsNullOrEmpty(CreditCard.Expiry) && CreditCard.Expiry.Length == 4 && !expired);
+                CardNumberValid = (!String.IsNullOrEmpty(CreditCard.CardNumber) && CreditCard.CardNumber.Replace("-", "").Length == 16);
+                ExpiryValid = (!String.IsNullOrEmpty(CreditCard.Expiry) && CreditCard.Expiry.Replace("/","").Length == 4 && !expired);
                 CvvValid = (!String.IsNullOrEmpty(CreditCard.CVV) && CreditCard.CVV.Length == 3);
 
                 if (CardNumberValid && ExpiryValid && CvvValid)
@@ -143,6 +157,19 @@ namespace TruSport.ViewModel.Shop
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+            }
+            IsActivityIndicatorVisible = false;
+        }
+
+        async Task Close()
+        {
+            try
+            {
+                await Navigation.PopModalAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Close");
             }
         }
     }

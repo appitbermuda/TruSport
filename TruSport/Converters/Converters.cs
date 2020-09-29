@@ -54,6 +54,35 @@ namespace TruSport.Converters
         }
     }
 
+    public class PhoneNumberConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var phoneNumber = (string)value;
+
+            if (phoneNumber != null)
+            {
+                phoneNumber = phoneNumber.Replace("-", "");
+
+                if (phoneNumber.Length > 7)
+                {
+                    var area1 = phoneNumber.Substring(0, 1);
+                    var area2 = phoneNumber.Substring(1, 3);
+                    var first3 = phoneNumber.Substring(phoneNumber.Length - 7, 3);
+                    var last4 = phoneNumber.Substring(phoneNumber.Length - 4, 4);
+                    return (!String.IsNullOrEmpty(area1) ? area1 + "-" : "") + (!String.IsNullOrEmpty(area2) ? area2 + "-" : "") + first3 + "-" + last4;
+                }
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (string)value;
+        }
+    }
+
     public class EntryValidationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1743,6 +1772,51 @@ namespace TruSport.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value;
+        }
+    }
+
+    public class PaymentResponseTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var thisValue = (bool)value;
+
+            return thisValue ? "Success" : "Failed";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PaymentResponseIconConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var thisValue = (bool)value;
+
+            return thisValue ? "" : "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PaymentResponseColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var thisValue = (bool)value;
+
+            return thisValue ? Color.Green : Color.Red;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

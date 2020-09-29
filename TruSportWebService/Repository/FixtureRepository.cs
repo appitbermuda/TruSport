@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -53,15 +54,21 @@ namespace OnTrackWebService.Repository
                 Fixture fixture = new Fixture();
 
                 fixture = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters).ThenInclude(e => e.Player)
                 .Include(e => e.Season)
                 .Include(e => e.Sport).FirstOrDefaultAsync(e => e.ID == id);
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixture.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == fixture.HomeTeamID).ToList();
+                fixture.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == fixture.AwayTeamID).ToList();
+
 
                 return fixture;
             }
@@ -80,15 +87,21 @@ namespace OnTrackWebService.Repository
                 List<Fixture> fixtures = new List<Fixture>();
 
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 return fixtures;
             }
@@ -108,15 +121,21 @@ namespace OnTrackWebService.Repository
                 Sport selectedSport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == sport);
 
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport).Where(e => e.SportID == selectedSport.ID).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 //if(selectedSport.Name == "Cricket")
                 //{
@@ -169,8 +188,8 @@ namespace OnTrackWebService.Repository
             {
                 List<CricketFixture> fixtures = new List<CricketFixture>();
                 fixtures = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters)
@@ -178,6 +197,12 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
                 .ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -335,15 +360,21 @@ namespace OnTrackWebService.Repository
             {
                 List<CricketFixture> fixtures = new List<CricketFixture>();
                 fixtures = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters)
                 .Include(e => e.MatchInnings)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
-                .Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now && e.HomeTeam.Name != "TBD" && e.AwayTeam.Name != "TBD").ToListAsync();
+                .Where(e => e.Date.Date < DateTime.Now.Date && e.HomeTeam.Name != "TBD" && e.AwayTeam.Name != "TBD").ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -508,15 +539,21 @@ namespace OnTrackWebService.Repository
             {
                 List<CricketFixture> fixtures = new List<CricketFixture>();
                 fixtures = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters)
                 .Include(e => e.MatchInnings)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
-                .Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now && e.MatchInnings != null && e.MatchInnings.Count > 0).ToListAsync();
+                .Where(e => e.Date.Date < DateTime.Now.Date && e.MatchInnings != null && e.MatchInnings.Count > 0).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -669,15 +706,21 @@ namespace OnTrackWebService.Repository
             {
                 List<CricketFixture> fixtures = new List<CricketFixture>();
                 fixtures = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters)
                 .Include(e => e.MatchInnings)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
-                .Where(e => e.FixtureTime.AddHours(4) >= DateTime.Now).ToListAsync();
+                .Where(e => e.Date.Date >= DateTime.Now.Date).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -798,8 +841,8 @@ namespace OnTrackWebService.Repository
             {
                 CricketFixture fixture = new CricketFixture();
                 fixture = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters).ThenInclude(e => e.Player)
@@ -810,6 +853,12 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.MatchInnings).ThenInclude(e => e.FieldingTeam)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season).FirstOrDefaultAsync(e => e.ID == id);
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixture.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == fixture.HomeTeamID).ToList();
+                fixture.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == fixture.AwayTeamID).ToList();
 
                 fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
                 fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
@@ -945,14 +994,20 @@ namespace OnTrackWebService.Repository
             {
                 List<Fixture> fixtures = new List<Fixture>();
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                        .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -973,17 +1028,25 @@ namespace OnTrackWebService.Repository
             {
                 List<Fixture> fixtures = new List<Fixture>();
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
-                .Include(e => e.Season).Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now && e.HomeTeam.Name != "TBD" && e.AwayTeam.Name != "TBD").ToListAsync();
+                .Include(e => e.Season)
+                .Where(e => e.Date.Date < DateTime.Now.Date && e.HomeTeam.Name != "TBD" && e.AwayTeam.Name != "TBD")
+                .ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
 
                 return fixtures;
             }
@@ -1001,14 +1064,20 @@ namespace OnTrackWebService.Repository
             {
                 List<Fixture> fixtures = new List<Fixture>();
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
-                .Include(e => e.Season).Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).ToListAsync();
+                
+                .Include(e => e.Season).Where(e => e.Date.Date < DateTime.Now.Date && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -1029,15 +1098,20 @@ namespace OnTrackWebService.Repository
             {
                 List<Fixture> fixtures = new List<Fixture>();
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
                 .Include(e => e.Season)
-                .Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now).ToListAsync();
+                .Where(e => e.Date.Date >= DateTime.Now.Date).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -1058,17 +1132,23 @@ namespace OnTrackWebService.Repository
             {
                 Fixture fixture = new Fixture();
                 fixture = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters).ThenInclude(e => e.Player)
-                .Include(e => e.MatchRosters).ThenInclude(e => e.Team)
-                .Include(e => e.MatchRosters).ThenInclude(e => e.SubstitutePlayer)
-                .Include(e => e.MatchRosters).ThenInclude(e => e.MatchStats)
+                //.ThenInclude(e => e.Player)
+                //.ThenInclude(e => e.Team)
+                //.ThenInclude(e => e.SubstitutePlayer)
+                //.ThenInclude(e => e.MatchStats)
                 .Include(e => e.Season).FirstOrDefaultAsync(e => e.ID == id);
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixture.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == fixture.HomeTeamID).ToList();
+                fixture.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == fixture.AwayTeamID).ToList();
 
                 fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
                 fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
@@ -1192,16 +1272,22 @@ namespace OnTrackWebService.Repository
                 Fixture fixture = await _context.Fixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
 
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
-                .Where(e => ((e.HomeTeamID == fixture.HomeTeamID && e.AwayTeamID == fixture.AwayTeamID) || (e.HomeTeamID == fixture.AwayTeamID && e.AwayTeamID == fixture.HomeTeamID)) && e.ID != fixture.ID && e.FixtureTime < DateTime.Now.AddMinutes(-90) && (e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue) && !e.IsPostponed).ToListAsync();
+                .Where(e => ((e.HomeTeamID == fixture.HomeTeamID && e.AwayTeamID == fixture.AwayTeamID) || (e.HomeTeamID == fixture.AwayTeamID && e.AwayTeamID == fixture.HomeTeamID)) && e.ID != fixture.ID && e.Date.Date < DateTime.Now.Date && (e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue) && !e.IsPostponed).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -1224,15 +1310,21 @@ namespace OnTrackWebService.Repository
                 CricketFixture fixture = await _context.CricketFixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
 
                 fixtures = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters)
                 .Include(e => e.MatchInnings)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
-                .Where(e => ((e.HomeTeamID == fixture.HomeTeamID && e.AwayTeamID == fixture.AwayTeamID) || (e.HomeTeamID == fixture.AwayTeamID && e.AwayTeamID == fixture.HomeTeamID)) && e.ID != fixture.ID && e.FixtureTime < DateTime.Now.AddMinutes(-90) && (e.MatchInnings.Count > 0) && !e.IsPostponed).ToListAsync();
+                .Where(e => ((e.HomeTeamID == fixture.HomeTeamID && e.AwayTeamID == fixture.AwayTeamID) || (e.HomeTeamID == fixture.AwayTeamID && e.AwayTeamID == fixture.HomeTeamID)) && e.ID != fixture.ID && e.Date.Date < DateTime.Now.Date && (e.MatchInnings.Count > 0) && !e.IsPostponed).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
                 fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
@@ -1255,17 +1347,23 @@ namespace OnTrackWebService.Repository
                 Fixture fixture = await _context.Fixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
 
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
-                .Where(e => (e.HomeTeamID == fixture.HomeTeamID || e.AwayTeamID == fixture.HomeTeamID) && e.ID != fixture.ID && (e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue) && !e.IsPostponed && e.FixtureTime < DateTime.Now.AddMinutes(-90)).ToListAsync();
-                
+                .Where(e => (e.HomeTeamID == fixture.HomeTeamID || e.AwayTeamID == fixture.HomeTeamID) && e.ID != fixture.ID && (e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue) && !e.IsPostponed && e.Date.Date < DateTime.Now.Date).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
+
                 fixtures.ForEach(e => e.SelectedTeamID = fixture.HomeTeamID);
                 fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == fixture.HomeTeamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) ? "W" : (e.HomeTeamID == fixture.HomeTeamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) ? "L" : (e.AwayTeamID == fixture.HomeTeamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) ? "W" : (e.AwayTeamID == fixture.HomeTeamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) ? "L" : "D");
 
@@ -1287,16 +1385,22 @@ namespace OnTrackWebService.Repository
                 Fixture fixture = await _context.Fixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
 
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
-                .Where(e => (e.HomeTeamID == fixture.AwayTeamID || e.AwayTeamID == fixture.AwayTeamID) && e.ID != fixture.ID && e.FixtureTime < DateTime.Now.AddMinutes(-90)).ToListAsync();
+                .Where(e => (e.HomeTeamID == fixture.AwayTeamID || e.AwayTeamID == fixture.AwayTeamID) && e.ID != fixture.ID && e.Date.Date < DateTime.Now.Date).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.SelectedTeamID = fixture.HomeTeamID);
                 fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == fixture.AwayTeamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) ? "W" : (e.HomeTeamID == fixture.AwayTeamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) ? "L" : (e.AwayTeamID == fixture.AwayTeamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) ? "W" : (e.AwayTeamID == fixture.AwayTeamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) ? "L" : "D");
@@ -1338,16 +1442,22 @@ namespace OnTrackWebService.Repository
                 List<Fixture> fixtures = new List<Fixture>();
 
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
                 .Where(e => e.AwayTeamID == teamID || e.HomeTeamID == teamID).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.SelectedTeamID = teamID);
                 fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
@@ -1369,16 +1479,22 @@ namespace OnTrackWebService.Repository
                 List<Fixture> fixtures = new List<Fixture>();
 
                 fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
-                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.FixtureTime < DateTime.Now && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).OrderByDescending(e => e.Date).Take(6).ToListAsync();
+                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.Date.Date < DateTime.Now.Date && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).OrderByDescending(e => e.Date).Take(6).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.SelectedTeamID = teamID);
                 fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
@@ -1400,8 +1516,8 @@ namespace OnTrackWebService.Repository
                 List<CricketFixture> fixtures = new List<CricketFixture>();
 
                 fixtures = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters)
@@ -1409,6 +1525,12 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
                 .Where(e => e.AwayTeamID == teamID || e.HomeTeamID == teamID).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.SelectedTeamID = teamID);
                 //fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
@@ -1534,15 +1656,21 @@ namespace OnTrackWebService.Repository
                 List<CricketFixture> fixtures = new List<CricketFixture>();
 
                 fixtures = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters)
                 .Include(e => e.MatchInnings)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
-                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.FixtureTime < DateTime.Now && (e.MatchInnings != null && e.MatchInnings.Count > 0)).OrderByDescending(f => f.Date).Take(6).ToListAsync();
+                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.Date < DateTime.Now.Date && (e.MatchInnings != null && e.MatchInnings.Count > 0)).OrderByDescending(f => f.Date).Take(6).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 fixtures.ForEach(e => e.SelectedTeamID = teamID);
                 
@@ -1873,16 +2001,22 @@ namespace OnTrackWebService.Repository
             try
             {
                 var fixtures = await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
                 .Where(e => e.LeagueID == leagueID).ToListAsync();
+
+                List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+                fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
 
                 return fixtures;
             }
@@ -1899,8 +2033,8 @@ namespace OnTrackWebService.Repository
             try
             {
                 var fixtures = await _context.CricketFixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.CricketRosters)
@@ -1980,32 +2114,47 @@ namespace OnTrackWebService.Repository
         public async Task<IEnumerable<Fixture>> GetUpcoming()
         {
             //return await _context.Fixtures.Include("HomeTeam").Include("AwayTeam").Include("Field").Include("League").Include("Match").Include("MatchType").Include("MatchRosters").Include("Season").Where(e => e.Date > DateTime.Now.Date && (TimeSpan.Parse(e.Time)) > DateTime.Now.TimeOfDay && (e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7")).ToListAsync();
-            return await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+             var fixtures = await _context.Fixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
-                .Where(e => e.Date > DateTime.Now.Date && (TimeSpan.Parse(e.Time)) > DateTime.Now.TimeOfDay).ToListAsync();
+                .Where(e => e.Date > DateTime.Now.Date).ToListAsync();
+
+            List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+            fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+            fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
+
+            return fixtures;
         }
 
         public async Task<IEnumerable<Fixture>> GetPast()
         {
-            return await _context.Fixtures
-                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
-                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+            var fixtures =  await _context.Fixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                .Include(e => e.MatchRosters)
+                
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
                 .Where(e => e.Date < DateTime.Now.Date && (TimeSpan.Parse(e.Time)) < DateTime.Now.TimeOfDay && (e.AwayTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7" || e.HomeTeamID != "584edccc-3930-4f57-9dc3-0be4922ec4a7")).ToListAsync();
+
+            List<Coach> coaches = await _context.Coaches
+                    .ToListAsync();
+
+            fixtures.ForEach(e => e.HomeTeam.Coaches = coaches?.Where(x => x.TeamID == e.HomeTeamID).ToList());
+            fixtures.ForEach(e => e.AwayTeam.Coaches = coaches?.Where(x => x.TeamID == e.AwayTeamID).ToList());
+
+            return fixtures;
         }
 
         public async Task Insert(Fixture item)
@@ -2061,6 +2210,10 @@ namespace OnTrackWebService.Repository
                 using (var reader = new StreamReader(file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
                     var records = csv.GetRecords<CricketFixtures>();
 
                     foreach(var record in records)
@@ -2170,12 +2323,17 @@ namespace OnTrackWebService.Repository
                 Team homeTeam = null;
                 Team awayTeam = null;
                 Season season = null;
+                string TBD = await settingRepository.GetString(Constants.SETTING_FOOTBALL_TBD_ID);
 
                 //Stream reader = file.OpenReadStream();
 
                 using (var reader = new StreamReader(file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
                     var records = csv.GetRecords<Fixtures>();
 
                     foreach (var record in records)
@@ -2193,12 +2351,13 @@ namespace OnTrackWebService.Repository
                             {
                                 Date = record.Date,
                                 Time = record.Time.AddHours(4).ToString("HH:mm:ss"),
-                                HomeTeamID = homeTeam.ID,
-                                AwayTeamID = awayTeam.ID,
+                                HomeTeamID = homeTeam != null ? homeTeam.ID : TBD,
+                                AwayTeamID = awayTeam != null ? awayTeam.ID : TBD,
                                 LeagueID = league.ID,
                                 MatchTypeID = matchType.ID,
                                 FieldID = field.ID,
-                                SeasonID = season.ID
+                                SeasonID = season.ID,
+                                SportID = season.SportID
                             });
                         }
                         catch (Exception ex)
@@ -2211,7 +2370,7 @@ namespace OnTrackWebService.Repository
 
                     try
                     {
-                        await UpdateFixtures(fixtures);
+                        await AddFixtures(fixtures);
                     }
                     catch(Exception ex)
                     {
@@ -2457,6 +2616,20 @@ namespace OnTrackWebService.Repository
             try
             {
                 await _context.CricketFixtures.AddRangeAsync(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Fixtures");
+            }
+        }
+
+        public async Task AddFixtures(List<Fixture> items)
+        {
+            try
+            {
+                await _context.Fixtures.AddRangeAsync(items);
 
                 await _context.SaveChangesAsync();
             }

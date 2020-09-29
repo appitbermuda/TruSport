@@ -64,6 +64,27 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values
+        [HttpGet]
+        [Route("ProcessingFee")]
+        public async Task<IActionResult> ProcessingFee()
+        {
+            try
+            {
+
+                decimal? processingFee = await _settingRepository.ProcessingFee();
+
+                if(processingFee.HasValue)
+                    return Ok(processingFee);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values/5
         [HttpGet("{id}")]
         [Route("Get")]

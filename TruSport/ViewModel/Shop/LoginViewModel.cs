@@ -131,6 +131,7 @@ namespace TruSport.ViewModel.Shop
                             {
                                 await App.Database.SignIn(thisCustomer);
 
+                                await SecureStorage.SetAsync("Email", thisCustomer.Email);
                                 await SecureStorage.SetAsync("Token", thisCustomer.Token);
                                 await SecureStorage.SetAsync("UserLoggedIn", "true");
 

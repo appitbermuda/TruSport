@@ -77,7 +77,7 @@
                             <DataTemplate>
                             <Frame CornerRadius="20" Padding="0" BackgroundColor="{DynamicResource backgroundColor}">
                             <Frame CornerRadius="20" BackgroundColor="{DynamicResource backgroundColor}">
-                            <Grid>
+                            <Grid VerticalOptions="FillAndExpand">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
@@ -95,7 +95,7 @@
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        />
                             </StackLayout>
-                            <StackLayout Grid.Row="1" HorizontalOptions="CenterAndExpand">
+                            <StackLayout Grid.Row="1" HorizontalOptions="CenterAndExpand" HeightRequest="300" IsClippedToBounds="True">
                                 <Image Source="{Binding Image, Converter={StaticResource imageConverter}}"  HeightRequest="300" WidthRequest="300" Aspect="AspectFit" />
                             </StackLayout>
                             <StackLayout Grid.Row="2" HorizontalOptions="CenterAndExpand">

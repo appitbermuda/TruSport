@@ -114,11 +114,20 @@ namespace TruSport.ViewModels
                 if (item >= 0)
                 {
                     team.IsFavourite = !team.IsFavourite;
-                    TeamCollection[item] = team;
 
-                    if (!TeamCollection[item].IsFavourite)
+                    if (!team.IsFavourite)
                     {
                         await App.Database.DeleteTeamFavourite(team.ID);
+
+
+                        var teamFavourites = await App.Database.GetFootballTeamFavourites();
+
+                        var teams = await teamService.GetFootballTeams();
+
+                        if (teamFavourites != null && teamFavourites.Count > 0)
+                            teams.ForEach(e => e.IsFavourite = teamFavourites.Any(d => d.TeamID == e.ID));
+
+                        TeamCollection = new ObservableCollection<Team>(teams);
                     }
                     else
                     {
@@ -129,7 +138,16 @@ namespace TruSport.ViewModels
                             Type = "Team"
                         };
 
-                        await App.Database.SaveCricketFavourite(favourite);
+                        var fav = await App.Database.SaveFootballFavourite(favourite);
+
+                        var teamFavourites = await App.Database.GetFootballTeamFavourites();
+
+                        var teams = await teamService.GetFootballTeams();
+
+                        if (teamFavourites != null && teamFavourites.Count > 0)
+                            teams.ForEach(e => e.IsFavourite = teamFavourites.Any(d => d.TeamID == e.ID));
+
+                        TeamCollection = new ObservableCollection<Team>(teams);
                     }
                 }
             }

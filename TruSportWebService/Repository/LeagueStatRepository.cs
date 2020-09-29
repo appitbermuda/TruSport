@@ -49,22 +49,55 @@ namespace OnTrackWebService.Repository
 
         public async Task<IEnumerable<GoalsConcededByTeam>> GetGoalsConcededByTeam()
         {
-            //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
-            return await _context.GoalsConcededByTeam.OrderByDescending(e => e.Goals).ToListAsync();
+            try
+            {
+                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
+                var season = await _context.Seasons.FirstOrDefaultAsync(e => e.IsCurrent && e.Sport.Name == "Football");
+
+                var goalsConceded = await _context.GoalsConcededByTeam.Where(e => e.SeasonDate == season.Date).OrderByDescending(e => e.Goals).ToListAsync();
+
+                return goalsConceded;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<GoalsScoredByTeam>> GetGoalsScoredByTeam()
         {
-            //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
-            return await _context.GoalsScoredByTeam.OrderByDescending(e => e.Goals).ToListAsync();
+            try
+            {
+                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
+                var season = await _context.Seasons.FirstOrDefaultAsync(e => e.IsCurrent && e.Sport.Name == "Football");
+
+                var goalsScored = await _context.GoalsScoredByTeam.Where(e => e.SeasonDate == season.Date).OrderByDescending(e => e.Goals).ToListAsync();
+
+                return goalsScored;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<GoalsScoredByPlayer>> GetGoalsScoredByPlayer()
         {
             try
             {
-                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
-                return await _context.GoalsScoredByPlayer.OrderByDescending(e => e.Goals).ToListAsync();
+                
+                //var season = await _context.Seasons.FirstOrDefaultAsync(e => e.IsCurrent);
+
+                //var goalsScored = await _context.GoalsScoredByPlayer.Where(e => e.SeasonDate == season.Date).OrderByDescending(e => e.Goals).ToListAsync();
+                var season = await _context.Seasons.FirstOrDefaultAsync(e => e.IsCurrent && e.Sport.Name == "Football");
+
+                var goalsScored = await _context.GoalsScoredByPlayer.Where(e => e.SeasonDate == season.Date).OrderByDescending(e => e.Goals).ToListAsync();
+
+                return goalsScored;
             }
             catch(Exception ex)
             {

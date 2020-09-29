@@ -295,7 +295,11 @@ namespace OnTrackWebService.Repository
                 teamSeason.ForEach(e => e.Team.League = e.League);
                 teamSeason.ForEach(e => e.Team.LeagueID = e.LeagueID);
 
-                return teamSeason.Select(e => e.Team).OrderBy(e => e.Name).ToList();
+                teams = teamSeason.Select(e => e.Team).ToList();
+                teams.ForEach(e => e.TeamSeasons = teamSeason.Where(d => d.TeamID == e.ID).ToList());
+
+                //return teamSeason.Select(e => e.Team).OrderBy(e => e.Name).ToList();
+                return teams;
             }
             catch (Exception ex)
             {
@@ -319,7 +323,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team).ThenInclude(e => e.Sport)
                     .Include(e => e.Season).ThenInclude(e => e.Sport)
                     .Include(e => e.League)
-                    .Where(e => e.ID == teamID && e.Season.IsCurrent)
+                    .Where(e => e.TeamID == teamID && e.Season.IsCurrent)
                     .ToListAsync();
 
                 teamSeason.ForEach(e => e.Team.League = e.League);
@@ -367,7 +371,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team).ThenInclude(e => e.Sport)
                     .Include(e => e.Season).ThenInclude(e => e.Sport)
                     .Include(e => e.League)
-                    .Where(e => e.ID == teamID && e.Season.IsCurrent)
+                    .Where(e => e.TeamID == teamID && e.Season.IsCurrent)
                     .ToListAsync();
 
                     teamSeason.ForEach(e => e.Team.League = e.League);

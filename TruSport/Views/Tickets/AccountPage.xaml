@@ -4,6 +4,7 @@
         <ResourceDictionary>
             <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
             <converters:CardNumberConverter x:Key="cardNumberConverter"/>
+            <converters:PhoneNumberConverter x:Key="phoneNumberConverter"/>
             <DataTemplate x:Name="CardItemTemplate" x:Key="CardItemTemplate">
                 <StackLayout Padding="0"
                              HorizontalOptions="FillAndExpand"
@@ -25,7 +26,7 @@
                             <StackLayout
                                          Padding="15,10"
                                          VerticalOptions="Center">
-                                <Label Text="{Binding CardNumber, Converter={StaticResource cardNumberConverter}}"
+                                <Label Text="{Binding Last4}"
                                        FontSize="Medium"
                                        TextColor="Black"
                                        LineBreakMode="WordWrap"
@@ -124,7 +125,7 @@
                         <Label Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" FontSize="Small" TextColor="LightGray" VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
                     <StackLayout Grid.Row="1" HeightRequest="50" Grid.Column="1" Orientation="Horizontal">
-                        <Label Text="{Binding Customer.Email}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding Customer.Email}" FontSize="Small" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
                     <BoxView Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
 
@@ -132,7 +133,7 @@
                         <Label Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" FontSize="Small" TextColor="LightGray" VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
                     <StackLayout Grid.Row="3" HeightRequest="50" Grid.Column="1">
-                        <Label Text="{Binding Customer.Phone}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding Customer.Phone, Converter={StaticResource phoneNumberConverter}}" FontSize="Small" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
                     <BoxView Grid.Row="4" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
             </Grid>
@@ -140,19 +141,20 @@
             <StackLayout>
                 <Grid x:Name="WalletGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="40"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                     <StackLayout BackgroundColor="WhiteSmoke" Padding="10,0" Orientation="Horizontal">
                         <Label Text="Wallet" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
-                        <Button Text="" FontSize="25" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Command="{Binding AddCreditCardCommand}"/>
+                        <Button Text="" FontSize="20" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource iconColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Command="{Binding AddCreditCardCommand}"/>
                     </StackLayout>
-                <listView:SfListView x:Name="CreditCardList"
+                    <StackLayout Grid.Row="1">
+                    <listView:SfListView x:Name="CreditCardList"
                                         ItemsSource="{Binding CreditCardCollection}"
-                                        ItemTemplate="{StaticResource CreditCardItemTemplate}"
-                                        SelectionMode="None"
+                                        ItemTemplate="{StaticResource CardItemTemplate}"
                                         SelectionChangedCommand="{Binding CreditCardSelectedCommand}"
                                         SelectionChangedCommandParameter="{x:Reference CreditCardList}"
+                                         SelectionMode="Single"
                                         HorizontalOptions="FillAndExpand"
                                         VerticalOptions="FillAndExpand"
                                         ItemSpacing="5"
@@ -161,18 +163,20 @@
                                         ItemSize="60"
                                      HeightRequest="{Binding WalletHeight}"
                                     />
-                <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsWalletActivityIndicatorVisible}" IsRunning="{Binding IsWalletActivityIndicatorVisible}"/>
+                        </StackLayout>
+                    <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsWalletActivityIndicatorVisible}" IsRunning="{Binding IsWalletActivityIndicatorVisible}"/>
             </Grid>
                 </StackLayout>
             <StackLayout>
                 <Grid x:Name="OrderGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="40"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                     <StackLayout BackgroundColor="WhiteSmoke" Padding="10,0" Orientation="Horizontal">
                         <Label Text="Order History" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
+                    <StackLayout Grid.Row="1">
                 <listView:SfListView x:Name="OrderHistoryList"
                                         ItemsSource="{Binding OrderCollection}"
                                         ItemTemplate="{StaticResource OrderItemTemplate}"
@@ -184,9 +188,13 @@
                                         SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
                                         AutoFitMode="DynamicHeight"
                                     />
+                        </StackLayout>
                 <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsOrderActivityIndicatorVisible}" IsRunning="{Binding IsOrderActivityIndicatorVisible}"/>
             </Grid>
                 </StackLayout>
+            <StackLayout Padding="50" VerticalOptions="EndAndExpand">
+                <Button Text="Sign Out" BackgroundColor="{DynamicResource buttonBackgroundColor}" TextColor="{DynamicResource buttonTextColor}" Padding="50,0" HeightRequest="50" CornerRadius="25" Command="{Binding SignOutCommand}"></Button>
+            </StackLayout>
             <!--<StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                             <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
                         </StackLayout>-->

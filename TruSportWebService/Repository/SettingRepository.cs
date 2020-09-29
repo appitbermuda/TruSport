@@ -54,6 +54,22 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<decimal?> ProcessingFee()
+        {
+            try
+            {
+                decimal processingFee = await GetDecimal(Constants.SETTING_PROCESSING_FEE_ID);
+
+                return processingFee;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+            }
+
+            return null;
+        }
+
         public async Task<bool> DoesItemExist(string id)
         {
             return await _context.Settings.AnyAsync(e => e.ID == id);

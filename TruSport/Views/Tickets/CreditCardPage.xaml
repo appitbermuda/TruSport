@@ -25,7 +25,7 @@
                    FontAttributes="Bold"
                    HorizontalOptions="CenterAndExpand"
                    VerticalOptions="Center"/>
-                <Button Text="" FontSize="30" FontFamily="{StaticResource fontAwesomeSolidFamily}" WidthRequest="40" TextColor="{DynamicResource navModalTextColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="Start" BackgroundColor="Transparent" Command="{Binding CloseClickedCommand}"/>                
+                <Button Text="" FontSize="25" FontFamily="{StaticResource fontAwesomeSolidFamily}" WidthRequest="40" TextColor="{DynamicResource navModalTextColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="Start" BackgroundColor="Transparent" Command="{Binding CloseClickedCommand}"/>                
                 </Grid>
             </StackLayout>
                 <StackLayout Grid.Row="1" BackgroundColor="{DynamicResource backgroundColor}">
@@ -50,7 +50,7 @@
                                                UnfocusedColor="Gray"
                                                FocusedColor="{DynamicResource GroupHeaderBackgroundColor}"
                                                ContainerType="None">
-                    <Entry Text="{Binding CardNumber}" TextColor="{DynamicResource TextPrimaryColor}"
+                    <Entry Text="{Binding CreditCard.CardNumber}" TextColor="{DynamicResource TextPrimaryColor}"
                            Keyboard="Numeric">
                         <Entry.Behaviors>
                             <extension:MaskedBehavior Mask="XXXX-XXXX-XXXX-XXXX"/>
@@ -63,7 +63,7 @@
                                                 UnfocusedColor="Gray"
                                                 FocusedColor="{DynamicResource GroupHeaderBackgroundColor}"
                                                ContainerType="None">
-                    <Entry Text="{Binding Expiry}" TextColor="{DynamicResource TextPrimaryColor}"
+                    <Entry Text="{Binding CreditCard.Expiry}" TextColor="{DynamicResource TextPrimaryColor}"
                            Keyboard="Numeric">
                          <Entry.Behaviors>
                             <extension:MaskedBehavior Mask="XX/XX"/>
@@ -76,14 +76,14 @@
                                                 UnfocusedColor="Gray" 
                                                 FocusedColor="{DynamicResource GroupHeaderBackgroundColor}"
                                                ContainerType="None">
-                    <Entry Text="{Binding CVV}" TextColor="{DynamicResource TextPrimaryColor}" MaxLength="3" IsPassword="True"
+                    <Entry Text="{Binding CreditCard.CVV}" TextColor="{DynamicResource TextPrimaryColor}" MaxLength="3" IsPassword="True"
                            Keyboard="Numeric"/>
                 </inputLayout:SfTextInputLayout>
             </StackLayout>
                 <StackLayout Grid.Row="3" Grid.ColumnSpan="2" HeightRequest="80" >
                     <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
                  <Label Text="Default?" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" VerticalTextAlignment="Center" />
-                        <Switch IsToggled="{Binding IsDefault}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"/>
+                        <Switch IsToggled="{Binding CreditCard.IsDefault}" OnColor="{DynamicResource iconColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
             </StackLayout>
             </Grid>

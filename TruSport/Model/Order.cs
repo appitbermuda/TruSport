@@ -19,6 +19,7 @@ namespace TruSport.Model
         [Ignore]
         public Customer Customer { get; set; }
 
+        [Ignore]
         public virtual OrderDetail OrderDetail { get; set; }
     }
 

@@ -74,5 +74,18 @@ namespace TruSport.Views
                     break;
             }
         }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
+
+        void Menu_Clicked(System.Object sender, System.EventArgs e)
+        {
+            if (Application.Current.MainPage is MasterDetailPage mdp)
+            {
+                mdp.IsPresented = true;
+            }
+        }
     }
 }

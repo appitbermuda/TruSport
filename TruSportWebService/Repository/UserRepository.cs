@@ -76,10 +76,16 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var user = await _context.Users.Include(e => e.Role).Include(e => e.Team).FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
+                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
 
                 if (user != null)
                 {
+                    if (!String.IsNullOrEmpty(user.TeamID))
+                    {
+                        var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
+                        user.Team = team;
+                    }
+
                     PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.Password, userAuthentication.password);
 
                     if(passwordVerificationResult == PasswordVerificationResult.Success)
@@ -133,7 +139,13 @@ namespace OnTrackWebService.Repository
                             _context.Users.Add(user);
                             await _context.SaveChangesAsync();
 
-                            user = await _context.Users.Include(e => e.Role).Include(e => e.Team).FirstOrDefaultAsync(e => e.ID == user.ID);
+                            user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.ID == user.ID);
+
+                            if (!String.IsNullOrEmpty(user.TeamID))
+                            {
+                                var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
+                                user.Team = team;
+                            }
 
                             //SEND EMAIL
                             try

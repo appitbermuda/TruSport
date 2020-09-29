@@ -23,7 +23,8 @@ namespace OnTrackWebService.Models
         [ForeignKey("RoleID")]
         public Role Role { get; set; }
 
-        [ForeignKey("TeamID")]
+        //[ForeignKey("TeamID")]
+        [NotMapped]
         public Team Team { get; set; }
     }
 
