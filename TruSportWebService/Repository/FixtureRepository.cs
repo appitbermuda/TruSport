@@ -1485,10 +1485,9 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.League)
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
-                
                 .Include(e => e.Season)
                 .Include(e => e.Sport)
-                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.Date.Date < DateTime.Now.Date && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).OrderByDescending(e => e.Date).Take(6).ToListAsync();
+                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.Date.Date < DateTime.Now.Date && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue && e.Season.IsCurrent).OrderByDescending(e => e.Date).Take(6).ToListAsync();
 
                 List<Coach> coaches = await _context.Coaches
                     .ToListAsync();

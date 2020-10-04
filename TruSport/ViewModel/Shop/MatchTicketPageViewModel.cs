@@ -20,6 +20,7 @@ namespace TruSport.ViewModel.Shop
         private bool _isActivityIndicatorVisible;
 
         MatchTicketService matchTicketService;
+        InventoryService inventoryService;
 
         INavigation Navigation;
 
@@ -27,11 +28,18 @@ namespace TruSport.ViewModel.Shop
         {
             Navigation = navigation;
             matchTicketService = new MatchTicketService();
+            inventoryService = new InventoryService();
             MatchTicketCollection = new ObservableCollection<FixtureProduct>();
 
             GenerateSource();
 
             TicketSelectedCommand = new Command<object>(TicketSelected);
+
+            MessagingCenter.Unsubscribe<PurchasePage, string>(this, "Refresh");
+            MessagingCenter.Subscribe<PurchasePage>(this, "Refresh", async (obj) =>
+            {
+                GenerateSource();
+            });
         }
 
         private Command<Object> ticketSelectedCommand;
@@ -85,14 +93,30 @@ namespace TruSport.ViewModel.Shop
             var listView = obj as SfListView;
             var fixtureProduct = listView.SelectedItem as FixtureProduct;
 
-            MessagingCenter.Subscribe<CreditCardPageViewModel, FixtureProduct>(this, "TicketPurchased", async (objs, product) =>
+            //MessagingCenter.Subscribe<CreditCardPageViewModel, FixtureProduct>(this, "TicketPurchased", async (objs, product) =>
+            //{
+            //    //Purchase tickets saved to local
+            //    //var creditCards = await App.Database.T(Customer.Email);
+            //    GenerateSource();
+            //});
+
+            MessagingCenter.Subscribe<PurchaseTicketPageViewModel>(this, "MatchTicketPage", async (objs) =>
             {
                 //Purchase tickets saved to local
                 //var creditCards = await App.Database.T(Customer.Email);
                 GenerateSource();
             });
 
-            await Navigation.PushModalAsync(new PurchaseTicketPage(fixtureProduct));
+            var hasStock = await inventoryService.CheckInventory(fixtureProduct.ProductID);
+
+            if (hasStock)
+            {
+                await Navigation.PushModalAsync(new PurchaseTicketPage(fixtureProduct));
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Out of Stock", "Sorry, there are no more tickets left for purchase.", "OK");
+            }
             //DisplayAlert("Message", (listView.SelectedItem as Fixture).ContactName + " is selected", "OK");
         }
     }

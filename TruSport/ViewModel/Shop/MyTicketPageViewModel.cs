@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using Newtonsoft.Json;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
+using TruSport.Views.Tickets;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -27,6 +29,12 @@ namespace TruSport.ViewModel.Shop
             OrderCollection = new ObservableCollection<CustomerOrder>();
 
             GenerateSource();
+
+            MessagingCenter.Unsubscribe<ActiveTicketsPage, string>(this, "Refresh");
+            MessagingCenter.Subscribe<ActiveTicketsPage>(this, "Refresh", async (obj) =>
+            {
+                GenerateSource();
+            });
         }
 
         public ObservableCollection<CustomerOrder> OrderCollection
@@ -60,8 +68,12 @@ namespace TruSport.ViewModel.Shop
 
                     var email = await SecureStorage.GetAsync("Email");
                     var matchTickets = await orderService.GetMatchDayOrder(email);
-                    OrderCollection = new ObservableCollection<CustomerOrder>(matchTickets);
 
+                    if (matchTickets != null)
+                    {
+                        matchTickets.ForEach(e => e.CustomerTicket = JsonConvert.SerializeObject(e));
+                        OrderCollection = new ObservableCollection<CustomerOrder>(matchTickets);
+                    }
 
                     if (OrderCollection.Count == 0)
                         NoTickets = true;
@@ -70,7 +82,12 @@ namespace TruSport.ViewModel.Shop
                 {
                     var email = await SecureStorage.GetAsync("Email");
                     var matchTickets = await App.Database.GetMatchDayOrder(email);
-                    OrderCollection = new ObservableCollection<CustomerOrder>(matchTickets);
+
+                    if (matchTickets != null)
+                    {
+                        matchTickets.ForEach(e => e.CustomerTicket = JsonConvert.SerializeObject(e));
+                        OrderCollection = new ObservableCollection<CustomerOrder>(matchTickets);
+                    }
 
                     if (OrderCollection.Count == 0)
                         NoTickets = true;
@@ -80,8 +97,10 @@ namespace TruSport.ViewModel.Shop
             {
                 Debug.WriteLine(ex.Message, "Match Tickets");
             }
-
-            IsActivityIndicatorVisible = false;
+            finally
+            {
+                IsActivityIndicatorVisible = false;
+            }
         }
     }
 }

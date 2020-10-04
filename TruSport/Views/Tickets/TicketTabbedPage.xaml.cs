@@ -19,9 +19,13 @@ namespace TruSport.Views.Tickets
         {
             ticketTabbedPageViewModel = new TicketTabbedPageViewModel(Navigation);
 
-            this.BindingContext = ticketTabbedPageViewModel;
+            this.Children.Add(new PurchasePage());
+            this.Children.Add(new ActiveTicketsPage());
+            this.Children.Add(new AccountPage());
 
             InitializeComponent();
+
+            this.BindingContext = ticketTabbedPageViewModel;
         }
 
         protected override async void OnAppearing()

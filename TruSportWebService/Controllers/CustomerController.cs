@@ -18,11 +18,11 @@ namespace OnTrackWebService.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly CustomerRepository _customerRepository;
+        private readonly AuthenticationRepository _authenticationRepository;
 
-        public CustomerController(IDisposable customerRepository)
+        public CustomerController(IDisposable authenticationRepository)
         {
-            _customerRepository = (CustomerRepository)customerRepository;
+            _authenticationRepository = (AuthenticationRepository)authenticationRepository;
         }
 
         // GET api/values
@@ -34,7 +34,7 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<Customer> customers = await _customerRepository.GetAll();
+                IEnumerable<Customer> customers = await _authenticationRepository.GetAllCustomers();
 
                 if (customers != null)
                     return Ok(customers);
@@ -54,7 +54,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                Customer customer = await _customerRepository.Get(id);
+                Customer customer = await _authenticationRepository.GetCustomer(id);
 
                 if (customer != null)
                     return Ok(customer);
@@ -73,7 +73,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                List<Customer> customers = await _customerRepository.GetCustomersByDate(date);
+                List<Customer> customers = await _authenticationRepository.GetCustomersByDate(date);
 
                 return Ok(customers);
             }
@@ -91,7 +91,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                List<Customer> customers = await _customerRepository.GetCustomersByTeam(TeamID);
+                List<Customer> customers = await _authenticationRepository.GetCustomersByTeam(TeamID);
 
                 return Ok(customers);
             }
@@ -109,7 +109,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                List<Customer> customers = await _customerRepository.GetCustomersByDateByTeam(date, TeamID);
+                List<Customer> customers = await _authenticationRepository.GetCustomersByDateByTeam(date, TeamID);
 
                 return Ok(customers);
             }
@@ -127,7 +127,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                bool customerExists = await _customerRepository.CustomerExists(email);
+                bool customerExists = await _authenticationRepository.CustomerExists(email);
 
                 return Ok(customerExists);
             }
@@ -145,7 +145,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                bool validateCustomer = await _customerRepository.Validate(email);
+                string validateCustomer = await _authenticationRepository.ValidateCustomer(email);
 
                 return Ok(validateCustomer);
             }
@@ -164,7 +164,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                var newCustomer = await _customerRepository.SignUp(customer);
+                var newCustomer = await _authenticationRepository.SignUp(customer);
                 return Ok(newCustomer);
             }
             catch (Exception ex)
@@ -181,7 +181,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                var customer = await _customerRepository.SignIn(customerAuthentication);
+                var customer = await _authenticationRepository.SignInCustomer(customerAuthentication);
 
                 return Ok(customer);
             }
@@ -201,7 +201,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _customerRepository.Update(customer);
+                await _authenticationRepository.Update(customer);
 
                 return Ok();
             }
@@ -220,7 +220,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _customerRepository.ForgotPassword(forgotPassword);
+                await _authenticationRepository.ForgotCustomerPassword(forgotPassword);
 
                 return Ok();
             }
@@ -238,7 +238,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                string resetPassword = await _customerRepository.ResetPassword(passwordReset);
+                string resetPassword = await _authenticationRepository.ResetCustomerPassword(passwordReset);
 
                 return Ok(resetPassword);
             }

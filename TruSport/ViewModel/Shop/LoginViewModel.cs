@@ -6,6 +6,7 @@ using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
 using TruSport.Views;
+using TruSport.Views.Tickets;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -82,7 +83,7 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                IsBusy = true;
+                IsActivityIndicatorVisible = true;
 
             }
             catch (Exception ex)
@@ -91,7 +92,7 @@ namespace TruSport.ViewModel.Shop
             }
             finally
             {
-                IsBusy = false;
+                IsActivityIndicatorVisible = false;
             }
         }
 
@@ -109,7 +110,7 @@ namespace TruSport.ViewModel.Shop
 
         async void Login()
         {
-            IsBusy = true;
+            IsActivityIndicatorVisible = true;
 
             try
             {
@@ -135,14 +136,26 @@ namespace TruSport.ViewModel.Shop
                                 await SecureStorage.SetAsync("Token", thisCustomer.Token);
                                 await SecureStorage.SetAsync("UserLoggedIn", "true");
 
-                                IsBusy = false;
+                                IsActivityIndicatorVisible = false;
                                 App.IsLoggedIn = true;
-
+                                                                
                                 await Navigation.PopAsync();
+
+                                if (Application.Current.MainPage is MasterDetailPage mdp)
+                                {
+                                    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
+                                    page.Title = "Tickets";
+
+                                    mdp.Detail = new NavigationPage(page)
+                                    {
+                                        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                                        BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                                    };
+                                }
                             }
                             else
                             {
-                                IsBusy = false;
+                                IsActivityIndicatorVisible = false;
                                 await Application.Current.MainPage.DisplayAlert("Sign In", "You have either entered an incorrect email or password, or your account has not been validated. Please try again later.", "Okay");
                             }
                         }
@@ -163,7 +176,7 @@ namespace TruSport.ViewModel.Shop
             }
             finally
             {
-                IsBusy = false;
+                IsActivityIndicatorVisible = false;
             }
         }
 

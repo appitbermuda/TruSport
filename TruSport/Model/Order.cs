@@ -33,12 +33,23 @@ namespace TruSport.Model
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public string FixtureDate { get; set; }
-        public string FixtureTime { get; set; }
+        public DateTime FixtureDate { get; set; }
+        public string Time { get; set; }
         public string FieldName { get; set; }
         public string HomeTeamName { get; set; }
         public string AwayTeamName { get; set; }
         public string HomeTeamLogo { get; set; }
         public string AwayTeamLogo { get; set; }
+        public bool Validated { get; set; }
+
+        [Ignore]
+        public string CustomerTicket { get; set; } 
+
+        [Ignore]
+        public DateTime FixtureTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
+                        TimeZoneInfo.ConvertTime(FixtureDate.AddDays(1).Add((TimeSpan.Parse(Time) + (TimeZoneInfo.Local.GetUtcOffset(new DateTime().Date + TimeSpan.Parse(Time)) - TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)))), TimeZoneInfo.Utc, TimeZoneInfo.Local) :
+                        TimeZoneInfo.ConvertTime(FixtureDate.AddDays(1).Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local) : TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
+                        TimeZoneInfo.ConvertTime(FixtureDate.Add((TimeSpan.Parse(Time) + (TimeZoneInfo.Local.GetUtcOffset(new DateTime().Date + TimeSpan.Parse(Time)) - TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)))), TimeZoneInfo.Utc, TimeZoneInfo.Local) :
+                        TimeZoneInfo.ConvertTime(FixtureDate.Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local);
     }
 }

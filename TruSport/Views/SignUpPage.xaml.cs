@@ -41,23 +41,23 @@ namespace TruSport.Views
             switch (e.PropertyName)
             {
                 case nameof(registerViewModel.FirstName):
-                    FirstNameLabel.TextColor = propHasErrors
+                    FirstNameInput.ErrorColor = propHasErrors
                     ? Color.Red : Color.Gray;
                     break;
                 case nameof(registerViewModel.LastName):
-                    LastNameLabel.TextColor = propHasErrors
+                    LastNameInput.ErrorColor = propHasErrors
                     ? Color.Red : Color.Gray;
                     break;
                 case nameof(registerViewModel.Email):
-                    EmailLabel.TextColor = propHasErrors
+                    EmailInput.ErrorColor = propHasErrors
                     ? Color.Red : Color.Gray;
                     break;
                 case nameof(registerViewModel.Password):
-                    PasswordLabel.TextColor = propHasErrors
+                    PasswordInput.ErrorColor = propHasErrors
                     ? Color.Red : Color.Gray;
                     break;
                 case nameof(registerViewModel.ConfirmPassword):
-                    ConfirmPasswordLabel.TextColor = propHasErrors
+                    ConfirmPasswordInput.ErrorColor = propHasErrors
                     ? Color.Red : Color.Gray;
                     break;
                 default:

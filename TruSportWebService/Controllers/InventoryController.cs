@@ -47,15 +47,33 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values/5
         [HttpGet]
-        [Route("Get")]
-        public async Task<IActionResult> Get(string id)
+        [Route("Team")]
+        public async Task<IActionResult> Get(string teamid)
         {
             try
             {
-                Inventory inventory = await _inventoryRepository.Get(id);
+                int inventoryLevel = await _inventoryRepository.TeamInventoryLevel(teamid);
 
-                if (inventory != null)
-                    return Ok(inventory);
+                return Ok(inventoryLevel);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Inventory");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("Check")]
+        public async Task<IActionResult> CheckInventory(string productID)
+        {
+            try
+            {
+                bool hasInventory = await _inventoryRepository.CheckInventory(productID);
+
+                return Ok(hasInventory);
             }
             catch (Exception ex)
             {

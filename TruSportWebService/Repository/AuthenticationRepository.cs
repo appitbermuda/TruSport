@@ -17,7 +17,7 @@ using OnTrackWebService.Models.Shop;
 
 namespace OnTrackWebService.Repository
 {
-    public class CustomerRepository : IDisposable
+    public class AuthenticationRepository : IDisposable
     {
         OnTrackContext _context;
         PasswordHasher _passwordHasher;
@@ -25,12 +25,12 @@ namespace OnTrackWebService.Repository
 
         private readonly AppSettings _appSettings;
 
-        //public CustomerRepository(IOptions<AppSettings> appSettings)
+        //public AuthenticationRepository(IOptions<AppSettings> appSettings)
         //{
         //    _appSettings = appSettings.Value;
         //}
 
-        public CustomerRepository(OnTrackContext context, IOptions<AppSettings> appSettings)
+        public AuthenticationRepository(OnTrackContext context, IOptions<AppSettings> appSettings)
         {
             _context = context;
             _passwordHasher = new PasswordHasher();
@@ -38,7 +38,7 @@ namespace OnTrackWebService.Repository
             _appSettings = appSettings.Value;
         }
 
-        public CustomerRepository()
+        public AuthenticationRepository()
         {
         }
 
@@ -47,7 +47,312 @@ namespace OnTrackWebService.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<Customer> Get(string id)
+        public async Task<User> GetUser(string id)
+        {
+            var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.ID == id);
+
+            user.Password = null;
+
+            return user;
+        }
+
+        public async Task<bool> UserExists(string email)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+
+                if (user != null)
+                    return true;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return false;
+        }
+
+        public async Task<User> SignInUser(UserAuthentication userAuthentication)
+        {
+            try
+            {
+                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
+
+                if (user != null)
+                {
+                    if (!String.IsNullOrEmpty(user.TeamID))
+                    {
+                        var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
+                        user.Team = team;
+                    }
+
+                    PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.Password, userAuthentication.password);
+
+                    if(passwordVerificationResult == PasswordVerificationResult.Success)
+                    {
+                        // authentication successful so generate jwt token
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                        var tokenDescriptor = new SecurityTokenDescriptor
+                        {
+                            Subject = new ClaimsIdentity(new Claim[]
+                            {
+                                new Claim(ClaimTypes.Name, user.Email.ToString()),
+                                new Claim(ClaimTypes.Role, user.Role.Name)
+                            }),
+                            Expires = DateTime.UtcNow.AddYears(100),
+                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                        };
+                        var token = tokenHandler.CreateToken(tokenDescriptor);
+                        user.Token = tokenHandler.WriteToken(token);
+
+                        // remove password before returning
+                        user.Password = null;
+
+                        return user;
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return null;
+        }
+
+        public async Task<UserResponse> SignUp(User user)
+        {
+            try
+            {
+                if (Regex.IsMatch(user.Email, "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$"))
+                {
+                    if (user.Password.Length >= 8)
+                    {
+                        var userExists = await _context.Users.AnyAsync(e => e.Email == user.Email);
+                        if (!userExists)
+                        {
+                            //encrypt password
+                            user.Password = _passwordHasher.HashPassword(user.Password);
+
+                            _context.Users.Add(user);
+                            await _context.SaveChangesAsync();
+
+                            user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.ID == user.ID);
+
+                            if (!String.IsNullOrEmpty(user.TeamID))
+                            {
+                                var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
+                                user.Team = team;
+                            }
+
+                            //SEND EMAIL
+                            try
+                            {
+                                await emailRepository.Welcome(user.Email);
+                                await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.Role.Name, user.Team != null ? user.Team.Name : null);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message, "Welcome Email");
+                            }
+
+                            return new UserResponse
+                            {
+                                ID = user.ID,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Role = user.Role,
+                                RoleID = user.RoleID,
+                                Email = user.Email,
+                                TeamID = user.TeamID,
+                                Team = user.Team
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return null;
+        }
+
+        public async Task<bool> ValidateUser(string email)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email && !e.IsValidated);
+
+                if (user != null)
+                {
+                    user.IsValidated = true;
+
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    try
+                    {
+                        await emailRepository.UserValidated(email);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message, "User Validate");
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return false;
+        }
+
+        public async Task<bool> ForgotUserPassword(ForgotPassword forgotPassword)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == forgotPassword.Email);
+
+                if (user != null)
+                {
+                    //genereate pw
+                    string temporaryPassword = RandomPassword();
+
+                    //encrypt password
+                    user.TemporaryPassword = _passwordHasher.HashPassword(temporaryPassword);
+
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    //SEND EMAIL
+                    await emailRepository.SendPasswordResetEmail(user.FirstName, user.Email, temporaryPassword);
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return false;
+        }
+
+        public async Task<string> ResetUserPassword(PasswordReset passwordReset)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == passwordReset.Email);
+
+                PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.TemporaryPassword, passwordReset.TemporaryPassword);
+
+                if (passwordVerificationResult == PasswordVerificationResult.Success)
+                {
+                    
+                    //encrypt password
+                    user.Password = _passwordHasher.HashPassword(passwordReset.Password);
+                    user.TemporaryPassword = null;
+
+                    _context.Users.Update(user);
+
+                    await _context.SaveChangesAsync();
+
+                    //user = await _context.Users.Include(e => e.UserType).Include(e => e.Team).FirstOrDefaultAsync(e => e.ID == user.ID);
+
+                    //SEND EMAIL
+                    //await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.UserType.Name, user.Team != null ? user.Team.Name : null);
+
+                    return "Password reset successfully!";
+                }
+
+                return "Temporary password is incorrect or is expired.";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return "There was an error resetting your password.";
+        }
+
+        public async Task<IEnumerable<AllUsers>> GetAllUsers()
+        {
+            return await _context.AllUsers.Include(e => e.UserType).Include(e => e.Team).ToListAsync();
+        }
+
+        public Task<IEnumerable<User>> GetByTeam(string teamID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Insert(User item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task Update(User item)
+        {
+            try
+            {
+                var dbUser = await _context.Users.FirstOrDefaultAsync(e => e.ID == item.ID);
+
+                dbUser.FirstName = item.FirstName;
+                dbUser.LastName = item.LastName;
+                dbUser.Email = item.Email;
+                dbUser.RoleID = item.RoleID;
+                dbUser.TeamID = item.TeamID;
+                dbUser.IsValidated = item.IsValidated;
+
+                _context.Update(dbUser);
+
+                await _context.SaveChangesAsync();
+
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+        }
+
+        public async Task<User> AuthenticateUser(string username, string password)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == username && x.Password == password);
+
+            // return null if user not found
+            if (user == null)
+                return null;
+
+            // authentication successful so generate jwt token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Email.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role.Name)
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            user.Token = tokenHandler.WriteToken(token);
+
+            // remove password before returning
+            user.Password = null;
+
+            return user;
+        }
+
+        public async Task<Customer> GetCustomer(string id)
         {
             var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == id);
 
@@ -65,7 +370,7 @@ namespace OnTrackWebService.Repository
                 if (customer != null)
                     return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Customer");
             }
@@ -73,7 +378,7 @@ namespace OnTrackWebService.Repository
             return false;
         }
 
-        public async Task<Customer> SignIn(UserAuthentication customerAuthentication)
+        public async Task<Customer> SignInCustomer(UserAuthentication customerAuthentication)
         {
             try
             {
@@ -83,7 +388,7 @@ namespace OnTrackWebService.Repository
                 {
                     PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(customer.Password, customerAuthentication.password);
 
-                    if(passwordVerificationResult == PasswordVerificationResult.Success)
+                    if (passwordVerificationResult == PasswordVerificationResult.Success)
                     {
                         // authentication successful so generate jwt token
                         var tokenHandler = new JwtSecurityTokenHandler();
@@ -167,7 +472,7 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<string> Validate(string email)
+        public async Task<string> ValidateCustomer(string email)
         {
             try
             {
@@ -200,7 +505,7 @@ namespace OnTrackWebService.Repository
             return "Account cannot be validated at this time.";
         }
 
-        public async Task<bool> ForgotPassword(ForgotPassword forgotPassword)
+        public async Task<bool> ForgotCustomerPassword(ForgotPassword forgotPassword)
         {
             try
             {
@@ -231,7 +536,7 @@ namespace OnTrackWebService.Repository
             return false;
         }
 
-        public async Task<string> ResetPassword(PasswordReset passwordReset)
+        public async Task<string> ResetCustomerPassword(PasswordReset passwordReset)
         {
             try
             {
@@ -241,7 +546,7 @@ namespace OnTrackWebService.Repository
 
                 if (passwordVerificationResult == PasswordVerificationResult.Success)
                 {
-                    
+
                     //encrypt password
                     customer.Password = _passwordHasher.HashPassword(passwordReset.Password);
                     customer.TemporaryPassword = null;
@@ -268,7 +573,7 @@ namespace OnTrackWebService.Repository
             return "There was an error resetting your password.";
         }
 
-        public async Task<IEnumerable<Customer>> GetAll()
+        public async Task<IEnumerable<Customer>> GetAllCustomers()
         {
             try
             {
@@ -280,7 +585,7 @@ namespace OnTrackWebService.Repository
 
                 return customers;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Get All");
             }
@@ -372,16 +677,6 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public Task<IEnumerable<Customer>> GetByTeam(string teamID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Insert(Customer item)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task Update(Customer item)
         {
             try
@@ -399,13 +694,13 @@ namespace OnTrackWebService.Repository
                 await _context.SaveChangesAsync();
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Customer");
             }
         }
 
-        public async Task<Customer> Authenticate(string customername, string password)
+        public async Task<Customer> AuthenticateCustomer(string customername, string password)
         {
             var customer = await _context.Customers.SingleOrDefaultAsync(x => x.Email == customername && x.Password == password);
 

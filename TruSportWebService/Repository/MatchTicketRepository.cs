@@ -96,7 +96,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.Inventory)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date)
+                    .Where(e => e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date.AddDays(1))
                     .ToListAsync();
 
                 //List<Product> products = await _context.Products
@@ -195,19 +195,25 @@ namespace OnTrackWebService.Repository
             return fixtureProducts;
         }
 
-        public async Task<bool> Scan(string OrderId)
+        public async Task<bool> Scan(CustomerOrder customerOrder)
         {
             try
             {
-                var order = await _context.Orders
-                    .FirstOrDefaultAsync(e => e.ID == OrderId && !e.Validated);
+                var fixtureProducts = await _context.FixtureProducts
+                    .Include(e => e.Product)
+                    .Where(e => e.Product.TeamID == customerOrder.ScannedTeamID)
+                    .ToListAsync();
+
+                var orderDetail = await _context.OrderDetails
+                    .Include(e => e.Order)
+                    .FirstOrDefaultAsync(e => e.OrderID == customerOrder.OrderID && !e.Order.Validated);
 
 
-                if (order != null)
+                if (orderDetail.Order != null && fixtureProducts.Any(e => e.ID == orderDetail.FixtureProductID))
                 {
-                    order.Validated = true;
-                    order.ValidatedTime = DateTime.Now.ToUniversalTime();
-                    _context.Orders.Update(order);
+                    orderDetail.Order.Validated = true;
+                    orderDetail.Order.ValidatedTime = DateTime.Now.ToUniversalTime();
+                    _context.Orders.Update(orderDetail.Order);
                     await _context.SaveChangesAsync();
 
                     return true;
@@ -324,7 +330,7 @@ namespace OnTrackWebService.Repository
                     OrderDetail orderDetail = new OrderDetail
                     {
                         FixtureProductID = paymentAuthorization.FixtureProductID,
-                        Qty = 1,
+                        Qty = paymentAuthorization.Quantity,
                         Subtotal = PaymentAmount + ProcessingFeeAmount,
                         OrderID = order.ID
                     };
@@ -345,8 +351,13 @@ namespace OnTrackWebService.Repository
 
                     try
                     {
+                        var fixtureProduct = await _context.FixtureProducts
+                            .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                            .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                            .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.FixtureProductID);
                         var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
-                        await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.ReferenceNumber, PaymentAmount, ProcessingFeeAmount);
+
+                        await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, orderDetail.Qty, fixtureProduct.Fixture);
                     }
                     catch (Exception ex)
                     {

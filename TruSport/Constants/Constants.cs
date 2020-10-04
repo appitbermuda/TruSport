@@ -30,8 +30,8 @@ namespace TruSport
         public static string APNTemplateBody { get; set; } = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
 
 #if DEBUG
-        public const string APIEndpoint = "http://localhost:40139/api/";
-        //public const string APIEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
+        //public const string APIEndpoint = "http://localhost:40139/api/";
+        public const string APIEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
         //public const string APIEndpoint = "https://ontrackservice.azurewebsites.net/api/";
         //public const string ChatEndpoint = "http://localhost:26585/chatHub";
         public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";

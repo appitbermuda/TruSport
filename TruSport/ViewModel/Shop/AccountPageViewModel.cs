@@ -38,6 +38,12 @@ namespace TruSport.ViewModel.Shop
             CreditCardSelectedCommand = new Command<object>(CreditCardSelected);
             AddCreditCardCommand = new Command(async () => await AddNewCard());
             SignOutCommand = new Command(async () => await SignOut());
+
+            MessagingCenter.Unsubscribe<AccountPage, string>(this, "Refresh");
+            MessagingCenter.Subscribe<AccountPage>(this, "Refresh", async (obj) =>
+            {
+                GenerateSource();
+            });
         }
 
         public Command SignOutCommand { get; set; }

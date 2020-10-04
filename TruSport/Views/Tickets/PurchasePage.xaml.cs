@@ -17,5 +17,12 @@ namespace TruSport.Views.Tickets
 
             InitializeComponent();
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            MessagingCenter.Send<PurchasePage>(this, "Refresh");
+        }
     }
 }

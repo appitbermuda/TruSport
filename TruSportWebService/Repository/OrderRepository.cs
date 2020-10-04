@@ -60,10 +60,10 @@ namespace OnTrackWebService.Repository
                         Email = orderDetail.Order.Customer.Email,
                         Phone = orderDetail.Order.Customer.Phone,
                         FixtureDate = orderDetail.FixtureProduct.Fixture.Date,
-                        FixtureTime = orderDetail.FixtureProduct.Fixture.Time,
+                        Time =  orderDetail.FixtureProduct.Fixture.Time,
                         FieldName = orderDetail.FixtureProduct.Fixture.Field.Name,
-                        HomeTeamName = orderDetail.FixtureProduct.Fixture.HomeTeam.Alias ?? orderDetail.FixtureProduct.Fixture.HomeTeam.Name,
-                        AwayTeamName = orderDetail.FixtureProduct.Fixture.AwayTeam.Alias ?? orderDetail.FixtureProduct.Fixture.AwayTeam.Name,
+                        HomeTeamName = !String.IsNullOrEmpty(orderDetail.FixtureProduct.Fixture.HomeTeam.Alias) ? orderDetail.FixtureProduct.Fixture.HomeTeam.Alias : orderDetail.FixtureProduct.Fixture.HomeTeam.Name,
+                        AwayTeamName = !String.IsNullOrEmpty(orderDetail.FixtureProduct.Fixture.HomeTeam.Alias) ? orderDetail.FixtureProduct.Fixture.HomeTeam.Alias : orderDetail.FixtureProduct.Fixture.AwayTeam.Name,
                         HomeTeamLogo = orderDetail.FixtureProduct.Fixture.HomeTeam.TeamLogo,
                         AwayTeamLogo = orderDetail.FixtureProduct.Fixture.AwayTeam.TeamLogo,
                         Validated = orderDetail.Order.Validated

@@ -13,7 +13,7 @@ namespace TruSport.ViewModels
         public bool IsBusy
         {
             get { return isBusy; }
-            set { SetProperty(ref isBusy, value); }
+            set { Set(ref isBusy, value); }
         }
 
         protected bool SetProperty<T>(ref T backingStore, T value,

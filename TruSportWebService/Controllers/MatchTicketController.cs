@@ -108,14 +108,15 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
-        [HttpGet]
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpPost]
         [Route("Scan")]
-        public async Task<IActionResult> Scan(string OrderId)
+        public async Task<IActionResult> Scan([FromBody] CustomerOrder customerOrder)
         {
             try
             {
-
-                bool validated = await _matchTicketRepository.Scan(OrderId);
+                
+                bool validated = await _matchTicketRepository.Scan(customerOrder);
 
                 return Ok(validated);
             }

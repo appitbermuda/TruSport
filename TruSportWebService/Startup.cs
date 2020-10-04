@@ -45,13 +45,13 @@ namespace OnTrackWebService
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
-            //#if DEBUG
-            services.AddDbContext<OnTrackContext>
-                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
+            ////#if DEBUG
+            //services.AddDbContext<OnTrackContext>
+            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
             //#else
-            //services.AddDbContext<OnTrackContext>
-            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
+            services.AddDbContext<OnTrackContext>
+                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
             //#endif
 
@@ -99,6 +99,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<MatchRoster>, MatchRosterRepository>();
             services.AddScoped<IOnTrackRepository<MatchStat>, MatchStatRepository>();
             services.AddScoped<IOnTrackRepository<MatchType>, MatchTypeRepository>();
+            services.AddScoped<IOnTrackRepository<Order>, OrderRepository>();
             services.AddScoped<IOnTrackRepository<Player>, PlayerRepository>();
             services.AddScoped<IOnTrackRepository<Award>, AwardRepository>();
             services.AddScoped<IOnTrackRepository<PlayerSeason>, PlayerSeasonRepository>();
@@ -107,8 +108,8 @@ namespace OnTrackWebService
             services.AddScoped<ISettingRepository<Setting>, SettingRepository>();
             services.AddScoped<IOnTrackRepository<Season>, SeasonRepository>();
             services.AddScoped<IOnTrackRepository<Sport>, SportRepository>();
-            services.AddScoped<IDisposable, UserRepository>();
-            services.AddScoped<IDisposable, CustomerRepository>();
+            //services.AddScoped<IDisposable, UserRepository>();
+            services.AddScoped<IDisposable, AuthenticationRepository>();
             services.AddScoped<IPushNotificationRepository<Push>, PushNotificationRepository>();
             services.AddScoped<IOnTrackRepository<UserType>, UserTypeRepository>();
             //services.AddSingleton<BackgroundWorker>();

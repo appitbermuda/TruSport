@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,58 @@ namespace OnTrackWebService.Repository
         {
             return await _context.Inventorys
                 .Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == id);
+        }
+        
+        public async Task<int> TeamInventoryLevel(string teamid)
+        {
+            try
+            {
+                var inventory = await _context.Inventorys
+                    .Include(e => e.Product).FirstOrDefaultAsync(e => e.Product.TeamID == teamid);
+
+
+                var orders = await _context.OrderDetails
+                    .Include(e => e.FixtureProduct)
+                    .Where(e => e.FixtureProduct.Product.TeamID == teamid)
+                    .ToListAsync();
+
+                var orderCount = orders.Sum(e => e.Qty);
+
+                
+                    return inventory.Stock - orderCount;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Check Inventory");
+            }
+
+            return 0;
+        }
+
+        public async Task<bool> CheckInventory(string productID)
+        {
+            try
+            {
+                var inventory = await _context.Inventorys
+                    .Include(e => e.Product).FirstOrDefaultAsync(e => e.ProductID == productID);
+
+
+                var orders = await _context.OrderDetails
+                    .Include(e => e.FixtureProduct)
+                    .Where(e => e.FixtureProduct.ProductID == productID)
+                    .ToListAsync();
+
+                var orderCount = orders.Sum(e => e.Qty);
+
+                if (orderCount < inventory.Stock)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Check Inventory");
+            }
+
+            return false;
         }
 
         public async Task<IEnumerable<Inventory>> GetAll()

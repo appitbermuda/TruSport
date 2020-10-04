@@ -17,11 +17,11 @@ namespace OnTrackWebService.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
+        private readonly AuthenticationRepository _authenticationRepository;
 
-        public UserController(IDisposable userRepository)
+        public UserController(IDisposable authenticationRepository)
         {
-            _userRepository = (UserRepository)userRepository;
+            _authenticationRepository = (AuthenticationRepository)authenticationRepository;
         }
 
         // GET api/values
@@ -33,7 +33,7 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<AllUsers> users = await _userRepository.GetAll();
+                IEnumerable<AllUsers> users = await _authenticationRepository.GetAllUsers();
 
                 if (users != null)
                     return Ok(users);
@@ -53,7 +53,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                User user = await _userRepository.Get(id);
+                User user = await _authenticationRepository.GetUser(id);
 
                 if (user != null)
                     return Ok(user);
@@ -72,7 +72,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                bool userExists = await _userRepository.UserExists(email);
+                bool userExists = await _authenticationRepository.UserExists(email);
 
                 return Ok(userExists);
             }
@@ -90,7 +90,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                bool validateUser = await _userRepository.Validate(email);
+                bool validateUser = await _authenticationRepository.ValidateUser(email);
 
                 return Ok(validateUser);
             }
@@ -109,7 +109,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                var newUser = await _userRepository.SignUp(user);
+                var newUser = await _authenticationRepository.SignUp(user);
                 return Ok(newUser);
             }
             catch (Exception ex)
@@ -126,7 +126,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                var user = await _userRepository.SignIn(userAuthentication);
+                var user = await _authenticationRepository.SignInUser(userAuthentication);
 
                 return Ok(user);
             }
@@ -146,7 +146,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _userRepository.Update(user);
+                await _authenticationRepository.Update(user);
 
                 return Ok();
             }
@@ -165,7 +165,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _userRepository.ForgotPassword(forgotPassword);
+                await _authenticationRepository.ForgotUserPassword(forgotPassword);
 
                 return Ok();
             }
@@ -183,7 +183,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                string resetPassword = await _userRepository.ResetPassword(passwordReset);
+                string resetPassword = await _authenticationRepository.ResetUserPassword(passwordReset);
 
                 return Ok(resetPassword);
             }

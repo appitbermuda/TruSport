@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:converters="clr-namespace:TruSport.Converters" x:Class="TruSport.Views.Tickets.AccountPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions"
+             xmlns:converters="clr-namespace:TruSport.Converters"
+             xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable"
+             x:Class="TruSport.Views.Tickets.AccountPage"
+             Title="My Account">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
@@ -65,17 +71,75 @@
                               HorizontalOptions="FillAndExpand"
                               RowSpacing="0">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <StackLayout
+                            <StackLayout Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Match Ticket"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start"/>
+                                <StackLayout Orientation="Horizontal">
+                                <Label Text="{Binding OrderDetail.FixtureProduct.Fixture.HomeTeam.Name}"
+                                       FontSize="Micro"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                                    <Label Text="v"
+                                       FontSize="Micro"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Center">
+                                </Label>
+                                    <Label Text="{Binding OrderDetail.FixtureProduct.Fixture.AwayTeam.Name}"
+                                       FontSize="Micro"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End">
+                                </Label>
+                                </StackLayout>
+                            </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="1"
                                          Padding="15,10"
                                          VerticalOptions="Center">
-                                <Label Text="{Binding CardNumber, Converter={StaticResource cardNumberConverter}}"
-                                       FontSize="Medium"
+                                <Label Text="Date"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                <Label Text="{Binding OrderDetail.FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd h:mm tt}'}"
+                                       FontSize="Micro"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End">
+                                </Label>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="0"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Order #"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start"/>
+                                <Label Text="{Binding OrderNumber}"
+                                       FontSize="Micro"
                                        TextColor="Black"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
@@ -83,11 +147,52 @@
                                 </Label>
                                 
                             </StackLayout>
-                            <StackLayout Grid.Column="1"
+                            <StackLayout Grid.Row="1" Grid.Column="1"
                                          Padding="15,10"
                                          VerticalOptions="Center">
-                                <Label Text="{Binding Expiry, StringFormat='Exp: {0}'}"
-                                       FontSize="Small"
+                                <Label Text="Trx Date"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                <Label Text="{Binding Date, StringFormat='{0:MMM dd, yyyy HH:mm tt}'}"
+                                       FontSize="Micro"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Row="2"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Authorisation"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start"/>
+                                <Label Text="{Binding Authorisation}"
+                                       FontSize="Micro"
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Row="2" Grid.Column="1"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Total"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                <Label Text="{Binding Total, StringFormat='{0:C}'}"
+                                       FontSize="Micro"
                                        TextColor="Black"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
@@ -104,7 +209,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout BackgroundColor="{DynamicResource backgroundColor}" Spacing="50">
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}" Spacing="20">
             <StackLayout>
                 <Grid x:Name="ProfileGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0" ColumnSpacing="0" Padding="10,0">
                 <Grid.RowDefinitions>
@@ -138,7 +243,7 @@
                     <BoxView Grid.Row="4" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
             </Grid>
                 </StackLayout>
-            <StackLayout>
+            <!--<StackLayout>
                 <Grid x:Name="WalletGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
@@ -166,7 +271,7 @@
                         </StackLayout>
                     <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsWalletActivityIndicatorVisible}" IsRunning="{Binding IsWalletActivityIndicatorVisible}"/>
             </Grid>
-                </StackLayout>
+                </StackLayout>-->
             <StackLayout>
                 <Grid x:Name="OrderGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
                 <Grid.RowDefinitions>
@@ -187,12 +292,20 @@
                                         Padding="1"
                                         SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
                                         AutoFitMode="DynamicHeight"
-                                    />
+                                    >
+                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="Date" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                </listView:SfListView>
                         </StackLayout>
                 <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsOrderActivityIndicatorVisible}" IsRunning="{Binding IsOrderActivityIndicatorVisible}"/>
             </Grid>
                 </StackLayout>
-            <StackLayout Padding="50" VerticalOptions="EndAndExpand">
+            <StackLayout Padding="50,20" VerticalOptions="EndAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
                 <Button Text="Sign Out" BackgroundColor="{DynamicResource buttonBackgroundColor}" TextColor="{DynamicResource buttonTextColor}" Padding="50,0" HeightRequest="50" CornerRadius="25" Command="{Binding SignOutCommand}"></Button>
             </StackLayout>
             <!--<StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">

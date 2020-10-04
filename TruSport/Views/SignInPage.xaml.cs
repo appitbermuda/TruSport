@@ -31,7 +31,9 @@ namespace TruSport.Views
 
             try
             {
-                BusyIndicator.IsVisible = true;
+                //BusyIndicator.IsVisible = true;
+
+                loginViewModel.IsActivityIndicatorVisible = true;
 
                 var userLoggedIn = await SecureStorage.GetAsync("UserLoggedIn");
 
@@ -48,7 +50,7 @@ namespace TruSport.Views
             }
             finally
             {
-                BusyIndicator.IsVisible = false;
+                loginViewModel.IsActivityIndicatorVisible = false;
             }
         }
 

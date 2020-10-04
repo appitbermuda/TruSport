@@ -14,6 +14,9 @@ namespace TruSport.Model
         public string Phone { get; set; }
 
         [Ignore]
+        public string Name => FirstName + " " + LastName;
+
+        [Ignore]
         public Order Order { get; set; }
     }
 }

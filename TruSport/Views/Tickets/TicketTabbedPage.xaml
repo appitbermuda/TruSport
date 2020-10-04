@@ -7,7 +7,7 @@
             SelectedTabColor="{DynamicResource iconColor}">
     <!--Pages can be added as references or inline-->
     
-    <tickets:PurchasePage Title="Match's" />
+    <!--<tickets:PurchasePage Title="Match's" />
     <tickets:ActiveTicketsPage Title="Active" />
-    <tickets:AccountPage Title="My Account" />
+    <tickets:AccountPage Title="My Account" />-->
 </TabbedPage>

@@ -24,6 +24,7 @@ namespace TruSport.ViewModel.Shop
         public string _confirmPassword;
         private bool _isSportSelected;
         private bool _isRoleSelected;
+        private bool _isActivityIndicatorVisible;
 
         public CustomerRequest Customer
         {
@@ -35,6 +36,12 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _isSportSelected; }
             set { Set(ref _isSportSelected, value); }
+        }
+
+        public bool IsActivityIndicatorVisible
+        {
+            get { return _isActivityIndicatorVisible; }
+            set { Set(ref _isActivityIndicatorVisible, value); }
         }
 
 
@@ -148,7 +155,7 @@ namespace TruSport.ViewModel.Shop
 
         async void Register()
         {
-            IsBusy = true;
+            IsActivityIndicatorVisible = true;
             var IsValid = true;
 
             try
@@ -180,7 +187,7 @@ namespace TruSport.ViewModel.Shop
 
                                         if (customerRegistered != null)
                                         {
-                                            IsBusy = false;
+                                            IsActivityIndicatorVisible = false;
 
                                             await Application.Current.MainPage.DisplayAlert("Register", "Thanks for signing up!", "Okay");
 
@@ -199,24 +206,24 @@ namespace TruSport.ViewModel.Shop
                                     }
                                     
 
-                                    IsBusy = false;
+                                    IsActivityIndicatorVisible = false;
                                 }
                                 else
                                 {
-                                    IsBusy = false;
+                                    IsActivityIndicatorVisible = false;
                                     await Application.Current.MainPage.DisplayAlert("Register", "Password must be atleast 8 characters", "Okay");
                                 }
                             }
                             else
                             {
-                                IsBusy = false;
+                                IsActivityIndicatorVisible = false;
                                 await Application.Current.MainPage.DisplayAlert("Register", "Your passwords do not match.", "Okay");
                             }
                         }
                     }
                     else
                     {
-                        IsBusy = false;
+                        IsActivityIndicatorVisible = false;
                         await Application.Current.MainPage.DisplayAlert("Register", "Please enter a valid email.", "Okay");
                     }
                 }
@@ -230,7 +237,7 @@ namespace TruSport.ViewModel.Shop
             }
             finally
             {
-                IsBusy = false;
+                IsActivityIndicatorVisible = false;
             }
         }
 

@@ -17,6 +17,13 @@ namespace TruSport.Views.Tickets
             InitializeComponent();
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            MessagingCenter.Send<AccountPage>(this, "Refresh");
+        }
+
         void Menu_Clicked(System.Object sender, System.EventArgs e)
         {
             if (Application.Current.MainPage is MasterDetailPage mdp)

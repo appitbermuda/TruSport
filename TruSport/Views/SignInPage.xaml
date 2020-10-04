@@ -56,10 +56,12 @@
                     </StackLayout>
                     
                 </StackLayout>
-                <extension:CustomBusyIndicator x:Name="BusyIndicator" Grid.RowSpan="3" IsVisible="{Binding IsBusy}" />
+                
             </Grid>
         </StackLayout>
             </ScrollView>
+         <!--<extension:CustomBusyIndicator x:Name="BusyIndicator" Grid.Row="1" IsVisible="True" />-->
+         <ActivityIndicator x:Name="BusyIndicator" Grid.Row="1" IsVisible="{Binding IsActivityIndicatorVisible}" IsRunning="{Binding IsActivityIndicatorVisible}"/>
          </Grid>
          </StackLayout>
     </ContentPage.Content>
