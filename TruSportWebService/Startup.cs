@@ -46,12 +46,12 @@ namespace OnTrackWebService
             });
 
             ////#if DEBUG
-            //services.AddDbContext<OnTrackContext>
-            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
+            services.AddDbContext<OnTrackContext>
+                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
             //#else
-            services.AddDbContext<OnTrackContext>
-                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
+            //services.AddDbContext<OnTrackContext>
+            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
             //#endif
 
@@ -104,6 +104,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<Award>, AwardRepository>();
             services.AddScoped<IOnTrackRepository<PlayerSeason>, PlayerSeasonRepository>();
             services.AddScoped<IOnTrackRepository<Team>, TeamRepository>();
+            services.AddScoped<IOnTrackRepository<TicketConfiguration>, TicketConfigurationRepository>();
             services.AddScoped<IOnTrackRepository<Role>, RoleRepository>();
             services.AddScoped<ISettingRepository<Setting>, SettingRepository>();
             services.AddScoped<IOnTrackRepository<Season>, SeasonRepository>();

@@ -7,7 +7,7 @@ namespace OnTrackWebService.Models.Shop
     public class PaymentAuthorize
     {
         public string CustomerID { get; set; }
-        public string FixtureProductID { get; set; }
+        public string FixtureID { get; set; }
         public string NameOnCard { get; set; }
         public string CardNumber { get; set; }
         public string CVV { get; set; }
@@ -17,5 +17,8 @@ namespace OnTrackWebService.Models.Shop
 
         [NotMapped]
         public List<ContactTrace> ContactTraces { get; set; }
+
+        [NotMapped]
+        public List<OrderDetail> OrderDetails { get; set; }
     }    
 }

@@ -34,9 +34,10 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var inventory = await _context.Inventorys
-                    .Include(e => e.Product).FirstOrDefaultAsync(e => e.Product.TeamID == teamid);
+                //var product = await _context.Products.FirstOrDefaultAsync(e => e.TeamID == teamid);
 
+                var ticketConfiguration = await _context.TicketConfigurations
+                    .FirstOrDefaultAsync(e => e.TeamID == teamid);
 
                 var orders = await _context.OrderDetails
                     .Include(e => e.FixtureProduct)
@@ -46,7 +47,7 @@ namespace OnTrackWebService.Repository
                 var orderCount = orders.Sum(e => e.Qty);
 
                 
-                    return inventory.Stock - orderCount;
+                return ticketConfiguration.Stock - orderCount;
             }
             catch(Exception ex)
             {
@@ -60,9 +61,10 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var inventory = await _context.Inventorys
-                    .Include(e => e.Product).FirstOrDefaultAsync(e => e.ProductID == productID);
+                var product = await _context.Products.FirstOrDefaultAsync(e => e.ID == productID);
 
+                var ticketConfiguration = await _context.TicketConfigurations
+                    .FirstOrDefaultAsync(e => e.TeamID == product.TeamID);
 
                 var orders = await _context.OrderDetails
                     .Include(e => e.FixtureProduct)
@@ -71,7 +73,7 @@ namespace OnTrackWebService.Repository
 
                 var orderCount = orders.Sum(e => e.Qty);
 
-                if (orderCount < inventory.Stock)
+                if (orderCount < ticketConfiguration.Stock)
                     return true;
             }
             catch (Exception ex)

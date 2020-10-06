@@ -59,6 +59,7 @@ namespace OnTrackWebService.Data
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamSeason> TeamSeasons { get; set; }
+        public DbSet<TicketConfiguration> TicketConfigurations { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<vTransfers> vTransfers { get; set; }
         public DbSet<User> Users { get; set; }
@@ -78,8 +79,12 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<FixtureProduct>().ToTable("FixtureProduct");
             modelBuilder.Entity<Product>().ToTable("Product");
             modelBuilder.Entity<Field>().ToTable("Field");
+            modelBuilder.Entity<TicketConfiguration>().ToTable("TicketConfiguration");
             //modelBuilder.Entity<Fixture>().ToTable("Fixture");
             //modelBuilder.Entity<CricketFixture>().ToTable("CricketFixture");
+            modelBuilder.Entity<Order>()
+            .HasMany(c => c.OrderDetails)
+            .WithOne(e => e.Order);
 
             modelBuilder.Entity<Fixture>().ToTable("Fixture")
                     .HasOne(x => x.HomeTeam)

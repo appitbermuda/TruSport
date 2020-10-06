@@ -42,7 +42,6 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Fixture).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Inventory)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
                     .FirstOrDefaultAsync(e => e.Fixture.ID == FixtureID);
 
@@ -94,7 +93,6 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Fixture).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Inventory)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
                     .Where(e => e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date.AddDays(1))
                     .ToListAsync();
@@ -153,7 +151,6 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Fixture).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Inventory)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
                     .Where(e => e.Product.TeamID == teamID && e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date).ToListAsync();
 
@@ -241,7 +238,6 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Fixture).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Inventory)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
                     .FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
 
@@ -289,86 +285,92 @@ namespace OnTrackWebService.Repository
 
             try
             {
-                var processingFee = await _context.Settings.FirstOrDefaultAsync(e => e.ID == Constants.SETTING_PROCESSING_FEE_ID);
+                var orders = await _context.OrderDetails
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .Where(e => e.FixtureProduct.FixtureID == paymentAuthorization.FixtureID)
+                    .ToListAsync();
 
-                Decimal ProcessingFeeAmount = Convert.ToDecimal(processingFee.Value);
-                Decimal PaymentAmount = 0.0m;
+                var ticketConfiguration = await _context.TicketConfigurations
+                    .FirstOrDefaultAsync(e => e.TeamID == orders.FirstOrDefault().FixtureProduct.Product.TeamID);
 
-                //string payment = String.Format("{0,0:N2}", Decimal.Parse(paymentAuthorization.Amount) / 100.0m);
-                string payment = String.Format("{0,0:N2}", Decimal.Parse(paymentAuthorization.Amount));
+                var orderCount = orders.Sum(e => e.Qty);
 
-                //string topUp = topUpPayment.Amount;
-                //topUp.Insert(topUp.Length - 2, ".");
-                PaymentAmount = Convert.ToDecimal(payment);
-                paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
-
-                Order order = new Order
+                if (orderCount < ticketConfiguration.Stock)
                 {
-                    Total = PaymentAmount + ProcessingFeeAmount,
-                    CustomerID = paymentAuthorization.CustomerID,
-                    Date = DateTime.Now,
-                    Discount = 0.0m,
-                    Validated = false
-                };
+                    var processingFee = await _context.Settings.FirstOrDefaultAsync(e => e.ID == Constants.SETTING_PROCESSING_FEE_ID);
 
-                _context.Orders.Add(order);
-                await _context.SaveChangesAsync();
+                    Decimal ProcessingFeeAmount = Convert.ToDecimal(processingFee.Value);
+                    Decimal PaymentAmount = 0.0m;
 
-                var response = await request.Payment(paymentAuthorization);
+                    //string payment = String.Format("{0,0:N2}", Decimal.Parse(paymentAuthorization.Amount) / 100.0m);
+                    string payment = String.Format("{0,0:N2}", Decimal.Parse(paymentAuthorization.Amount));
 
-                if (response.CreditCardTransactionResults.ResponseCode == "1")
-                {
-                    _context.Database.BeginTransaction();
+                    //string topUp = topUpPayment.Amount;
+                    //topUp.Insert(topUp.Length - 2, ".");
+                    PaymentAmount = Convert.ToDecimal(payment);
+                    paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
 
-                    var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
-                    updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;
-                    updateOrder.OrderNumber = response.OrderNumber;
-
-                    _context.Orders.Update(updateOrder);
-                    await _context.SaveChangesAsync();
-
-                    OrderDetail orderDetail = new OrderDetail
+                    Order order = new Order
                     {
-                        FixtureProductID = paymentAuthorization.FixtureProductID,
-                        Qty = paymentAuthorization.Quantity,
-                        Subtotal = PaymentAmount + ProcessingFeeAmount,
-                        OrderID = order.ID
+                        Total = PaymentAmount + ProcessingFeeAmount,
+                        CustomerID = paymentAuthorization.CustomerID,
+                        Date = DateTime.Now,
+                        Discount = 0.0m,
+                        Validated = false
                     };
 
-                    _context.OrderDetails.Add(orderDetail);
+                    _context.Orders.Add(order);
                     await _context.SaveChangesAsync();
 
-                    if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
-                    {
-                        paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
+                    var response = await request.Payment(paymentAuthorization);
 
-                        _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
+                    if (response.CreditCardTransactionResults.ResponseCode == "1")
+                    {
+                        _context.Database.BeginTransaction();
+
+                        var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
+                        updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;
+                        updateOrder.OrderNumber = response.OrderNumber;
+
+                        _context.Orders.Update(updateOrder);
                         await _context.SaveChangesAsync();
+
+                        _context.OrderDetails.AddRange(paymentAuthorization.OrderDetails);
+                        await _context.SaveChangesAsync();
+
+                        if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
+                        {
+                            paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
+
+                            _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
+                            await _context.SaveChangesAsync();
+                        }
+
+                        _context.Database.CommitTransaction();
+                        paymentResponse.IsApproved = true;
+
+                        try
+                        {
+                            var fixtureProduct = await _context.FixtureProducts
+                                .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                                .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                                .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.OrderDetails.FirstOrDefault().FixtureProductID);
+                            var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
+
+                            await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), fixtureProduct.Fixture);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message, "Payment Email");
+                        }
                     }
 
-                    _context.Database.CommitTransaction();
-                    paymentResponse.IsApproved = true;
+                    paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
+                    paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
 
-                    try
-                    {
-                        var fixtureProduct = await _context.FixtureProducts
-                            .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                            .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                            .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.FixtureProductID);
-                        var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
-
-                        await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, orderDetail.Qty, fixtureProduct.Fixture);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.Message, "Payment Email");
-                    }
+                    return paymentResponse;
                 }
-
-                paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
-                paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
-
-                return paymentResponse;
             }
             catch (Exception ex)
             {
