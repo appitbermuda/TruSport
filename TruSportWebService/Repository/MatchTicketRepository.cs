@@ -296,7 +296,7 @@ namespace OnTrackWebService.Repository
                     _context.MatchTickets.Update(matchTicket);
                     await _context.SaveChangesAsync();
 
-                    var fixtureProduct = await _context.FixtureProducts.FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.FixtureProductID);
+                    var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.FixtureProductID);
 
                     ticketResponse.Response = "Validated Successfully!";
                     ticketResponse.Ticket = fixtureProduct.Product.Age + " Ticket";
