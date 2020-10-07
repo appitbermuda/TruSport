@@ -87,27 +87,13 @@
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start"/>
-                                <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding OrderDetail.FixtureProduct.Fixture.HomeTeam.Name}"
+                                <StackLayout>
+                                <Label Text="{Binding Fixture}"
                                        FontSize="Micro"
                                        TextColor="Black"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start">
-                                </Label>
-                                    <Label Text="v"
-                                       FontSize="Micro"
-                                       TextColor="Black"
-                                       LineBreakMode="WordWrap"
-                                       VerticalOptions="Center"
-                                       HorizontalTextAlignment="Center">
-                                </Label>
-                                    <Label Text="{Binding OrderDetail.FixtureProduct.Fixture.AwayTeam.Name}"
-                                       FontSize="Micro"
-                                       TextColor="Black"
-                                       LineBreakMode="WordWrap"
-                                       VerticalOptions="Center"
-                                       HorizontalTextAlignment="End">
                                 </Label>
                                 </StackLayout>
                             </StackLayout>
@@ -120,7 +106,7 @@
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End"/>
-                                <Label Text="{Binding OrderDetail.FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd h:mm tt}'}"
+                                <Label Text="{Binding OrderDetails[0].FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd h:mm tt}'}"
                                        FontSize="Micro"
                                        TextColor="Black"
                                        LineBreakMode="WordWrap"

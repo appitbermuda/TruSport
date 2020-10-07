@@ -131,24 +131,24 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        // GET api/values/5
-        [HttpGet]
-        [Route("Validate")]
-        public async Task<IActionResult> ValidateCustomer(string orderID)
-        {
-            try
-            {
-                bool validated = await _orderRepository.ValidateCustomer(orderID);
+        //// GET api/values/5
+        //[HttpGet]
+        //[Route("Validate")]
+        //public async Task<IActionResult> ValidateCustomer(string orderID)
+        //{
+        //    try
+        //    {
+        //        bool validated = await _orderRepository.ValidateCustomer(orderID);
 
-               return Ok(validated);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message, "Order");
-            }
+        //       return Ok(validated);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message, "Order");
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // GET api/values/5
         [HttpGet]

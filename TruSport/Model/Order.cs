@@ -13,14 +13,18 @@ namespace TruSport.Model
         public decimal Discount { get; set; }
         public decimal Total { get; set; }
         public string Authorisation { get; set; }
-        public bool Validated { get; set; }
-        public DateTime? ValidatedTime { get; set; }
 
         [Ignore]
         public Customer Customer { get; set; }
 
         [Ignore]
-        public virtual OrderDetail OrderDetail { get; set; }
+        public DateTime FixtureDate { get; set; }
+
+        [Ignore]
+        public string Fixture { get; set; }
+
+        [Ignore]
+        public virtual List<OrderDetail> OrderDetails { get; set; }
     }
 
     public class CustomerOrder

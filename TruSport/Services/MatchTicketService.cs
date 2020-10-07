@@ -15,18 +15,18 @@ namespace TruSport.Services
         {
         }
 
-        public async Task<List<FixtureProduct>> GetMatchTickets()
+        public async Task<List<MatchTicket>> GetMatchTickets()
         {
             try
             {
-                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+                string accessToken = await SecureStorage.GetAsync("Token");
 
-                //if (accessToken != null)
-                //{
+                if (accessToken != null)
+                {
                     var client = new RestClient(Constants.APIEndpoint);
-                    var request = new RestRequest("MatchTicket/All", Method.GET);
+                    var request = new RestRequest("MatchTicket/Customer", Method.GET);
                     //request.AddParameter("teamID", teamID);
-                    //request.AddHeader("authorization", "Bearer " + accessToken);
+                    request.AddHeader("authorization", "Bearer " + accessToken);
 
                     // We execute the request and capture the response
                     // in a variable called `response`
@@ -34,11 +34,44 @@ namespace TruSport.Services
 
                     if (response.IsSuccessful)
                     {
-                        List<FixtureProduct> matchTickets = JsonConvert.DeserializeObject<List<FixtureProduct>>(response.Content);
+                        List<MatchTicket> matchTickets = JsonConvert.DeserializeObject<List<MatchTicket>>(response.Content);
 
                         return matchTickets;
                     }
-                //}
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+            return null;
+        }
+
+        public async Task<List<MatchTicket>> GetTodayMatchTickets(string teamID)
+        {
+            try
+            {
+                string accessToken = await SecureStorage.GetAsync("Token");
+
+                if (accessToken != null)
+                {
+                    var client = new RestClient(Constants.APIEndpoint);
+                    var request = new RestRequest("MatchTicket/Today", Method.GET);
+                    request.AddParameter("teamID", teamID);
+                    request.AddHeader("authorization", "Bearer " + accessToken);
+
+                    // We execute the request and capture the response
+                    // in a variable called `response`
+                    IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        List<MatchTicket> matchTickets = JsonConvert.DeserializeObject<List<MatchTicket>>(response.Content);
+
+                        return matchTickets;
+                    }
+                }
 
                 //return null;
 
@@ -50,30 +83,30 @@ namespace TruSport.Services
             return null;
         }
 
-        public async Task<List<FixtureProduct>> GetFixtureMatchTickets(string fixtureID)
+        public async Task<List<MatchTicket>> GetFixtureMatchTickets(string fixtureID)
         {
             try
             {
-                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+                string accessToken = await SecureStorage.GetAsync("Token");
 
-                //if (accessToken != null)
-                //{
-                var client = new RestClient(Constants.APIEndpoint);
-                var request = new RestRequest("MatchTicket/Fixture", Method.GET);
-                request.AddParameter("fixtureID", fixtureID);
-                //request.AddHeader("authorization", "Bearer " + accessToken);
-
-                // We execute the request and capture the response
-                // in a variable called `response`
-                IRestResponse response = await client.ExecuteTaskAsync(request);
-
-                if (response.IsSuccessful)
+                if (accessToken != null)
                 {
-                    List<FixtureProduct> matchTickets = JsonConvert.DeserializeObject<List<FixtureProduct>>(response.Content);
+                    var client = new RestClient(Constants.APIEndpoint);
+                    var request = new RestRequest("MatchTicket/Fixture", Method.GET);
+                    request.AddParameter("fixtureID", fixtureID);
+                    request.AddHeader("authorization", "Bearer " + accessToken);
 
-                    return matchTickets;
+                    // We execute the request and capture the response
+                    // in a variable called `response`
+                    IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        List<MatchTicket> matchTickets = JsonConvert.DeserializeObject<List<MatchTicket>>(response.Content);
+
+                        return matchTickets;
+                    }
                 }
-                //}
 
                 //return null;
 
@@ -120,40 +153,5 @@ namespace TruSport.Services
             paymentResponse.IsApproved = false;
             return paymentResponse;
         }
-
-        //public async Task<Player> Get(string ID)
-        //{
-        //    try
-        //    {
-        //        string accessToken = await SecureStorage.GetAsync("oauth_token");
-
-        //        if (accessToken != null)
-        //        {
-        //            var client = new RestClient(Constants.APIEndpoint);
-        //            var request = new RestRequest("Player/Get", Method.GET);
-        //            request.AddHeader("authorization", "Bearer " + accessToken);
-        //            request.AddParameter("id", ID);
-
-        //            // We execute the request and capture the response
-        //            // in a variable called `response`
-        //            IRestResponse response = await client.ExecuteTaskAsync(request);
-
-        //            if (response.IsSuccessful)
-        //            {
-        //                Player stop = JsonConvert.DeserializeObject<Player>(response.Content);
-
-        //                return stop;
-        //            }
-        //        }
-
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message, "Player");
-
-        //        return null;
-        //    }
-        //}
     }
 }

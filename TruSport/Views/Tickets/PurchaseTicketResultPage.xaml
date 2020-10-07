@@ -12,6 +12,7 @@
             <Grid VerticalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="70"/>
+                    <!--<RowDefinition Height="Auto"/>-->
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <!--<StackLayout BackgroundColor="{DynamicResource navBackgroundColor}" >
@@ -29,6 +30,20 @@
                         <!--<Label FontSize="30" Text="{Binding Response.IsApproved, Converter={StaticResource paymentResponseTextConverter}}"  TextColor="{Binding Response.IsApproved, Converter={StaticResource paymentResponseColorConverter}}"/>-->
                     </StackLayout>
                 </StackLayout>
+                <!--<StackLayout Grid.Row="2" Padding="20,20,20,0">
+                    <StackLayout BindableLayout.ItemsSource="{Binding Response.Tickets}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalOptions="FillAndExpand">
+                                    <StackLayout HorizontalOptions="CenterAndExpand">
+                                        <Label Text="Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="Start"/>
+                                        <Label Text="{Binding .}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                                    </StackLayout>
+                                        </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                </StackLayout>-->
             </Grid>
         </StackLayout>
     </ContentPage.Content>

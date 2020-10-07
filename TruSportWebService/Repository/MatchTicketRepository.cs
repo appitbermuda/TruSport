@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Data;
@@ -11,7 +13,7 @@ using OnTrackWebService.Models.Shop;
 
 namespace OnTrackWebService.Repository
 {
-    public class MatchTicketRepository : IOnTrackRepository<FixtureProduct>
+    public class MatchTicketRepository : IOnTrackRepository<MatchTicket>
     {
         OnTrackContext _context;
         EmailRepository emailRepository;
@@ -26,230 +28,255 @@ namespace OnTrackWebService.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<FixtureProduct> Get(string FixtureID)
+        public async Task<MatchTicket> Get(string ID)
         {
-            FixtureProduct fixtureProduct = new FixtureProduct();
+            MatchTicket matchTicket = new MatchTicket();
 
             try
             {
-                fixtureProduct = await _context.FixtureProducts
-                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Field)
-                    .Include(e => e.Fixture).ThenInclude(e => e.League)
-                    .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Season)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .FirstOrDefaultAsync(e => e.Fixture.ID == FixtureID);
+                matchTicket = await _context.MatchTickets
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.League)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.MatchType)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
+                    .FirstOrDefaultAsync(e => e.ID == ID);
 
-                //List<Product> products = await _context.Products
-                //                        .Include(e => e.ProductType).ThenInclude(e => e.Sport)
-                //                        .Include(e => e.ProductType).ThenInclude(e => e.MatchType)
-                //                        .Include(e => e.Team).ToListAsync();
+            }
+            catch (Exception ex)
+            { }
 
-                //Fixture fixture = await _context.Fixtures
-                //                        .Include(e => e.HomeTeam)
-                //                        .Include(e => e.AwayTeam)
-                //                        .Include(e => e.Field)
-                //                        .Include(e => e.League)
-                //                        .Include(e => e.MatchType)
-                //                        .Include(e => e.Season)
-                //                        .Include(e => e.Sport).FirstOrDefaultAsync(e => e.ID == FixtureID && e.Season.IsCurrent && e.Date == DateTime.Now.Date.AddHours(-4));
-                //.Include(e => e.Sport).Where(e => products.Any(p => (p.TeamID == e.HomeTeamID && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null)) && e.Season.IsCurrent && e.Date < DateTime.Now.Date.AddDays(3) && e.Date > DateTime.Now.Date.AddDays(-1)).ToListAsync();
+            return matchTicket;
+        }
 
-                //if (fixture != null)
+        public async Task<IEnumerable<MatchTicket>> GetAll()
+        {
+            List<MatchTicket> matchTickets = new List<MatchTicket>();
+
+            try
+            {
+                var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
+                var fixtureProducts = await _context.FixtureProducts
+                    .Include(e => e.Fixture)
+                    .Include(e => e.Product).ToListAsync();
+
+                var matchTicketsList = await _context.MatchTickets
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.League)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.MatchType)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
+                    .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1))
+                    .ToListAsync();
+
+
+                foreach(var matchTicket in matchTicketsList)
+                {
+                    var fixtureProduct = fixtureProducts.FirstOrDefault(e => e.FixtureID == matchTicket.FixtureProduct.FixtureID);
+                    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
+
+                    if(DateTime.Now.Date > matchTicket.FixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                        matchTickets.Add(matchTicket);
+                }
+            }
+            catch(Exception ex)
+            { }
+
+            return matchTickets;
+        }
+
+        public async Task<IEnumerable<MatchTicket>> GetCustomerTickets(ClaimsPrincipal user)
+        {
+            List<MatchTicket> matchTickets = new List<MatchTicket>();
+
+            try
+            {
+                ////Get the current claims principal
+                //var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+                // Get the claims values
+                var email = user.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                //var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
+                //var fixtureProducts = await _context.FixtureProducts
+                //    .Include(e => e.Fixture)
+                //    .Include(e => e.Product).ToListAsync();
+
+                matchTickets = await _context.MatchTickets
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && e.Order.Customer.Email == email)
+                    .ToListAsync();
+
+                matchTickets.ForEach(e => e.CustomerMatchTicket = new CustomerMatchTicket
+                {
+                    FixtureProductID = e.FixtureProductID,
+                    ID = e.ID,
+                    OrderID = e.OrderID
+                });
+
+                //foreach (var matchTicket in matchTickets)
                 //{
-                //    var product = products.FirstOrDefault(p => (p.TeamID == fixture.HomeTeamID && p.ProductType.MatchTypeID == fixture.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == fixture.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null));
+                //    var fixtureProduct = fixtureProducts.FirstOrDefault(e => e.FixtureID == matchTicket.FixtureID);
+                //    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
 
-                //    if (product != null)
-                //    {
-                //        matchTicket.Fixture = fixture;
-                //        matchTicket.Product = product;
-                //    }
+                //    if (DateTime.Now.Date > matchTicket.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                //        matchTickets.Add(matchTicket);
                 //}
             }
             catch (Exception ex)
             { }
 
-            return fixtureProduct;
+            return matchTickets;
         }
 
-        public async Task<IEnumerable<FixtureProduct>> GetAll()
+        public async Task<IEnumerable<MatchTicket>> Team(string teamID)
         {
-            List<FixtureProduct> fixtureProducts = new List<FixtureProduct>();
-
-            try
-            {
-                var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
-
-                var fixtureProductsList = await _context.FixtureProducts
-                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Field)
-                    .Include(e => e.Fixture).ThenInclude(e => e.League)
-                    .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Season)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => DateTime.Now.Date <= e.Fixture.Date.AddDays(1))
-                    .ToListAsync();
-
-
-                foreach(var fixtureProduct in fixtureProductsList)
-                {
-                    //ticketConfig.Any(t => t.TeamID == e.Product.TeamID && DateTime.Now.Date > e.Fixture.Date.AddDays(-(t.ValidFrom)))
-
-                    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
-
-                    if(DateTime.Now.Date > fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
-                        fixtureProducts.Add(fixtureProduct);
-                }
-                //List<Product> products = await _context.Products
-                //                        .Include(e => e.ProductType).ThenInclude(e => e.Sport)
-                //                        .Include(e => e.ProductType).ThenInclude(e => e.MatchType)
-                //                        .Include(e => e.Inventory)
-                //                        .Include(e => e.Team).ToListAsync();
-
-                //List<Fixture> fixtures = await _context.Fixtures
-                //                        .Include(e => e.HomeTeam)
-                //                        .Include(e => e.AwayTeam)
-                //                        .Include(e => e.Field)
-                //                        .Include(e => e.League)
-                //                        .Include(e => e.MatchType)
-                //                        .Include(e => e.Season)
-                //                        .Include(e => e.Sport).Where(e => e.Season.IsCurrent && e.Date == DateTime.Now.Date).ToListAsync();
-                //.Include(e => e.Sport).Where(e => products.Any(p => (p.TeamID == e.HomeTeamID && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null)) && e.Season.IsCurrent && e.Date == DateTime.Now.Date.AddHours(-4)).ToListAsync();
-                //.Include(e => e.Sport).Where(e => products.Any(p => (p.TeamID == e.HomeTeamID && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null)) && e.Season.IsCurrent && e.Date < DateTime.Now.Date.AddDays(3) && e.Date > DateTime.Now.Date.AddDays(-1)).ToListAsync();
-
-                //foreach (var fixture in fixtures)
-                //{
-                //    var product = products.FirstOrDefault(p => (p.TeamID == fixture.HomeTeamID && p.ProductType.MatchTypeID == fixture.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == fixture.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null));
-
-                //    if (product != null)
-                //    {
-                //        matchTickets.Add(new MatchTicket
-                //        {
-                //            Fixture = fixture,
-                //            Product = product
-                //        });
-                //    }
-                //}
-
-            }
-            catch(Exception ex)
-            { }
-
-            return fixtureProducts;
-        }
-
-        public async Task<IEnumerable<FixtureProduct>> Team(string teamID)
-        {
-            List<FixtureProduct> fixtureProducts = new List<FixtureProduct>();
+            List<MatchTicket> matchTickets = new List<MatchTicket>();
 
             try
             {
                 var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == teamID);
 
-                var fixtureProductsList = await _context.FixtureProducts
-                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Field)
-                    .Include(e => e.Fixture).ThenInclude(e => e.League)
-                    .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Season)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.Product.TeamID == teamID && e.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date).ToListAsync();
+                matchTickets = await _context.MatchTickets
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.Order).ThenInclude(e => e.OrderDetails)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.League)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.MatchType)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
+                    .Where(e => e.FixtureProduct.Product.TeamID == teamID).ToListAsync();
 
-                foreach (var fixtureProduct in fixtureProductsList)
-                {
-                    //ticketConfig.Any(t => t.TeamID == e.Product.TeamID && DateTime.Now.Date > e.Fixture.Date.AddDays(-(t.ValidFrom)))
+                matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+                //.Where(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.FixtureProduct.Fixture.Date).ToListAsync();
 
-                    
-
-                    if (DateTime.Now.Date > fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
-                        fixtureProducts.Add(fixtureProduct);
-                }
-
-                //List<Product> products = await _context.Products
-                //                        .Include(e => e.ProductType).ThenInclude(e => e.Sport)
-                //                        .Include(e => e.ProductType).ThenInclude(e => e.MatchType)
-                //                        .Include(e => e.Inventory)
-                //                        .Include(e => e.Team).Where(e => e.TeamID == teamID).ToListAsync();
-
-                //List<Fixture> fixtures = await _context.Fixtures
-                //                        .Include(e => e.HomeTeam)
-                //                        .Include(e => e.AwayTeam)
-                //                        .Include(e => e.Field)
-                //                        .Include(e => e.League)
-                //                        .Include(e => e.MatchType)
-                //                        .Include(e => e.Season)
-                //                        .Include(e => e.Sport).Where(e => e.Season.IsCurrent && e.Date == DateTime.Now.Date && e.HomeTeamID == teamID).ToListAsync();
-                //.Include(e => e.Sport).Where(e => products.Any(p => (p.TeamID == e.HomeTeamID && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null)) && e.Season.IsCurrent && e.Date == DateTime.Now.Date.AddHours(-4)).ToListAsync();
-                //.Include(e => e.Sport).Where(e => products.Any(p => (p.TeamID == e.HomeTeamID && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null)) && e.Season.IsCurrent && e.Date < DateTime.Now.Date.AddDays(3) && e.Date > DateTime.Now.Date.AddDays(-1)).ToListAsync();
-
-                //foreach (var fixture in fixtures)
+                //foreach (var matchTicket in matchTicketsList)
                 //{
-                //    var product = products.FirstOrDefault(p => (p.TeamID == fixture.HomeTeamID && p.ProductType.MatchTypeID == fixture.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == fixture.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null));
-
-                //    if (product != null)
-                //    {
-                //        matchTickets.Add(new MatchTicket
-                //        {
-                //            Fixture = fixture,
-                //            Product = product
-                //        });
-                //    }
+                //    if (DateTime.Now.Date > matchTicket.FixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                //        matchTickets.Add(matchTicket);
                 //}
-
             }
             catch (Exception ex)
             { }
 
-            return fixtureProducts;
+            return matchTickets;
         }
 
-        public async Task<IEnumerable<FixtureProduct>> Fixture(string fixtureID)
+        public async Task<IEnumerable<MatchTicket>> GetTodayMatchTickets(string teamID)
         {
-            List<FixtureProduct> fixtureProducts = new List<FixtureProduct>();
+            List<MatchTicket> matchTickets = new List<MatchTicket>();
 
             try
             {
-                var fixtureProductsList = await _context.FixtureProducts
-                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Field)
-                    .Include(e => e.Fixture).ThenInclude(e => e.League)
-                    .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Season)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.FixtureID == fixtureID && DateTime.Now.Date <= e.Fixture.Date).ToListAsync();
+                var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == teamID);
 
-                foreach (var fixtureProduct in fixtureProductsList)
+                matchTickets = await _context.MatchTickets
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.Order).ThenInclude(e => e.OrderDetails)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.League)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.MatchType)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
+                    .Where(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date == DateTime.Now.Date).ToListAsync();
+
+                matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+                //foreach (var matchTicket in matchTicketsList)
+                //{
+                //    if (DateTime.Now.Date > matchTicket.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                //        matchTickets.Add(matchTicket);
+                //}
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetTodayMatchTickets");
+            }
+
+            return matchTickets;
+        }
+
+        public async Task<bool> ValidateCustomer(string matchTicketID)
+        {
+            try
+            {
+                var matchTicket = await _context.MatchTickets.FirstOrDefaultAsync(e => e.ID == matchTicketID);
+
+                if (!matchTicket.Validated)
                 {
-                    var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+                    matchTicket.Validated = true;
+                    matchTicket.ValidatedTime = DateTime.Now.ToUniversalTime();
 
-                    if (DateTime.Now.Date > fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
-                        fixtureProducts.Add(fixtureProduct);
+                    _context.MatchTickets.Update(matchTicket);
+                    await _context.SaveChangesAsync();
+
+                    return true;
                 }
             }
             catch (Exception ex)
             { }
 
-            return fixtureProducts;
+            return false;
         }
 
-        public async Task<TicketResponse> Scan(CustomerOrder customerOrder)
+        public async Task<IEnumerable<MatchTicket>> Fixture(string fixtureID)
+        {
+            List<MatchTicket> matchTickets = new List<MatchTicket>();
+
+            try
+            {
+                var fixtureProducts = await _context.FixtureProducts
+                       .Include(e => e.Fixture)
+                       .Include(e => e.Product).ToListAsync();
+
+                var matchTicketsList = await _context.MatchTickets
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.League)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.MatchType)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
+                    .Where(e => e.FixtureProduct.FixtureID == fixtureID && DateTime.Now.Date <= e.FixtureProduct.Fixture.Date).ToListAsync();
+
+                foreach (var matchTicket in matchTicketsList)
+                {
+                    var fixtureProduct = fixtureProducts.FirstOrDefault(e => e.ID == matchTicket.FixtureProductID);
+                    var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+
+                    if (DateTime.Now.Date > matchTicket.FixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                        matchTickets.Add(matchTicket);
+                }
+            }
+            catch (Exception ex)
+            { }
+
+            return matchTickets;
+        }
+
+        public async Task<TicketResponse> Scan(MatchTicket scannedMatchTicket)
         {
             TicketResponse ticketResponse = new TicketResponse();
 
@@ -257,25 +284,22 @@ namespace OnTrackWebService.Repository
             {
                 List<string> tickets = new List<string>();
 
-                var fixtureProducts = await _context.FixtureProducts
-                    .Include(e => e.Product)
-                    .Where(e => e.Product.TeamID == customerOrder.ScannedTeamID)
-                    .ToListAsync();
+                var matchTicket = await _context.MatchTickets
+                    .Include(e => e.Order)
+                    .FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.ID && !e.Validated);
 
-                var order = await _context.Orders
-                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                    .FirstOrDefaultAsync(e => e.ID == customerOrder.OrderID && !e.Validated);
-
-
-                if (order != null && fixtureProducts.Any(e => order.OrderDetails.Any(d => e.ID == d.FixtureProductID)))
+                if (matchTicket != null)
                 {
-                    order.Validated = true;
-                    order.ValidatedTime = DateTime.Now.ToUniversalTime();
-                    _context.Orders.Update(order);
+                    matchTicket.Validated = true;
+                    matchTicket.ValidatedTime = DateTime.Now.ToUniversalTime();
+
+                    _context.MatchTickets.Update(matchTicket);
                     await _context.SaveChangesAsync();
 
+                    var fixtureProduct = await _context.FixtureProducts.FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.FixtureProductID);
+
                     ticketResponse.Response = "Validated Successfully!";
-                    ticketResponse.Tickets = tickets;
+                    ticketResponse.Ticket = fixtureProduct.Product.Age + " Ticket";
                     ticketResponse.IsValidated = true;
                     
                     return ticketResponse;
@@ -295,65 +319,38 @@ namespace OnTrackWebService.Repository
             return ticketResponse;
         }
 
-        public async Task<FixtureProduct> GetTodayByTeam(string teamID)
-        {
-            FixtureProduct fixtureProduct = new FixtureProduct();
+        //public async Task<MatchTicket> GetTodayByTeam(string teamID)
+        //{
+        //    MatchTicket matchTicket = new MatchTicket();
 
-            try
-            {
-                var ticketConfig = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == teamID);
+        //    try
+        //    {
+        //        var fixtureProduct = await _context.FixtureProducts
+        //               .Include(e => e.Fixture)
+        //               .Include(e => e.Product)
+        //               .FirstOrDefaultAsync(e => e.Product.TeamID == teamID);
 
-                fixtureProduct = await _context.FixtureProducts
-                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Field)
-                    .Include(e => e.Fixture).ThenInclude(e => e.League)
-                    .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Season)
-                    .Include(e => e.Fixture).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
-                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
-                    .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.Fixture.Date.AddDays(-(ticketConfig.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
-                //.FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
+        //        var ticketConfig = await _context.TicketConfigurations
+        //            .FirstOrDefaultAsync(e => e.TeamID == teamID);
 
+        //        matchTicket = await _context.MatchTickets
+        //            .Include(e => e.Order).ThenInclude(e => e.Customer)
+        //            .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+        //            .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+        //            .Include(e => e.Fixture).ThenInclude(e => e.Field)
+        //            .Include(e => e.Fixture).ThenInclude(e => e.League)
+        //            .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
+        //            .Include(e => e.Fixture).ThenInclude(e => e.Season)
+        //            .Include(e => e.Fixture).ThenInclude(e => e.Sport)
+        //            .FirstOrDefaultAsync(e => e.FixtureID == fixtureProduct.FixtureID && e.Fixture.Date.AddDays(-(ticketConfig.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
+        //        //.FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
 
-                //Product product = await _context.Products
-                //                        .Include(e => e.ProductType).ThenInclude(e => e.Sport)
-                //                        .Include(e => e.ProductType).ThenInclude(e => e.MatchType)
-                //                        .Include(e => e.Inventory)
-                //                        .Include(e => e.Team).FirstOrDefaultAsync(e => e.TeamID == teamID);
+        //    }
+        //    catch (Exception ex)
+        //    { }
 
-                //Fixture fixture = await _context.Fixtures
-                //                        .Include(e => e.HomeTeam)
-                //                        .Include(e => e.AwayTeam)
-                //                        .Include(e => e.Field)
-                //                        .Include(e => e.League)
-                //                        .Include(e => e.MatchType)
-                //                        .Include(e => e.Season)
-                //                        .Include(e => e.Sport).FirstOrDefaultAsync(e => e.Season.IsCurrent && e.Date == DateTime.Now.Date && e.HomeTeamID == teamID);
-                //.Include(e => e.Sport).Where(e => products.Any(p => (p.TeamID == e.HomeTeamID && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null)) && e.Season.IsCurrent && e.Date == DateTime.Now.Date.AddHours(-4)).ToListAsync();
-                //.Include(e => e.Sport).Where(e => products.Any(p => (p.TeamID == e.HomeTeamID && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == e.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null)) && e.Season.IsCurrent && e.Date < DateTime.Now.Date.AddDays(3) && e.Date > DateTime.Now.Date.AddDays(-1)).ToListAsync();
-
-                //var product = product.TeamID == fixture.HomeTeamID && p.ProductType.MatchTypeID == fixture.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == fixture.MatchTypeID) || (p.TeamID == null && p.ProductType.MatchTypeID == null));
-
-                //if (product != null && fixture != null)
-                //{
-                //    matchTicket = new MatchTicket
-                //    {
-                //        Fixture = fixture,
-                //        Product = product
-                //    };
-                //}
-
-
-            }
-            catch (Exception ex)
-            { }
-
-            return fixtureProduct;
-        }
+        //    return matchTicket;
+        //}
 
         public async Task<PaymentResponse> Purchase(PaymentAuthorize paymentAuthorization)
         {
@@ -367,10 +364,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product)
                     .FirstOrDefaultAsync(e => e.FixtureID == paymentAuthorization.FixtureID);
 
-                var orders = await _context.OrderDetails
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .Where(e => e.FixtureProduct.FixtureID == paymentAuthorization.FixtureID)
+                var matchTicketsList = await _context.MatchTickets
                     .ToListAsync();
 
                 var teamID = fixtureProduct.Product.TeamID;
@@ -378,9 +372,9 @@ namespace OnTrackWebService.Repository
                 var ticketConfiguration = await _context.TicketConfigurations
                     .FirstOrDefaultAsync(e => e.TeamID == teamID);
 
-                var orderCount = orders.Sum(e => e.Qty);
+                var ticketCount = matchTicketsList.Count();
 
-                if (orderCount < ticketConfiguration.Stock)
+                if (ticketCount < ticketConfiguration.Stock && paymentAuthorization.OrderDetails.Sum(e => e.Qty) <= ticketConfiguration.Stock)
                 {
                     var processingFee = await _context.Settings.FirstOrDefaultAsync(e => e.ID == Constants.SETTING_PROCESSING_FEE_ID);
 
@@ -407,57 +401,75 @@ namespace OnTrackWebService.Repository
                         CustomerID = paymentAuthorization.CustomerID,
                         Date = DateTime.Now,
                         Discount = 0.0m,
-                        Validated = false, 
                     };
 
                     _context.Orders.Add(order);
                     await _context.SaveChangesAsync();
 
-                    //var response = await request.Payment(paymentAuthorization);
+                    var response = await request.Payment(paymentAuthorization);
 
-                    //if (response.CreditCardTransactionResults.ResponseCode == "1")
-                    //{
-                    //    _context.Database.BeginTransaction();
+                    if (response.CreditCardTransactionResults.ResponseCode == "1")
+                    {
+                        _context.Database.BeginTransaction();
 
-                    //    var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
-                    //    updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;
-                    //    updateOrder.OrderNumber = response.OrderNumber;
+                        var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
+                        updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;
+                        updateOrder.OrderNumber = response.OrderNumber;
 
-                    //    _context.Orders.Update(updateOrder);
-                    //    await _context.SaveChangesAsync();
+                        _context.Orders.Update(updateOrder);
+                        await _context.SaveChangesAsync();
 
-                    //    _context.OrderDetails.AddRange(paymentAuthorization.OrderDetails);
-                    //    await _context.SaveChangesAsync();
+                        if (paymentAuthorization.OrderDetails != null && paymentAuthorization.OrderDetails.Count > 0)
+                        {
+                            List<MatchTicket> matchTickets = new List<MatchTicket>();
+                            foreach(var orderDetail in paymentAuthorization.OrderDetails)
+                            {
+                                for(var i = 0; i < orderDetail.Qty; i++)
+                                {
+                                    matchTickets.Add(new MatchTicket
+                                    {
+                                        FixtureProductID = orderDetail.FixtureProductID,
+                                        OrderID = order.ID,
+                                        Validated = false
+                                    });
+                                }
+                            }
 
-                    //    if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
-                    //    {
-                    //        paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
+                            _context.MatchTickets.AddRange(matchTickets);
+                            await _context.SaveChangesAsync();
 
-                    //        _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
-                    //        await _context.SaveChangesAsync();
-                    //    }
+                        }
 
-                    //    _context.Database.CommitTransaction();
-                    //    paymentResponse.IsApproved = true;
+                        if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
+                        {
+                            paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
 
-                    //    try
-                    //    {
-                    //        var fixtureProduct = await _context.FixtureProducts
-                    //            .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                    //            .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    //            .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.OrderDetails.FirstOrDefault().FixtureProductID);
-                    //        var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
+                            _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
+                            await _context.SaveChangesAsync();
+                        }
 
-                    //        await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), fixtureProduct.Fixture);
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        Debug.WriteLine(ex.Message, "Payment Email");
-                    //    }
-                    //}
+                        _context.Database.CommitTransaction();
+                        paymentResponse.IsApproved = true;
 
-                    //paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
-                    //paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
+                        try
+                        {
+                            var fixture = await _context.Fixtures
+                                .Include(e => e.HomeTeam)
+                                .Include(e => e.AwayTeam)
+                                .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.FixtureID);
+
+                            var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
+                            await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), fixture);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message, "Payment Email");
+                        }
+                    }
+
+                    paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
+                    paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
 
                     return paymentResponse;
                 }
@@ -473,11 +485,11 @@ namespace OnTrackWebService.Repository
             return paymentResponse;
         }
 
-        public async Task Insert(FixtureProduct item)
+        public async Task Insert(MatchTicket item)
         {
             try
             {
-                _context.FixtureProducts.Add(item);
+                _context.MatchTickets.Add(item);
 
                 await _context.SaveChangesAsync();
             }
@@ -487,11 +499,11 @@ namespace OnTrackWebService.Repository
             }
         }
 
-        public async Task Update(FixtureProduct item)
+        public async Task Update(MatchTicket item)
         {
             try
             {
-                _context.FixtureProducts.Update(item);
+                _context.MatchTickets.Update(item);
 
                 await _context.SaveChangesAsync();
             }

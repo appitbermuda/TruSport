@@ -6,7 +6,7 @@ namespace OnTrackWebService.Models
 {
     public class TicketResponse
     {
-        public List<string> Tickets { get; set; }
+        public string Ticket { get; set; }
         public string Response { get; set; }
         public bool IsValidated { get; set; }
     }

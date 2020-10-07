@@ -39,48 +39,13 @@
                             <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="1" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <!--<ContentView Grid.ColumnSpan="5" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />-->
-                        <!--<StackLayout Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3" Spacing="5" Padding="5,10"
-                                 VerticalOptions="EndAndExpand"
-                                     HorizontalOptions="StartAndExpand"
-                                     Orientation="Horizontal">
-                            <StackLayout Padding="2">
-                                <Label x:Name="FieldIcon"
-                                   FontSize="Small"
-                                       Text="&#xe901;"
-                                       VerticalOptions="Center"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                    FontFamily="{StaticResource fontFamily}"/>
-                                </StackLayout>
-                            <StackLayout>
-                                <Label x:Name="FieldName"
-                                   FontSize="Small"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                    Text="{Binding FieldName}"/>
-                                </StackLayout>
-                        </StackLayout>-->
-                        <!--<StackLayout Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2"
-                                 VerticalOptions="Center"
-                                     HorizontalOptions="EndAndExpand"
-                                     Orientation="Horizontal"
-                                 Padding="5,10">
-                                <Label x:Name="TimeIcon"
-                                   FontSize="Small"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="&#xe904;"
-                                       FontFamily="{StaticResource fontFamily}"/>
-                            <Label x:Name="TimeLabel"
-                                   FontSize="Small"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                   VerticalTextAlignment="End"
-                                        Text="{Binding FixtureTime, StringFormat='{0:MMM dd - h:mm tt}'}"/>
-                        </StackLayout>-->
                     <StackLayout Grid.Row="0" Grid.Column="0" Padding="5" HorizontalOptions="Center" VerticalOptions="Center">
                             <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
-                        <ff:CachedImage Source="{Binding HomeTeamLogo, Converter={StaticResource imageConverter}}"
+                        <ff:CachedImage Source="{Binding FixtureProduct.Fixture.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontrack.png"
                                         LoadingPlaceholder="ontrack.png"
                                                         CacheDuration="50"
@@ -96,7 +61,7 @@
                     </StackLayout>
                     <StackLayout Grid.Row="0" Grid.Column="4" Padding="5" HorizontalOptions="Center" VerticalOptions="Center">
                              <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
-                        <ff:CachedImage Source="{Binding AwayTeamLogo, Converter={StaticResource imageConverter}}"
+                        <ff:CachedImage Source="{Binding FixtureProduct.Fixture.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontrack.png"
                                         LoadingPlaceholder="ontrack.png"
                                                         CacheDuration="50"
@@ -135,7 +100,7 @@
                                    FontSize="Micro"
                                    FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding HomeTeamName}">
+                                        Text="{Binding FixtureProduct.Fixture.HomeTeam.Name}">
                                 <Label.FontSize>
                                     <OnPlatform x:TypeArguments="x:Double">  
                         <OnPlatform.Android> 
@@ -159,7 +124,7 @@
                                    FontSize="Micro"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
-                                        Text="{Binding AwayTeamName}">
+                                        Text="{Binding FixtureProduct.Fixture.AwayTeam.Name}">
                                 <Label.FontSize>
                                     <OnPlatform x:TypeArguments="x:Double">  
                         <OnPlatform.Android> 
@@ -188,7 +153,7 @@
                                     <Label x:Name="FieldName"
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding FieldName}"/>
+                                        Text="{Binding FixtureProduct.Fixture.Field.Name}"/>
                                     </StackLayout>
                             </StackLayout>
                             <StackLayout Grid.Row="2" Grid.ColumnSpan="5"
@@ -205,16 +170,19 @@
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding FixtureTime, StringFormat='{0:MMM dd hh:mm tt}'}"/>
-                                <!--<Label x:Name="PostponedLabel"
-                                       IsVisible="{Binding FixtureProduct.Fixture.IsPostponedOrCancelled}"
-                                       FontSize="Small"
+                                            Text="{Binding FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd - hh:mm tt}'}"/>
+                                </StackLayout>
+                    <StackLayout Grid.Row="3" Grid.ColumnSpan="5"
+                                     VerticalOptions="Center"
+                                         HorizontalOptions="CenterAndExpand"
+                                     Padding="5,10">
+                                <Label x:Name="AgeLabel"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding FixtureProduct.Fixture.PostOrCanc}"/>-->
-                            </StackLayout>
-                    <BoxView HeightRequest="1" BackgroundColor="{DynamicResource frameBackgroundColor}" Grid.ColumnSpan="5" Grid.Row="3" Opacity="0.3"/>
-                    <StackLayout Grid.Row="4" Grid.ColumnSpan="5" IsVisible="{Binding IsValidated, Converter={StaticResource inverseBooleanConverter}}">
+                                            Text="{Binding FixtureProduct.Product.Age, StringFormat='{0} Ticket'}" FontAttributes="Bold" FontSize="25"/>
+                                </StackLayout>
+                    <BoxView HeightRequest="1" BackgroundColor="{DynamicResource frameBackgroundColor}" Grid.ColumnSpan="5" Grid.Row="4" Opacity="0.3"/>
+                    <StackLayout Grid.Row="5" Grid.ColumnSpan="5" IsVisible="{Binding Validated, Converter={StaticResource inverseBooleanConverter}}">
                         <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                             <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsClippedToBounds="True" HasShadow="False">
                         <StackLayout>
@@ -251,7 +219,7 @@
                 <!--<RowDefinition Height="50"/>-->
             </Grid.RowDefinitions>
             <listView:SfListView x:Name="MyTicketsList"
-                                    ItemsSource="{Binding OrderCollection}"
+                                    ItemsSource="{Binding MatchTicketCollection}"
                                     ItemTemplate="{StaticResource MatchTicketItemTemplate}"
                                  SelectionMode="None"
                                     SelectionChangedCommand="{Binding TicketSelectedCommand}"

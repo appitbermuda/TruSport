@@ -39,6 +39,7 @@ namespace TruSport.ViewModel.Shop
         private decimal _processingFeeAmount;
         INavigation Navigation;
 
+        FixtureProductService fixtureProductService;
         MatchTicketService matchTicketService;
         SettingService settingService;
         InventoryService inventoryService;
@@ -46,6 +47,7 @@ namespace TruSport.ViewModel.Shop
         public PurchaseTicketPageViewModel(INavigation navigation, FixtureProduct fixtureProduct)
         {
             Navigation = navigation;
+            fixtureProductService = new FixtureProductService();
             matchTicketService = new MatchTicketService();
             settingService = new SettingService();
             inventoryService = new InventoryService();
@@ -219,7 +221,7 @@ namespace TruSport.ViewModel.Shop
 
                 if (Customer != null)
                 {
-                    var fixtureProducts = await matchTicketService.GetFixtureMatchTickets(fixtureProduct.FixtureID);
+                    var fixtureProducts = await fixtureProductService.GetFixtureFixtureProducts(fixtureProduct.FixtureID);
 
                     CreditCard = new CreditCard();
                     FixtureProduct = fixtureProduct;

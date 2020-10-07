@@ -31,6 +31,7 @@ namespace TruSport.Data
             database.CreateTableAsync<Order>().Wait();
             database.CreateTableAsync<League>().Wait();
             database.CreateTableAsync<Match>().Wait();
+            database.CreateTableAsync<MatchTicket>().Wait();
             database.CreateTableAsync<MatchType>().Wait();
             database.CreateTableAsync<Player>().Wait();
             database.CreateTableAsync<Sport>().Wait();
@@ -158,6 +159,22 @@ namespace TruSport.Data
             }
 
             return orders;
+        }
+
+        public async Task<List<MatchTicket>> GetMatchDayTickets(string email)
+        {
+            List<MatchTicket> matchTickets = new List<MatchTicket>();
+            try
+            {
+                var customer = await GetCustomerByIDAsync(email);
+                //orders = await database.Table<CustomerOrder>().Where(e => e.CustomerID == customer.ID).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetMatchDayOrder");
+            }
+
+            return matchTickets;
         }
 
         public async Task<List<Order>> GetOrderHistory(string email)

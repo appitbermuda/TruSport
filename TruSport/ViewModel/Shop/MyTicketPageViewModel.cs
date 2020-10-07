@@ -13,6 +13,7 @@ namespace TruSport.ViewModel.Shop
 {
     public class MyTicketPageViewModel : BaseViewModel
     {
+        private ObservableCollection<MatchTicket> _matchTicketCollection;
         private ObservableCollection<CustomerOrder> _orderCollection;
         private FixtureProduct _fixtureProduct;
         private PaymentAuthorize _paymentAuthorize;
@@ -20,13 +21,16 @@ namespace TruSport.ViewModel.Shop
         private bool _isActivityIndicatorVisible;
 
         OrderService orderService;
+        MatchTicketService matchTicketService;
 
         INavigation Navigation;
 
         public MyTicketPageViewModel(INavigation navigation)
         {
+            matchTicketService = new MatchTicketService();
             orderService = new OrderService();
             OrderCollection = new ObservableCollection<CustomerOrder>();
+            MatchTicketCollection = new ObservableCollection<MatchTicket>();
 
             GenerateSource();
 
@@ -35,6 +39,12 @@ namespace TruSport.ViewModel.Shop
             {
                 GenerateSource();
             });
+        }
+
+        public ObservableCollection<MatchTicket> MatchTicketCollection
+        {
+            get { return _matchTicketCollection; }
+            set { Set(ref _matchTicketCollection, value); }
         }
 
         public ObservableCollection<CustomerOrder> OrderCollection
@@ -67,31 +77,41 @@ namespace TruSport.ViewModel.Shop
                 {
 
                     var email = await SecureStorage.GetAsync("Email");
-                    var matchTickets = await orderService.GetMatchDayOrder(email);
+                    var matchTickets = await matchTicketService.GetMatchTickets();
+                    //var matchTickets = await orderService.GetMatchDayOrder(email);
 
                     if (matchTickets != null)
                     {
-                        matchTickets.ForEach(e => e.CustomerTicket = JsonConvert.SerializeObject(e));
-                        OrderCollection = new ObservableCollection<CustomerOrder>(matchTickets);
+                        matchTickets.ForEach(e => e.CustomerTicket = JsonConvert.SerializeObject(e.CustomerMatchTicket));
+                        //OrderCollection = new ObservableCollection<CustomerOrder>(matchTickets);
+                        MatchTicketCollection = new ObservableCollection<MatchTicket>(matchTickets);
                     }
 
-                    if (OrderCollection.Count == 0)
+                    if (MatchTicketCollection.Count == 0)
                         NoTickets = true;
                 }
                 else
                 {
-                    var email = await SecureStorage.GetAsync("Email");
-                    var matchTickets = await App.Database.GetMatchDayOrder(email);
-
-                    if (matchTickets != null)
-                    {
-                        matchTickets.ForEach(e => e.CustomerTicket = JsonConvert.SerializeObject(e));
-                        OrderCollection = new ObservableCollection<CustomerOrder>(matchTickets);
-                    }
-
-                    if (OrderCollection.Count == 0)
-                        NoTickets = true;
+                    await App.Current.MainPage.DisplayAlert("Not Network", "Please check your network connection and come back.", "Okay");
                 }
+                //else
+                //{
+                //    var email = await SecureStorage.GetAsync("Email");
+                //    var matchTickets = await App.Database.GetMatchDayOrder(email);
+                //    var matchTickets = await App.Database.GetMatchTickets();
+
+                //    if (matchTickets != null)
+                //    {
+                //        matchTickets.ForEach(e => e.CustomerTicket = JsonConvert.SerializeObject(e));
+                //        //OrderCollection = new ObservableCollection<CustomerOrder>(matchTickets);
+                //        MatchTicketCollection = new ObservableCollection<MatchTicket>(matchTickets);
+                //    }
+
+                //    //if (OrderCollection.Count == 0)
+                //    //    NoTickets = true;
+                //    if (MatchTicketCollection.Count == 0)
+                //        NoTickets = true;
+                //}
             }
             catch (Exception ex)
             {

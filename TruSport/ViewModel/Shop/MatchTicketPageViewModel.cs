@@ -19,7 +19,7 @@ namespace TruSport.ViewModel.Shop
         private bool _noTickets;
         private bool _isActivityIndicatorVisible;
 
-        MatchTicketService matchTicketService;
+        FixtureProductService fixtureProductService;
         InventoryService inventoryService;
 
         INavigation Navigation;
@@ -27,7 +27,7 @@ namespace TruSport.ViewModel.Shop
         public MatchTicketPageViewModel(INavigation navigation)
         {
             Navigation = navigation;
-            matchTicketService = new MatchTicketService();
+            fixtureProductService = new FixtureProductService();
             inventoryService = new InventoryService();
             MatchTicketCollection = new ObservableCollection<FixtureProduct>();
 
@@ -74,7 +74,7 @@ namespace TruSport.ViewModel.Shop
                 NoTickets = false;
                 IsActivityIndicatorVisible = true;
 
-                var matchTickets = await matchTicketService.GetMatchTickets();
+                var matchTickets = await fixtureProductService.GetFixtureProducts();
                 MatchTicketCollection = new ObservableCollection<FixtureProduct>(matchTickets);
 
                 if (MatchTicketCollection.Count == 0)

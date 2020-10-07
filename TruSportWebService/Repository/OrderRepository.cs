@@ -67,19 +67,7 @@ namespace OnTrackWebService.Repository
             List<CustomerOrder> matchDayOrders = new List<CustomerOrder>();
             try
             {
-                //var orders = await _context.Orders
-                //    .Include(e => e.Customer)
-                //    .Where(e => e.Customer.Email == email && e.Date.Date >= DateTime.Now.Date.AddDays(-1))
-                //    .ToListAsync();
 
-                //var orderDetails = await _context.OrderDetails
-                //    .Include(e => e.Order).ThenInclude(e => e.Customer)
-                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
-                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                //    .Where(e => e.Order.Customer.Email == email && e.Order.Date.Date >= DateTime.Now.Date.AddDays(-1)).ToListAsync();
 
                 var orders = await _context.Orders.Include(e => e.Customer)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
@@ -117,35 +105,12 @@ namespace OnTrackWebService.Repository
                                     AwayTeamName = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.AwayTeam.Name,
                                     HomeTeamLogo = fixture.HomeTeam.TeamLogo,
                                     AwayTeamLogo = fixture.AwayTeam.TeamLogo,
-                                    Validated = order.Validated
+                                    //Validated = order.Validated
                                 });
                             }
                         }
                     }
                 }
-
-                //foreach (var orderDetail in orderDetails)
-                //{
-                //    matchDayOrders.Add(new CustomerOrder
-                //    {
-                //        OrderID = orderDetail.OrderID,
-                //        FixtureProductID = orderDetail.FixtureProductID,
-                //        CustomerID = orderDetail.Order.CustomerID,
-                //        OrderNumber = orderDetail.Order.OrderNumber,
-                //        FirstName = orderDetail.Order.Customer.FirstName,
-                //        LastName = orderDetail.Order.Customer.LastName,
-                //        Email = orderDetail.Order.Customer.Email,
-                //        Phone = orderDetail.Order.Customer.Phone,
-                //        FixtureDate = orderDetail.FixtureProduct.Fixture.Date,
-                //        Time =  orderDetail.FixtureProduct.Fixture.Time,
-                //        FieldName = orderDetail.FixtureProduct.Fixture.Field.Name,
-                //        HomeTeamName = !String.IsNullOrEmpty(orderDetail.FixtureProduct.Fixture.HomeTeam.Alias) ? orderDetail.FixtureProduct.Fixture.HomeTeam.Alias : orderDetail.FixtureProduct.Fixture.HomeTeam.Name,
-                //        AwayTeamName = !String.IsNullOrEmpty(orderDetail.FixtureProduct.Fixture.HomeTeam.Alias) ? orderDetail.FixtureProduct.Fixture.HomeTeam.Alias : orderDetail.FixtureProduct.Fixture.AwayTeam.Name,
-                //        HomeTeamLogo = orderDetail.FixtureProduct.Fixture.HomeTeam.TeamLogo,
-                //        AwayTeamLogo = orderDetail.FixtureProduct.Fixture.AwayTeam.TeamLogo,
-                //        Validated = orderDetail.Order.Validated
-                //    });
-                //}
 
             }
             catch (Exception ex)
@@ -346,27 +311,27 @@ namespace OnTrackWebService.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<bool> ValidateCustomer(string orderID)
-        {
-            try
-            {
-                var order = await _context.Orders.FirstOrDefaultAsync(e => e.ID == orderID);
+        //public async Task<bool> ValidateCustomer(string orderID)
+        //{
+        //    try
+        //    {
+        //        var order = await _context.Orders.FirstOrDefaultAsync(e => e.ID == orderID);
 
-                if (!order.Validated)
-                {
-                    order.Validated = true;
+        //        if (!order.Validated)
+        //        {
+        //            order.Validated = true;
 
-                    _context.Orders.Update(order);
-                    await _context.SaveChangesAsync();
+        //            _context.Orders.Update(order);
+        //            await _context.SaveChangesAsync();
 
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            { }
+        //            return true;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    { }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         public async Task Update(Order item)
         {
