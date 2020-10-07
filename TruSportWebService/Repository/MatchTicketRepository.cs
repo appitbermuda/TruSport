@@ -192,34 +192,50 @@ namespace OnTrackWebService.Repository
             return fixtureProducts;
         }
 
-        public async Task<bool> Scan(CustomerOrder customerOrder)
+        public async Task<TicketResponse> Scan(CustomerOrder customerOrder)
         {
+            TicketResponse ticketResponse = new TicketResponse();
+
             try
             {
+                List<string> tickets = new List<string>();
+
                 var fixtureProducts = await _context.FixtureProducts
                     .Include(e => e.Product)
                     .Where(e => e.Product.TeamID == customerOrder.ScannedTeamID)
                     .ToListAsync();
 
-                var orderDetail = await _context.OrderDetails
-                    .Include(e => e.Order)
-                    .FirstOrDefaultAsync(e => e.OrderID == customerOrder.OrderID && !e.Order.Validated);
+                var order = await _context.Orders
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
+                    .FirstOrDefaultAsync(e => e.ID == customerOrder.OrderID && !e.Validated);
 
 
-                if (orderDetail.Order != null && fixtureProducts.Any(e => e.ID == orderDetail.FixtureProductID))
+                if (order != null && fixtureProducts.Any(e => order.OrderDetails.Any(d => e.ID == d.FixtureProductID)))
                 {
-                    orderDetail.Order.Validated = true;
-                    orderDetail.Order.ValidatedTime = DateTime.Now.ToUniversalTime();
-                    _context.Orders.Update(orderDetail.Order);
+                    order.Validated = true;
+                    order.ValidatedTime = DateTime.Now.ToUniversalTime();
+                    _context.Orders.Update(order);
                     await _context.SaveChangesAsync();
 
-                    return true;
+                    ticketResponse.Response = "Validated Successfully!";
+                    ticketResponse.Tickets = tickets;
+                    ticketResponse.IsValidated = true;
+                    
+                    return ticketResponse;
                 }
+
+                ticketResponse.Response = "Ticket already validated!";
+                ticketResponse.IsValidated = false;
+
+                return ticketResponse;
             }
             catch (Exception ex)
             { }
 
-            return false;
+            ticketResponse.Response = "Error Validating Ticket!";
+            ticketResponse.IsValidated = false;
+
+            return ticketResponse;
         }
 
         public async Task<FixtureProduct> GetTodayByTeam(string teamID)
@@ -228,6 +244,9 @@ namespace OnTrackWebService.Repository
 
             try
             {
+                var ticketConfig = await _context.TicketConfigurations
+                    .FirstOrDefaultAsync(e => e.TeamID == teamID);
+
                 fixtureProduct = await _context.FixtureProducts
                     .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
@@ -239,7 +258,9 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
+                    .FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.Fixture.Date.AddDays(-(ticketConfig.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
+                //.FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
+
 
                 //Product product = await _context.Products
                 //                        .Include(e => e.ProductType).ThenInclude(e => e.Sport)
@@ -268,7 +289,7 @@ namespace OnTrackWebService.Repository
                 //        Product = product
                 //    };
                 //}
-                
+
 
             }
             catch (Exception ex)

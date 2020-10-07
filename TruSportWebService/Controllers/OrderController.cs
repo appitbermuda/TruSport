@@ -67,6 +67,49 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+
+        // GET api/values
+        [HttpGet]
+        [Route("TodayByTeam")]
+        public async Task<IActionResult> TodayByTeam(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.TodayByTeam(teamID);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("Team")]
+        public async Task<IActionResult> Team(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.Team(teamID);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values
         [HttpGet]
         [Route("AllOrders")]

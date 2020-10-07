@@ -116,9 +116,9 @@ namespace OnTrackWebService.Controllers
             try
             {
                 
-                bool validated = await _matchTicketRepository.Scan(customerOrder);
+                TicketResponse ticketResponse = await _matchTicketRepository.Scan(customerOrder);
 
-                return Ok(validated);
+                return Ok(ticketResponse);
             }
             catch (Exception ex)
             {

@@ -20,7 +20,12 @@ namespace OnTrackWebService.Models.Shop
         [ForeignKey("CustomerID")]
         public Customer Customer { get; set; }
 
-        //public virtual List<OrderDetail> OrderDetails { get; set; }
+        [NotMapped]
+        public DateTime FixtureDate { get; set; }
+
+        [NotMapped]
+        public string Fixture { get; set; }
+
         [NotMapped]
         public virtual List<OrderDetail> OrderDetails { get; set; }
     }
