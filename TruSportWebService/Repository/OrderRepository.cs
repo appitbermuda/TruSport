@@ -82,33 +82,46 @@ namespace OnTrackWebService.Repository
                 //    .Where(e => e.Order.Customer.Email == email && e.Order.Date.Date >= DateTime.Now.Date.AddDays(-1)).ToListAsync();
 
                 var orders = await _context.Orders.Include(e => e.Customer)
-                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .Where(e => e.Customer.Email == email && e.Date.Date >= DateTime.Now.Date.AddDays(-1))
+                    .Where(e => e.Customer.Email == email)
                     .ToListAsync();
 
                 foreach (var order in orders)
                 {
-                    var fixture = order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture;
-                    matchDayOrders.Add(new CustomerOrder
+                    foreach(var orderDetail in order.OrderDetails)
                     {
-                        OrderID = order.ID,
-                        FixtureID = fixture.ID,
-                        CustomerID = order.CustomerID,
-                        OrderNumber = order.OrderNumber,
-                        FirstName = order.Customer.FirstName,
-                        LastName = order.Customer.LastName,
-                        Email = order.Customer.Email,
-                        Phone = order.Customer.Phone,
-                        FixtureDate = fixture.Date,
-                        Time = fixture.Time,
-                        FieldName = fixture.Field.Name,
-                        HomeTeamName = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name,
-                        AwayTeamName = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.AwayTeam.Name,
-                        HomeTeamLogo = fixture.HomeTeam.TeamLogo,
-                        AwayTeamLogo = fixture.AwayTeam.TeamLogo,
-                        Validated = order.Validated
-                    });
+                        if (orderDetail.FixtureProduct.Fixture.Date >= DateTime.Now.Date.AddDays(-1))
+                        {
+                            var fixture = orderDetail.FixtureProduct.Fixture;
+
+                            for (var i = 0; i < orderDetail.Qty; i++)
+                            {
+                                matchDayOrders.Add(new CustomerOrder
+                                {
+                                    OrderID = order.ID,
+                                    FixtureID = fixture.ID,
+                                    CustomerID = order.CustomerID,
+                                    OrderNumber = order.OrderNumber,
+                                    Product = orderDetail.FixtureProduct.Product.Age + " Ticket",
+                                    FirstName = order.Customer.FirstName,
+                                    LastName = order.Customer.LastName,
+                                    Email = order.Customer.Email,
+                                    Phone = order.Customer.Phone,
+                                    FixtureDate = fixture.Date,
+                                    Time = fixture.Time,
+                                    FieldName = fixture.Field.Name,
+                                    HomeTeamName = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name,
+                                    AwayTeamName = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.AwayTeam.Name,
+                                    HomeTeamLogo = fixture.HomeTeam.TeamLogo,
+                                    AwayTeamLogo = fixture.AwayTeam.TeamLogo,
+                                    Validated = order.Validated
+                                });
+                            }
+                        }
+                    }
                 }
 
                 //foreach (var orderDetail in orderDetails)
@@ -198,10 +211,10 @@ namespace OnTrackWebService.Repository
                 var orders = await _context.Orders.Include(e => e.Customer)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Where(e => e.Customer.Email == email && e.Date.Date >= DateTime.Now.Date.AddDays(-1))
+                    .Where(e => e.Customer.Email == email)
                     .ToListAsync();
 
-                orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+                orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Name));
                 //var orders = await _context.Orders
                 //    .Include(e => e.Customer)
                 //    .Where(e => e.Customer.Email == email && e.Date.Date >= DateTime.Now.Date.AddDays(-1))

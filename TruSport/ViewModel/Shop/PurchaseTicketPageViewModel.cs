@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -16,17 +17,22 @@ namespace TruSport.ViewModel.Shop
     public class PurchaseTicketPageViewModel : BaseViewModel
     {
         public ObservableCollection<ContactTrace> _contactTraces;
+        private ObservableCollection<FixtureProduct> _fixtureProductCollection;
         private FixtureProduct _fixtureProduct;
+        private FixtureProduct _fixtureProductTwo;
         private Customer _customer;
         private CreditCard _creditCard;
+        private string _fixtureProductTwoName;
         private string _customerName;
         private string _firstName;
         private string _lastName;
         private string _email;
         private string _phone;
         private int _quantity;
+        private int _quantity2;
         private int _contactTracingHeight;
         private decimal _price;
+        private decimal _price2;
         private decimal _subtotal;
         private decimal _total;
         private decimal _processingFee;
@@ -44,16 +50,19 @@ namespace TruSport.ViewModel.Shop
             settingService = new SettingService();
             inventoryService = new InventoryService();
             ContactTraces = new ObservableCollection<ContactTrace>();
+            FixtureProductCollection = new ObservableCollection<FixtureProduct>();
 
             GenerateSource(fixtureProduct);
 
             PurchaseCommand = new Command(async () => await Purchase());
+            UpdateQuantityCommand = new Command(async () => await UpdateQuantity());
             CloseClickedCommand = new Command(async () => await Close());
             AddContactTraceCommand = new Command(async () => await AddContactTrace());
             ContactTracingSelectedCommand = new Command<object>(ContactTracingSelected);
         }
 
         public Command PurchaseCommand { get; set; }
+        public Command UpdateQuantityCommand { get; set; }
         public Command CloseClickedCommand { get; set; }
         public Command AddContactTraceCommand { get; set; }
 
@@ -64,10 +73,22 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _contactTracingSelectedCommand, value); }
         }
 
+        public ObservableCollection<FixtureProduct> FixtureProductCollection
+        {
+            get { return _fixtureProductCollection; }
+            set { Set(ref _fixtureProductCollection, value); }
+        }
+
         public ObservableCollection<ContactTrace> ContactTraces
         {
             get { return _contactTraces; }
             set { Set(ref _contactTraces, value); }
+        }
+
+        public FixtureProduct FixtureProductTwo
+        {
+            get { return _fixtureProductTwo; }
+            set { Set(ref _fixtureProductTwo, value); }
         }
 
         public FixtureProduct FixtureProduct
@@ -86,6 +107,12 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _creditCard; }
             set { Set(ref _creditCard, value); }
+        }
+
+        public string FixtureProductTwoName
+        {
+            get { return _fixtureProductTwoName; }
+            set { Set(ref _fixtureProductTwoName, value); }
         }
 
         public string CustomerName
@@ -118,6 +145,16 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _phone, value); }
         }
 
+        public int Quantity2
+        {
+            get { return _quantity2; }
+            set
+            {
+                Set(ref _quantity2, value);
+                this.UpdatePrice();
+            }
+        }
+
         public int Quantity
         {
             get { return _quantity; }
@@ -134,6 +171,12 @@ namespace TruSport.ViewModel.Shop
             set {
                 Set(ref _contactTracingHeight, value);
             }
+        }
+
+        public decimal Price2
+        {
+            get { return _price2; }
+            set { Set(ref _price2, value); }
         }
 
         public decimal Price
@@ -176,8 +219,16 @@ namespace TruSport.ViewModel.Shop
 
                 if (Customer != null)
                 {
+                    var fixtureProducts = await matchTicketService.GetFixtureMatchTickets(fixtureProduct.FixtureID);
+
                     CreditCard = new CreditCard();
                     FixtureProduct = fixtureProduct;
+
+                    if (fixtureProducts != null && fixtureProducts.Count > 0)
+                    {
+                        FixtureProductCollection = new ObservableCollection<FixtureProduct>(fixtureProducts.Where(e => e.ID != fixtureProduct.ID).ToList());
+                        //FixtureProductCollection = new ObservableCollection<FixtureProduct>(fixtureProducts.Where(e => e.ID != fixtureProduct.ID).ToList());
+                    }
 
                     decimal? processingFee = await settingService.GetProcessingFee();
 
@@ -219,8 +270,8 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                this.ProcessingFee = (this.Quantity * this.ProcessingFeeAmount);
-                this.Subtotal = (this.Quantity * this.Price);
+                this.ProcessingFee = ((this.Quantity + this.Quantity2) * this.ProcessingFeeAmount);
+                this.Subtotal = this.Quantity2 > 0 ? (this.Quantity * this.Price) + (this.Quantity2 * this.Price2) : (this.Quantity * this.Price);
                 this.Total = this.Subtotal + this.ProcessingFee;
             }
             catch(Exception ex)
@@ -234,41 +285,70 @@ namespace TruSport.ViewModel.Shop
             IsBusy = true;
             try
             {
-                if (Quantity <= ContactTraces.Count)
+                if ((Quantity + Quantity2) <= ContactTraces.Count)
                 {
                     if (CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV))
                     {
+                        await UpdateQuantity();
+
+                        List<OrderDetail> orderDetails = new List<OrderDetail>();
+
+                        orderDetails.Add(new OrderDetail
+                        {
+                            FixtureProductID = FixtureProduct.ID,
+                            Qty = Quantity,
+                            Subtotal = this.Quantity * this.Price
+                        });
+
+                        if (FixtureProductCollection.Count > 0 && Quantity2 > 0)
+                        {
+                            orderDetails.Add(new OrderDetail
+                            {
+                                FixtureProductID = FixtureProductCollection.FirstOrDefault().ID,
+                                Qty = Quantity2,
+                                Subtotal = this.Quantity2 * this.Price2
+                            });
+                        }
+
                         PaymentAuthorize paymentAuthorize = new PaymentAuthorize
                         {
                             NameOnCard = CustomerName,
                             CardNumber = CreditCard.CardNumber,
                             Expiry = CreditCard.Expiry,
                             CVV = CreditCard.CVV,
-                            Quantity = Quantity,
+                            Quantity = Quantity + Quantity2,
                             Amount = Convert.ToString(Total),
-                            FixtureProductID = FixtureProduct.ID,
+                            FixtureID = FixtureProduct.FixtureID,
                             CustomerID = Customer.ID,
-                            ContactTraces = ContactTraces.ToList()
+                            ContactTraces = ContactTraces.ToList(),
+                            OrderDetails = orderDetails.ToList()
                         };
 
                         var hasStock = await inventoryService.CheckInventory(FixtureProduct.ProductID);
 
                         if (hasStock)
                         {
-                            PaymentResponse paymentResponse = await matchTicketService.Purchase(paymentAuthorize);
+                            bool confirmPayment = await App.Current.MainPage.DisplayAlert("Purchase Ticket","You will be charged a total of " + Total.ToString("C"),"Purchase","Cancel");
 
-                            IsBusy = false;
-
-                            MessagingCenter.Subscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased", async (objs, product) =>
+                            if (confirmPayment)
                             {
-                                MessagingCenter.Unsubscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased");
+                                PaymentResponse paymentResponse = await matchTicketService.Purchase(paymentAuthorize);
 
-                                if (product.IsApproved)
-                                    await Navigation.PopModalAsync();
-                            });
+                                if (paymentResponse != null)
+                                {
+                                    IsBusy = false;
 
-                            await Navigation.PushModalAsync(new PurchaseTicketResultPage(paymentResponse));
+                                    MessagingCenter.Subscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased", async (objs, product) =>
+                                    {
+                                        MessagingCenter.Unsubscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased");
 
+                                        if (product.IsApproved)
+                                            await Navigation.PopModalAsync();
+                                    });
+
+                                    await Navigation.PushModalAsync(new PurchaseTicketResultPage(paymentResponse));
+                                }
+                            }
                         }
                         else
                         {
@@ -290,6 +370,24 @@ namespace TruSport.ViewModel.Shop
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        async Task UpdateQuantity()
+        {
+            try
+            {
+                if(FixtureProductCollection.Count == 1)
+                {
+                    Quantity2 = FixtureProductCollection.Sum(e => e.Quantity);
+                    Price2 = FixtureProductCollection.FirstOrDefault().Product.Price;
+
+                    UpdatePrice();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Close");
             }
         }
 

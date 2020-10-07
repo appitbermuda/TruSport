@@ -26,9 +26,10 @@ namespace TruSport.Model
     public class CustomerOrder
     {
         public string OrderID { get; set; }
-        public string FixtureProductID { get; set; }
+        public string FixtureID { get; set; }
         public string OrderNumber { get; set; }
         public string CustomerID { get; set; }
+        public string Product { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }

@@ -9,6 +9,7 @@ namespace OnTrackWebService.Models.Shop
         public string FixtureID { get; set; }
         public string OrderNumber { get; set; }
         public string CustomerID { get; set; }
+        public string Product { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }

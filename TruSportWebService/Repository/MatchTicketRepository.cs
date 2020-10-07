@@ -83,7 +83,9 @@ namespace OnTrackWebService.Repository
 
             try
             {
-                fixtureProducts = await _context.FixtureProducts
+                var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
+
+                var fixtureProductsList = await _context.FixtureProducts
                     .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.Fixture).ThenInclude(e => e.Field)
@@ -94,9 +96,19 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date.AddDays(1))
+                    .Where(e => DateTime.Now.Date <= e.Fixture.Date.AddDays(1))
                     .ToListAsync();
 
+
+                foreach(var fixtureProduct in fixtureProductsList)
+                {
+                    //ticketConfig.Any(t => t.TeamID == e.Product.TeamID && DateTime.Now.Date > e.Fixture.Date.AddDays(-(t.ValidFrom)))
+
+                    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
+
+                    if(DateTime.Now.Date > fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                        fixtureProducts.Add(fixtureProduct);
+                }
                 //List<Product> products = await _context.Products
                 //                        .Include(e => e.ProductType).ThenInclude(e => e.Sport)
                 //                        .Include(e => e.ProductType).ThenInclude(e => e.MatchType)
@@ -141,7 +153,9 @@ namespace OnTrackWebService.Repository
 
             try
             {
-                fixtureProducts = await _context.FixtureProducts
+                var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == teamID);
+
+                var fixtureProductsList = await _context.FixtureProducts
                     .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.Fixture).ThenInclude(e => e.Field)
@@ -152,7 +166,17 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.Product.TeamID == teamID && e.ValidFrom.Value < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date).ToListAsync();
+                    .Where(e => e.Product.TeamID == teamID && e.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date).ToListAsync();
+
+                foreach (var fixtureProduct in fixtureProductsList)
+                {
+                    //ticketConfig.Any(t => t.TeamID == e.Product.TeamID && DateTime.Now.Date > e.Fixture.Date.AddDays(-(t.ValidFrom)))
+
+                    
+
+                    if (DateTime.Now.Date > fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                        fixtureProducts.Add(fixtureProduct);
+                }
 
                 //List<Product> products = await _context.Products
                 //                        .Include(e => e.ProductType).ThenInclude(e => e.Sport)
@@ -185,6 +209,39 @@ namespace OnTrackWebService.Repository
                 //    }
                 //}
 
+            }
+            catch (Exception ex)
+            { }
+
+            return fixtureProducts;
+        }
+
+        public async Task<IEnumerable<FixtureProduct>> Fixture(string fixtureID)
+        {
+            List<FixtureProduct> fixtureProducts = new List<FixtureProduct>();
+
+            try
+            {
+                var fixtureProductsList = await _context.FixtureProducts
+                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.Fixture).ThenInclude(e => e.League)
+                    .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Season)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Sport)
+                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
+                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
+                    .Include(e => e.Product).ThenInclude(e => e.Team)
+                    .Where(e => e.FixtureID == fixtureID && DateTime.Now.Date <= e.Fixture.Date).ToListAsync();
+
+                foreach (var fixtureProduct in fixtureProductsList)
+                {
+                    var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+
+                    if (DateTime.Now.Date > fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                        fixtureProducts.Add(fixtureProduct);
+                }
             }
             catch (Exception ex)
             { }
@@ -306,14 +363,20 @@ namespace OnTrackWebService.Repository
 
             try
             {
+                var fixtureProduct = await _context.FixtureProducts
+                    .Include(e => e.Product)
+                    .FirstOrDefaultAsync(e => e.FixtureID == paymentAuthorization.FixtureID);
+
                 var orders = await _context.OrderDetails
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
                     .Where(e => e.FixtureProduct.FixtureID == paymentAuthorization.FixtureID)
                     .ToListAsync();
 
+                var teamID = fixtureProduct.Product.TeamID;
+
                 var ticketConfiguration = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == orders.FirstOrDefault().FixtureProduct.Product.TeamID);
+                    .FirstOrDefaultAsync(e => e.TeamID == teamID);
 
                 var orderCount = orders.Sum(e => e.Qty);
 
@@ -330,65 +393,71 @@ namespace OnTrackWebService.Repository
                     //string topUp = topUpPayment.Amount;
                     //topUp.Insert(topUp.Length - 2, ".");
                     PaymentAmount = Convert.ToDecimal(payment);
-                    paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
+                    var orderSubTotal = paymentAuthorization.OrderDetails.Sum(e => e.Subtotal);
+
+                    if (PaymentAmount != orderSubTotal + (ProcessingFeeAmount * paymentAuthorization.Quantity))
+                    {
+                        paymentAuthorization.Amount = (orderSubTotal + (ProcessingFeeAmount * paymentAuthorization.Quantity)).ToString();
+                        paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
+                    }
 
                     Order order = new Order
                     {
-                        Total = PaymentAmount + ProcessingFeeAmount,
+                        Total = PaymentAmount,
                         CustomerID = paymentAuthorization.CustomerID,
                         Date = DateTime.Now,
                         Discount = 0.0m,
-                        Validated = false
+                        Validated = false, 
                     };
 
                     _context.Orders.Add(order);
                     await _context.SaveChangesAsync();
 
-                    var response = await request.Payment(paymentAuthorization);
+                    //var response = await request.Payment(paymentAuthorization);
 
-                    if (response.CreditCardTransactionResults.ResponseCode == "1")
-                    {
-                        _context.Database.BeginTransaction();
+                    //if (response.CreditCardTransactionResults.ResponseCode == "1")
+                    //{
+                    //    _context.Database.BeginTransaction();
 
-                        var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
-                        updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;
-                        updateOrder.OrderNumber = response.OrderNumber;
+                    //    var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
+                    //    updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;
+                    //    updateOrder.OrderNumber = response.OrderNumber;
 
-                        _context.Orders.Update(updateOrder);
-                        await _context.SaveChangesAsync();
+                    //    _context.Orders.Update(updateOrder);
+                    //    await _context.SaveChangesAsync();
 
-                        _context.OrderDetails.AddRange(paymentAuthorization.OrderDetails);
-                        await _context.SaveChangesAsync();
+                    //    _context.OrderDetails.AddRange(paymentAuthorization.OrderDetails);
+                    //    await _context.SaveChangesAsync();
 
-                        if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
-                        {
-                            paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
+                    //    if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
+                    //    {
+                    //        paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
 
-                            _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
-                            await _context.SaveChangesAsync();
-                        }
+                    //        _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
+                    //        await _context.SaveChangesAsync();
+                    //    }
 
-                        _context.Database.CommitTransaction();
-                        paymentResponse.IsApproved = true;
+                    //    _context.Database.CommitTransaction();
+                    //    paymentResponse.IsApproved = true;
 
-                        try
-                        {
-                            var fixtureProduct = await _context.FixtureProducts
-                                .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                                .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                                .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.OrderDetails.FirstOrDefault().FixtureProductID);
-                            var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
+                    //    try
+                    //    {
+                    //        var fixtureProduct = await _context.FixtureProducts
+                    //            .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    //            .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    //            .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.OrderDetails.FirstOrDefault().FixtureProductID);
+                    //        var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
 
-                            await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), fixtureProduct.Fixture);
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(ex.Message, "Payment Email");
-                        }
-                    }
+                    //        await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), fixtureProduct.Fixture);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        Debug.WriteLine(ex.Message, "Payment Email");
+                    //    }
+                    //}
 
-                    paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
-                    paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
+                    //paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
+                    //paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
 
                     return paymentResponse;
                 }

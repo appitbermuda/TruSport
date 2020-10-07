@@ -88,6 +88,27 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("Fixture")]
+        public async Task<IActionResult> FixtureMatchTickets(string fixtureID)
+        {
+            try
+            {
+
+                IEnumerable<FixtureProduct> matchTickets = await _matchTicketRepository.Fixture(fixtureID);
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("Team")]
         public async Task<IActionResult> TeamMatchTickets(string teamID)
         {
