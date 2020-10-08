@@ -53,10 +53,10 @@
 		<true/>
 	</dict>
 	<key>CFBundleVersion</key>
-	<string>1.24</string>
+	<string>1.25</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-1338169805120312~6077936967</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.2</string>
+	<string>2.1.0</string>
 </dict>
 </plist>

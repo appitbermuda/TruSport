@@ -391,9 +391,10 @@ namespace OnTrackWebService.Repository
 
                     if (PaymentAmount != orderSubTotal + (ProcessingFeeAmount * paymentAuthorization.Quantity))
                     {
-                        paymentAuthorization.Amount = (orderSubTotal + (ProcessingFeeAmount * paymentAuthorization.Quantity)).ToString();
-                        paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
+                        paymentAuthorization.Amount = (orderSubTotal + (ProcessingFeeAmount * paymentAuthorization.Quantity)).ToString();                        
                     }
+
+                    paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
 
                     Order order = new Order
                     {
@@ -419,8 +420,19 @@ namespace OnTrackWebService.Repository
                         _context.Orders.Update(updateOrder);
                         await _context.SaveChangesAsync();
 
+
+
                         if (paymentAuthorization.OrderDetails != null && paymentAuthorization.OrderDetails.Count > 0)
                         {
+                            try
+                            {
+                                paymentAuthorization.OrderDetails.ForEach(e => e.OrderID = order.ID);
+                                _context.OrderDetails.AddRange(paymentAuthorization.OrderDetails);
+                                await _context.SaveChangesAsync();
+                            }
+                            catch(Exception ex)
+                            { }
+
                             List<MatchTicket> matchTickets = new List<MatchTicket>();
                             foreach(var orderDetail in paymentAuthorization.OrderDetails)
                             {

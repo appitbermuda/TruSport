@@ -57,6 +57,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
+
         <StackLayout>
             <Grid BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,20">
                 <StackLayout VerticalOptions="CenterAndExpand">
@@ -66,7 +67,7 @@
                     <Button Text="" FontSize="20" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" WidthRequest="30" HeightRequest="30"  HorizontalOptions="StartAndExpand" Command="{Binding CloseClickedCommand}"/>
                 </StackLayout>
             </Grid>
-        
+        <Grid VerticalOptions="FillAndExpand">
         <ScrollView VerticalOptions="FillAndExpand" Padding="0,0,0,50">
             <StackLayout>
                 <Grid>
@@ -246,7 +247,7 @@
                         </StackLayout>
                 </Grid>
 
-                <!--<BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="WhiteSmoke" />-->
+                <!--<BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />-->
 
                 <Grid Padding="10,30,10,50">
                     <Grid.RowDefinitions>
@@ -329,7 +330,7 @@
                     <StackLayout Grid.Row="3" Grid.Column="1" HorizontalOptions="EndAndExpand">
                         <Label Text="{Binding ProcessingFee, StringFormat='{0:C}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
                     </StackLayout>
-                    <BoxView Grid.ColumnSpan="2" HeightRequest="1" Grid.Row="4" BackgroundColor="WhiteSmoke" />
+                    <BoxView Grid.ColumnSpan="2" HeightRequest="1" Grid.Row="4" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />
                     <StackLayout Grid.Row="5" HorizontalOptions="StartAndExpand">
                         <Label Text="Total" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
                     </StackLayout>
@@ -338,12 +339,12 @@
                     </StackLayout>
                 </Grid>
 
-                <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="WhiteSmoke" />
+                <!--<BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />-->
 
-                        <StackLayout HeightRequest="30" BackgroundColor="WhiteSmoke" Padding="10,0">
+                        <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
                             <Label Text="Contact Tracing" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </StackLayout>
-                <Grid Padding="10" ColumnSpacing="20">
+                <Grid Padding="10" ColumnSpacing="20" Margin="0,0,0,30">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/> 
@@ -359,24 +360,25 @@
                         <Label Text="Due to COVID-19, we must ensure the correct approach is taken for contact tracing. Please provide the name(s) and contact details required by government to ensure the match is in compliance." LineBreakMode="WordWrap" FontSize="9" />
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.Column="0">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
                             <Entry Text="{Binding FirstName}" Placeholder="First Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.Column="1">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
                             <Entry Text="{Binding LastName}" Placeholder="Last Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="2" Grid.ColumnSpan="2">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Phone" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Phone" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
                             <Entry Text="{Binding Phone}" Placeholder="Phone" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="3" Grid.ColumnSpan="2">
                         <Button Text="Add" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="30" CornerRadius="15" Padding="50,0" Command="{Binding AddContactTraceCommand}"/> 
                     </StackLayout>
-                    <StackLayout Grid.Row="4" Grid.ColumnSpan="2" HeightRequest="{Binding ContactTracingHeight}" BackgroundColor="WhiteSmoke">
+                    <StackLayout Grid.Row="4" Grid.ColumnSpan="2" >
+                        <Frame IsClippedToBounds="True" BackgroundColor="{DynamicResource controlElementBackgroundColor}" CornerRadius="10" HeightRequest="{Binding ContactTracingHeight}" Padding="5">
                         <listView:SfListView x:Name="ContactTracingList"
                                     ItemsSource="{Binding ContactTraces}"
                                     ItemTemplate="{StaticResource ContactTracingItemTemplate}"
@@ -391,12 +393,13 @@
                                     ItemSize="30"
                                     HeightRequest="{Binding ContactTracingHeight}"
                                 />
+                            </Frame>
                     </StackLayout>
                 </Grid>
 
-                <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="WhiteSmoke" />
+                <!--<BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />-->
 
-                <StackLayout HeightRequest="30" BackgroundColor="WhiteSmoke" Padding="10,0">
+                <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
                     <Label Text="Card Details" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
                 </StackLayout>
                 <Grid Padding="10" ColumnSpacing="20">
@@ -410,22 +413,22 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackLayout Grid.ColumnSpan="2">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Name of Card" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Name of Card" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
                             <Entry Text="{Binding CustomerName}" Placeholder="Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Card Number" ContainerType="Outlined" CharMaxLength="16" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Card Number" ContainerType="Outlined" CharMaxLength="16" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
                             <Entry Text="{Binding CreditCard.CardNumber}" MaxLength="16" Keyboard="Numeric" Placeholder="1111222233334444" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="2" Grid.Column="0">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Expiry (MMYY)" ContainerType="Outlined" CharMaxLength="4" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Expiry (MMYY)" ContainerType="Outlined" CharMaxLength="4" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
                             <Entry Text="{Binding CreditCard.Expiry}" MaxLength="4" Keyboard="Numeric" Placeholder="0125" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="2" Grid.Column="1">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="CVV" ContainerType="Outlined" CharMaxLength="3" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="CVV" ContainerType="Outlined" CharMaxLength="3" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
                             <Entry Text="{Binding CreditCard.CVV}" MaxLength="3" Keyboard="Numeric" Placeholder="123" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
@@ -439,10 +442,11 @@
                     <Button Text="Purchase" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding PurchaseCommand}"/>
                 </StackLayout>
                         </StackLayout>
-                    <extension:CustomBusyIndicator  IsVisible="{Binding IsBusy}"/>
                 </Grid>
             </StackLayout>
         </ScrollView>
+            <extension:CustomBusyIndicator IsVisible="{Binding IsBusy}"/>
+            </Grid>
             </StackLayout>
     </ContentPage.Content>
 </ContentPage>

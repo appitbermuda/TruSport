@@ -741,7 +741,7 @@ namespace OnTrackWebService.Repository
                            <tr>
                              <td> [Product] </td>
                              <td> [Quantity] </td>
-                             <td> [Total] </td>
+                             <td> $[Total] </td>
                            </tr>
  
                         </table>
@@ -757,7 +757,9 @@ namespace OnTrackWebService.Repository
                            </tr>
  
                         </table>
- 
+
+                        <p>Please plan to arrive to the match before half time.</p>
+
                          <p>If you have any issues with your purchase please do not hesitate to contact us by replying to sports@ontrackbda.com</p>
 
                         <br>
@@ -783,7 +785,7 @@ namespace OnTrackWebService.Repository
             body = body.Replace("[Email]", customer.Email);
             body = body.Replace("[Product]", fixture.HomeTeam.Name + " v " + fixture.AwayTeam.Name);
             body = body.Replace("[Quantity]", quantity.ToString());
-            body = body.Replace("[Total]", order.Total.ToString("C"));
+            body = body.Replace("[Total]", order.Total.ToString());
             body = body.Replace("[Authorisation]", authorisation);
             body = body.Replace("[TrxDate]", order.Date.ToString("MMM dd yyyy - H:mm:ss"));
 

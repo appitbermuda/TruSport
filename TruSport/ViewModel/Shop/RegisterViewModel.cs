@@ -189,7 +189,7 @@ namespace TruSport.ViewModel.Shop
                                         {
                                             IsActivityIndicatorVisible = false;
 
-                                            await Application.Current.MainPage.DisplayAlert("Register", "Thanks for signing up!", "Okay");
+                                            await Application.Current.MainPage.DisplayAlert("Register", "Thanks for signing up, please check your email for validation!", "Okay");
 
 
                                             await Navigation.PopAsync();

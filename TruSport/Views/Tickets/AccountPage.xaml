@@ -34,7 +34,7 @@
                                          VerticalOptions="Center">
                                 <Label Text="{Binding Last4}"
                                        FontSize="Medium"
-                                       TextColor="Black"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start">
@@ -46,7 +46,7 @@
                                          VerticalOptions="Center">
                                 <Label Text="{Binding Expiry, StringFormat='Exp: {0}'}"
                                        FontSize="Small"
-                                       TextColor="Black"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End"/>
@@ -65,8 +65,8 @@
                              VerticalOptions="FillAndExpand">
                     <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="5">
-                        <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                            <Frame Padding="0" CornerRadius="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsClippedToBounds="True" HasShadow="False">
+                        <Frame Padding="0" CornerRadius="5" BackgroundColor="{DynamicResource controlElementBackgroundColor}"  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                            <Frame Padding="0" CornerRadius="5" BackgroundColor="{DynamicResource controlElementBackgroundColor}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsClippedToBounds="True" HasShadow="False">
                         <Grid VerticalOptions="FillAndExpand"
                               HorizontalOptions="FillAndExpand"
                               RowSpacing="0">
@@ -90,7 +90,7 @@
                                 <StackLayout>
                                 <Label Text="{Binding Fixture}"
                                        FontSize="Micro"
-                                       TextColor="Black"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start">
@@ -108,7 +108,7 @@
                                        HorizontalTextAlignment="End"/>
                                 <Label Text="{Binding OrderDetails[0].FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd h:mm tt}'}"
                                        FontSize="Micro"
-                                       TextColor="Black"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End">
@@ -126,7 +126,7 @@
                                        HorizontalTextAlignment="Start"/>
                                 <Label Text="{Binding OrderNumber}"
                                        FontSize="Micro"
-                                       TextColor="Black"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start">
@@ -144,7 +144,7 @@
                                        HorizontalTextAlignment="End"/>
                                 <Label Text="{Binding Date, StringFormat='{0:MMM dd, yyyy HH:mm tt}'}"
                                        FontSize="Micro"
-                                       TextColor="Black"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End"/>
@@ -161,7 +161,7 @@
                                        HorizontalTextAlignment="Start"/>
                                 <Label Text="{Binding Authorisation}"
                                        FontSize="Micro"
-                                       TextColor="Black"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start">
@@ -179,7 +179,7 @@
                                        HorizontalTextAlignment="End"/>
                                 <Label Text="{Binding Total, StringFormat='{0:C}'}"
                                        FontSize="Micro"
-                                       TextColor="Black"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End"/>
@@ -264,7 +264,7 @@
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                    <StackLayout BackgroundColor="WhiteSmoke" Padding="10,0" Orientation="Horizontal">
+                    <StackLayout BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0" Orientation="Horizontal">
                         <Label Text="Order History" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
                     <StackLayout Grid.Row="1">

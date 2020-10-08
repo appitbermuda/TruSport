@@ -937,6 +937,7 @@ namespace TruSport.Data
             try
             {
                 await database.DeleteAllAsync<User>();
+                await database.DeleteAllAsync<Customer>();
 
                 return true;
             }

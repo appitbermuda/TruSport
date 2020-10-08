@@ -287,12 +287,12 @@ namespace TruSport.ViewModel.Shop
             IsBusy = true;
             try
             {
+                await UpdateQuantity();
+
                 if ((Quantity + Quantity2) <= ContactTraces.Count)
                 {
                     if (CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV))
                     {
-                        await UpdateQuantity();
-
                         List<OrderDetail> orderDetails = new List<OrderDetail>();
 
                         orderDetails.Add(new OrderDetail
@@ -349,6 +349,10 @@ namespace TruSport.ViewModel.Shop
                                     });
 
                                     await Navigation.PushModalAsync(new PurchaseTicketResultPage(paymentResponse));
+                                }
+                                else
+                                {
+                                    await Application.Current.MainPage.DisplayAlert("Transaction Error", "Looks like there was an issue processing your payment, please check your card details and try again.", "OK");
                                 }
                             }
                         }

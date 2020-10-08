@@ -64,10 +64,17 @@ namespace TruSport.Converters
             {
                 phoneNumber = phoneNumber.Replace("-", "");
 
-                if (phoneNumber.Length > 7)
+                string area1 = string.Empty;
+                string area2 = string.Empty;
+
+                if (phoneNumber.Length >= 7)
                 {
-                    var area1 = phoneNumber.Substring(0, 1);
-                    var area2 = phoneNumber.Substring(1, 3);
+                    if(phoneNumber.Length > 10)
+                        area1 = phoneNumber.Substring(0, 1);
+
+                    if(phoneNumber.Length > 7 && phoneNumber.Length < 11)
+                        area2 = phoneNumber.Substring(phoneNumber.Length - 10, 3);
+
                     var first3 = phoneNumber.Substring(phoneNumber.Length - 7, 3);
                     var last4 = phoneNumber.Substring(phoneNumber.Length - 4, 4);
                     return (!String.IsNullOrEmpty(area1) ? area1 + "-" : "") + (!String.IsNullOrEmpty(area2) ? area2 + "-" : "") + first3 + "-" + last4;

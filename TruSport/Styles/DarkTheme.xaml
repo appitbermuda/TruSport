@@ -21,4 +21,6 @@
     <Color x:Key="indicatorColor">#FFFFFF</Color>
     <Color x:Key="indicatorTextColor">#000000</Color>
     <Color x:Key="iconColor">#FFFFFF</Color>
+    <Color x:Key="buttonBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="buttonTextColor">#1d2462</Color>
 </ResourceDictionary>
