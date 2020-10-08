@@ -365,6 +365,8 @@ namespace OnTrackWebService.Repository
                     .FirstOrDefaultAsync(e => e.FixtureID == paymentAuthorization.FixtureID);
 
                 var matchTicketsList = await _context.MatchTickets
+                    .Include(e => e.FixtureProduct)
+                    .Where(e => e.FixtureProduct.FixtureID == paymentAuthorization.FixtureID)
                     .ToListAsync();
 
                 var teamID = fixtureProduct.Product.TeamID;

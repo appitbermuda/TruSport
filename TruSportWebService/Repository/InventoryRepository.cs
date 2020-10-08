@@ -61,19 +61,26 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var product = await _context.Products.FirstOrDefaultAsync(e => e.ID == productID);
+                var fixtureProduct = await _context.FixtureProducts
+                    .Include(e => e.Product)
+                    .Include(e => e.Fixture)
+                    .FirstOrDefaultAsync(e => e.ID == productID);
 
                 var ticketConfiguration = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == product.TeamID);
+                    .FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
 
-                var orders = await _context.OrderDetails
-                    .Include(e => e.FixtureProduct)
-                    .Where(e => e.FixtureProduct.ProductID == productID)
+                var matchTicketsList = await _context.MatchTickets
+                    .Where(e => e.FixtureProduct.FixtureID == fixtureProduct.FixtureID)
                     .ToListAsync();
 
-                var orderCount = orders.Sum(e => e.Qty);
+                //var orders = await _context.OrderDetails
+                //    .Include(e => e.FixtureProduct)
+                //    .Where(e => e.FixtureProduct.ProductID == productID)
+                //    .ToListAsync();
 
-                if (orderCount < ticketConfiguration.Stock)
+                var ticketCount = matchTicketsList.Count();
+
+                if (ticketCount < ticketConfiguration.Stock)
                     return true;
             }
             catch (Exception ex)
