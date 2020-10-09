@@ -97,6 +97,8 @@ namespace OnTrackWebService.Repository
                     .Where(e => DateTime.Now.Date <= e.Fixture.Date.AddDays(1))
                     .ToListAsync();
 
+                fixtureProductsList.ForEach(e => e.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.Fixture.HomeTeam.Alias) ? e.Fixture.HomeTeam.Alias : e.Fixture.HomeTeam.Name);
+                fixtureProductsList.ForEach(e => e.Fixture.AwayTeam.Name = !String.IsNullOrEmpty(e.Fixture.AwayTeam.Alias) ? e.Fixture.AwayTeam.Alias : e.Fixture.AwayTeam.Name);
 
                 foreach (var fixtureProduct in fixtureProductsList)
                 {
@@ -104,7 +106,7 @@ namespace OnTrackWebService.Repository
 
                     var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
 
-                    if (DateTime.Now.Date > fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                    if (DateTime.Now.Date >= fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
                         fixtureProducts.Add(fixtureProduct);
                 }
                 //List<Product> products = await _context.Products
@@ -165,6 +167,8 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
                     .Where(e => e.Product.TeamID == teamID && e.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date).ToListAsync();
+
+
 
                 foreach (var fixtureProduct in fixtureProductsList)
                 {
@@ -234,7 +238,8 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.Fixture.Date.AddDays(-(ticketConfig.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
+                    .FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.Fixture.Date == DateTime.Now.AddHours(-4).Date);
+                //.FirstOrDefaultAsync(e => e.Product.TeamID == teamID && e.Fixture.Date.AddDays(-(ticketConfig.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.Fixture.Date);
 
                 return fixtureProduct.Fixture;
             }

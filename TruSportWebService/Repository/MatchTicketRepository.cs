@@ -120,6 +120,9 @@ namespace OnTrackWebService.Repository
                     .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && e.Order.Customer.Email == email)
                     .ToListAsync();
 
+                matchTickets.ForEach(e => e.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.FixtureProduct.Fixture.HomeTeam.Alias) ? e.FixtureProduct.Fixture.HomeTeam.Alias : e.FixtureProduct.Fixture.HomeTeam.Name);
+                matchTickets.ForEach(e => e.FixtureProduct.Fixture.AwayTeam.Name = !String.IsNullOrEmpty(e.FixtureProduct.Fixture.AwayTeam.Alias) ? e.FixtureProduct.Fixture.AwayTeam.Alias : e.FixtureProduct.Fixture.AwayTeam.Name);
+
                 matchTickets.ForEach(e => e.CustomerMatchTicket = new CustomerMatchTicket
                 {
                     FixtureProductID = e.FixtureProductID,
@@ -197,9 +200,10 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
-                    .Where(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date == DateTime.Now.Date).ToListAsync();
+                    .Where(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date == DateTime.Now.AddHours(-4).Date).ToListAsync();
 
                 matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+
                 //foreach (var matchTicket in matchTicketsList)
                 //{
                 //    if (DateTime.Now.Date > matchTicket.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
@@ -276,7 +280,7 @@ namespace OnTrackWebService.Repository
             return matchTickets;
         }
 
-        public async Task<TicketResponse> Scan(MatchTicket scannedMatchTicket)
+        public async Task<TicketResponse> Scan(MatchTicket scannedMatchTicket, ClaimsPrincipal claimsUser)
         {
             TicketResponse ticketResponse = new TicketResponse();
 
@@ -284,28 +288,49 @@ namespace OnTrackWebService.Repository
             {
                 List<string> tickets = new List<string>();
 
+                ////Get the current claims principal
+                //var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+                // Get the claims values
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == email && e.Role.Name == role);
+
+                var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.FixtureProductID);
+
                 var matchTicket = await _context.MatchTickets
                     .Include(e => e.Order)
-                    .FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.ID && !e.Validated);
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.ID && e.FixtureProduct.Product.TeamID == user.TeamID);
 
                 if (matchTicket != null)
                 {
-                    matchTicket.Validated = true;
-                    matchTicket.ValidatedTime = DateTime.Now.ToUniversalTime();
+                    if (!matchTicket.Validated)
+                    {
+                        matchTicket.Validated = true;
+                        matchTicket.ValidatedTime = DateTime.Now.ToUniversalTime();
 
-                    _context.MatchTickets.Update(matchTicket);
-                    await _context.SaveChangesAsync();
+                        _context.MatchTickets.Update(matchTicket);
+                        await _context.SaveChangesAsync();
 
-                    var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.FixtureProductID);
+                        ticketResponse.Response = "Validated Successfully!";
+                        ticketResponse.Ticket = fixtureProduct.Product.Age + " Ticket";
+                        ticketResponse.IsValidated = true;
 
-                    ticketResponse.Response = "Validated Successfully!";
-                    ticketResponse.Ticket = fixtureProduct.Product.Age + " Ticket";
-                    ticketResponse.IsValidated = true;
-                    
+                        return ticketResponse;
+                    }
+
+                    ticketResponse.Response = "Ticket already validated!";
+                    ticketResponse.IsValidated = false;
+
                     return ticketResponse;
                 }
 
-                ticketResponse.Response = "Ticket already validated!";
+                ticketResponse.Response = "Invalid Ticket!";
                 ticketResponse.IsValidated = false;
 
                 return ticketResponse;

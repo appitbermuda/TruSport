@@ -21,11 +21,12 @@
                 <Button Text="" FontSize="25" TextColor="{DynamicResource buttonBackgroundColor}" FontFamily="{StaticResource fontAwesomeSolidFamily}" HorizontalOptions="StartAndExpand" Clicked="Button_Clicked"/>
             </Grid>-->
             <!--<BoxView HeightRequest="1" BackgroundColor="WhiteSmoke" />-->
-            <StackLayout Margin="20,50">
-                <Image Source="OnTrack_Wordmark.png"/>
-            </StackLayout>
+            
             <ScrollView>
                 <StackLayout>
+                    <StackLayout Margin="20,50">
+                <Image Source="OnTrack_Wordmark.png"/>
+            </StackLayout>
             <Grid HorizontalOptions="FillAndExpand" RowSpacing="20" ColumnSpacing="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

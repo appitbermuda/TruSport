@@ -183,7 +183,7 @@ namespace OnTrackWebService.Controllers
             try
             {
                 
-                TicketResponse ticketResponse = await _matchTicketRepository.Scan(matchTicket);
+                TicketResponse ticketResponse = await _matchTicketRepository.Scan(matchTicket, User);
 
                 return Ok(ticketResponse);
             }
