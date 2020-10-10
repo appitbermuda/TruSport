@@ -36,7 +36,6 @@ namespace OnTrackWebService.Models.Shop
             request.TransactionDetails.MerchantId = Constants.MerchantId;
             request.TransactionDetails.OrderNumber = Constants.OrderNumberPrefix + DateTime.Now.Ticks.ToString("000000000000");
 
-
             //Compute Hash from required fields
             request.TransactionDetails.Signature = Helper.ComputeHash(String.Join("", Constants.ProcessingPW,
                 request.TransactionDetails.MerchantId,
