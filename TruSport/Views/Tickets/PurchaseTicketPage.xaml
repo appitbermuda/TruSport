@@ -59,12 +59,12 @@
     <ContentPage.Content>
 
         <StackLayout>
-            <Grid BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,20">
-                <StackLayout VerticalOptions="CenterAndExpand">
+            <Grid BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,0" HeightRequest="90">
+                <StackLayout VerticalOptions="FillAndExpand">
                     <Label Text="Purchase Ticket" FontSize="Small" FontAttributes="Bold" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
                 </StackLayout>
-                 <StackLayout VerticalOptions="CenterAndExpand">
-                    <Button Text="" FontSize="20" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" WidthRequest="30" HeightRequest="30"  HorizontalOptions="StartAndExpand" Command="{Binding CloseClickedCommand}"/>
+                 <StackLayout VerticalOptions="FillAndExpand">
+                    <Button Text="" BackgroundColor="Transparent" FontSize="25" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" WidthRequest="30" HeightRequest="30" Padding="0" HorizontalOptions="StartAndExpand" Command="{Binding CloseClickedCommand}"/>
                 </StackLayout>
             </Grid>
         <Grid VerticalOptions="FillAndExpand">
@@ -390,7 +390,7 @@
                                     ItemSpacing="5"
                                     Padding="1"
                                     SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
-                                    ItemSize="30"
+                                    ItemSize="32"
                                     HeightRequest="{Binding ContactTracingHeight}"
                                 />
                             </Frame>

@@ -383,6 +383,8 @@ namespace OnTrackWebService.Repository
             PaymentResponse paymentResponse = new PaymentResponse();
             paymentResponse.IsApproved = false;
 
+            _context.Database.BeginTransaction();
+
             try
             {
                 var fixtureProduct = await _context.FixtureProducts
@@ -438,7 +440,7 @@ namespace OnTrackWebService.Repository
 
                     if (response.CreditCardTransactionResults.ResponseCode == "1")
                     {
-                        _context.Database.BeginTransaction();
+                        
 
                         var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
                         updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;

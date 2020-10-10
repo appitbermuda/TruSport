@@ -414,9 +414,9 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                //if (Quantity > ContactTraces.Count)
-                //{
-                    if (!String.IsNullOrEmpty(FirstName) && !String.IsNullOrEmpty(LastName) && !String.IsNullOrEmpty(Phone))
+                if (!String.IsNullOrEmpty(FirstName) && !String.IsNullOrEmpty(LastName) && !String.IsNullOrEmpty(Phone))
+                {
+                    if (!(ContactTraces.Count > 0 && ContactTraces.Any(e => e.FirstName == FirstName && e.LastName == LastName)))
                     {
                         ContactTraces.Add(new ContactTrace
                         {
@@ -428,12 +428,14 @@ namespace TruSport.ViewModel.Shop
                         FirstName = String.Empty;
                         LastName = String.Empty;
                         Phone = String.Empty;
-                    }
 
-                    ContactTracingHeight = 40 * ContactTraces.Count;
-                //}
-                //else
-                //    await Application.Current.MainPage.DisplayAlert("Contact Tracing", "You have reached the number of tickets you have selected", "OK");
+                        ContactTracingHeight = 40 * ContactTraces.Count;
+                    }
+                    else
+                        await Application.Current.MainPage.DisplayAlert("Contact Tracing", "You have already entered this name.", "OK");
+                }
+                else
+                    await Application.Current.MainPage.DisplayAlert("Contact Tracing", "All fields are required.", "OK");
             }
             catch (Exception ex)
             {

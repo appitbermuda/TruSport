@@ -140,6 +140,8 @@ namespace OnTrackWebService.Repository
                 //    }
                 //}
 
+                return fixtureProducts.OrderByDescending(e => e.FixtureID);
+
             }
             catch (Exception ex)
             { }
@@ -302,7 +304,7 @@ namespace OnTrackWebService.Repository
                 {
                     var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
 
-                    if (DateTime.Now.Date > fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                    if (DateTime.Now.Date >= fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
                         fixtureProducts.Add(fixtureProduct);
                 }
             }

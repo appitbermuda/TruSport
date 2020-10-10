@@ -72,7 +72,7 @@ namespace OnTrackWebService.Repository
 
                         <p>If you have any issues with thier account, please reply to them at [Email]. Otherwise, click below to validate their account.</p>
 
-                        <p><a href='[URL]/user/validate?email=[Email]'>Validate [FirstName]</a></p>
+                        <p><a href='[URL]/user/validate?email=[Email]'>Validate [Name]</a></p>
 
                         <br>
                         <br>
@@ -732,31 +732,40 @@ namespace OnTrackWebService.Repository
                         <h3>Order Summary</h3>
                         <hr/>
 
-                        <table style='width: 100%; border:none;'>
+                        <table style='width: 100%; border:none; text-align:left;'>
                             <tr>
-                             <th> Ticket </th>
-                             <th> Qty </th>
-                             <th> Total </th>
-                           </tr>
+                             <th style='width:50%;'> Ticket </th>
+                                       </tr>
                            <tr>
-                             <td> [Product] </td>
-                             <td> [Quantity] </td>
-                             <td> $[Total] </td>
+                             <td style='width:50%;'> [Product] </td>
                            </tr>
  
                         </table>
-
-                        <table style='width: 100%; border:none;'>
+<br/>
+                        <table style='width: 100%; border:none; text-align:left;'>
                             <tr>
-                             <th> Authorisation </th>
-                             <th> Transaction Date </th>
+                             <th style='width:50%;'> Qty </th>
+                             <th style='width:50%;'> Total </th>
                            </tr>
                            <tr>
-                             <td> [Authorisation] </td>
-                             <td> [TrxDate] </td>
+                             <td style='width:50%;'> [Quantity] </td>
+                             <td style='width:50%;'> $[Total] </td>
                            </tr>
  
                         </table>
+<br/>
+                        <table style='width: 100%; border:none; text-align:left;'>
+                            <tr>
+                             <th style='width:50%;'> Authorisation </th>
+                             <th style='width:50%;'> Transaction Date </th>
+                           </tr>
+                           <tr>
+                             <td style='width:50%;'> [Authorisation] </td>
+                             <td style='width:50%;'> [TrxDate] </td>
+                           </tr>
+ 
+                        </table>
+<br/>
 
                         <p>Please plan to arrive to the match before half time.</p>
 
@@ -787,7 +796,7 @@ namespace OnTrackWebService.Repository
             body = body.Replace("[Quantity]", quantity.ToString());
             body = body.Replace("[Total]", order.Total.ToString());
             body = body.Replace("[Authorisation]", authorisation);
-            body = body.Replace("[TrxDate]", order.Date.ToString("MMM dd yyyy - H:mm:ss"));
+            body = body.Replace("[TrxDate]", order.Date.ToLocalTime().ToString("MMM dd yyyy - H:mm:ss"));
 
             mailMessage.Body = body;
 

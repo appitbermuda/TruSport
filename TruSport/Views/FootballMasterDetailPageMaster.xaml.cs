@@ -105,7 +105,7 @@ namespace TruSport.Views
                     new FootballMasterDetailPageMenuItem { Id = 8, Title = "Settings", IconSource="" , TargetType = typeof(SettingPage), Group = "OnTrack" },
                     //new FootballMasterDetailPageMenuItem { Id = 9, Title = "Privacy Policy", IconSource="" , TargetType = typeof(PrivacyPolicyPage), Group = "OnTrack" },
                     new FootballMasterDetailPageMenuItem { Id = 9, Title = "Contact Us", IconSource="" , TargetType = typeof(ContactUsPage), Group = "OnTrack" },
-                    new FootballMasterDetailPageMenuItem { Id = 9, Title = "Sports", IconSource="" , TargetType = typeof(OnTrackPage), Group = "OnTrack" },
+                    new FootballMasterDetailPageMenuItem { Id = 9, Title = "Switch Sports", IconSource="" , TargetType = typeof(OnTrackPage), Group = "OnTrack" },
                     //new FootballMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(Tickets.TicketTabbedPage), Group = "OnTrack" }
                 });
                 

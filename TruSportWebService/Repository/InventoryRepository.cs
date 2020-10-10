@@ -64,7 +64,7 @@ namespace OnTrackWebService.Repository
                 var fixtureProduct = await _context.FixtureProducts
                     .Include(e => e.Product)
                     .Include(e => e.Fixture)
-                    .FirstOrDefaultAsync(e => e.ID == productID);
+                    .FirstOrDefaultAsync(e => e.ProductID == productID);
 
                 var ticketConfiguration = await _context.TicketConfigurations
                     .FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
