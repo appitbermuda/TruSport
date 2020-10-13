@@ -149,6 +149,49 @@ namespace OnTrackWebService.Repository
             return fixtureProducts;
         }
 
+        public async Task<IEnumerable<Fixture>> Products()
+        {
+            List<Fixture> fixtures = new List<Fixture>();
+
+            try
+            {
+                var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
+
+                var fixtureProductsList = await _context.FixtureProducts
+                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.Fixture).ThenInclude(e => e.League)
+                    .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Season)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Sport)
+                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
+                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
+                    .Include(e => e.Product).ThenInclude(e => e.Team)
+                    .Where(e => DateTime.Now.AddHours(-4).Date <= e.Fixture.Date)
+                    .ToListAsync();
+
+                fixtureProductsList.ForEach(e => e.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.Fixture.HomeTeam.Alias) ? e.Fixture.HomeTeam.Alias : e.Fixture.HomeTeam.Name);
+                fixtureProductsList.ForEach(e => e.Fixture.AwayTeam.Name = !String.IsNullOrEmpty(e.Fixture.AwayTeam.Alias) ? e.Fixture.AwayTeam.Alias : e.Fixture.AwayTeam.Name);
+
+                foreach (var fixtureProduct in fixtureProductsList)
+                {
+                    //ticketConfig.Any(t => t.TeamID == e.Product.TeamID && DateTime.Now.Date > e.Fixture.Date.AddDays(-(t.ValidFrom)))
+
+                    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
+
+                    if (DateTime.Now.Date >= fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                        fixtures.Add(fixtureProduct.Fixture);
+                }
+
+                return fixtures.Distinct().ToList();
+            }
+            catch (Exception ex)
+            { }
+
+            return fixtures;
+        }
+
         public async Task<IEnumerable<FixtureProduct>> Team(string teamID)
         {
             List<FixtureProduct> fixtureProducts = new List<FixtureProduct>();

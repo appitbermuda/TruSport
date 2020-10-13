@@ -18,6 +18,7 @@ namespace TruSport.ViewModel.Shop
     {
         public ObservableCollection<ContactTrace> _contactTraces;
         private ObservableCollection<FixtureProduct> _fixtureProductCollection;
+        private Fixture _fixture;
         private FixtureProduct _fixtureProduct;
         private FixtureProduct _fixtureProductTwo;
         private Customer _customer;
@@ -44,7 +45,7 @@ namespace TruSport.ViewModel.Shop
         SettingService settingService;
         InventoryService inventoryService;
 
-        public PurchaseTicketPageViewModel(INavigation navigation, FixtureProduct fixtureProduct)
+        public PurchaseTicketPageViewModel(INavigation navigation, Fixture fixture)
         {
             Navigation = navigation;
             fixtureProductService = new FixtureProductService();
@@ -54,7 +55,7 @@ namespace TruSport.ViewModel.Shop
             ContactTraces = new ObservableCollection<ContactTrace>();
             FixtureProductCollection = new ObservableCollection<FixtureProduct>();
 
-            GenerateSource(fixtureProduct);
+            GenerateSource(fixture);
 
             PurchaseCommand = new Command(async () => await Purchase());
             UpdateQuantityCommand = new Command(async () => await UpdateQuantity());
@@ -85,6 +86,12 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _contactTraces; }
             set { Set(ref _contactTraces, value); }
+        }
+
+        public Fixture Fixture
+        {
+            get { return _fixture; }
+            set { Set(ref _fixture, value); }
         }
 
         public FixtureProduct FixtureProductTwo
@@ -211,7 +218,7 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _total, value); }
         }
 
-        internal async void GenerateSource(FixtureProduct fixtureProduct)
+        internal async void GenerateSource(Fixture fixture)
         {
             IsBusy = true;
             try
@@ -221,22 +228,22 @@ namespace TruSport.ViewModel.Shop
 
                 if (Customer != null)
                 {
-                    var fixtureProducts = await fixtureProductService.GetFixtureFixtureProducts(fixtureProduct.FixtureID);
+                    var fixtureProducts = await fixtureProductService.GetFixtureFixtureProducts(fixture.ID);
 
                     CreditCard = new CreditCard();
-                    FixtureProduct = fixtureProduct;
+                    Fixture = fixture;
 
                     if (fixtureProducts != null && fixtureProducts.Count > 0)
                     {
-                        FixtureProductCollection = new ObservableCollection<FixtureProduct>(fixtureProducts.Where(e => e.ID != fixtureProduct.ID).ToList());
+                        FixtureProductCollection = new ObservableCollection<FixtureProduct>(fixtureProducts.ToList());
                         //FixtureProductCollection = new ObservableCollection<FixtureProduct>(fixtureProducts.Where(e => e.ID != fixtureProduct.ID).ToList());
                     }
 
                     decimal? processingFee = await settingService.GetProcessingFee();
 
                     CustomerName = Customer.Name;
-                    Quantity = 1;
-                    Price = fixtureProduct.Product.Price;
+                    //Quantity = 1;
+                    //Price = fixtureProduct.Product.Price;
                     Subtotal = Price;
                     ProcessingFeeAmount = processingFee ?? 0.00m;
                     ProcessingFee = ProcessingFeeAmount;
@@ -272,8 +279,18 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                this.ProcessingFee = ((this.Quantity + this.Quantity2) * this.ProcessingFeeAmount);
-                this.Subtotal = this.Quantity2 > 0 ? (this.Quantity * this.Price) + (this.Quantity2 * this.Price2) : (this.Quantity * this.Price);
+                decimal thisSubtotal = 0.0m;
+                this.ProcessingFee = (this.FixtureProductCollection.Sum(e => e.Quantity) * this.ProcessingFeeAmount);
+
+                foreach (var fixtureProduct in FixtureProductCollection)
+                {
+                    if (fixtureProduct.Quantity > 0)
+                    {
+                        thisSubtotal += fixtureProduct.Quantity * fixtureProduct.Product.Price;
+                    }
+                }
+
+                this.Subtotal = thisSubtotal;
                 this.Total = this.Subtotal + this.ProcessingFee;
             }
             catch(Exception ex)
@@ -289,7 +306,7 @@ namespace TruSport.ViewModel.Shop
             {
                 await UpdateQuantity();
 
-                if ((Quantity + Quantity2) <= ContactTraces.Count)
+                if (FixtureProductCollection.Sum(e => e.Quantity) > 0 && FixtureProductCollection.Sum(e => e.Quantity) <= ContactTraces.Count)
                 {
                     if (CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV))
                     {
@@ -383,10 +400,11 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                if(FixtureProductCollection.Count == 1)
+                if(FixtureProductCollection.Count > 0)
                 {
-                    Quantity2 = FixtureProductCollection.Sum(e => e.Quantity);
-                    Price2 = FixtureProductCollection.FirstOrDefault().Product.Price;
+
+                    //Quantity2 = FixtureProductCollection.Sum(e => e.Quantity);
+                    //Price2 = FixtureProductCollection.FirstOrDefault().Product.Price;
 
                     UpdatePrice();
                 }

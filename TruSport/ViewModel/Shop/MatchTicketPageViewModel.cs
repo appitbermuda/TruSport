@@ -13,7 +13,7 @@ namespace TruSport.ViewModel.Shop
     public class MatchTicketPageViewModel : BaseViewModel
     {
 
-        private ObservableCollection<FixtureProduct> _matchTicketCollection;
+        private ObservableCollection<Fixture> _matchTicketCollection;
         private ObservableCollection<Fixture> _fixtureCollection;
         private ObservableCollection<Product> _productCollection;
         private bool _noTickets;
@@ -29,7 +29,7 @@ namespace TruSport.ViewModel.Shop
             Navigation = navigation;
             fixtureProductService = new FixtureProductService();
             inventoryService = new InventoryService();
-            MatchTicketCollection = new ObservableCollection<FixtureProduct>();
+            MatchTicketCollection = new ObservableCollection<Fixture>();
 
             GenerateSource();
 
@@ -49,7 +49,7 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref ticketSelectedCommand, value); }
         }
 
-        public ObservableCollection<FixtureProduct> MatchTicketCollection
+        public ObservableCollection<Fixture> MatchTicketCollection
         {
             get { return _matchTicketCollection; }
             set { Set(ref _matchTicketCollection, value); }
@@ -74,8 +74,8 @@ namespace TruSport.ViewModel.Shop
                 NoTickets = false;
                 IsActivityIndicatorVisible = true;
 
-                var matchTickets = await fixtureProductService.GetFixtureProducts();
-                MatchTicketCollection = new ObservableCollection<FixtureProduct>(matchTickets);
+                var matchTickets = await fixtureProductService.GetProducts();
+                MatchTicketCollection = new ObservableCollection<Fixture>(matchTickets);
 
                 if (MatchTicketCollection.Count == 0)
                     NoTickets = true;
@@ -91,14 +91,7 @@ namespace TruSport.ViewModel.Shop
         private async void TicketSelected(object obj)
         {
             var listView = obj as SfListView;
-            var fixtureProduct = listView.SelectedItem as FixtureProduct;
-
-            //MessagingCenter.Subscribe<CreditCardPageViewModel, FixtureProduct>(this, "TicketPurchased", async (objs, product) =>
-            //{
-            //    //Purchase tickets saved to local
-            //    //var creditCards = await App.Database.T(Customer.Email);
-            //    GenerateSource();
-            //});
+            var fixture = listView.SelectedItem as Fixture;
 
             MessagingCenter.Subscribe<PurchaseTicketPageViewModel>(this, "MatchTicketPage", async (objs) =>
             {
@@ -107,17 +100,16 @@ namespace TruSport.ViewModel.Shop
                 GenerateSource();
             });
 
-            var hasStock = await inventoryService.CheckInventory(fixtureProduct.ProductID);
+            var hasStock = await inventoryService.CheckInventory(fixture.ID);
 
             if (hasStock)
             {
-                await Navigation.PushModalAsync(new PurchaseTicketPage(fixtureProduct));
+                await Navigation.PushModalAsync(new PurchaseTicketPage(fixture));
             }
             else
             {
                 await Application.Current.MainPage.DisplayAlert("Out of Stock", "Sorry, there are no more tickets left for purchase.", "OK");
             }
-            //DisplayAlert("Message", (listView.SelectedItem as Fixture).ContactName + " is selected", "OK");
         }
     }
 }

@@ -10,9 +10,9 @@ namespace TruSport.Views.Tickets
     {
         PurchaseTicketPageViewModel purchaseTicketPageViewModel;
 
-        public PurchaseTicketPage(FixtureProduct fixtureProduct)
+        public PurchaseTicketPage(Fixture fixture)
         {
-            purchaseTicketPageViewModel = new PurchaseTicketPageViewModel(Navigation, fixtureProduct);
+            purchaseTicketPageViewModel = new PurchaseTicketPageViewModel(Navigation, fixture);
 
             this.BindingContext = purchaseTicketPageViewModel;
 

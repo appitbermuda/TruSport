@@ -25,6 +25,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
+        //Deprecated
         [HttpGet]
         [Route("All")]
         public async Task<IActionResult> FixtureProducts()
@@ -33,6 +34,27 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<FixtureProduct> fixtureProducts = await _fixtureProductRepository.GetAll();
+
+                if (fixtureProducts != null)
+                    return Ok(fixtureProducts);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "FixtureProduct");
+            }
+
+            return NoContent();
+        }
+
+        //Deprecated
+        [HttpGet]
+        [Route("Products")]
+        public async Task<IActionResult> Products()
+        {
+            try
+            {
+
+                IEnumerable<Fixture> fixtureProducts = await _fixtureProductRepository.Products();
 
                 if (fixtureProducts != null)
                     return Ok(fixtureProducts);

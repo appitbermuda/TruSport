@@ -50,6 +50,41 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<Fixture>> GetProducts()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("FixtureProduct/Products", Method.GET);
+                //request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Fixture> matchTickets = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return matchTickets;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "FixtureProduct");
+            }
+            return null;
+        }
+
         public async Task<List<FixtureProduct>> GetFixtureFixtureProducts(string fixtureID)
         {
             try
