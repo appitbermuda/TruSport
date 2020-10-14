@@ -66,12 +66,31 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values/5
         [HttpGet]
-        [Route("Check")]
-        public async Task<IActionResult> CheckInventory(string productID)
+        [Route("Ticket")]
+        public async Task<IActionResult> Ticket(string fixtureID)
         {
             try
             {
-                bool hasInventory = await _inventoryRepository.CheckInventory(productID);
+                int inventoryLevel = await _inventoryRepository.TicketInventoryLevel(fixtureID);
+
+                return Ok(inventoryLevel);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Inventory");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("Check")]
+        public async Task<IActionResult> CheckInventory(string fixtureID)
+        {
+            try
+            {
+                bool hasInventory = await _inventoryRepository.CheckInventory(fixtureID);
 
                 return Ok(hasInventory);
             }

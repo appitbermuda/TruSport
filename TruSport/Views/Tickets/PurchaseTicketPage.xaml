@@ -122,7 +122,7 @@
                                     <Label x:Name="FieldName"
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding FixtureProduct.Fixture.Field.Name}"/>
+                                        Text="{Binding Fixture.Field.Name}"/>
                                     </StackLayout>
                             </StackLayout>
                             <StackLayout Grid.Row="2" Grid.ColumnSpan="5"
@@ -139,7 +139,7 @@
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd hh:mm tt}'}"/>
+                                            Text="{Binding Fixture.FixtureTime, StringFormat='{0:MMM dd - hh:mm tt}'}"/>
                                 <!--<Label x:Name="PostponedLabel"
                                        IsVisible="{Binding FixtureProduct.Fixture.IsPostponedOrCancelled}"
                                        FontSize="Small"
@@ -149,7 +149,7 @@
                             </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
-                            <ff:CachedImage Source="{Binding FixtureProduct.Fixture.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                            <ff:CachedImage Source="{Binding Fixture.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                             ErrorPlaceholder="ontracklogo.png"
                                             LoadingPlaceholder="ontracklogo.png"
                                                             CacheDuration="50"
@@ -165,7 +165,7 @@
                         </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                                  <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
-                            <ff:CachedImage Source="{Binding FixtureProduct.Fixture.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                            <ff:CachedImage Source="{Binding Fixture.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                             ErrorPlaceholder="ontracklogo.png"
                                             LoadingPlaceholder="ontracklogo.png"
                                                             CacheDuration="50"
@@ -204,7 +204,7 @@
                                        FontSize="Micro"
                                        FontAttributes="Bold"
                                        TextColor="{DynamicResource TextPrimaryColor}"
-                                            Text="{Binding FixtureProduct.Fixture.HomeTeam.Name}">
+                                            Text="{Binding Fixture.HomeTeam.Name}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
                             <OnPlatform.Android> 
@@ -228,7 +228,7 @@
                                        FontSize="Micro"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        FontAttributes="Bold"
-                                            Text="{Binding FixtureProduct.Fixture.AwayTeam.Name}">
+                                            Text="{Binding Fixture.AwayTeam.Name}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
                             <OnPlatform.Android> 
@@ -266,7 +266,7 @@
                         
                        
                     </StackLayout>-->
-                    <StackLayout Grid.Row="0" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Padding="0,0,0,20">
+                    <StackLayout Grid.Row="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,0,0,20">
                         <Label Text="Match Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="25" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
                         <!--<Grid HorizontalOptions="FillAndExpand" Padding="0,20,0,0">
                             <Grid.ColumnDefinitions>
@@ -436,6 +436,9 @@
 
                 <StackLayout Padding="10">
                     <Label Text="Due to your privacy and protection, OnTrack will not be storing your card information." FontSize="10" />
+
+                    <Label Text="First Division ticket holders must arrive before half time of the match. Premier Divison ticket holders will not be permitted to use their ticket before half time of the First Division match." FontSize="10" />
+
                 </StackLayout>
 
                 <StackLayout Padding="10">

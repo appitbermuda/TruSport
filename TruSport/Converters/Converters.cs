@@ -54,6 +54,25 @@ namespace TruSport.Converters
         }
     }
 
+    public class TicketsAvailableConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var stock = (int)value;
+
+            if (stock <= 10 && stock >= 0)
+                return true;
+
+
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (string)value;
+        }
+    }
+
     public class PhoneNumberConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

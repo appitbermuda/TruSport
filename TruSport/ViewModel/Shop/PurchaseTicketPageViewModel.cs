@@ -232,22 +232,31 @@ namespace TruSport.ViewModel.Shop
 
                     CreditCard = new CreditCard();
                     Fixture = fixture;
+                    decimal? processingFee = await settingService.GetProcessingFee();
+                    ProcessingFeeAmount = processingFee ?? 0.00m;
 
                     if (fixtureProducts != null && fixtureProducts.Count > 0)
                     {
+                        fixtureProducts.ForEach(e => e.Quantity = e.Product.Age == "Adult" ? 1 : 0);
+
                         FixtureProductCollection = new ObservableCollection<FixtureProduct>(fixtureProducts.ToList());
+
+                        UpdatePrice();
                         //FixtureProductCollection = new ObservableCollection<FixtureProduct>(fixtureProducts.Where(e => e.ID != fixtureProduct.ID).ToList());
                     }
 
-                    decimal? processingFee = await settingService.GetProcessingFee();
+                    
+
+                    
 
                     CustomerName = Customer.Name;
                     //Quantity = 1;
                     //Price = fixtureProduct.Product.Price;
-                    Subtotal = Price;
-                    ProcessingFeeAmount = processingFee ?? 0.00m;
-                    ProcessingFee = ProcessingFeeAmount;
-                    Total = (Quantity * Price) + ProcessingFee;
+                    //Subtotal = Price;
+                    
+                    //ProcessingFee = ProcessingFeeAmount;
+                    //Total = (Quantity * Price) + ProcessingFee;
+
                     ContactTraces.Add(new ContactTrace
                     {
                         FirstName = Customer.FirstName,
@@ -305,86 +314,91 @@ namespace TruSport.ViewModel.Shop
             try
             {
                 await UpdateQuantity();
+                var inventoryLevel = await inventoryService.TicketInventory(Fixture.ID);
 
-                if (FixtureProductCollection.Sum(e => e.Quantity) > 0 && FixtureProductCollection.Sum(e => e.Quantity) <= ContactTraces.Count)
+                if (FixtureProductCollection.Sum(e => e.Quantity) <= inventoryLevel)
                 {
-                    if (CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV))
+                    if (FixtureProductCollection.Sum(e => e.Quantity) > 0 && FixtureProductCollection.Sum(e => e.Quantity) <= ContactTraces.Count)
                     {
-                        List<OrderDetail> orderDetails = new List<OrderDetail>();
-
-                        orderDetails.Add(new OrderDetail
+                        if (CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV))
                         {
-                            FixtureProductID = FixtureProduct.ID,
-                            Qty = Quantity,
-                            Subtotal = this.Quantity * this.Price
-                        });
+                            List<OrderDetail> orderDetails = new List<OrderDetail>();
 
-                        if (FixtureProductCollection.Count > 0 && Quantity2 > 0)
-                        {
-                            orderDetails.Add(new OrderDetail
+                            foreach (var fixtureProduct in FixtureProductCollection)
                             {
-                                FixtureProductID = FixtureProductCollection.FirstOrDefault().ID,
-                                Qty = Quantity2,
-                                Subtotal = this.Quantity2 * this.Price2
-                            });
-                        }
-
-                        PaymentAuthorize paymentAuthorize = new PaymentAuthorize
-                        {
-                            NameOnCard = CustomerName,
-                            CardNumber = CreditCard.CardNumber,
-                            Expiry = CreditCard.Expiry,
-                            CVV = CreditCard.CVV,
-                            Quantity = Quantity + Quantity2,
-                            Amount = Convert.ToString(Total),
-                            FixtureID = FixtureProduct.FixtureID,
-                            CustomerID = Customer.ID,
-                            ContactTraces = ContactTraces.ToList(),
-                            OrderDetails = orderDetails.ToList()
-                        };
-
-                        var hasStock = await inventoryService.CheckInventory(FixtureProduct.ProductID);
-
-                        if (hasStock)
-                        {
-                            bool confirmPayment = await App.Current.MainPage.DisplayAlert("Purchase Ticket","You will be charged a total of " + Total.ToString("C"),"Purchase","Cancel");
-
-                            if (confirmPayment)
-                            {
-                                PaymentResponse paymentResponse = await matchTicketService.Purchase(paymentAuthorize);
-
-                                if (paymentResponse != null)
+                                if (fixtureProduct.Quantity > 0)
                                 {
-                                    IsBusy = false;
-
-                                    MessagingCenter.Subscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased", async (objs, product) =>
+                                    orderDetails.Add(new OrderDetail
                                     {
-                                        MessagingCenter.Unsubscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased");
-
-                                        if (product.IsApproved)
-                                            await Navigation.PopModalAsync();
+                                        FixtureProductID = fixtureProduct.ID,
+                                        Qty = fixtureProduct.Quantity,
+                                        Subtotal = fixtureProduct.Quantity * fixtureProduct.Product.Price
                                     });
-
-                                    await Navigation.PushModalAsync(new PurchaseTicketResultPage(paymentResponse));
-                                }
-                                else
-                                {
-                                    await Application.Current.MainPage.DisplayAlert("Transaction Error", "Looks like there was an issue processing your payment, please check your card details and try again.", "OK");
                                 }
                             }
+
+                            PaymentAuthorize paymentAuthorize = new PaymentAuthorize
+                            {
+                                NameOnCard = CustomerName,
+                                CardNumber = CreditCard.CardNumber,
+                                Expiry = CreditCard.Expiry,
+                                CVV = CreditCard.CVV,
+                                Quantity = FixtureProductCollection.Sum(e => e.Quantity),
+                                Amount = Convert.ToString(Total),
+                                FixtureID = Fixture.ID,
+                                CustomerID = Customer.ID,
+                                ContactTraces = ContactTraces.ToList(),
+                                OrderDetails = orderDetails.ToList()
+                            };
+
+                            var hasStock = await inventoryService.CheckInventory(Fixture.ID);
+
+                            if (hasStock)
+                            {
+                                bool confirmPayment = await App.Current.MainPage.DisplayAlert("Purchase Ticket", "You will be charged a total of " + Total.ToString("C"), "Purchase", "Cancel");
+
+                                if (confirmPayment)
+                                {
+                                    PaymentResponse paymentResponse = await matchTicketService.Purchase(paymentAuthorize);
+
+                                    if (paymentResponse != null)
+                                    {
+                                        IsBusy = false;
+
+                                        MessagingCenter.Subscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased", async (objs, product) =>
+                                        {
+                                            MessagingCenter.Unsubscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased");
+
+                                            if (product.IsApproved)
+                                                await Navigation.PopModalAsync();
+                                        });
+
+                                        await Navigation.PushModalAsync(new PurchaseTicketResultPage(paymentResponse));
+                                    }
+                                    else
+                                    {
+                                        await Application.Current.MainPage.DisplayAlert("Transaction Error", "Looks like there was an issue processing your payment, please check your card details and try again.", "OK");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                await Application.Current.MainPage.DisplayAlert("Out of Stock", "Sorry, there are no more tickets left for purchase.", "OK");
+                                await Navigation.PopModalAsync();
+                            }
+
                         }
                         else
-                        {
-                            await Application.Current.MainPage.DisplayAlert("Out of Stock", "Sorry, there are no more tickets left for purchase.", "OK");
-                            await Navigation.PopModalAsync();
-                        }
-
+                            await Application.Current.MainPage.DisplayAlert("Card Details", "Please enter your card details.", "OK");
                     }
                     else
-                        await Application.Current.MainPage.DisplayAlert("Card Details", "Please enter your card details.", "OK");
+                        await Application.Current.MainPage.DisplayAlert("Contact Tracing", "You must provide the names for the match tickets for contact tracing.", "OK");
                 }
                 else
-                    await Application.Current.MainPage.DisplayAlert("Contact Tracing", "You must provide the names for the match tickets for contact tracing.", "OK");
+                {
+                    await Application.Current.MainPage.DisplayAlert("Available Tickets", "Sorry, there " + (inventoryLevel == 0 ? "are no tickets" : inventoryLevel == 1 ? "is only 1 ticket" : "are only " + inventoryLevel + " tickets") + " available.", "OK");
+                    await Navigation.PopModalAsync();
+                }
             }
             catch (Exception ex)
             {

@@ -181,7 +181,24 @@ namespace OnTrackWebService.Repository
                     var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
 
                     if (DateTime.Now.Date >= fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
-                        fixtures.Add(fixtureProduct.Fixture);
+                    {
+                        var matchTicketsList = await _context.MatchTickets
+                        .Where(e => e.FixtureProduct.FixtureID == fixtureProduct.FixtureID)
+                        .ToListAsync();
+
+                        var ticketCount = matchTicketsList.Count();
+                        var availableTickets = (ticketConfiguration.Stock - ticketCount) < 0 ? 0 : (ticketConfiguration.Stock - ticketCount);
+
+                        if (availableTickets > 0)
+                        {
+                            //if (availableTickets <= 10)
+                            //{
+                                fixtureProduct.Fixture.TicketAvailable = availableTickets;
+                            //}
+
+                            fixtures.Add(fixtureProduct.Fixture);
+                        }
+                    }
                 }
 
                 return fixtures.Distinct().ToList();

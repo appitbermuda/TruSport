@@ -7,6 +7,7 @@
              Title="Match's" >
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converters:TicketsAvailableConverter x:Name="ticketsAvailableConverter" x:Key="ticketsAvailableConverter"/>
             <DataTemplate x:Name="MatchTicketItemTemplate" x:Key="MatchTicketItemTemplate">
                 <StackLayout>
                 <StackLayout HorizontalOptions="FillAndExpand"
@@ -214,12 +215,20 @@
                                 </StackLayout>
                         </StackLayout>-->
                     <StackLayout Grid.Row="3" Grid.ColumnSpan="5" HorizontalOptions="FillAndExpand" Padding="5" BackgroundColor="{DynamicResource navBackgroundColor}">
-                        <Label x:Name="MatchTicket" HorizontalTextAlignment="Center"
+                        <StackLayout HorizontalOptions="CenterAndExpand" Orientation="Horizontal">
+                        <Label x:Name="MatchTicket"
                                    FontSize="Medium"
                                        FontAttributes="Bold"
                                        Text="Match Ticket"
                                        VerticalOptions="CenterAndExpand"
                                    TextColor="{DynamicResource navTextColor}"/>
+                        <Label IsVisible="{Binding TicketAvailable, Converter={StaticResource ticketsAvailableConverter}}" x:Name="MatchTicketStock"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                       Text="{Binding TicketAvailable, StringFormat='({0} Available)'}"
+                                       VerticalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource navTextColor}"/>
+                            </StackLayout>
                     </StackLayout>
                         </Grid>
                         </Frame>
@@ -234,7 +243,6 @@
         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <listView:SfListView x:Name="MatchTicketsList"
                                     ItemsSource="{Binding MatchTicketCollection}"

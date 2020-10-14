@@ -57,20 +57,52 @@ namespace OnTrackWebService.Repository
             return 0;
         }
 
-        public async Task<bool> CheckInventory(string productID)
+        public async Task<int> TicketInventoryLevel(string fixtureID)
+        {
+            try
+            {
+                //var product = await _context.Products.FirstOrDefaultAsync(e => e.TeamID == teamid);
+                var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.FixtureID == fixtureID);
+
+                var ticketConfiguration = await _context.TicketConfigurations
+                    .FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+
+                //var orders = await _context.OrderDetails
+                //    .Include(e => e.FixtureProduct)
+                //    .Where(e => e.FixtureProduct.Product.TeamID == teamid)
+                //    .ToListAsync();
+
+                var matchTicketsList = await _context.MatchTickets
+                    .Where(e => e.FixtureProduct.FixtureID == fixtureID)
+                    .ToListAsync();
+
+                var ticketCount = matchTicketsList.Count();
+
+
+                return (ticketConfiguration.Stock - ticketCount) < 0 ? 0 : (ticketConfiguration.Stock - ticketCount);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Check Inventory");
+            }
+
+            return 0;
+        }
+
+        public async Task<bool> CheckInventory(string fixtureID)
         {
             try
             {
                 var fixtureProduct = await _context.FixtureProducts
                     .Include(e => e.Product)
                     .Include(e => e.Fixture)
-                    .FirstOrDefaultAsync(e => e.ProductID == productID);
+                    .FirstOrDefaultAsync(e => e.FixtureID == fixtureID);
 
                 var ticketConfiguration = await _context.TicketConfigurations
                     .FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
 
                 var matchTicketsList = await _context.MatchTickets
-                    .Where(e => e.FixtureProduct.FixtureID == fixtureProduct.FixtureID)
+                    .Where(e => e.FixtureProduct.FixtureID == fixtureID)
                     .ToListAsync();
 
                 //var orders = await _context.OrderDetails

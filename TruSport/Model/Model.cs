@@ -723,6 +723,9 @@ namespace TruSport.Model
         public bool IsPostponedOrCancelled { get; set; }
 
         [Ignore]
+        public int TicketAvailable { get; set; }
+
+        [Ignore]
         public Team HomeTeam { get; set; }
 
         [Ignore]

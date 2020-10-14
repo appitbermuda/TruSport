@@ -29,6 +29,9 @@
                         <Label HorizontalTextAlignment="Center" LineBreakMode="WordWrap" FontSize="20" Text="{Binding Response.Description}"  TextColor="{Binding Response.IsApproved, Converter={StaticResource paymentResponseColorConverter}}"/>
                         <!--<Label FontSize="30" Text="{Binding Response.IsApproved, Converter={StaticResource paymentResponseTextConverter}}"  TextColor="{Binding Response.IsApproved, Converter={StaticResource paymentResponseColorConverter}}"/>-->
                     </StackLayout>
+                    <StackLayout IsVisible="{Binding Response.IsApproved}" Margin="0,20,0,0">
+                        <Label HorizontalTextAlignment="Center" LineBreakMode="WordWrap" FontSize="18" Text="Your ticket is displayed in your 'My Tickets' tab." FontAttributes="Bold"/>
+                    </StackLayout>
                 </StackLayout>
                 <!--<StackLayout Grid.Row="2" Padding="20,20,20,0">
                     <StackLayout BindableLayout.ItemsSource="{Binding Response.Tickets}">
