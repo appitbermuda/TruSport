@@ -94,7 +94,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => DateTime.Now.Date.AddHours(-4) <= e.Fixture.Date)
+                    .Where(e => DateTime.Now.AddHours(-4).Date <= e.Fixture.Date)
                     .ToListAsync();
 
                 fixtureProductsList.ForEach(e => e.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.Fixture.HomeTeam.Alias) ? e.Fixture.HomeTeam.Alias : e.Fixture.HomeTeam.Name);

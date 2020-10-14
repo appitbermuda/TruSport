@@ -89,7 +89,41 @@ namespace OnTrackWebService.Repository
             return 0;
         }
 
-        public async Task<bool> CheckInventory(string fixtureID)
+        public async Task<bool> CheckInventory(string productID)
+        {
+            try
+            {
+                var fixtureProduct = await _context.FixtureProducts
+                    .Include(e => e.Product)
+                    .Include(e => e.Fixture)
+                    .FirstOrDefaultAsync(e => e.ProductID == productID);
+
+                var ticketConfiguration = await _context.TicketConfigurations
+                    .FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+
+                var matchTicketsList = await _context.MatchTickets
+                    .Where(e => e.FixtureProduct.FixtureID == fixtureProduct.FixtureID)
+                    .ToListAsync();
+
+                //var orders = await _context.OrderDetails
+                //    .Include(e => e.FixtureProduct)
+                //    .Where(e => e.FixtureProduct.ProductID == productID)
+                //    .ToListAsync();
+
+                var ticketCount = matchTicketsList.Count();
+
+                if (ticketCount < ticketConfiguration.Stock)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Check Inventory");
+            }
+
+            return false;
+        }
+
+        public async Task<bool> CheckTicketInventory(string fixtureID)
         {
             try
             {

@@ -100,7 +100,7 @@ namespace TruSport.ViewModel.Shop
                 GenerateSource();
             });
 
-            var hasStock = await inventoryService.CheckInventory(fixture.ID);
+            var hasStock = await inventoryService.CheckTicketInventory(fixture.ID);
 
             if (hasStock)
             {
