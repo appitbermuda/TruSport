@@ -42,12 +42,12 @@
                 </Grid.ColumnDefinitions>
                 <StackLayout Grid.Row="0">
                         <textinputlayout:SfTextInputLayout x:Name="FirstNameInput" IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
-                            <Entry Text="{Binding FirstName}" Placeholder="First Name" TextColor="{DynamicResource TextPrimaryColor}"/>
+                            <Entry Text="{Binding FirstName}" Placeholder="First Name" TextColor="{DynamicResource TextPrimaryColor}" IsSpellCheckEnabled="False"/>
                         </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="0" Grid.Column="1">
                     <textinputlayout:SfTextInputLayout x:Name="LastNameInput" IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
-                            <Entry Text="{Binding LastName}" Placeholder="Last Name" TextColor="{DynamicResource TextPrimaryColor}"/>
+                            <Entry Text="{Binding LastName}" Placeholder="Last Name" TextColor="{DynamicResource TextPrimaryColor}" IsSpellCheckEnabled="False"/>
                         </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="1" Grid.ColumnSpan="2">

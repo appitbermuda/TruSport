@@ -18,7 +18,7 @@
     <Color x:Key="TextThirdColor">#646464</Color>
     <Color x:Key="TextHeaderColor">#FFFFFF</Color>
     <Color x:Key="tabHeaderColor">#F5F5F5</Color>
-    <Color x:Key="tabTextColor">#FFFFFF</Color>
+    <Color x:Key="tabTextColor">#0e1550</Color>
     <Color x:Key="tabIndicatorColor">#0e1550</Color>
     <Color x:Key="borderColor">#ebebeb</Color>
     <Color x:Key="indicatorColor">#0e1550</Color>

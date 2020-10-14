@@ -476,25 +476,30 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email && !e.IsValidated);
+                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email);
 
                 if (customer != null)
                 {
-                    customer.IsValidated = true;
+                    if (!customer.IsValidated)
+                    {
+                        customer.IsValidated = true;
 
-                    _context.Customers.Update(customer);
-                    await _context.SaveChangesAsync();
+                        _context.Customers.Update(customer);
+                        await _context.SaveChangesAsync();
 
-                    //try
-                    //{
-                    //    await emailRepository.CustomerValidated(email);
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    Debug.WriteLine(ex.Message, "Customer Validate");
-                    //}
+                        //try
+                        //{
+                        //    await emailRepository.CustomerValidated(email);
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    Debug.WriteLine(ex.Message, "Customer Validate");
+                        //}
 
-                    return "Account validated successfully!";
+                        return "Account validated successfully!";
+                    }
+                    else
+                        return "Account already validated.";
                 }
             }
             catch (Exception ex)
