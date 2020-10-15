@@ -11,13 +11,6 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
 	<key>MinimumOSVersion</key>
 	<string>9.0</string>
 	<key>CFBundleDisplayName</key>
@@ -53,10 +46,12 @@
 		<true/>
 	</dict>
 	<key>CFBundleVersion</key>
-	<string>1.25</string>
+	<string>1.29</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-1338169805120312~6077936967</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.1.0</string>
+	<string>2.1.1</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 </dict>
 </plist>
