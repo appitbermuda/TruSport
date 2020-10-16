@@ -541,6 +541,40 @@ namespace OnTrackWebService.Repository
             return false;
         }
 
+        public async Task<bool> CustomerHasTemporaryPassword(string email)
+        {
+            try
+            {
+                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email && e.TemporaryPassword != null);
+
+                if (customer != null)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Has Temporary Password");
+            }
+
+            return false;
+        }
+
+        public async Task<bool> UserHasTemporaryPassword(string email)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email && e.TemporaryPassword != null);
+
+                if (user != null)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Has Temporary Password");
+            }
+
+            return false;
+        }
+
         public async Task<string> ResetCustomerPassword(PasswordReset passwordReset)
         {
             try

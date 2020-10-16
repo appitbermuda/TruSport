@@ -149,6 +149,35 @@ namespace TruSport.Services
             }
         }
 
+        public async Task<bool> HasTemporaryPassword(string email)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Customer/HasTemporaryPassword", Method.GET);
+                request.AddParameter("email", email);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    bool userExist = JsonConvert.DeserializeObject<bool>(response.Content);
+
+                    return userExist;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+
+                return false;
+            }
+        }
+
         public async Task<bool> ForgotPassword(ForgotPassword forgotPassword)
         {
             try

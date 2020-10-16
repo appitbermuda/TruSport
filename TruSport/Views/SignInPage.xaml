@@ -55,7 +55,14 @@
                         <Label Text="Haven't signed up?" TextColor="Gray" VerticalOptions="CenterAndExpand"/>
                         <Button Text="Sign Up" Padding="0" FontAttributes="Bold" BackgroundColor="Transparent" TextColor="{DynamicResource buttonBackgroundColor}" Command="{Binding RegisterCommand}" />
                     </StackLayout>
-                    
+                    <StackLayout>
+                        <Button Text="Forgot your password?" Padding="0"
+                            BackgroundColor="Transparent"
+                            TextColor="{DynamicResource buttonBackgroundColor}"
+                            Command="{Binding ForgotPasswordCommand}"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"/>
+                    </StackLayout>
                 </StackLayout>
                 
             </Grid>

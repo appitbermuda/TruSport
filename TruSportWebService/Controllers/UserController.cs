@@ -158,6 +158,25 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("HasTemporaryPassword")]
+        public async Task<IActionResult> HasTemporaryPassword(string email)
+        {
+            try
+            {
+
+                bool hasTemporaryPassword = await _authenticationRepository.UserHasTemporaryPassword(email);
+
+                return Ok(hasTemporaryPassword);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
         //This resource is only For SuperAdmin role
         [HttpPost]
         [Route("ForgotPassword")]

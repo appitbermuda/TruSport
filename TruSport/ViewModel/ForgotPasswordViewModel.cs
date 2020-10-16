@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TruSport.Model;
+using TruSport.Services;
 using TruSport.ViewModels;
 using TruSport.Views;
+using TruSport.Views.Tickets;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -19,7 +23,7 @@ namespace TruSport.ViewModel
         private bool buttonDisabled;
         private bool _isEmailSent;
         //DatabaseManager databaseManager;
-        UserService userService;
+        AuthenticationService authenticationService;
 
         public INavigation Navigation { get; set; }
         public string RoleID;
@@ -29,7 +33,7 @@ namespace TruSport.ViewModel
         {
             this.Navigation = navigation;
 
-            userService = new UserService();
+            authenticationService = new AuthenticationService();
 
             GenerateSource();
 
@@ -91,6 +95,7 @@ namespace TruSport.ViewModel
             IsActivityIndicatorVisible = true;
 
             IsEmailSent = false;
+            ButtonDisabled = true;
 
             IsActivityIndicatorVisible = false;
         }
@@ -104,19 +109,18 @@ namespace TruSport.ViewModel
 
                 if (!String.IsNullOrEmpty(Email) && !IsEmailSent)
                 {
-
-                }
-
-                if (!String.IsNullOrEmpty(Email) && !IsEmailSent)
-                {
-                    var hasTempPassword = await userService.HasTemporaryPassword(Email);
+                    var hasTempPassword = await authenticationService.HasTemporaryPassword(Email);
 
                     if (!hasTempPassword)
                     {
                         if (Regex.IsMatch(Email, "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$"))
                         {
+                            ForgotPassword forgotPassword = new ForgotPassword
+                            {
+                                Email = Email
+                            };
 
-                            bool forgotPasswordSent = await userService.ForgotPassword(Email);
+                            bool forgotPasswordSent = await authenticationService.ForgotPassword(forgotPassword);
 
                             if (forgotPasswordSent)
                             {
@@ -154,9 +158,9 @@ namespace TruSport.ViewModel
                             {
                                 if (Password.Length >= 8)
                                 {
-                                    bool userExists = await userService.DoesUserExist(Email);
+                                    bool customerExists = await authenticationService.CustomerExists(Email);
 
-                                    if (userExists)
+                                    if (customerExists)
                                     {
                                         PasswordReset passwordReset = new PasswordReset
                                         {
@@ -165,41 +169,46 @@ namespace TruSport.ViewModel
                                             TemporaryPassword = TemporaryPassword
                                         };
 
-                                        await userService.ResetPassword(passwordReset);
+                                        await authenticationService.ResetPassword(passwordReset);
 
                                         await Application.Current.MainPage.DisplayAlert("Success", "Password reset successfully!.", "Okay");
 
-                                        UserAuthentication User = new UserAuthentication();
-                                        User.Email = Email;
-                                        User.Password = Password;
+                                        CustomerAuthentication Customer = new CustomerAuthentication();
+                                        Customer.Email = Email;
+                                        Customer.Password = Password;
 
-                                        User userAuthenticated = await userService.SignIn(User);
+                                        Customer thisCustomer = await authenticationService.SignIn(Customer);
 
-                                        if (userAuthenticated != null)
+                                        if (thisCustomer != null)
                                         {
-                                            await App.Database.SaveUserAsync(userAuthenticated);
+                                            await App.Database.SignIn(thisCustomer);
 
-                                            await SecureStorage.SetAsync("UserEmail", userAuthenticated.Email);
-                                            await SecureStorage.SetAsync("ProfileID", userAuthenticated.ProfileID);
-                                            await SecureStorage.SetAsync("Role", userAuthenticated.RoleName);
-
-                                            App.IsLoggedIn = true;
-                                            App.UserRole = userAuthenticated.RoleName;
+                                            await SecureStorage.SetAsync("Email", thisCustomer.Email);
+                                            await SecureStorage.SetAsync("Token", thisCustomer.Token);
+                                            await SecureStorage.SetAsync("UserLoggedIn", "true");
 
                                             IsActivityIndicatorVisible = false;
+                                            App.IsLoggedIn = true;
 
-                                            Navigation.InsertPageBefore(new MainPage(), Navigation.NavigationStack.First());
-                                            await Navigation.PopToRootAsync();
+                                            await Navigation.PopModalAsync();
 
+                                            if (Application.Current.MainPage is MasterDetailPage mdp)
+                                            {
+                                                var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
+                                                page.Title = "Tickets";
+
+                                                mdp.Detail = new NavigationPage(page)
+                                                {
+                                                    BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                                                    BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                                                };
+                                            }
                                         }
                                         else
                                         {
                                             IsActivityIndicatorVisible = false;
-                                            await Application.Current.MainPage.DisplayAlert("Sign In", "You have entered an incorrect email or password, or your account has not been validated yet.", "Okay");
+                                            await Application.Current.MainPage.DisplayAlert("Sign In", "You have either entered an incorrect email or password, or your account has not been validated. Please try again later.", "Okay");
                                         }
-
-                                        Navigation.InsertPageBefore(new MainPage(), Navigation.NavigationStack.First());
-                                        await Navigation.PopToRootAsync();
 
                                     }
                                     else

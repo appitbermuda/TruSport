@@ -268,6 +268,23 @@ namespace OnTrackWebService.Repository
             return "There was an error resetting your password.";
         }
 
+        public async Task<bool> HasTemporaryPassword(string email)
+        {
+            try
+            {
+                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email && e.TemporaryPassword != null);
+
+                if (customer != null)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Has Temporary Password");
+            }
+
+            return false;
+        }
+
         public async Task<IEnumerable<Customer>> GetAll()
         {
             try

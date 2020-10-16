@@ -25,6 +25,9 @@ namespace TruSport.Views.Tickets
 
             InitializeComponent();
 
+            BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"];
+            BarTextColor = (Color)App.Current.Resources["navTextColor"];
+
             this.BindingContext = ticketTabbedPageViewModel;
         }
 

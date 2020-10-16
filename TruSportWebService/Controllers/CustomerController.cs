@@ -140,6 +140,25 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("HasTemporaryPassword")]
+        public async Task<IActionResult> HasTemporaryPassword(string email)
+        {
+            try
+            {
+
+                bool hasTemporaryPassword = await _authenticationRepository.CustomerHasTemporaryPassword(email);
+
+                return Ok(hasTemporaryPassword);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("Validate")]
         public async Task<IActionResult> Validate(string email)
         {

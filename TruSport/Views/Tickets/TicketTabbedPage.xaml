@@ -4,7 +4,9 @@
             xmlns:tickets="clr-namespace:TruSport.Views.Tickets"
             x:Class="TruSport.Views.Tickets.TicketTabbedPage"
             Title="Tickets"
-            SelectedTabColor="{DynamicResource indicatorColor}">
+            SelectedTabColor="{DynamicResource indicatorColor}"
+            BarBackgroundColor="{DynamicResource navBackgroundColor}"
+            BarTextColor="{DynamicResource navTextColor}">
     <!--Pages can be added as references or inline-->
     
     <!--<tickets:PurchasePage Title="Match's" />

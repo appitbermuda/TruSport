@@ -56,6 +56,7 @@ namespace TruSport.ViewModel.Shop
         Command _loginCommand;
         public Command LoginCommand => _loginCommand ?? (_loginCommand = new Command(Login, CanLogin));
 
+        public Command ForgotPasswordCommand { get; set; }
         public Command RegisterCommand { get; set; }
         INavigation Navigation;
         AuthenticationService authenticationService;
@@ -70,6 +71,7 @@ namespace TruSport.ViewModel.Shop
             GenerateSource();
 
             RegisterCommand = new Command(async () => await Register());
+            ForgotPasswordCommand = new Command(async () => await ForgotPassword());
 
             //MessagingCenter.Subscribe<NewItemPage, Item>(this, "AddItem", async (obj, item) =>
             //{
@@ -178,6 +180,11 @@ namespace TruSport.ViewModel.Shop
             {
                 IsActivityIndicatorVisible = false;
             }
+        }
+
+        async Task ForgotPassword()
+        {
+            await Navigation.PushModalAsync(new ForgotPasswordPage());
         }
 
         bool CanLogin() => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !HasErrors;

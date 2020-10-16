@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TruSport.ViewModel;
 using TruSport.ViewModels;
 using Xamarin.Forms;
 
@@ -7,13 +8,13 @@ namespace TruSport.Views
 {
     public partial class ForgotPasswordPage : ContentPage
     {
-        AuthenticationViewModel authenticationViewModel;
+        ForgotPasswordViewModel forgotPasswordViewModel;
 
         public ForgotPasswordPage()
         {
-            authenticationViewModel = new AuthenticationViewModel(Navigation, "Reset Password");
+            forgotPasswordViewModel = new ForgotPasswordViewModel(Navigation);
 
-            this.BindingContext = authenticationViewModel;
+            this.BindingContext = forgotPasswordViewModel;
             InitializeComponent();
         }
 

@@ -771,7 +771,7 @@ namespace OnTrackWebService.Repository
 
 <br/>
 <h3>How do you get in?</h3>
-<p>In the app, you would have seen an 'Active' tab in the ticketing section. A QR code is automatically generated for you. This can be scanned at the gate for entry. You being the purchaser, will have every purchased ticket on your device. If there are any issues with your phone, the ticketing administrators are able to search for your tickets by your name.</p>
+<p>In the app, you would have seen an 'Active' or 'My Tickets' tab in the ticketing section. A QR code is automatically generated for you. This can be scanned at the gate for entry. You being the purchaser, will have every purchased ticket on your device. If there are any issues with your phone, the ticketing administrators are able to search for your tickets by your name.</p>
 
 <br/>
 
