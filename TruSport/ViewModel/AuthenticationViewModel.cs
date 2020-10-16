@@ -607,9 +607,50 @@ namespace TruSport.ViewModels
 
                                         await Application.Current.MainPage.DisplayAlert("Success", "Password reset successfully!.", "Okay");
 
-                                        await Navigation.PopModalAsync();
+                                        //await Navigation.PopModalAsync();
 
-                                        PasswordResetRequestSent = true;
+                                        //PasswordResetRequestSent = true;
+
+                                        UserAuthentication userAuthentication = new UserAuthentication();
+                                        userAuthentication.Email = Email;
+                                        userAuthentication.Password = Password;
+
+                                        User thisUser = await userService.SignIn(userAuthentication);
+
+                                        if (thisUser != null)
+                                        {
+                                            bool isEnabled = await Microsoft.AppCenter.Push.Push.IsEnabledAsync();
+                                            Guid DeviceID = Guid.Empty;
+                                            if (isEnabled)
+                                            {
+                                                Guid? deviceID = await AppCenter.GetInstallIdAsync();
+                                                DeviceID = deviceID.GetValueOrDefault();
+                                                App.DeviceID = DeviceID.ToString();
+                                            }
+
+                                            //await App.Database.SaveUser(localUser);
+
+                                            await SecureStorage.SetAsync("Email", thisUser.Email);
+                                            await SecureStorage.SetAsync("Token", thisUser.Token);
+                                            await SecureStorage.SetAsync("UserLoggedIn", "true");
+                                            await SecureStorage.SetAsync("UserRole", thisUser.UserType.Name);
+
+                                            App.UserID = thisUser.ID;
+                                            App.UserFirstName = thisUser.FirstName;
+                                            App.UserLastName = thisUser.LastName;
+                                            App.UserFullName = thisUser.FirstName + " " + thisUser.LastName;
+
+                                            //await App.Database.UpdateUser(thisUser);
+                                            IsActivityIndicatorVisible = false;
+
+
+                                            await Navigation.PopModalAsync();
+                                        }
+                                        else
+                                        {
+                                            IsActivityIndicatorVisible = false;
+                                            await Application.Current.MainPage.DisplayAlert("Sign In", "You have either entered an incorrect email or password, or your account has not been validated. Please try again later.", "Okay");
+                                        }
 
                                     }
                                     else

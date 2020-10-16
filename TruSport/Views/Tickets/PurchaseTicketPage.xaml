@@ -58,8 +58,8 @@
     </ContentPage.Resources>
     <ContentPage.Content>
 
-        <StackLayout>
-            <Grid BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,0" HeightRequest="90">
+        <StackLayout BackgroundColor="{DynamicResource navBackgroundColor}">
+            <Grid  Padding="10,0" HeightRequest="90">
                 <StackLayout VerticalOptions="FillAndExpand">
                     <Label Text="Purchase Ticket" FontSize="Small" FontAttributes="Bold" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
                 </StackLayout>
@@ -360,17 +360,17 @@
                         <Label Text="Due to COVID-19, we must ensure the correct approach is taken for contact tracing. Please provide the name(s) and contact details required by government to ensure the match is in compliance." LineBreakMode="WordWrap" FontSize="9" />
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.Column="0">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding FirstName}" Placeholder="First Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.Column="1">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding LastName}" Placeholder="Last Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="2" Grid.ColumnSpan="2">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Phone" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Phone" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding Phone}" Placeholder="Phone" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
@@ -413,22 +413,22 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackLayout Grid.ColumnSpan="2">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Name of Card" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Name of Card" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding CustomerName}" Placeholder="Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Card Number" ContainerType="Outlined" CharMaxLength="16" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Card Number" ContainerType="Outlined" CharMaxLength="16" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding CreditCard.CardNumber}" MaxLength="16" Keyboard="Numeric" Placeholder="1111222233334444" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="2" Grid.Column="0">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Expiry (MMYY)" ContainerType="Outlined" CharMaxLength="4" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Expiry (MMYY)" ContainerType="Outlined" CharMaxLength="4" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding CreditCard.Expiry}" MaxLength="4" Keyboard="Numeric" Placeholder="0125" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="2" Grid.Column="1">
-                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="CVV" ContainerType="Outlined" CharMaxLength="3" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="WhiteSmoke">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="CVV" ContainerType="Outlined" CharMaxLength="3" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding CreditCard.CVV}" MaxLength="3" Keyboard="Numeric" Placeholder="123" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>

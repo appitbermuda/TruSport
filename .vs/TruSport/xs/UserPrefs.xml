@@ -1,51 +1,37 @@
-﻿<Properties StartupConfiguration="{27E69D44-8F2E-4872-A445-BF4C3E3836A1}|Default">
+﻿<Properties StartupConfiguration="{2B8BBBC2-64F1-4CA8-93A4-CE0C0FCA282F}|Default">
   <MonoDevelop.Ide.ItemProperties.TruSport.Android AndroidDesignerPreferredDevice="Nexus 4" PreferredExecutionTarget="Android.pixel_xl_r_11_0_-_api_30" />
-  <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Models/Fixture.cs">
+  <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.2CF59E39-8BAE-4537-B46A-46324ECBA491" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSport/ViewModel/ForgotPasswordViewModel.cs">
     <Files>
-      <File FileName="TruSport/Views/Tickets/PurchasePage.xaml" Line="250" Column="59" />
-      <File FileName="TruSport/Converters/Converters.cs" Line="63" Column="40" />
-      <File FileName="TruSport/Views/Tickets/PurchaseTicketPage.xaml" Line="441" Column="1" />
-      <File FileName="TruSport/Views/Tickets/TicketTabbedPage.xaml" Line="14" Column="1" />
-      <File FileName="TruSport/Styles/DarkTheme.xaml" Line="1" Column="1" />
-      <File FileName="TruSport/ViewModel/Shop/PurchaseTicketPageViewModel.cs" Line="354" Column="87" />
-      <File FileName="TruSport/ViewModel/Football/FootballPageViewModel.cs" Line="1" Column="1" />
-      <File FileName="TruSport/Styles/LightTheme.xaml" Line="24" Column="33" />
-      <File FileName="TruSport/Views/FootballMasterDetailPageMaster.xaml" Line="1" Column="1" />
-      <File FileName="TruSport.iOS/ExtendedTicketTabbedPageRenderer.cs" Line="1" Column="1" />
-      <File FileName="TruSport.iOS/ExtendedTabbedPageRenderer.cs" Line="1" Column="1" />
-      <File FileName="TruSport/Views/Tickets/TicketTabbedPage.xaml.cs" Line="1" Column="1" />
-      <File FileName="TruSport/Views/Tickets/PurchaseTicketResultPage.xaml" Line="39" Column="47" />
-      <File FileName="TruSport/Constants/Constants.cs" Line="1" Column="1" />
-      <File FileName="TruSport.iOS/Info.plist" />
-      <File FileName="TruSport.Android/Properties/AndroidManifest.xml" />
-      <File FileName="TruSportWebService/Repository/MatchTicketRepository.cs" Line="1" Column="1" />
-      <File FileName="TruSportWebService/Repository/EmailRepository.cs" Line="1" Column="1" />
-      <File FileName="TruSportWebService/Models/Fixture.cs" Line="1" Column="1" />
-      <File FileName="TruSport/ViewModel/Shop/MatchTicketPageViewModel.cs" Line="103" Column="71" NotebookId="1" />
-      <File FileName="TruSport/Model/Model.cs" Line="726" Column="9" NotebookId="1" />
-      <File FileName="TruSport/Services/InventoryService.cs" Line="88" Column="47" NotebookId="1" />
-      <File FileName="TruSportWebService/Controllers/InventoryController.cs" Line="113" Column="64" NotebookId="1" />
-      <File FileName="TruSportWebService/Repository/InventoryRepository.cs" Line="105" Column="87" NotebookId="1" />
-      <File FileName="TruSport/Services/FixtureProductService.cs" Line="53" Column="42" NotebookId="1" />
-      <File FileName="TruSportWebService/Repository/FixtureProductRepository.cs" Line="143" Column="1" NotebookId="1" />
-      <File FileName="TruSportWebService/Controllers/FixtureProductController.cs" Line="36" Column="97" NotebookId="1" />
+      <File FileName="TruSportWebService/Repository/UserRepository.cs" Line="217" Column="9" />
+      <File FileName="TruSportWebService/Repository/CustomerRepository.cs" Line="208" Column="1" />
+      <File FileName="TruSportWebService/Repository/EmailRepository.cs" Line="333" Column="30" />
+      <File FileName="TruSportWebService/Controllers/CustomerController.cs" Line="223" Column="64" />
+      <File FileName="TruSportWebService/Repository/AuthenticationRepository.cs" Line="513" Column="33" />
+      <File FileName="TruSport/Services/AuthenticationService.cs" Line="1" Column="1" />
+      <File FileName="TruSport/Views/ForgotPasswordPage.xaml" Line="115" Column="19" />
+      <File FileName="TruSport/Views/ForgotPasswordPage.xaml.cs" Line="14" Column="58" />
+      <File FileName="TruSport/ViewModel/AuthenticationViewModel.cs" Line="431" Column="84" />
+      <File FileName="TruSport/Services/UserService.cs" Line="123" Column="33" />
+      <File FileName="TruSport/Views/SignInPage.xaml.cs" Line="1" Column="1" />
+      <File FileName="TruSport/ViewModel/ForgotPasswordViewModel.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="TruSport" expanded="True">
-            <Node name="OnTrackWebService" expanded="True">
-              <Node name="Models" expanded="True">
-                <Node name="Fixture.cs" selected="True" />
-              </Node>
-              <Node name="Repository" expanded="True" />
-            </Node>
+            <Node name="OnTrackWebService" expanded="True" />
             <Node name="TruSport" expanded="True">
               <Node name="Constants" expanded="True" />
-              <Node name="Converters" expanded="True" />
+              <Node name="Services" expanded="True" />
               <Node name="ViewModel" expanded="True">
                 <Node name="Shop" expanded="True" />
+                <Node name="ForgotPasswordViewModel.cs" selected="True" />
+              </Node>
+              <Node name="Views" expanded="True">
+                <Node name="Tickets" expanded="True" />
+                <Node name="ForgotPasswordPage.xaml" expanded="True" />
+                <Node name="SignInPage.xaml" expanded="True" />
               </Node>
             </Node>
             <Node name="TruSport.Android" expanded="True">
@@ -67,9 +53,8 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.OnTrackWebService PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <Debugger.DebugSourceFolders />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>

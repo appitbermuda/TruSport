@@ -10,6 +10,7 @@
     <Color x:Key="frameBackgroundColor">#272727</Color>
     <Color x:Key="controlHeaderBackgroundColor">#131313</Color>
     <Color x:Key="controlElementBackgroundColor">#1d1d1d</Color>
+    <Color x:Key="unfocusedBackgroundColor">#F5F5F5</Color>
     <Color x:Key="TextPrimaryColor">#FFFFFF</Color>
     <Color x:Key="TextSecondaryColor">#FFFFFF</Color>
     <Color x:Key="TextThirdColor">#FFFFFF</Color>

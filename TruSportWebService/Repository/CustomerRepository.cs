@@ -200,11 +200,11 @@ namespace OnTrackWebService.Repository
             return "Account cannot be validated at this time.";
         }
 
-        public async Task<bool> ForgotPassword(ForgotPassword forgotPassword)
+        public async Task<bool> ForgotPassword(string email)
         {
             try
             {
-                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == forgotPassword.Email);
+                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email);
 
                 if (customer != null)
                 {

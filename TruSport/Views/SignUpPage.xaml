@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
              x:Class="TruSport.Views.SignUpPage"
-             Title="Sign Up">
+             Title="Sign Up"
+             BackgroundColor="{DynamicResource backgroundColor}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:EventArgsConverter x:Key="eventArgsConverter" />
@@ -41,38 +42,38 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <StackLayout Grid.Row="0">
-                        <textinputlayout:SfTextInputLayout x:Name="FirstNameInput" IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
-                            <Entry Text="{Binding FirstName}" Placeholder="First Name" TextColor="{DynamicResource TextPrimaryColor}" IsSpellCheckEnabled="False"/>
+                        <textinputlayout:SfTextInputLayout x:Name="FirstNameInput" IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}">
+                            <Entry Text="{Binding FirstName}" Placeholder="First Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="0" Grid.Column="1">
-                    <textinputlayout:SfTextInputLayout x:Name="LastNameInput" IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
-                            <Entry Text="{Binding LastName}" Placeholder="Last Name" TextColor="{DynamicResource TextPrimaryColor}" IsSpellCheckEnabled="False"/>
+                    <textinputlayout:SfTextInputLayout x:Name="LastNameInput" IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}">
+                            <Entry Text="{Binding LastName}" Placeholder="Last Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
-                    <textinputlayout:SfTextInputLayout x:Name="EmailInput" IsHintAlwaysFloated="True" Hint="Email" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                    <textinputlayout:SfTextInputLayout x:Name="EmailInput" IsHintAlwaysFloated="True" Hint="Email" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}">
                             <Entry Text="{Binding Email}" Keyboard="Email" Placeholder="Email" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="2" Grid.ColumnSpan="2">
-                    <textinputlayout:SfTextInputLayout x:Name="PhoneInput" IsHintAlwaysFloated="True" Hint="Phone" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                    <textinputlayout:SfTextInputLayout x:Name="PhoneInput" IsHintAlwaysFloated="True" Hint="Phone" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}">
                             <Entry Text="{Binding Phone}" Keyboard="Telephone" Placeholder="Phone" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="3" Grid.ColumnSpan="2">
-                    <textinputlayout:SfTextInputLayout x:Name="PasswordInput" IsHintAlwaysFloated="True" Hint="Password" EnablePasswordVisibilityToggle="True" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                    <textinputlayout:SfTextInputLayout x:Name="PasswordInput" IsHintAlwaysFloated="True" Hint="Password" EnablePasswordVisibilityToggle="True" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}">
                             <Entry Text="{Binding Password}" IsPassword="True" Placeholder="Password" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="4" Grid.ColumnSpan="2">
-                    <textinputlayout:SfTextInputLayout x:Name="ConfirmPasswordInput" IsHintAlwaysFloated="True" Hint="Confirm Password" EnablePasswordVisibilityToggle="True" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                    <textinputlayout:SfTextInputLayout x:Name="ConfirmPasswordInput" IsHintAlwaysFloated="True" Hint="Confirm Password" EnablePasswordVisibilityToggle="True" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}">
                             <Entry Text="{Binding ConfirmPassword}" IsPassword="True" Placeholder="Confirm Password" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="5" Padding="20,30" Grid.ColumnSpan="2">
                     <Frame Padding="0" HeightRequest="50" CornerRadius="25">
-                        <Button Text="Register" BackgroundColor="{DynamicResource buttonBackgroundColor}" TextColor="White" HeightRequest="50" CornerRadius="25" Command="{Binding RegisterCommand}"/>
+                        <Button Text="Register" BackgroundColor="{DynamicResource buttonBackgroundColor}"  TextColor="{DynamicResource buttonTextColor}" HeightRequest="50" CornerRadius="25" Command="{Binding RegisterCommand}"/>
                     </Frame>
                 </StackLayout>
                 <!--<extension:CustomBusyIndicator Grid.RowSpan="5" Grid.ColumnSpan="2" IsVisible="{Binding IsActivityIndicatorVisible}" />-->

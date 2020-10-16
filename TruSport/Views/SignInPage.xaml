@@ -4,7 +4,8 @@
              xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:extension="clr-namespace:TruSport.Extensions"
              x:Class="TruSport.Views.SignInPage"
              Title="Sign In"
-             NavigationPage.HasNavigationBar="False">
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{DynamicResource backgroundColor}">
  <ContentPage.Content>
      <StackLayout>
      <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" RowSpacing="0">
@@ -37,18 +38,18 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackLayout Grid.Row="0">
-                    <textinputlayout:SfTextInputLayout x:Name="EmailLabel" Hint="Email" UnfocusedColor="Gray" FocusedColor="Black" ContainerType="None">
+                    <textinputlayout:SfTextInputLayout x:Name="EmailLabel" Hint="Email"  UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}" ContainerType="None">
                         <Entry x:Name="Email" Placeholder="Email" Keyboard="Email" Text="{Binding Email}" ClearButtonVisibility="WhileEditing"/>
                     </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="1">
-                    <textinputlayout:SfTextInputLayout x:Name="PasswordLabel" Hint="Password" EnablePasswordVisibilityToggle="True" UnfocusedColor="Gray" FocusedColor="Black" ContainerType="None">
+                    <textinputlayout:SfTextInputLayout x:Name="PasswordLabel" Hint="Password" EnablePasswordVisibilityToggle="True"  UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}" ContainerType="None">
                         <Entry x:Name="Password" Placeholder="Password" IsPassword="True" Text="{Binding Password}" ClearButtonVisibility="WhileEditing"/>
                     </textinputlayout:SfTextInputLayout>
                 </StackLayout>
                 <StackLayout Grid.Row="2" Padding="20,30" Margin="0,50,0,0" Spacing="20">
                     <Frame Padding="0" HeightRequest="50" CornerRadius="25">
-                        <Button Text="Login" BackgroundColor="{DynamicResource buttonBackgroundColor}" TextColor="White" HeightRequest="50" CornerRadius="25" Command="{Binding LoginCommand}"/>
+                        <Button Text="Login" BackgroundColor="{DynamicResource buttonBackgroundColor}" TextColor="{DynamicResource buttonTextColor}" HeightRequest="50" CornerRadius="25" Command="{Binding LoginCommand}"/>
                     </Frame>
                     <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
                         <Label Text="Haven't signed up?" TextColor="Gray" VerticalOptions="CenterAndExpand"/>
