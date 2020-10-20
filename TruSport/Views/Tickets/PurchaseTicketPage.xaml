@@ -58,8 +58,8 @@
     </ContentPage.Resources>
     <ContentPage.Content>
 
-        <StackLayout BackgroundColor="{DynamicResource navBackgroundColor}">
-            <Grid  Padding="10,0" HeightRequest="90">
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid  BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,0" HeightRequest="90">
                 <StackLayout VerticalOptions="FillAndExpand">
                     <Label Text="Purchase Ticket" FontSize="Small" FontAttributes="Bold" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
                 </StackLayout>
@@ -105,8 +105,7 @@
                             <RowDefinition Height="1" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <!--<ContentKenView Grid.ColumnSpan="5" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />-->
-                            <StackLayout Grid.Row="1" Grid.ColumnSpan="5" Spacing="5" Padding="5,10"
+                        <StackLayout Grid.Row="1" Grid.ColumnSpan="5" Spacing="5" Padding="5,10"
                                      VerticalOptions="EndAndExpand"
                                          HorizontalOptions="CenterAndExpand"
                                          Orientation="Horizontal">
@@ -140,12 +139,7 @@
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
                                             Text="{Binding Fixture.FixtureTime, StringFormat='{0:MMM dd - hh:mm tt}'}"/>
-                                <!--<Label x:Name="PostponedLabel"
-                                       IsVisible="{Binding FixtureProduct.Fixture.IsPostponedOrCancelled}"
-                                       FontSize="Small"
-                                       TextColor="{DynamicResource TextPrimaryColor}"
-                                       VerticalTextAlignment="End"
-                                            Text="{Binding FixtureProduct.Fixture.PostOrCanc}"/>-->
+                                
                             </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
@@ -268,25 +262,6 @@
                     </StackLayout>-->
                     <StackLayout Grid.Row="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,0,0,20">
                         <Label Text="Match Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="25" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
-                        <!--<Grid HorizontalOptions="FillAndExpand" Padding="0,20,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="60"/>
-                            </Grid.ColumnDefinitions>
-                        <StackLayout HorizontalOptions="StartAndExpand">
-                            <Label Text="Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="Start"/>
-                            <Label Text="{Binding FixtureProduct.Product.Age}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
-                        </StackLayout>
-                        <StackLayout Grid.Column="1" HorizontalOptions="StartAndExpand">
-                            <Label Text="QTY" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
-                            <Entry Text="{Binding Quantity}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Keyboard="Numeric" Placeholder="1"/>
-                        </StackLayout>
-                        <StackLayout Grid.Column="2" HorizontalOptions="EndAndExpand">
-                            <Label Text="Price" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="Start"/>
-                            <Label Text="{Binding Price, StringFormat='{0:C}'}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
-                        </StackLayout>
-                            </Grid>-->
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="StartAndExpand" Padding="0,0,0,20" IsVisible="{Binding FixtureProductCollection, Converter={StaticResource listCountConverter}}">
                         <StackLayout BindableLayout.ItemsSource="{Binding FixtureProductCollection}">
@@ -338,8 +313,6 @@
                         <Label Text="{Binding Total, StringFormat='{0:C}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
                     </StackLayout>
                 </Grid>
-
-                <!--<BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />-->
 
                         <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
                             <Label Text="Contact Tracing" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
@@ -397,8 +370,6 @@
                     </StackLayout>
                 </Grid>
 
-                <!--<BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />-->
-
                 <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
                     <Label Text="Card Details" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
                 </StackLayout>
@@ -434,11 +405,12 @@
                     </StackLayout>
                 </Grid>
 
-                <StackLayout Padding="10">
-                    <Label Text="Due to your privacy and protection, OnTrack will not be storing your card information." FontSize="10" />
+                <StackLayout Padding="10" Spacing="10">
+                    <Label Text="Due to your privacy and protection, OnTrack will not be storing your card information." FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>
 
-                    <Label Text="First Division ticket holders must arrive before half time of the match. Premier Divison ticket holders will not be permitted to use their ticket before half time of the First Division match." FontSize="10" />
+                    <Label Text="First Division ticket holders must arrive before half time of the match. Premier Divison ticket holders will not be permitted to use their ticket before half time of the First Division match." FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>
 
+                    <Label Text="Due to COVID-19 regulations set by the governing body, all patrons are required to wear their mask at all times." FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small"/>
                 </StackLayout>
 
                 <StackLayout Padding="10">

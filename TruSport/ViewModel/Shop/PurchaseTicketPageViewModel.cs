@@ -269,6 +269,21 @@ namespace TruSport.ViewModel.Shop
                 else
                 {
                     await Navigation.PopModalAsync();
+
+                    SecureStorage.RemoveAll();
+                    await App.Database.SignOut();
+
+                    if (Application.Current.MainPage is MasterDetailPage mdp)
+                    {
+                        var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
+                        page.Title = "Tickets";
+
+                        mdp.Detail = new NavigationPage(page)
+                        {
+                            BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                            BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                        };
+                    }
                 }
             }
             catch(Exception ex)
