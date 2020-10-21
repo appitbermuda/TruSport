@@ -45,11 +45,11 @@ namespace OnTrackWebService
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
-            ////#if DEBUG
+            //#if DEBUG
             //services.AddDbContext<OnTrackContext>
             //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
-            //#else
+            ////#else
             services.AddDbContext<OnTrackContext>
                 (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
@@ -81,7 +81,7 @@ namespace OnTrackWebService
                 };
             });
 
-            services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
+            services.AddScoped<IOnTrackRepository<ContactTrace>, ContactTraceRepository>();
             services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
             services.AddScoped<IEmailRepository<string>, EmailRepository>();
             services.AddScoped<INewsRepository<RssFeedItem>, NewsRepository>();

@@ -122,6 +122,25 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("Ticketing")]
+        public async Task<IActionResult> Ticketing(string SportID)
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetTicketingTeams(SportID);
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("AllFootball")]
         public async Task<IActionResult> GetFootballTeams()
         {

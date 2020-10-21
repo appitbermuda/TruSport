@@ -278,6 +278,25 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<Team>> GetTicketingTeams(string SportID)
+        {
+            try
+            {
+                List<Team> teams = new List<Team>();
+
+                var ticketTeams = await _context.Products.Include(e => e.Team).Where(e => e.Team.SportID == SportID).ToListAsync();
+                teams = ticketTeams.Select(e => e.Team).Distinct().ToList();
+
+                return teams;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return null;
+        }
+
         public async Task<List<Team>> GetFootballTeams()
         {
             try

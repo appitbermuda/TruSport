@@ -37,8 +37,8 @@ namespace OnTrackWebService.Data
         public class Apis { public const string Notification = "push/notifications"; }
 
 #if DEBUG
-        //public static string OnTrackEndpoint = "http://localhost:40139/api/";
-        public static string OnTrackEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
+        public static string OnTrackEndpoint = "http://localhost:40139/api/";
+        //public static string OnTrackEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
         //public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
         public static string[] SubscriptionTags { get; set; } = { "default", "cricket", "football" };
         public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";

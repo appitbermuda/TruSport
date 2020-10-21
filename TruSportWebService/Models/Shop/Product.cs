@@ -21,6 +21,7 @@ namespace OnTrackWebService.Models.Shop
         [ForeignKey("TeamID")]
         public Team Team { get; set; }
 
+        [NotMapped]
         public virtual Inventory Inventory { get; set; }
     }
 }

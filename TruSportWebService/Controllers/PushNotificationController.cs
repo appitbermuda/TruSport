@@ -25,7 +25,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
-        [Authorize(Roles = Roles.AllUsers)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         [Route("Send")]
         public async Task<IActionResult> Send(string Message)

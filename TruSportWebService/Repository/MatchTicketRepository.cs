@@ -59,13 +59,9 @@ namespace OnTrackWebService.Repository
 
             try
             {
-                var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
-                var fixtureProducts = await _context.FixtureProducts
-                    .Include(e => e.Fixture)
-                    .Include(e => e.Product).ToListAsync();
-
-                var matchTicketsList = await _context.MatchTickets
+                matchTickets = await _context.MatchTickets
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.Order).ThenInclude(e => e.OrderDetails)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
@@ -74,18 +70,9 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
-                    .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1))
                     .ToListAsync();
 
-
-                foreach(var matchTicket in matchTicketsList)
-                {
-                    var fixtureProduct = fixtureProducts.FirstOrDefault(e => e.FixtureID == matchTicket.FixtureProduct.FixtureID);
-                    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
-
-                    if(DateTime.Now.Date > matchTicket.FixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
-                        matchTickets.Add(matchTicket);
-                }
+                matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
             }
             catch(Exception ex)
             { }
@@ -99,17 +86,9 @@ namespace OnTrackWebService.Repository
 
             try
             {
-                ////Get the current claims principal
-                //var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
-
                 // Get the claims values
                 var email = user.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
-
-                //var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
-                //var fixtureProducts = await _context.FixtureProducts
-                //    .Include(e => e.Fixture)
-                //    .Include(e => e.Product).ToListAsync();
 
                 matchTickets = await _context.MatchTickets
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
@@ -129,15 +108,6 @@ namespace OnTrackWebService.Repository
                     ID = e.ID,
                     OrderID = e.OrderID
                 });
-
-                //foreach (var matchTicket in matchTickets)
-                //{
-                //    var fixtureProduct = fixtureProducts.FirstOrDefault(e => e.FixtureID == matchTicket.FixtureID);
-                //    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TeamID == fixtureProduct.Product.TeamID);
-
-                //    if (DateTime.Now.Date > matchTicket.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
-                //        matchTickets.Add(matchTicket);
-                //}
             }
             catch (Exception ex)
             { }
@@ -151,8 +121,6 @@ namespace OnTrackWebService.Repository
 
             try
             {
-                var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == teamID);
-
                 matchTickets = await _context.MatchTickets
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails)
@@ -167,13 +135,7 @@ namespace OnTrackWebService.Repository
                     .Where(e => e.FixtureProduct.Product.TeamID == teamID).ToListAsync();
 
                 matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
-                //.Where(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)) < DateTime.Now.Date && DateTime.Now.Date <= e.FixtureProduct.Fixture.Date).ToListAsync();
-
-                //foreach (var matchTicket in matchTicketsList)
-                //{
-                //    if (DateTime.Now.Date > matchTicket.FixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
-                //        matchTickets.Add(matchTicket);
-                //}
+                
             }
             catch (Exception ex)
             { }
@@ -187,8 +149,6 @@ namespace OnTrackWebService.Repository
 
             try
             {
-                var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == teamID);
-
                 matchTickets = await _context.MatchTickets
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails)
@@ -203,13 +163,6 @@ namespace OnTrackWebService.Repository
                     .Where(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date == DateTime.Now.AddHours(-4).Date).ToListAsync();
 
                 matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
-
-                //foreach (var matchTicket in matchTicketsList)
-                //{
-                //    if (DateTime.Now.Date > matchTicket.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
-                //        matchTickets.Add(matchTicket);
-                //}
-
 
             }
             catch (Exception ex)

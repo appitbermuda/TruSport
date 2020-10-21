@@ -1,0 +1,174 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using OnTrackWebService.Interfaces;
+using OnTrackWebService.Repository;
+using OnTrackWebService.Models;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using OnTrackWebService.Data;
+using OnTrackWebService.Models.Shop;
+
+namespace OnTrackWebService.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ContactTraceController : ControllerBase
+    {
+        private readonly ContactTraceRepository _contactTraceRepository;
+
+        public ContactTraceController(IOnTrackRepository<ContactTrace> contactTraceRepository)
+        {
+            _contactTraceRepository = (ContactTraceRepository)contactTraceRepository;
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> ContactTraces()
+        {
+            try
+            {
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.GetAll();
+
+                if (contactTraces != null)
+                    return Ok(contactTraces);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Today")]
+        public async Task<IActionResult> TodaysContactTraces(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.GetTodayContactTraces(User);
+
+                if (contactTraces != null)
+                    return Ok(contactTraces);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Fixture")]
+        public async Task<IActionResult> FixtureContactTraces(string fixtureID)
+        {
+            try
+            {
+
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.Fixture(fixtureID);
+
+                if (contactTraces != null)
+                    return Ok(contactTraces);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Download")]
+        public async Task<IActionResult> Download(string fixtureID)
+        {
+            try
+            {
+
+                bool downloaded = await _contactTraceRepository.Download(fixtureID, User);
+
+                return Ok(downloaded);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Team")]
+        public async Task<IActionResult> TeamContactTraces()
+        {
+            try
+            {
+
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.Team(User);
+
+                if (contactTraces != null)
+                    return Ok(contactTraces);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpPost]
+        [Route("Update")]
+        public async Task<IActionResult> Update([FromBody] ContactTrace contactTrace)
+        {
+            try
+            {
+                await _contactTraceRepository.Update(contactTrace);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // DELETE api/values/5
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                await _contactTraceRepository.Delete(id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+    }
+}
