@@ -118,7 +118,6 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-
                 IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.Team(User);
 
                 if (contactTraces != null)

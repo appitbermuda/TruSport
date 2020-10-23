@@ -803,7 +803,10 @@ namespace OnTrackWebService.Repository
             body = body.Replace("[Quantity]", quantity.ToString());
             body = body.Replace("[Total]", order.Total.ToString());
             body = body.Replace("[Authorisation]", authorisation);
-            body = body.Replace("[TrxDate]", order.Date.ToLocalTime().ToString("MMM dd yyyy - H:mm:ss"));
+
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+            DateTime orderTime = TimeZoneInfo.ConvertTimeFromUtc(order.Date, timeInfo);
+            body = body.Replace("[TrxDate]", orderTime.ToString("MMM dd yyyy - H:mm:ss"));
 
             mailMessage.Body = body;
 
