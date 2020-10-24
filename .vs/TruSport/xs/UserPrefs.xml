@@ -1,43 +1,84 @@
 ﻿<Properties StartupConfiguration="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}|Default">
-  <MonoDevelop.Ide.ItemProperties.TruSport.Android PreferredExecutionTarget="Android.pixel_2_pie_9_0_-_api_28" />
-  <MonoDevelop.Ide.ItemProperties.TruSport.iOS Xamarin.HotReload.WrongLinkerErrorInfoBar.TruSport.iOS.HideInfoBar="True" automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.BD81CFD2-A8D3-4F23-98F7-98DB4639E641" Xamarin.HotReload.DebuggerTimeoutException.TruSport.iOS.HideInfoBar="True" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/OnTrackWebService.csproj">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Repository/TeamRepository.cs">
     <Files>
-      <File FileName="TruSportWebService/Data/OnTrackContext.cs" Line="71" Column="42" />
-      <File FileName="TruSportWebService/Controllers/InventoryController.cs" Line="14" Column="40" />
-      <File FileName="TruSportWebService/Models/Shop/PaymentAuthorize.cs" Line="6" Column="47" />
-      <File FileName="TruSportWebService/Models/Shop/AuthorizeRequest.cs" Line="8" Column="6" />
-      <File FileName="TruSportWebService/Data/Constants.cs" Line="8" Column="95" />
-      <File FileName="TruSportWebService/Controllers/MatchTicketController.cs" Line="81" Column="43" />
-      <File FileName="TruSportWebService/OnTrackWebService.csproj" Line="48" Column="41" />
+      <File FileName="TruSportWebService/Data/OnTrackContext.cs" Line="75" Column="1" />
+      <File FileName="TruSportWebService/Controllers/UserController.cs" Line="87" Column="1" />
+      <File FileName="TruSportWebService/Repository/UserRepository.cs" Line="142" Column="37" />
+      <File FileName="TruSportWebService/Repository/EmailRepository.cs" Line="161" Column="1" />
+      <File FileName="TruSportWebService/Data/Constants.cs" Line="40" Column="13" />
+      <File FileName="TruSportWebService/Controllers/TeamController.cs" Line="48" Column="1" />
+      <File FileName="TruSportWebService/appsettings.json" Line="1" Column="1" />
+      <File FileName="TruSportWebService/Properties/launchSettings.json" Line="23" Column="38" />
+      <File FileName="TruSportWebService/Controllers/MatchTicketController.cs" Line="68" Column="1" />
+      <File FileName="TruSportWebService/Repository/MatchTicketRepository.cs" Line="70" Column="1" />
+      <File FileName="TruSportWebService/Repository/FixtureRepository.cs" Line="1267" Column="29" />
+      <File FileName="TruSportWebService/Models/Fixture.cs" Line="18" Column="41" />
+      <File FileName="TruSportWebService/Startup.cs" Line="96" Column="72" />
+      <File FileName="TruSport/Model/MatchTicket.cs" Line="1" Column="1" />
+      <File FileName="TruSport/Model/FixtureProduct.cs" Line="16" Column="45" />
+      <File FileName="TruSport/Services/FixtureService.cs" Line="1" Column="1" />
+      <File FileName="TruSport/Services/MatchTicketService.cs" Line="59" Column="1" />
+      <File FileName="TruSport/Views/Tickets/PurchasePage.xaml.cs" Line="12" Column="1" />
+      <File FileName="TruSport/ViewModel/Shop/MatchTicketPageViewModel.cs" Line="49" Column="44" />
+      <File FileName="TruSport/ViewModel/Shop/MyTicketPageViewModel.cs" Line="12" Column="39" />
+      <File FileName="TruSport/ViewModel/Shop/AccountPageViewModel.cs" Line="112" Column="48" />
+      <File FileName="TruSport/Data/OnTrackDatabase.cs" Line="702" Column="1" />
+      <File FileName="TruSport/Views/AuthenticationPage.xaml.cs" Line="1" Column="1" />
+      <File FileName="TruSport/Services/OrderService.cs" Line="27" Column="66" />
+      <File FileName="TruSport/ViewModel/AuthenticationViewModel.cs" Line="22" Column="52" />
+      <File FileName="TruSport/ViewModel/Shop/LoginViewModel.cs" Line="135" Column="86" />
+      <File FileName="TruSport/ViewModel/Shop/RegisterViewModel.cs" Line="111" Column="10" />
+      <File FileName="TruSport/Model/User.cs" Line="95" Column="46" />
+      <File FileName="TruSport/Views/SignInPage.xaml.cs" Line="50" Column="23" />
+      <File FileName="TruSport/Views/SignUpPage.xaml.cs" Line="133" Column="50" />
+      <File FileName="TruSport/App.xaml.cs" Line="107" Column="39" />
+      <File FileName="TruSport/Views/Tickets/CreditCardPage.xaml.cs" Line="12" Column="30" />
+      <File FileName="TruSport/ViewModel/Football/TeamPageViewModel.cs" Line="86" Column="61" />
+      <File FileName="TruSport/Services/TeamService.cs" Line="152" Column="48" />
+      <File FileName="TruSport/Constants/Constants.cs" Line="1" Column="1" />
+      <File FileName="TruSport/Views/Tickets/PurchasePage.xaml" />
+      <File FileName="TruSport/Views/Tickets/ActiveTicketsPage.xaml" />
+      <File FileName="TruSport/Views/Tickets/AccountPage.xaml" />
+      <File FileName="TruSport/Views/AuthenticationPage.xaml" />
+      <File FileName="TruSport/Views/SignUpPage.xaml" />
+      <File FileName="TruSport/Styles/LightTheme.xaml" />
+      <File FileName="TruSportWebService/Repository/TeamRepository.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="TruSport" expanded="True">
             <Node name="OnTrackWebService" expanded="True">
-              <Node name="Dependencies" expanded="True">
-                <Node name="PackageDependencies" expanded="True">
-                  <Node name="Grpc.AspNetCore" selected="True" />
-                </Node>
+              <Node name="Repository" expanded="True">
+                <Node name="TeamRepository.cs" selected="True" />
               </Node>
-              <Node name="Controllers" expanded="True" />
-              <Node name="Models" expanded="True">
-                <Node name="Shop" expanded="True" />
-              </Node>
-              <Node name="Repository" expanded="True" />
             </Node>
             <Node name="TruSport" expanded="True">
+              <Node name="Constants" expanded="True" />
               <Node name="Converters" expanded="True" />
-              <Node name="Views" expanded="True">
+              <Node name="Data" expanded="True" />
+              <Node name="Extensions" expanded="True" />
+              <Node name="Model" expanded="True" />
+              <Node name="Services" expanded="True" />
+              <Node name="Styles" expanded="True" />
+              <Node name="Templates" expanded="True" />
+              <Node name="ViewModel" expanded="True">
+                <Node name="Cricket" expanded="True" />
                 <Node name="Football" expanded="True" />
-                <Node name="MatchConfigurations" expanded="True">
-                  <Node name="FixtureListPage.xaml" expanded="True" />
-                </Node>
-                <Node name="FootballMasterDetailPage.xaml" expanded="True" />
+              </Node>
+              <Node name="Views" expanded="True">
+                <Node name="Cricket" expanded="True" />
+                <Node name="Tickets" expanded="True" />
               </Node>
             </Node>
           </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>modelBuilder.Model.GetEntityTypes().Select(x =&gt; x.FindPrimaryKey())</Value>
+          <Value>modelBuilder.Model.GetEntityTypes().Select(x =&gt; x.FindPrimaryKey()).SelectMany(x =&gt; x.Properties)</Value>
+          <Value>DateTime.Now.Date</Value>
         </State>
       </Pad>
     </Pads>
@@ -48,12 +89,10 @@
   <Debugger.DebugSourceFolders />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Controllers/FixtureController.cs" relfile="TruSportWebService/Controllers/FixtureController.cs" line="161" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1030" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1048" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1045" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1042" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/MatchTicketRepository.cs" relfile="TruSportWebService/Repository/MatchTicketRepository.cs" line="103" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/TeamRepository.cs" relfile="TruSportWebService/Repository/TeamRepository.cs" line="304" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/RoleRepository.cs" relfile="TruSportWebService/Repository/RoleRepository.cs" line="53" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/UserRepository.cs" relfile="TruSportWebService/Repository/UserRepository.cs" line="146" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/TeamRepository.cs" relfile="TruSportWebService/Repository/TeamRepository.cs" line="46" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations>
