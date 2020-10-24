@@ -5,7 +5,7 @@
     <Files>
       <File FileName="TruSportWebService/Repository/UserRepository.cs" Line="217" Column="9" />
       <File FileName="TruSportWebService/Repository/CustomerRepository.cs" />
-      <File FileName="TruSportWebService/Repository/EmailRepository.cs" Line="807" Column="78" />
+      <File FileName="TruSportWebService/Repository/EmailRepository.cs" />
       <File FileName="TruSportWebService/Controllers/CustomerController.cs" />
       <File FileName="TruSportWebService/Repository/AuthenticationRepository.cs" />
       <File FileName="TruSport/Services/AuthenticationService.cs" />
@@ -19,10 +19,10 @@
       <File FileName="TruSport/ViewModel/Shop/PurchaseTicketPageViewModel.cs" />
       <File FileName="TruSport/Constants/Constants.cs" />
       <File FileName="TruSport/Views/Tickets/TicketTabbedPage.xaml" />
-      <File FileName="TruSport/Styles/DarkTheme.xaml" Line="26" Column="51" />
+      <File FileName="TruSport/Styles/DarkTheme.xaml" />
       <File FileName="TruSport/Views/Tickets/PurchaseTicketPage.xaml" />
       <File FileName="TruSport/Views/Tickets/PurchaseTicketResultPage.xaml" />
-      <File FileName="TruSport/Views/Tickets/PurchasePage.xaml" Line="246" Column="35" />
+      <File FileName="TruSport/Views/Tickets/PurchasePage.xaml" />
       <File FileName="TruSport/Views/Tickets/ActiveTicketsPage.xaml" />
       <File FileName="TruSport/Views/Tickets/AccountPage.xaml" />
       <File FileName="TruSport/Views/SignInPage.xaml" />
@@ -31,19 +31,19 @@
       <File FileName="TruSport.iOS/Info.plist" />
       <File FileName="TruSportWebService/Repository/MatchTicketRepository.cs" />
       <File FileName="TruSport/ViewModel/Shop/MyTicketPageViewModel.cs" />
-      <File FileName="TruSportWebService/Controllers/ContactTraceController.cs" Line="120" Column="14" />
-      <File FileName="TruSport/Styles/LightTheme.xaml" Line="1" Column="1" />
-      <File FileName="TruSport/Styles/DefaultTheme.xaml" Line="17" Column="17" />
-      <File FileName="TruSport/Styles/DarkTheme.xaml.cs" Line="1" Column="1" />
-      <File FileName="TruSport/Styles/LightTheme.xaml.cs" Line="1" Column="1" />
-      <File FileName="TruSport/Views/HelpPage.xaml" Line="1" Column="1" />
-      <File FileName="TruSport/Views/HelpPage.xaml.cs" Line="1" Column="1" />
-      <File FileName="TruSport/ViewModel/HelpPageViewModel.cs" Line="21" Column="22" />
-      <File FileName="TruSportWebService/Startup.cs" Line="1" Column="1" />
-      <File FileName="TruSportWebService/Models/FixtureProduct.cs" Line="1" Column="1" />
-      <File FileName="TruSportWebService/Models/Fixture.cs" Line="1" Column="1" />
-      <File FileName="TruSportWebService/Models/CricketFixture.cs" Line="1" Column="1" />
-      <File FileName="TruSport/Model/Model.cs" Line="685" Column="5" />
+      <File FileName="TruSportWebService/Controllers/ContactTraceController.cs" />
+      <File FileName="TruSport/Styles/LightTheme.xaml" />
+      <File FileName="TruSport/Styles/DefaultTheme.xaml" />
+      <File FileName="TruSport/Styles/DarkTheme.xaml.cs" />
+      <File FileName="TruSport/Styles/LightTheme.xaml.cs" />
+      <File FileName="TruSport/Views/HelpPage.xaml" />
+      <File FileName="TruSport/Views/HelpPage.xaml.cs" />
+      <File FileName="TruSport/ViewModel/HelpPageViewModel.cs" />
+      <File FileName="TruSportWebService/Startup.cs" />
+      <File FileName="TruSportWebService/Models/FixtureProduct.cs" />
+      <File FileName="TruSportWebService/Models/Fixture.cs" />
+      <File FileName="TruSportWebService/Models/CricketFixture.cs" />
+      <File FileName="TruSport/Model/Model.cs" />
       <File FileName="TruSport.Android/Resources/drawable/splash_screen.xml" Line="1" Column="1" />
     </Files>
     <Pads>
@@ -59,6 +59,9 @@
             </Node>
             <Node name="TruSport.Android" expanded="True">
               <Node name="Resources" expanded="True">
+                <Node name="drawable" expanded="True">
+                  <Node name="splash_screen.xml" selected="True" />
+                </Node>
                 <Node name="layout" expanded="True" />
               </Node>
             </Node>
