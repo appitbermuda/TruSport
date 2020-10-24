@@ -184,7 +184,7 @@
                                         Text="{Binding Time, Converter={StaticResource timeConverter}}"/>
                         </StackLayout>
                     <StackLayout Grid.Row="1" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="bcblogo.png"
                                         LoadingPlaceholder="bcblogo.png"
@@ -199,7 +199,7 @@
                             </Frame>
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
-                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="bcblogo.png"
                                         LoadingPlaceholder="bcblogo.png"
@@ -442,8 +442,8 @@
 <Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="2*"/>
                                                     <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
                                                 <BoxView Grid.ColumnSpan="2"/>
                                                 <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">

@@ -15,75 +15,6 @@ namespace TruSport.Services
         {
         }
 
-        //public async Task<List<Player>> GetPlayers()
-        //{
-        //    try
-        //    {
-        //        //string accessToken = await SecureStorage.GetAsync("Token");
-
-        //        //if (accessToken != null)
-        //        //{
-        //        var client = new RestClient(Constants.APIEndpoint);
-        //        var request = new RestRequest("Player/AllPlayers", Method.GET);
-        //        //request.AddHeader("authorization", "Bearer " + accessToken);
-
-        //        // We execute the request and capture the response
-        //        // in a variable called `response`
-        //        IRestResponse response = await client.ExecuteTaskAsync(request);
-
-        //        if (response.IsSuccessful)
-        //        {
-        //            List<Player> coaches = JsonConvert.DeserializeObject<List<Player>>(response.Content);
-
-        //            return coaches;
-        //        }
-        //        //}
-
-        //        //return null;
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message, "Player");
-        //    }
-        //    return null;
-        //}
-
-        //public async Task<List<Player>> GetTeamPlayers(string TeamID)
-        //{
-        //    try
-        //    {
-        //        //string accessToken = await SecureStorage.GetAsync("Token");
-
-        //        //if (accessToken != null)
-        //        //{
-        //        var client = new RestClient(Constants.APIEndpoint);
-        //        var request = new RestRequest("Player/TeamPlayers", Method.GET);
-        //        request.AddParameter("teamID", TeamID);
-        //        //request.AddHeader("authorization", "Bearer " + accessToken);
-
-        //        // We execute the request and capture the response
-        //        // in a variable called `response`
-        //        IRestResponse response = await client.ExecuteTaskAsync(request);
-
-        //        if (response.IsSuccessful)
-        //        {
-        //            List<Player> players = JsonConvert.DeserializeObject<List<Player>>(response.Content);
-
-        //            return players;
-        //        }
-        //        //}
-
-        //        //return null;
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message, "Player");
-        //    }
-        //    return null;
-        //}
-
         public async Task<List<PlayerSeason>> GetPlayers()
         {
             try
@@ -138,6 +69,75 @@ namespace TruSport.Services
                 if (response.IsSuccessful)
                 {
                     List<PlayerSeason> players = JsonConvert.DeserializeObject<List<PlayerSeason>>(response.Content);
+
+                    return players;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketPlayerSeason>> GetCricketPlayers()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("Token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Player/CricketPlayers", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketPlayerSeason> players = JsonConvert.DeserializeObject<List<CricketPlayerSeason>>(response.Content);
+
+                    return players;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+            return null;
+        }
+
+        public async Task<List<CricketPlayerSeason>> GetCricketTeamPlayers(string TeamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("Token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Player/CricketTeamPlayers", Method.GET);
+                request.AddParameter("teamID", TeamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<CricketPlayerSeason> players = JsonConvert.DeserializeObject<List<CricketPlayerSeason>>(response.Content);
 
                     return players;
                 }

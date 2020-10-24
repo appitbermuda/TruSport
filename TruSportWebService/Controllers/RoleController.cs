@@ -41,6 +41,26 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values
+        [HttpGet]
+        [Route("Selectable")]
+        public async Task<IActionResult> SelectableRoles()
+        {
+            try
+            {
+                IEnumerable<Role> roles = await _roleRepository.GetSelectable();
+
+                if (roles != null)
+                    return Ok(roles);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Role");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values/5
         [HttpGet]
         [Route("Get")]

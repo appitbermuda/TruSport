@@ -16,6 +16,7 @@ namespace OnTrackWebService.Models
         public int Points { get; set; }
         public int BattingPoints { get; set; }
         public int BowlingPoints { get; set; }
+        public decimal NetRunRate { get; set; }
 
         [ForeignKey("TeamID")]
         public Team Team { get; set; }

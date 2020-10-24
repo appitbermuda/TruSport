@@ -22,9 +22,30 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
+        //Depracated
         [HttpGet]
         [Route("AllUserTypes")]
         public async Task<IActionResult> UserTypes()
+        {
+            try
+            {
+
+                IEnumerable<UserType> userTypes = await _userTypeRepository.GetSelectable();
+
+                if (userTypes != null)
+                    return Ok(userTypes);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "UserType");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> GetUserTypes()
         {
             try
             {
@@ -41,6 +62,27 @@ namespace OnTrackWebService.Controllers
 
             return NoContent();
         }
+
+        [HttpGet]
+        [Route("Roles")]
+        public async Task<IActionResult> GetSelectableRoles()
+        {
+            try
+            {
+
+                IEnumerable<UserType> userTypes = await _userTypeRepository.GetSelectable();
+
+                if (userTypes != null)
+                    return Ok(userTypes);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "UserType");
+            }
+
+            return NoContent();
+        }
+
 
         // GET api/values/5
         [HttpGet]

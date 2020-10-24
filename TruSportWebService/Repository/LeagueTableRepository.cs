@@ -114,14 +114,15 @@ namespace OnTrackWebService.Repository
                         Loss = standing.Loss,
                         Draws = standing.Draws,
                         Played = standing.Played,
-                        Points = standing.Points
+                        Points = standing.Points,
+                        NetRunRate = standing.NetRunRate
                     };
 
                     makeLeagueTable.Add(table);
                 }
 
                 List<CricketLeagueTable> leagueTable = new List<CricketLeagueTable>();
-                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points);
+                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points).ThenByDescending(e => e.NetRunRate);
                 int position = 1;
                 foreach (var table in tablePositions)
                 {
@@ -171,14 +172,15 @@ namespace OnTrackWebService.Repository
                         Loss = standing.Loss,
                         Draws = standing.Draws,
                         Played = standing.Played,
-                        Points = standing.Points
+                        Points = standing.Points,
+                        NetRunRate = standing.NetRunRate
                     };
 
                     makeLeagueTable.Add(table);
                 }
 
                 List<CricketLeagueTable> leagueTable = new List<CricketLeagueTable>();
-                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points);
+                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points).ThenByDescending(e => e.NetRunRate);
                 int position = 1;
                 foreach (var table in tablePositions)
                 {
@@ -239,14 +241,15 @@ namespace OnTrackWebService.Repository
                         Draws = standing.Draws,
                         Played = standing.Played,
                         IsSelectedTeam = standing.TeamID == teamID,
-                        Points = standing.Points
+                        Points = standing.Points,
+                        NetRunRate = standing.NetRunRate
                     };
 
                     makeLeagueTable.Add(table);
                 }
 
                 List<CricketLeagueTable> leagueTable = new List<CricketLeagueTable>();
-                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points);
+                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points).ThenByDescending(e => e.NetRunRate);
                 int position = 1;
                 foreach(var table in tablePositions)
                 {
@@ -297,14 +300,15 @@ namespace OnTrackWebService.Repository
                         Draws = standing.Draws,
                         Played = standing.Played,
                         IsSelectedTeam = standing.TeamID == teamID,
-                        Points = standing.Points
+                        Points = standing.Points,
+                        NetRunRate = standing.NetRunRate
                     };
 
                     makeLeagueTable.Add(table);
                 }
 
                 List<CricketLeagueTable> leagueTable = new List<CricketLeagueTable>();
-                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points);
+                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points).ThenByDescending(e => e.NetRunRate);
                 int position = 1;
                 foreach (var table in tablePositions)
                 {
@@ -403,14 +407,15 @@ namespace OnTrackWebService.Repository
                         Draws = standing.Draws,
                         Played = standing.Played,
                         IsSelectedTeam = standing.TeamID == teamID,
-                        Points = standing.Points
+                        Points = standing.Points,
+                        NetRunRate = standing.NetRunRate
                     };
 
                     makeLeagueTable.Add(table);
                 }
 
                 List<CricketLeagueTable> leagueTable = new List<CricketLeagueTable>();
-                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points);
+                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points).ThenByDescending(e => e.NetRunRate);
                 int position = 1;
                 foreach (var table in tablePositions)
                 {
@@ -541,14 +546,15 @@ namespace OnTrackWebService.Repository
                         Loss = standing.Loss,
                         Draws = standing.Draws,
                         Played = standing.Played,
-                        Points = standing.Points
+                        Points = standing.Points,
+                        NetRunRate = standing.NetRunRate
                     };
 
                     makeLeagueTable.Add(table);
                 }
 
                 List<CricketLeagueTable> leagueTable = new List<CricketLeagueTable>();
-                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points);
+                var tablePositions = makeLeagueTable.OrderByDescending(e => e.Points).ThenByDescending(e => e.NetRunRate);
                 int position = 1;
                 foreach (var table in tablePositions)
                 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -26,15 +27,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var award = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).FirstOrDefaultAsync(e => e.ID == id);
-            }
-            catch(Exception ex)
-            {
 
+                
+                return award;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetAward");
             }
 
             return null;
@@ -44,15 +48,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetBySportType");
             }
 
             return null;
@@ -62,15 +69,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.SportID == SportID).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetBySportType");
             }
 
             return null;
@@ -80,15 +90,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.Sport.Name == SportType).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetBySportType");
             }
 
             return null;
@@ -98,15 +111,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
-                    .Include(e => e.Player)
-                    .Include(e => e.AwardType)
-                    .Include(e => e.Season)
-                    .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "cricket" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+                    var awards = await _context.Awards
+                        .Include(e => e.Player)
+                        .Include(e => e.AwardType)
+                        .Include(e => e.Season)
+                        .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "cricket" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                    if (awards != null && awards.Count > 0)
+                        return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetCricketAwards");
             }
 
             return null;
@@ -116,15 +132,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "football" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetFootballAwards");
             }
 
             return null;
@@ -172,16 +191,20 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "cricket" && e.AwardType.Name == "Week" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetCricketPlayerOfTheWeek");
             }
+
 
             return null;
         }
@@ -190,15 +213,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "football" && e.AwardType.Name == "Week" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetFootballPlayerOfTheWeek");
             }
 
             return null;
@@ -208,15 +234,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "cricket" && e.AwardType.Name == "Month" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetCricketPlayerOfTheMonth");
             }
 
             return null;
@@ -226,15 +255,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "football" && e.AwardType.Name == "Month" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetFootballPlayerOfTheMonth");
             }
 
             return null;
@@ -244,15 +276,18 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "cricket" && e.AwardType.Name == "Season" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetCricketPlayerOfTheYear");
             }
 
             return null;
@@ -262,18 +297,23 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Awards
+                var awards = await _context.Awards
                     .Include(e => e.Player)
                     .Include(e => e.AwardType)
                     .Include(e => e.Season)
                     .Include(e => e.Sport).Where(e => e.Sport.Name.ToLower() == "football" && e.AwardType.Name == "Season" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message, "GetFootballPlayerOfTheYear");
             }
 
             return null;
+
+
         }
 
         public async Task Insert(Award playerAward)

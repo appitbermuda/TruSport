@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Shop;
 using OnTrackWebService.Repository;
 using Owin;
 
@@ -46,13 +47,11 @@ namespace OnTrackWebService
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
-
             //#if DEBUG
             services.AddDbContext<OnTrackContext>
                 (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
-
-            ////#else
+            //#else
             //services.AddDbContext<OnTrackContext>
             //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
@@ -93,9 +92,11 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<League>, LeagueRepository>();
             services.AddScoped<IOnTrackRepository<LeagueStat>, LeagueStatRepository>();
             services.AddScoped<IOnTrackRepository<LTable>, LeagueTableRepository>();
-            services.AddScoped<IOnTrackRepository<Transfers>, TransfersRepository>();
+            services.AddScoped<IOnTrackRepository<Inventory>, InventoryRepository>();
+            services.AddScoped<IOnTrackRepository<MatchTicket>, MatchTicketRepository>();
             services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
             services.AddScoped<IOnTrackRepository<Match>, MatchRepository>();
+            services.AddScoped<IOnTrackRepository<MatchInning>, MatchInningRepository>();
             services.AddScoped<IOnTrackRepository<MatchRoster>, MatchRosterRepository>();
             services.AddScoped<IOnTrackRepository<MatchStat>, MatchStatRepository>();
             services.AddScoped<IOnTrackRepository<MatchType>, MatchTypeRepository>();
@@ -110,6 +111,7 @@ namespace OnTrackWebService
             services.AddScoped<IDisposable, UserRepository>();
             services.AddScoped<IPushNotificationRepository<Push>, PushNotificationRepository>();
             services.AddScoped<IOnTrackRepository<UserType>, UserTypeRepository>();
+            //services.AddSingleton<BackgroundWorker>();
 
             //string domain = $"https://{Configuration["Auth0:Domain"]}/";
             //services.AddAuthentication(options =>

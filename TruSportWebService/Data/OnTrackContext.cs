@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Shop;
 
 namespace OnTrackWebService.Data
 {
@@ -13,6 +14,7 @@ namespace OnTrackWebService.Data
 
         public DbSet<Batting> Battings { get; set; }
         public DbSet<Coach> Coaches { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<Field> Fields { get; set; }
         public DbSet<Fielding> Fieldings { get; set; }
         public DbSet<Fixture> Fixtures { get; set; }
@@ -22,6 +24,7 @@ namespace OnTrackWebService.Data
         public DbSet<CricketLeagueStanding> CricketLeagueStandings { get; set; }
         public DbSet<CricketScore> CricketScores { get; set; }
         public DbSet<Flyer> Flyers { get; set; }
+        public DbSet<Inventory> Inventorys { get; set; }
         public DbSet<League> Leagues { get; set; }
         public DbSet<LeagueTable> LeagueTable { get; set; }
         public DbSet<CricketLeagueTable> CricketLeagueTable { get; set; }
@@ -41,6 +44,10 @@ namespace OnTrackWebService.Data
         public DbSet<MatchStat> MatchStats { get; set; }
         public DbSet<MatchType> MatchTypes { get; set; }
         public DbSet<OutType> OutTypes { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<Award> Awards { get; set; }
         public DbSet<PlayerSeason> PlayerSeasons { get; set; }
@@ -51,7 +58,7 @@ namespace OnTrackWebService.Data
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamSeason> TeamSeasons { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
-        public DbSet<Transfers> vTransfer { get; set; }
+        public DbSet<vTransfers> vTransfers { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<AllUsers> AllUsers { get; set; }
         public DbSet<UserTeam> UserTeams { get; set; }
@@ -60,6 +67,12 @@ namespace OnTrackWebService.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Coach>().ToTable("Coach");
+            modelBuilder.Entity<Customer>().ToTable("Customer");
+            modelBuilder.Entity<Inventory>().ToTable("Inventory");
+            modelBuilder.Entity<Order>().ToTable("Order");
+            modelBuilder.Entity<OrderDetail>().ToTable("OrderDetail");
+            modelBuilder.Entity<ProductType>().ToTable("ProductType");
+            modelBuilder.Entity<Product>().ToTable("Product");
             modelBuilder.Entity<Field>().ToTable("Field");
             modelBuilder.Entity<Fixture>().ToTable("Fixture");
             modelBuilder.Entity<CricketFixture>().ToTable("CricketFixture");
@@ -71,6 +84,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<CricketRoster>().ToTable("CricketRoster");
             modelBuilder.Entity<Flyer>().ToTable("Flyer");
             modelBuilder.Entity<Role>().ToTable("Role");
+            //modelBuilder.Entity<Transfer>().ToTable("Transfer");
             //modelBuilder.Entity<Fixture>()
             //    .HasOne(ht => ht.HomeTeam)
             //    .WithMany(p => p.Fixtures)
@@ -80,7 +94,7 @@ namespace OnTrackWebService.Data
             //modelBuilder.Entity<LeagueTable>().ToTable("LeagueTable");
             modelBuilder.Entity<LeagueTable>(entity => { entity.HasKey(e => new { e.TeamID, e.LeagueID }); });
             modelBuilder.Entity<CricketLeagueTable>(entity => { entity.HasKey(e => new { e.TeamID, e.LeagueID }); });
-            modelBuilder.Entity<Transfers>(entity => { entity.HasKey(e => e.PlayerID); });
+            modelBuilder.Entity<vTransfers>(entity => { entity.HasKey(e => e.PlayerID); });
             modelBuilder.Entity<CricketPremierLeagueTable>(entity => { entity.HasKey(e => e.TeamID); });
             modelBuilder.Entity<CricketFirstDivisionTable>(entity => { entity.HasKey(e => e.TeamID); });
             modelBuilder.Entity<PremierLeagueTable>(entity => { entity.HasKey(e => e.TeamID); });
@@ -112,6 +126,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<UserType>().ToTable("UserType");
 
             modelBuilder.Query<spLiveFixtures>();
+            modelBuilder.Query<spLiveCricketFixtures>();
 
         }
     }

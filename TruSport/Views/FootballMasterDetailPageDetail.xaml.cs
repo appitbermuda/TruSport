@@ -254,6 +254,7 @@ namespace TruSport.Views
         {
             try
             {
+                bool showPOW;
                 // get reference to the layout to animate
                 var layout = this.FindByName<StackLayout>("POWContainer");
                 // setup information for animation
@@ -267,11 +268,13 @@ namespace TruSport.Views
                 if (layout.Height <= 0)
                 {
                     POWContainer.IsVisible = true;
+                    showPOW = true;
                     startingHeight = 0; // the layout's height when we begin animation
                     endingHeight = 422; // final desired height of the layout
                 }
                 else
                 {
+                    showPOW = false;
                     startingHeight = layout.Height; // the layout's height when we begin animation
                     endingHeight = -10; // final desired height of the layout
                 }
@@ -279,7 +282,7 @@ namespace TruSport.Views
                 // now start animation with all the setup information
                 layout.Animate("invis", callback, startingHeight, endingHeight, rate, length, easing);
 
-                await SecureStorage.SetAsync("ShowPOW", POWContainer.IsVisible.ToString());
+                await SecureStorage.SetAsync("ShowPOW", showPOW.ToString());
             }
             catch (Exception ex)
             { }

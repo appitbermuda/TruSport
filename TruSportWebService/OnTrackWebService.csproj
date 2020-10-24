@@ -38,6 +38,8 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Repository\" />
     <Folder Include="Models\Imports\" />
+    <Folder Include="Models\CricHQ\" />
+    <Folder Include="Models\Shop\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,5 +59,8 @@
 
   <ItemGroup>
     <Compile Remove="Models\User %28copy%29.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Protos\api.proto" />
   </ItemGroup>
 </Project>

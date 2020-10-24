@@ -14,11 +14,8 @@
                         <ResourceDictionary>
                             <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
                             <converters:ImageConverter x:Key="imageConverter"/>
-                            <converters:ShowScoreConverter x:Key="showScoreConverter"/>
                             <converters:TimeConverter x:Key="timeConverter"/>
                             <converters:TeamNameConverter x:Key="teamNameConverter"/>
-                            <converters:CricketHomeTeamScoreConverter x:Key="cricketHomeTeamScoreConverter"/>
-                            <converters:CricketAwayTeamScoreConverter x:Key="cricketAwayTeamScoreConverter"/>
                         </ResourceDictionary>
                     </Grid.Resources>
                 <Grid.ColumnDefinitions>
@@ -77,7 +74,7 @@
                                         Text="{Binding PostOrCanc}"/>
                         </StackLayout>
                     <StackLayout Grid.Row="1" Grid.Column="0" Padding="5,0" HorizontalOptions="Start" VerticalOptions="Center">
-                            <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="bcblogo.png"
                                         LoadingPlaceholder="bcblogo.png"
@@ -93,7 +90,7 @@
                             </Frame>
                     </StackLayout>
                     <StackLayout Grid.Row="3" Grid.Column="0" Padding="5,0" HorizontalOptions="Start" VerticalOptions="Center">
-                             <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                             <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="bcblogo.png"
                                         LoadingPlaceholder="bcblogo.png"

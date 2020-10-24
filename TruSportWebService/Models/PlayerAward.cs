@@ -11,6 +11,7 @@ namespace OnTrackWebService.Models
         public string AwardTypeID { get; set; }
         public string SeasonID { get; set; }
         public string SportID { get; set; }
+        public string Image { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime ExpiryDate { get; set; }
 

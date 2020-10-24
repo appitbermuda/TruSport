@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Syncfusion.DataSource;
+using TruSport.Model;
 using TruSport.ViewModels.Cricket;
 using Xamarin.Forms;
 
@@ -14,6 +16,27 @@ namespace TruSport.Views.Cricket
 
             this.BindingContext = leagueStatPageViewModel;
             InitializeComponent();
+
+            PlayerMostRunsList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
+            {
+                PropertyName = "LeagueName",
+                KeySelector = (object obj1) =>
+                {
+                    var item = (obj1 as LeagueStat);
+                    return item.LeagueName;
+                }
+            });
+
+            PlayerMostWicketsList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
+            {
+                PropertyName = "LeagueName",
+                KeySelector = (object obj1) =>
+                {
+                    var item = (obj1 as LeagueStat);
+                    return item.LeagueName;
+                }
+            });
+
         }
     }
 }

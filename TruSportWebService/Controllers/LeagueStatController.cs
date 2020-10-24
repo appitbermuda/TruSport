@@ -9,6 +9,8 @@ using OnTrackWebService.Models;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using OnTrackWebService.Data;
+using Microsoft.AspNetCore.Http;
+using OnTrackWebService.Models.Imports;
 
 namespace OnTrackWebService.Controllers
 {
@@ -199,6 +201,48 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+
+        [HttpPost]
+        [Route("UploadRunStats")]
+        public async Task<IActionResult> UploadRunStat([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportRunStats fileUploadResponse = await _leagueStatRepository.UploadRunStats(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Run Stats");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("UploadWicketStats")]
+        public async Task<IActionResult> UploadWicketStat([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportWicketStats fileUploadResponse = await _leagueStatRepository.UploadWicketStats(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Wicket Stats");
+            }
+
+            return NoContent();
+        }
 
         // GET api/values/5
         [HttpGet]

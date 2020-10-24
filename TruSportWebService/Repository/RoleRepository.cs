@@ -42,6 +42,20 @@ namespace OnTrackWebService.Repository
         {
             try
             {
+                return await _context.Roles.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Role>> GetSelectable()
+        {
+            try
+            {
                 return await _context.Roles.Where(e => e.IsSelectable).ToListAsync();
             }
             catch (Exception ex)

@@ -1202,7 +1202,7 @@ namespace TruSport.Converters
                     if (data.Season.IsCurrent)
                         return data.Date.ToString("MMM d");
                     else
-                        return data.Date.Year.ToString();
+                        return data.Season.Date;
                 }
             }
             catch(Exception ex)
@@ -1245,7 +1245,7 @@ namespace TruSport.Converters
                     if (data.Season.IsCurrent)
                         return data.Date.ToString("MMM d");
                     else
-                        return data.Date.Year.ToString();
+                        return data.Season.Date;
                 }
             }
             catch (Exception ex)
@@ -1285,7 +1285,7 @@ namespace TruSport.Converters
                     if (data.Season.IsCurrent)
                         return data.Date.ToString("MMM d");
                     else
-                        return data.Date.Year.ToString();
+                        return data.Season.Date;
                 }
             }
             catch (Exception ex)
@@ -1325,7 +1325,7 @@ namespace TruSport.Converters
                     if (data.Season.IsCurrent)
                         return data.Date.ToString("MMM d");
                     else
-                        return data.Date.Year.ToString();
+                        return data.Season.Date;
                 }
             }
             catch (Exception ex)
