@@ -336,9 +336,9 @@
                             </Grid>
                         </tabView:SfTabItem.Content>
                     </tabView:SfTabItem>
-                    <tabView:SfTabItem IsVisible="{Binding NoLiveFixtures}" Title="Live" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                    <tabView:SfTabItem IsVisible="{Binding NoLiveFixtures, Converter={StaticResource inverseBooleanConverter}}" Title="Live" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
                         <tabView:SfTabItem.Content>
-                            <Grid  BackgroundColor="{DynamicResource listBackgroundColor}" Padding="0,0,0,0" RowSpacing="0">
+                            <Grid  BackgroundColor="{DynamicResource backgroundColor}" Padding="0,0,0,0" RowSpacing="0">
                                 <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
@@ -348,13 +348,11 @@
                                RefreshContentWidth="50" TransitionMode="Push" IsRefreshing="False">
   <pullToRefresh:SfPullToRefresh.PullableContent>
                                 <listView:SfListView  x:Name="LiveFixtureList"
-                                                ItemsSource="{Binding LiveCollection}"
-                                                    
+                                                ItemsSource="{Binding LiveCollection}"                                                    
                                                    SelectionMode="SingleDeselect"
                                                    ItemSpacing="0"
                                                    HorizontalOptions="FillAndExpand"
                                                     VerticalOptions="FillAndExpand"
-                                                    BackgroundColor="{DynamicResource listBackgroundColor}"
                                                     SelectionBackgroundColor="Transparent"
                                                  AutoFitMode="DynamicHeight"
                                                       TapCommand="{Binding OnLiveFixtureSelectedCommand}">
@@ -364,7 +362,7 @@
                                 </listView:SfListView.DataSource>
                                     <listView:SfListView.ItemTemplate>
                                     <DataTemplate>
-                                        <templates:FixtureList/>
+                                        <templates:LiveScoreFixtureList/>
                                     </DataTemplate>
                                 </listView:SfListView.ItemTemplate>
                                     <listView:SfListView.GroupHeaderTemplate>

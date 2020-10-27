@@ -12,7 +12,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid RowSpacing="1" BackgroundColor="White" VerticalOptions="FillAndExpand">
+        <Grid RowSpacing="0" BackgroundColor="White" VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>

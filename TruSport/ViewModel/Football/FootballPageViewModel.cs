@@ -35,7 +35,7 @@ namespace TruSport.ViewModels
         private ObservableCollection<Award> awardCollection;
         private ObservableCollection<Fixture> pastCollection;
         private ObservableCollection<Fixture> upcomingCollection;
-        private ObservableCollection<Fixture> liveCollection;
+        private ObservableCollection<LiveFixture> liveCollection;
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> onFixtureSelectedCommand;
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> onLiveFixtureSelectedCommand;
         private Command<object> leagueSelectedCommand;
@@ -78,7 +78,7 @@ namespace TruSport.ViewModels
 
             PastCollection = new ObservableCollection<Fixture>();
             UpcomingCollection = new ObservableCollection<Fixture>();
-            LiveCollection = new ObservableCollection<Fixture>();
+            LiveCollection = new ObservableCollection<LiveFixture>();
             CalendarInlineEvents = new CalendarEventCollection();
 
             fixtureService = new FixtureService();
@@ -190,7 +190,7 @@ namespace TruSport.ViewModels
             set { Set(ref upcomingCollection, value); }
         }
 
-        public ObservableCollection<Fixture> LiveCollection
+        public ObservableCollection<LiveFixture> LiveCollection
         {
             get { return liveCollection; }
             set { Set(ref liveCollection, value); }
@@ -425,7 +425,7 @@ namespace TruSport.ViewModels
                                 return true;
                             });
 
-                            LiveCollection = new ObservableCollection<Fixture>(liveFixtures);
+                            LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
                         }
                         else
                         {
@@ -480,7 +480,7 @@ namespace TruSport.ViewModels
                         if (liveFixtures.Count() > 0 && FixtureHeaderCount < 3)
                             FixtureHeaderCount++;
 
-                        LiveCollection = new ObservableCollection<Fixture>(liveFixtures);
+                        LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
                     }
                 }
                 else
@@ -586,7 +586,7 @@ namespace TruSport.ViewModels
 
                 NoLiveFixtures = liveFixtures.Count > 0;
 
-                LiveCollection = new ObservableCollection<Fixture>(liveFixtures);
+                LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
             }
             catch (Exception ex)
             {

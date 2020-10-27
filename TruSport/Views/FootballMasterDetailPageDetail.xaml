@@ -408,8 +408,7 @@
   <pullToRefresh:SfPullToRefresh.PullableContent>
                                 <listView:SfListView  x:Name="LiveFixtureList"
                                                 ItemsSource="{Binding LiveCollection}"
-                                                    ItemTemplate="{StaticResource footballFixtureDataTemplateSelector}"
-                                                   SelectionMode="SingleDeselect"
+                                                    SelectionMode="SingleDeselect"
                                                    ItemSpacing="0"
                                                    HorizontalOptions="FillAndExpand"
                                                     VerticalOptions="FillAndExpand"
@@ -420,11 +419,11 @@
                                   <data:DataSource>
                                   </data:DataSource>
                                 </listView:SfListView.DataSource>
-                                    <!--<listView:SfListView.ItemTemplate>
+                                    <listView:SfListView.ItemTemplate>
                                     <DataTemplate>
-                                        <templates:FixtureList/>
+                                        <templates:LiveScoreFixtureList/>
                                     </DataTemplate>
-                                </listView:SfListView.ItemTemplate>-->
+                                </listView:SfListView.ItemTemplate>
                                     <listView:SfListView.GroupHeaderTemplate>
                                   <DataTemplate>
                                       <ViewCell>
