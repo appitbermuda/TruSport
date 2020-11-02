@@ -25,6 +25,12 @@ namespace OnTrackWebService.Models
 
         [ForeignKey("SeasonID")]
         public Season Season { get; set; }
+
+        [NotMapped]
+        public int Position { get; set; }
+
+        [NotMapped]
+        public bool IsSelectedTeam { get; set; }
     }
 
 }

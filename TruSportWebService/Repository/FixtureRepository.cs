@@ -182,6 +182,196 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<BowlingFixture>> GetBowlingFixtures()
+        {
+            try
+            {
+                List<BowlingFixture> fixtures = new List<BowlingFixture>();
+                fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingRosters)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBowlingFixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingFixture>> GetBowlingResults()
+        {
+            try
+            {
+                List<BowlingFixture> fixtures = new List<BowlingFixture>();
+                fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingRosters)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => e.Date.Date < DateTime.Now.Date).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Past Bowling Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingFixture>> GetUpcomingBowlingFixtures()
+        {
+            try
+            {
+                List<BowlingFixture> fixtures = new List<BowlingFixture>();
+                fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingRosters)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => e.Date.Date >= DateTime.Now.Date).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+                
+                return fixtures.ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upcoming Bowling Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<BowlingFixture> GetBowlingFixture(string id)
+        {
+            try
+            {
+                BowlingFixture fixture = new BowlingFixture();
+                fixture = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingRosters)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season).FirstOrDefaultAsync(e => e.ID == id);
+
+                fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
+                fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
+
+                var table = await leagueTableRepository.GetBowlingLeagueStandings(fixture.LeagueID);
+                if (table != null)
+                {
+                    table.ForEach(e => e.IsSelectedTeam = (e.TeamID == fixture.HomeTeamID || e.TeamID == fixture.AwayTeamID));
+
+                    fixture.LeagueTable = table.ToList();
+                }
+
+                fixture.HeadToHead = await GetBowlingHeadToHead(fixture.ID);
+
+                //if (fixture.BowlingRosters != null && fixture.BowlingRosters.Count > 0)
+                //{
+                //    fixture.BowlingRosters.ForEach(e => e.IsHomeTeam = (e.TeamID == fixture.HomeTeamID));
+                //}
+
+                //fixture.MatchResult = (fixture.MatchInnings != null && fixture.MatchInnings.Count > 0) && fixture.IsCancelled && !fixture.IsPostponed ? "Match abandoned" : "";
+
+                return fixture;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingFixture>> GetPastBowlingFixtures()
+        {
+            try
+            {
+                List<BowlingFixture> fixtures = new List<BowlingFixture>();
+                fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingRosters)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Where(e => e.Date.Date < DateTime.Now.Date && e.HomeTeam.Name != "TBD" && e.AwayTeam.Name != "TBD").ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+                
+                return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Past Cricket Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<List<BowlingFixture>> GetBowlingHeadToHead(string fixtureID)
+        {
+            try
+            {
+                List<BowlingFixture> fixtures = new List<BowlingFixture>();
+                BowlingFixture fixture = await _context.BowlingFixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
+
+                fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingRosters)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Where(e => ((e.HomeTeamID == fixture.HomeTeamID && e.AwayTeamID == fixture.AwayTeamID) || (e.HomeTeamID == fixture.AwayTeamID && e.AwayTeamID == fixture.HomeTeamID)) && e.ID != fixture.ID && e.Date.Date < DateTime.Now.Date && !e.IsPostponed).ToListAsync();
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<CricketFixture>> GetCricketFixtures()
         {
             try

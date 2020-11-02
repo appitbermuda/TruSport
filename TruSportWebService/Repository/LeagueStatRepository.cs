@@ -66,6 +66,24 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<TopScoresByTeam>> GetTopScoresByTeam()
+        {
+            try
+            {
+                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
+                var season = await _context.Seasons.FirstOrDefaultAsync(e => e.IsCurrent && e.Sport.Name == "Bowling");
+
+                //var topScores = await _context.TopScoresByTeam.Where(e => e.SeasonDate == season.Date).OrderByDescending(e => e.Goals).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<GoalsScoredByTeam>> GetGoalsScoredByTeam()
         {
             try

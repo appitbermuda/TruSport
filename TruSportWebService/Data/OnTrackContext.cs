@@ -13,6 +13,11 @@ namespace OnTrackWebService.Data
         }
 
         public DbSet<Batting> Battings { get; set; }
+        public DbSet<BowlingFixture> BowlingFixtures { get; set; }
+        public DbSet<BowlingRoster> BowlingRosters { get; set; }
+        public DbSet<BowlingPlayerSeason> BowlingPlayerSeasons { get; set; }
+        public DbSet<BowlingLeagueStanding> BowlingLeagueStandings { get; set; }
+        public DbSet<BowlingGame> BowlingGames { get; set; }
         public DbSet<Coach> Coaches { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Field> Fields { get; set; }
@@ -70,6 +75,10 @@ namespace OnTrackWebService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<BowlingRoster>().ToTable("BowlingRoster");
+            modelBuilder.Entity<BowlingGame>().ToTable("BowlingGame");
+            modelBuilder.Entity<BowlingPlayerSeason>().ToTable("BowlingPlayerSeason");
+            modelBuilder.Entity<BowlingLeagueStanding>().ToTable("BowlingLeagueStanding");
             modelBuilder.Entity<Coach>().ToTable("Coach");
             modelBuilder.Entity<Customer>().ToTable("Customer");
             modelBuilder.Entity<ContactTrace>().ToTable("ContactTrace");
@@ -82,8 +91,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<MatchTicket>().ToTable("MatchTicket");
             modelBuilder.Entity<Field>().ToTable("Field");
             modelBuilder.Entity<TicketConfiguration>().ToTable("TicketConfiguration");
-            //modelBuilder.Entity<Fixture>().ToTable("Fixture");
-            //modelBuilder.Entity<CricketFixture>().ToTable("CricketFixture");
+
             modelBuilder.Entity<Order>()
             .HasMany(c => c.OrderDetails)
             .WithOne(e => e.Order);
@@ -92,6 +100,13 @@ namespace OnTrackWebService.Data
                     .HasOne(x => x.HomeTeam)
                     .WithMany();
             modelBuilder.Entity<Fixture>().ToTable("Fixture")
+                    .HasOne(x => x.AwayTeam)
+                    .WithMany();
+
+            modelBuilder.Entity<BowlingFixture>().ToTable("BowlingFixture")
+                    .HasOne(x => x.HomeTeam)
+                    .WithMany();
+            modelBuilder.Entity<BowlingFixture>().ToTable("BowlingFixture")
                     .HasOne(x => x.AwayTeam)
                     .WithMany();
 
@@ -111,17 +126,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<Flyer>().ToTable("Flyer");
             modelBuilder.Entity<Role>().ToTable("Role");
 
-            //modelBuilder.Entity<Role>()
-            //        .HasOne(x => x.Sport)
-            //        .WithMany();
-            //modelBuilder.Entity<Transfer>().ToTable("Transfer");
-            //modelBuilder.Entity<Fixture>()
-            //    .HasOne(ht => ht.HomeTeam)
-            //    .WithMany(p => p.Fixtures)
-            //    .HasForeignKey(ht => ht.HomeTeamID);
-
             modelBuilder.Entity<League>().ToTable("League");
-            //modelBuilder.Entity<LeagueTable>().ToTable("LeagueTable");
             modelBuilder.Entity<LeagueTable>(entity => { entity.HasKey(e => new { e.TeamID, e.LeagueID }); });
             modelBuilder.Entity<CricketLeagueTable>(entity => { entity.HasKey(e => new { e.TeamID, e.LeagueID }); });
             modelBuilder.Entity<vTransfers>(entity => { entity.HasKey(e => e.PlayerID); });
