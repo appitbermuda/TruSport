@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" x:Class="TruSport.Views.Tickets.TransferTicketPage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackLayout BackgroundColor="{DynamicResource navBackgroundColor}">
+                    <Grid VerticalOptions="FillAndExpand" HeightRequest="60">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand">
+                        <Label Text="Ticket Transfer" TextColor="{DynamicResource navTextColor}" FontSize="Small" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            </StackLayout>
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <Button Text="" FontSize="25" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" WidthRequest="40" HorizontalOptions="StartAndExpand" Command="{Binding BackCommand}"/>
+                    </StackLayout>
+                    </Grid>
+                </StackLayout>
+                <StackLayout Grid.Row="1">
+                    <StackLayout Padding="10,20">
+                        <Label Text="{Binding MatchTicket.Order.Fixture}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding MatchTicket.FixtureProduct.Fixture.Date}" FontSize="Small" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                    </StackLayout>
+                    <StackLayout Padding="10,20">
+                        <Label Text="{Binding MatchTicket.FixtureProduct.Product.Age, StringFormat='1 {0} Ticket'}" FontSize="Small" FontAttributes="Italic" HorizontalTextAlignment="Center" />
+                    </StackLayout>
+                    <StackLayout Padding="10,20">
+                        <Label Text="Please provide the email of the account you wish to transfer this ticket to. The user must already be registered in order to receive this ticket." FontSize="10" HorizontalTextAlignment="Center" />
+                    </StackLayout>
+
+                    <StackLayout Padding="10,0">
+                        <textinputlayout:SfTextInputLayout x:Name="EmailInput" IsHintAlwaysFloated="True" Hint="Email" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}">
+                            <Entry Text="{Binding TransferRequest.Email}" Placeholder="Email" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </textinputlayout:SfTextInputLayout>
+                    </StackLayout>
+
+                    <StackLayout Padding="10,0,10,50" VerticalOptions="EndAndExpand">
+                        <Button Text="Transfer Ticket" BackgroundColor="{DynamicResource buttonBackgroundColor}" TextColor="{DynamicResource buttonTextColor}" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding TransferCommand}" />
+                    </StackLayout>
+                </StackLayout>
+<ActivityIndicator x:Name="BusyIndicator" Grid.Row="1" IsVisible="{Binding IsActivityIndicatorVisible}" IsRunning="{Binding IsActivityIndicatorVisible}"/>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

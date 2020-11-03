@@ -1,47 +1,55 @@
 ﻿<Properties StartupConfiguration="Multiple Projects iOS">
   <MonoDevelop.Ide.ItemProperties.TruSport.Android PreferredExecutionTarget="Android.nexus_10_r_11_0_-_api_30" />
   <MonoDevelop.Ide.ItemProperties.TruSport.iOS Xamarin.HotReload.WrongLinkerErrorInfoBar.TruSport.iOS.HideInfoBar="True" automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.B7E59F85-C224-442E-A42E-EEB03C5E758D" Xamarin.HotReload.DebuggerTimeoutException.TruSport.iOS.HideInfoBar="True" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSport/Views/Football/FixtureDetailsPage.xaml">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSport/Views/Tickets/ActiveTicketsPage.xaml">
     <Files>
-      <File FileName="TruSport/Model/Model.cs" Line="692" Column="26" />
-      <File FileName="TruSport/Model/LiveFixturesList.cs" Line="1" Column="1" />
-      <File FileName="TruSport/Views/FootballMasterDetailPageDetail.xaml" Line="376" Column="31" />
-      <File FileName="TruSport/Views/MainPage.xaml" Line="19" Column="35" />
-      <File FileName="TruSport/Views/Football/TeamProfilePage.xaml" Line="1206" Column="53" />
-      <File FileName="TruSportWebService/Repository/TeamRepository.cs" Line="306" Column="1" />
-      <File FileName="TruSport/Views/Football/FixtureDetailsPage.xaml" Line="1543" Column="78" />
-      <File FileName="TruSportWebService/Controllers/FixtureController.cs" Line="626" Column="36" NotebookId="1" />
-      <File FileName="TruSport/ViewModel/Football/FootballPageViewModel.cs" Line="81" Column="66" NotebookId="1" />
-      <File FileName="TruSport/ViewModel/Football/FixturePageViewModel.cs" Line="591" Column="80" NotebookId="1" />
-      <File FileName="TruSport/ViewModel/Football/FixtureDetailPageViewModel.cs" Line="1" Column="1" NotebookId="1" />
-      <File FileName="TruSport/Templates/FootballFixtureDataTemplateSelector.cs" Line="1" Column="1" NotebookId="1" />
-      <File FileName="TruSport/Templates/LiveScoreFixtureList.xaml.cs" Line="15" Column="36" NotebookId="1" />
-      <File FileName="TruSport/Templates/LiveScoreFixtureList.xaml" Line="226" Column="1" NotebookId="1" />
-      <File FileName="TruSport/Views/Football/FixturePage.xaml" Line="323" Column="50" NotebookId="1" />
-      <File FileName="TruSportWebService/Startup.cs" Line="47" Column="1" NotebookId="1" />
-      <File FileName="TruSport/ViewModel/Cricket/CricketPageViewModel.cs" Line="486" Column="83" NotebookId="1" />
-      <File FileName="TruSport/ViewModel/Cricket/FixturePageViewModel.cs" Line="432" Column="87" NotebookId="1" />
+      <File FileName="TruSport/ViewModel/Shop/MyTicketPageViewModel.cs" Line="111" Column="50" NotebookId="2" />
+      <File FileName="TruSportWebService/Repository/MatchTicketRepository.cs" Line="575" Column="61" NotebookId="2" />
+      <File FileName="TruSport/Model/AcceptTransfer.cs" Line="12" Column="1" NotebookId="2" />
+      <File FileName="TruSport/Services/MatchTicketService.cs" Line="220" Column="64" NotebookId="2" />
+      <File FileName="TruSport/ViewModel/Football/FavouritePageViewModel.cs" Line="161" Column="10" NotebookId="2" />
+      <File FileName="TruSportWebService/Controllers/MatchTicketController.cs" Line="250" Column="45" NotebookId="2" />
+      <File FileName="TruSportWebService/Models/Shop/MatchTicket.cs" Line="17" Column="53" NotebookId="2" />
+      <File FileName="TruSportWebService/Repository/EmailRepository.cs" Line="990" Column="30" NotebookId="2" />
+      <File FileName="TruSport/Views/Tickets/ActiveTicketsPage.xaml" Line="247" Column="198" NotebookId="2" />
+      <File FileName="TruSport/Views/Tickets/PurchaseTicketPage.xaml" Line="266" Column="213" NotebookId="2" />
     </Files>
+    <FloatingWindows>
+      <FloatingWindow WindowId="1" X="0" Y="127" Width="1920" Height="1035">
+        <Files>
+          <File FileName="TruSport/ViewModel/Shop/MatchTicketPageViewModel.cs" Line="50" Column="10" />
+          <File FileName="TruSport/ViewModel/Shop/TransferTicketPageViewModel.cs" Line="83" Column="91" />
+          <File FileName="TruSport/Views/Tickets/TransferTicketPage.xaml" Line="43" Column="277" NotebookId="1" />
+          <File FileName="TruSport/Views/Tickets/TransferTicketPage.xaml.cs" Line="16" Column="1" NotebookId="1" />
+          <File FileName="TruSport/Views/SignInPage.xaml" Line="72" Column="164" NotebookId="1" />
+        </Files>
+      </FloatingWindow>
+    </FloatingWindows>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="TruSport" expanded="True">
             <Node name="OnTrackWebService" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Data" expanded="True" />
+              <Node name="Models" expanded="True">
+                <Node name="Shop" expanded="True" />
+              </Node>
               <Node name="Repository" expanded="True" />
             </Node>
             <Node name="TruSport" expanded="True">
               <Node name="Model" expanded="True" />
-              <Node name="Templates" expanded="True">
-                <Node name="LiveCricketScoreFixtureList.xaml" expanded="True" />
-                <Node name="LiveScoreFixtureList.xaml" expanded="True" />
-              </Node>
+              <Node name="Services" expanded="True" />
+              <Node name="Styles" expanded="True" />
+              <Node name="Templates" expanded="True" />
               <Node name="ViewModel" expanded="True">
-                <Node name="Cricket" expanded="True" />
                 <Node name="Football" expanded="True" />
+                <Node name="Shop" expanded="True" />
               </Node>
               <Node name="Views" expanded="True">
-                <Node name="Football" expanded="True">
-                  <Node name="FixtureDetailsPage.xaml" selected="True" />
+                <Node name="Tickets" expanded="True">
+                  <Node name="ActiveTicketsPage.xaml" selected="True" />
+                  <Node name="TransferTicketPage.xaml" expanded="True" />
                 </Node>
               </Node>
             </Node>
@@ -58,13 +66,11 @@
     <BreakpointStore>
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/UserRepository.cs" relfile="TruSportWebService/Repository/UserRepository.cs" line="210" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Services/FixtureService.cs" relfile="TruSport/Services/FixtureService.cs" line="259" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1054" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1244" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Services/FixtureService.cs" relfile="TruSport/Services/FixtureService.cs" line="284" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="1122" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Football/TeamProfilePageViewModel.cs" relfile="TruSport/ViewModel/Football/TeamProfilePageViewModel.cs" line="253" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/TeamRepository.cs" relfile="TruSportWebService/Repository/TeamRepository.cs" line="405" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Football/FixtureDetailPageViewModel.cs" relfile="TruSport/ViewModel/Football/FixtureDetailPageViewModel.cs" line="246" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/FixtureRepository.cs" relfile="TruSportWebService/Repository/FixtureRepository.cs" line="2409" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Football/TeamPageViewModel.cs" relfile="TruSport/ViewModel/Football/TeamPageViewModel.cs" line="155" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Services/LeagueStatService.cs" relfile="TruSport/Services/LeagueStatService.cs" line="113" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/LeagueStatRepository.cs" relfile="TruSportWebService/Repository/LeagueStatRepository.cs" line="103" column="1" />
@@ -80,7 +86,7 @@
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Data/PasswordHasher.cs" relfile="TruSport/Data/PasswordHasher.cs" line="76" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Data/PasswordHasher.cs" relfile="TruSport/Data/PasswordHasher.cs" line="102" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/CreditCardPageViewModel.cs" relfile="TruSport/ViewModel/Shop/CreditCardPageViewModel.cs" line="158" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/MyTicketPageViewModel.cs" relfile="TruSport/ViewModel/Shop/MyTicketPageViewModel.cs" line="117" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/MyTicketPageViewModel.cs" relfile="TruSport/ViewModel/Shop/MyTicketPageViewModel.cs" line="130" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Services/OrderService.cs" relfile="TruSport/Services/OrderService.cs" line="47" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Football/FavouritePageViewModel.cs" relfile="TruSport/ViewModel/Football/FavouritePageViewModel.cs" line="256" column="1" />
       <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Data/OnTrackDatabase.cs" relfile="TruSport/Data/OnTrackDatabase.cs" line="612" column="1" />

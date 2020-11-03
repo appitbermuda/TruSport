@@ -9,6 +9,7 @@
              x:Class="TruSport.Views.Tickets.ActiveTicketsPage"
              Title="My Tickets">
     <ContentPage.Resources>
+        <converters:ListCountConverter x:Key="listCountConverter"/>
         <ResourceDictionary>
             <DataTemplate x:Name="MatchTicketItemTemplate" x:Key="MatchTicketItemTemplate">
                             <StackLayout HorizontalOptions="FillAndExpand"
@@ -215,10 +216,41 @@
         <StackLayout Background="{DynamicResource backgroundColor}">
             <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <!--<RowDefinition Height="50"/>-->
             </Grid.RowDefinitions>
-            <listView:SfListView x:Name="MyTicketsList"
+                <StackLayout IsVisible="{Binding FixtureProductCollection, Converter={StaticResource listCountConverter}}">
+            <StackLayout BindableLayout.ItemsSource="{Binding TransferRequestCollection}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalOptions="FillAndExpand">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="60"/>
+                                            <RowDefinition Height="1"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                    <StackLayout HorizontalOptions="CenterAndExpand" Padding="10,0" Grid.ColumnSpan="2">
+                                        <Label Text="{Binding MatchTicket.Order.Fixture}" HorizontalOptions="Center" FontSize="Medium" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MatchTicket.FixtureProduct.Fixture.FixtureTime}" HorizontalOptions="Center" FontSize="Medium" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MatchTicket.FixtureProduct.Product.Age, StringFormat='1 {0} Ticket'}" HorizontalOptions="Center" FontSize="Medium" FontAttributes="Bold"/>
+                                    </StackLayout>
+                                    <StackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="CenterAndExpand">
+                                        <Button Text="Accept" BackgroundColor="DarkGreen" TextColor="White" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding AcceptCommand}" CommandParameter="true" />
+                                    </StackLayout>
+                                    <StackLayout Grid.Column="1" Grid.Row="1" HorizontalOptions="CenterAndExpand">
+                                        <Button Text="Reject" BackgroundColor="DarkRed" TextColor="White" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding AcceptCommand}" CommandParameter="false" />
+                                    </StackLayout>
+                                        <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" Grid.Row="1" Grid.ColumnSpan="2" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}"/>
+                                        </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                </StackLayout>
+            <listView:SfListView x:Name="MyTicketsList" Grid.Row="1"
                                     ItemsSource="{Binding MatchTicketCollection}"
                                     ItemTemplate="{StaticResource MatchTicketItemTemplate}"
                                  SelectionMode="None"

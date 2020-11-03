@@ -96,5 +96,8 @@
       <DependentUpon>TeamProfilePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Tickets\TransferTicketPage.xaml.cs">
+      <DependentUpon>TransferTicketPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

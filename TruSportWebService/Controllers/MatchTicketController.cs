@@ -67,6 +67,27 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpGet]
+        [Route("TransferRequests")]
+        public async Task<IActionResult> TransferRequests()
+        {
+            try
+            {
+                IEnumerable<AcceptTransfer> matchTickets = await _matchTicketRepository.GetTransferRequests(User);
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values/5
         [Authorize(Roles = Roles.Tickets)]
         [HttpGet]
@@ -213,6 +234,52 @@ namespace OnTrackWebService.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("Transfer")]
+        public async Task<IActionResult> Transfer([FromBody] TransferRequest transferRequest)
+        {
+            try
+            {
+                if (transferRequest != null && transferRequest.MatchTicketID != null && transferRequest.Email != null)
+                {
+                    string transferred = await _matchTicketRepository.TransferRequest(transferRequest, User);
+
+                    return Ok(transferred);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Transfer Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("AcceptTransfer")]
+        public async Task<IActionResult> AcceptTransfer([FromBody] AcceptTransfer accept)
+        {
+            try
+            {
+                if (accept != null && accept.CustomerID != null && accept.MatchTicketID != null && accept.TransferCustomerID != null && accept.Accept)
+                {
+                    string transferred = await _matchTicketRepository.AcceptTransferRequest(accept);
+
+                    return Ok(transferred);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Transfer Match Ticket");
             }
 
             return NoContent();

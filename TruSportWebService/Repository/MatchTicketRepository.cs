@@ -96,7 +96,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && e.Order.Customer.Email == email)
+                    .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && ((e.Order.Customer.Email == email && e.TransferCustomerID == null) || (e.TransferCustomer != null && e.TransferCustomer.Email == email && e.IsTransfer)))
                     .ToListAsync();
 
                 matchTickets.ForEach(e => e.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.FixtureProduct.Fixture.HomeTeam.Alias) ? e.FixtureProduct.Fixture.HomeTeam.Alias : e.FixtureProduct.Fixture.HomeTeam.Name);
@@ -477,6 +477,188 @@ namespace OnTrackWebService.Repository
             paymentResponse.Description = "There was an issue with your payment, please try again.";
 
             return paymentResponse;
+        }
+
+        public async Task<string> TransferRequest(TransferRequest transferRequest, ClaimsPrincipal user)
+        {
+            try
+            {
+                var email = user.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email);
+
+                var transferToCustomer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == transferRequest.Email);
+
+                var matchTicket = await _context.MatchTickets
+                    .Include(e => e.Order)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .FirstOrDefaultAsync(e => e.ID == transferRequest.MatchTicketID);
+
+                matchTicket.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(matchTicket.FixtureProduct.Fixture.HomeTeam.Alias) ? matchTicket.FixtureProduct.Fixture.HomeTeam.Alias : matchTicket.FixtureProduct.Fixture.HomeTeam.Name;
+                matchTicket.FixtureProduct.Fixture.AwayTeam.Name = !String.IsNullOrEmpty(matchTicket.FixtureProduct.Fixture.AwayTeam.Alias) ? matchTicket.FixtureProduct.Fixture.AwayTeam.Alias : matchTicket.FixtureProduct.Fixture.AwayTeam.Name;
+
+
+                if (matchTicket != null && customer != null && transferToCustomer != null)
+                {
+                    if (!matchTicket.Validated)
+                    {
+                        try
+                        {
+                            matchTicket.TransferCustomerID = transferToCustomer.ID;
+                            matchTicket.IsTransfer = false;
+                            matchTicket.TransferTime = null;
+
+                            _context.MatchTickets.Add(matchTicket);
+                            await _context.SaveChangesAsync();
+
+                            await emailRepository.SendTransferRequest(customer, transferToCustomer, matchTicket);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message, "Transfer Request Email");
+                        }
+
+                        return "Ticket transferred successfully.";
+                    }
+                    else
+                        return "This ticket is not valid for transferring.";
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TransferRequest");
+            }
+
+            return "There was an issue transferring the match ticket.";
+        }
+
+        public async Task<List<AcceptTransfer>> GetTransferRequests(ClaimsPrincipal user)
+        {
+            List<AcceptTransfer> transferRequests = new List<AcceptTransfer>();
+
+            try
+            {
+                var email = user.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                if (email != null)
+                {
+                    var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email);
+
+                    var matchTickets = await _context.MatchTickets
+                        .Include(e => e.Order).ThenInclude(e => e.Customer)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                        .Include(e => e.TransferCustomer)
+                        .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && (e.TransferCustomer.Email == email && !e.IsTransfer))
+                        .ToListAsync();
+
+                    matchTickets.ForEach(e => e.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.FixtureProduct.Fixture.HomeTeam.Alias) ? e.FixtureProduct.Fixture.HomeTeam.Alias : e.FixtureProduct.Fixture.HomeTeam.Name);
+                    matchTickets.ForEach(e => e.FixtureProduct.Fixture.AwayTeam.Name = !String.IsNullOrEmpty(e.FixtureProduct.Fixture.AwayTeam.Alias) ? e.FixtureProduct.Fixture.AwayTeam.Alias : e.FixtureProduct.Fixture.AwayTeam.Name);
+
+                    foreach(var ticket in matchTickets)
+                    {
+                        transferRequests.Add(new Models.Shop.AcceptTransfer
+                        {
+                            CustomerID = ticket.Order.CustomerID,
+                            TransferCustomerID = ticket.TransferCustomerID,
+                            MatchTicketID = ticket.ID,
+                            MatchTicket = ticket,
+                            Customer = ticket.Order.Customer,
+                            Accept = false
+                        });
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TransferRequest");
+            }
+
+            return transferRequests;
+        }
+
+        public async Task<string> AcceptTransferRequest(AcceptTransfer acceptTransfer)
+        {
+            try
+            {
+                if (acceptTransfer.Accept)
+                {
+                    var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == acceptTransfer.CustomerID);
+
+                    var transferToCustomer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == acceptTransfer.TransferCustomerID);
+
+                    var matchTicket = await _context.MatchTickets
+                        .FirstOrDefaultAsync(e => e.ID == acceptTransfer.MatchTicketID && e.TransferCustomerID != null);
+
+                    if (matchTicket != null && transferToCustomer != null)
+                    {
+                        try
+                        {
+                            matchTicket.IsTransfer = true;
+                            matchTicket.TransferTime = DateTime.Now;
+
+                            _context.MatchTickets.Add(matchTicket);
+                            await _context.SaveChangesAsync();
+
+                            await emailRepository.SendTransferAccept(customer, transferToCustomer, matchTicket);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message, "Transfer Request Email");
+                        }
+                    }
+
+                    return "Transfer completed successfully!";
+                }
+                else
+                {
+                    var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == acceptTransfer.CustomerID);
+
+                    var transferToCustomer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == acceptTransfer.TransferCustomerID);
+
+                    var matchTicket = await _context.MatchTickets
+                        .FirstOrDefaultAsync(e => e.ID == acceptTransfer.MatchTicketID && e.TransferCustomerID != null);
+
+                    if (matchTicket != null && transferToCustomer != null)
+                    {
+                        try
+                        {
+                            matchTicket.IsTransfer = false;
+                            matchTicket.TransferTime = null;
+                            matchTicket.TransferCustomerID = null;
+
+                            _context.MatchTickets.Add(matchTicket);
+                            await _context.SaveChangesAsync();
+
+                            await emailRepository.SendTransferReject(customer, transferToCustomer, matchTicket);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message, "Transfer Request Email");
+                        }
+                    }
+
+                    return "Transfer rejected successfully!";
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TransferRequest");
+            }
+
+            return "There was an issue completing your transfer.";
         }
 
         public async Task Insert(MatchTicket item)

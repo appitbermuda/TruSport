@@ -12,7 +12,7 @@ namespace TruSport.ViewModel.Shop
 {
     public class MatchTicketPageViewModel : BaseViewModel
     {
-
+        private ObservableCollection<AcceptTransfer> _transferRequestCollection;
         private ObservableCollection<Fixture> _matchTicketCollection;
         private ObservableCollection<Fixture> _fixtureCollection;
         private ObservableCollection<Product> _productCollection;
