@@ -49,9 +49,9 @@ namespace OnTrackWebService
             services.AddDbContext<OnTrackContext>
                 (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
-            ////#else
+            //////#else
             //services.AddDbContext<OnTrackContext>
-            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
+            //  (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
             //#endif
 
@@ -116,6 +116,9 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<UserType>, UserTypeRepository>();
             //services.AddSingleton<BackgroundWorker>();
 
+            services.AddOptions<NotificationHubOptions>()
+            .Configure(Configuration.GetSection("NotificationHub").Bind)
+            .ValidateDataAnnotations();
             //string domain = $"https://{Configuration["Auth0:Domain"]}/";
             //services.AddAuthentication(options =>
             //{

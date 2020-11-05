@@ -239,6 +239,51 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        //[Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("PurchaseTest")]
+        public async Task<IActionResult> PurchaseTest([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
+                {
+                    PaymentResponse authorized = await _matchTicketRepository.PurchaseTest(paymentAuthorize);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+
+        //[Authorize(Roles = Roles.Ad)]
+        [HttpGet]
+        [Route("ResendPurchaseConfirmation")]
+        public async Task<IActionResult> ResendPurchaseConfirmation(string OrderNumber)
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(OrderNumber))
+                {
+                    string confirmation = await _matchTicketRepository.ResendPurchaseConfirmation(OrderNumber);
+
+                    return Ok(confirmation);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Resend Match Ticket Confirmation");
+            }
+
+            return NoContent();
+        }
+
         // POST api/values
         [Authorize(Roles = Roles.Customer)]
         [HttpPost]

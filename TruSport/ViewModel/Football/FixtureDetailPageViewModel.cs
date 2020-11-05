@@ -433,6 +433,9 @@ namespace TruSport.ViewModels
                     };
 
                     await App.Database.SaveFootballFavourite(favourite);
+
+                    var tags = await App.Database.GetTags();
+                    //await notificationRegistrationService.RegisterDeviceAsync(tags);
                 }
 
             }

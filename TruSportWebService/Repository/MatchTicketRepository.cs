@@ -376,6 +376,14 @@ namespace OnTrackWebService.Repository
                         paymentAuthorization.Amount = (orderSubTotal + (ProcessingFeeAmount * paymentAuthorization.Quantity)).ToString();                        
                     }
 
+                    if (PaymentAmount > Convert.ToDecimal(paymentAuthorization.Amount))
+                    {
+                        PaymentAmount = Convert.ToDecimal(paymentAuthorization.Amount);
+                    }
+
+                    PaymentAmount = PaymentAmount != Convert.ToDecimal(paymentAuthorization.Amount) ? Convert.ToDecimal(paymentAuthorization.Amount) : PaymentAmount;
+
+
                     paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
 
                     Order order = new Order
@@ -659,6 +667,196 @@ namespace OnTrackWebService.Repository
             }
 
             return "There was an issue completing your transfer.";
+        }
+
+        public async Task<PaymentResponse> PurchaseTest(PaymentAuthorize paymentAuthorization)
+        {
+            Request request = new Request();
+            PaymentResponse paymentResponse = new PaymentResponse();
+            paymentResponse.IsApproved = false;
+
+            _context.Database.BeginTransaction();
+
+            try
+            {
+                var fixtureProduct = await _context.FixtureProducts
+                    .Include(e => e.Product)
+                    .FirstOrDefaultAsync(e => e.FixtureID == paymentAuthorization.FixtureID);
+
+                var matchTicketsList = await _context.MatchTickets
+                    .Include(e => e.FixtureProduct)
+                    .Where(e => e.FixtureProduct.FixtureID == paymentAuthorization.FixtureID)
+                    .ToListAsync();
+
+                var teamID = fixtureProduct.Product.TeamID;
+
+                var ticketConfiguration = await _context.TicketConfigurations
+                    .FirstOrDefaultAsync(e => e.TeamID == teamID);
+
+                var ticketCount = matchTicketsList.Count();
+
+                if (ticketCount < ticketConfiguration.Stock && paymentAuthorization.OrderDetails.Sum(e => e.Qty) <= ticketConfiguration.Stock)
+                {
+                    var processingFee = await _context.Settings.FirstOrDefaultAsync(e => e.ID == Constants.SETTING_PROCESSING_FEE_ID);
+
+                    Decimal ProcessingFeeAmount = Convert.ToDecimal(processingFee.Value);
+                    Decimal PaymentAmount = 0.0m;
+
+                    //string payment = String.Format("{0,0:N2}", Decimal.Parse(paymentAuthorization.Amount) / 100.0m);
+                    string payment = String.Format("{0,0:N2}", Decimal.Parse(paymentAuthorization.Amount));
+
+                    //string topUp = topUpPayment.Amount;
+                    //topUp.Insert(topUp.Length - 2, ".");
+                    PaymentAmount = Convert.ToDecimal(payment);
+                    var orderSubTotal = paymentAuthorization.OrderDetails.Sum(e => e.Subtotal);
+
+                    if (PaymentAmount != orderSubTotal + (ProcessingFeeAmount * paymentAuthorization.Quantity))
+                    {
+                        paymentAuthorization.Amount = (orderSubTotal + (ProcessingFeeAmount * paymentAuthorization.Quantity)).ToString();
+                    }
+
+                    if(PaymentAmount > Convert.ToDecimal(paymentAuthorization.Amount))
+                    {
+                        PaymentAmount = Convert.ToDecimal(paymentAuthorization.Amount);
+                    }
+
+                    PaymentAmount = PaymentAmount != Convert.ToDecimal(paymentAuthorization.Amount) ? Convert.ToDecimal(paymentAuthorization.Amount) : PaymentAmount;
+
+                    paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
+
+                    Order order = new Order
+                    {
+                        Total = PaymentAmount,
+                        CustomerID = paymentAuthorization.CustomerID,
+                        Date = DateTime.Now,
+                        Discount = 0.0m,
+                    };
+
+                    _context.Orders.Add(order);
+                    await _context.SaveChangesAsync();
+
+                    //var response = await request.Payment(paymentAuthorization);
+
+                    //if (response.CreditCardTransactionResults.ResponseCode == "1")
+                    //{
+
+
+                    //    var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
+                    //    updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;
+                    //    updateOrder.OrderNumber = response.OrderNumber;
+
+                    //    _context.Orders.Update(updateOrder);
+                    //    await _context.SaveChangesAsync();
+
+
+
+                    //    if (paymentAuthorization.OrderDetails != null && paymentAuthorization.OrderDetails.Count > 0)
+                    //    {
+                    //        try
+                    //        {
+                    //            paymentAuthorization.OrderDetails.ForEach(e => e.OrderID = order.ID);
+                    //            _context.OrderDetails.AddRange(paymentAuthorization.OrderDetails);
+                    //            await _context.SaveChangesAsync();
+                    //        }
+                    //        catch (Exception ex)
+                    //        { }
+
+                    //        List<MatchTicket> matchTickets = new List<MatchTicket>();
+                    //        foreach (var orderDetail in paymentAuthorization.OrderDetails)
+                    //        {
+                    //            for (var i = 0; i < orderDetail.Qty; i++)
+                    //            {
+                    //                matchTickets.Add(new MatchTicket
+                    //                {
+                    //                    FixtureProductID = orderDetail.FixtureProductID,
+                    //                    OrderID = order.ID,
+                    //                    Validated = false
+                    //                });
+                    //            }
+                    //        }
+
+                    //        _context.MatchTickets.AddRange(matchTickets);
+                    //        await _context.SaveChangesAsync();
+
+                    //    }
+
+                    //    if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
+                    //    {
+                    //        paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
+
+                    //        _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
+                    //        await _context.SaveChangesAsync();
+                    //    }
+
+                    //    _context.Database.CommitTransaction();
+                    //    paymentResponse.IsApproved = true;
+
+                    //    try
+                    //    {
+                    //        var fixture = await _context.Fixtures
+                    //            .Include(e => e.HomeTeam)
+                    //            .Include(e => e.AwayTeam)
+                    //            .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.FixtureID);
+
+                    //        var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
+                    //        await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), fixture);
+
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        Debug.WriteLine(ex.Message, "Payment Email");
+                    //    }
+                    //}
+
+                    //paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
+                    //paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
+                    _context.Database.RollbackTransaction();
+                    return paymentResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                _context.Database.RollbackTransaction();
+                Debug.WriteLine(ex.Message, "Payment");
+            }
+
+            paymentResponse.Description = "There was an issue with your payment, please try again.";
+
+            return paymentResponse;
+        }
+
+        public async Task<string> ResendPurchaseConfirmation(string orderNumber)
+        {
+            try
+            {
+                try
+                {
+                    var order = await _context.Orders.Include(e => e.Customer).FirstOrDefaultAsync(e => e.OrderNumber == orderNumber);
+
+                    var orderDetails = await _context.OrderDetails.Include(e => e.FixtureProduct).Where(e => e.OrderID == order.ID).ToListAsync();
+
+                    var fixture = await _context.Fixtures
+                        .Include(e => e.HomeTeam)
+                        .Include(e => e.AwayTeam)
+                        .FirstOrDefaultAsync(e => e.ID == orderDetails.FirstOrDefault().FixtureProduct.FixtureID);
+
+                    var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == order.Customer.ID);
+
+                    await emailRepository.SendPaymentConfirmation(customer, order.Authorisation, order, orderDetails.Sum(e => e.Qty), fixture);
+
+                    return "Confirmation sent successfully";
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message, "Payment Email");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Payment");
+            }
+
+            return "Failed to resend confirmation";
         }
 
         public async Task Insert(MatchTicket item)

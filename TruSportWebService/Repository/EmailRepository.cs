@@ -804,9 +804,16 @@ namespace OnTrackWebService.Repository
             body = body.Replace("[Total]", order.Total.ToString());
             body = body.Replace("[Authorisation]", authorisation);
 
+#if DEBUG
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+#else
             TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
-            DateTime orderTime = TimeZoneInfo.ConvertTimeFromUtc(order.Date, timeInfo);
+#endif
+            DateTime orderTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(order.Date, DateTimeKind.Unspecified), timeInfo);
+            //body = body.Replace("[TrxDate]", order.Date.ToString("MMM dd yyyy - H:mm:ss"));
             body = body.Replace("[TrxDate]", orderTime.ToString("MMM dd yyyy - H:mm:ss"));
+            //body = body.Replace("[TrxDate]", orderTime.ToString("MMM dd yyyy - H:mm:ss"));
+            //body = body.Replace("[TrxDate]", orderTime.ToString("MMM dd yyyy - H:mm:ss"));
 
             mailMessage.Body = body;
 
@@ -1302,31 +1309,49 @@ namespace OnTrackWebService.Repository
                         <h3>Order Summary</h3>
                         <hr/>
 
-                        <table style='width: 100%; border:none;'>
+                        <table style='width: 100%; border:none; text-align:left;'>
                             <tr>
-                             <th> Ticket </th>
-                             <th> Qty </th>
-                             <th> Total </th>
+                             <th style='width:50%;'> Ticket </th>
+                                       </tr>
+                           <tr>
+                             <td style='width:50%;'> [Product] </td>
+                           </tr>
+ 
+                        </table>
+<br/>
+                        <table style='width: 100%; border:none; text-align:left;'>
+                            <tr>
+                             <th style='width:50%;'> Qty </th>
+                             <th style='width:50%;'> Total </th>
                            </tr>
                            <tr>
-                             <td> [Product] </td>
-                             <td> [Quantity] </td>
-                             <td> [Total] </td>
+                             <td style='width:50%;'> [Quantity] </td>
+                             <td style='width:50%;'> $[Total] </td>
+                           </tr>
+ 
+                        </table>
+<br/>
+                        <table style='width: 100%; border:none; text-align:left;'>
+                            <tr>
+                             <th style='width:50%;'> Authorisation </th>
+                             <th style='width:50%;'> Transaction Date </th>
+                           </tr>
+                           <tr>
+                             <td style='width:50%;'> [Authorisation] </td>
+                             <td style='width:50%;'> [TrxDate] </td>
                            </tr>
  
                         </table>
 
-                        <table style='width: 100%; border:none;'>
-                            <tr>
-                             <th> Authorisation </th>
-                             <th> Transaction Date </th>
-                           </tr>
-                           <tr>
-                             <td> [Authorisation] </td>
-                             <td> [TrxDate] </td>
-                           </tr>
- 
-                        </table>
+<hr/>
+                        <p>Please plan to arrive to the match before half time.</p>
+
+<br/>
+<h3>How do you get in?</h3>
+<p>In the app, you would have seen an 'Active' or 'My Tickets' tab in the ticketing section. A QR code is automatically generated for you. This can be scanned at the gate for entry. You being the purchaser, will have every purchased ticket on your device. If there are any issues with your phone, the ticketing administrators are able to search for your tickets by your name.</p>
+
+<br/>
+
  
                          <p>If you have any issues with your purchase please do not hesitate to contact us by replying to sports@ontrackbda.com</p>
 
@@ -1355,7 +1380,16 @@ namespace OnTrackWebService.Repository
             //body = body.Replace("[Quantity]", quantity.ToString());
             //body = body.Replace("[Total]", order.Total.ToString("C"));
             //body = body.Replace("[Authorisation]", authorisation);
-            //body = body.Replace("[TrxDate]", order.Date.ToString("MMM dd yyyy - H:mm:ss"));
+
+#if DEBUG
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+#else
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+#endif
+            //TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+            DateTime orderTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified), timeInfo);
+            body = body.Replace("[TrxDate]", orderTime.ToString("MMM dd yyyy - H:mm:ss"));
+            //body = body.Replace("[TrxDate]", order.ToString("MMM dd yyyy - H:mm:ss"));
 
             mailMessage.Body = body;
 

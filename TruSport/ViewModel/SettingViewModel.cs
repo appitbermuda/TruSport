@@ -23,9 +23,11 @@ namespace TruSport.ViewModels
         INavigation Navigation;
 
         SportService sportService;
+        NotificationRegistrationService notificationRegistrationService;
 
         public SettingViewModel()
         {
+            notificationRegistrationService = new NotificationRegistrationService();
             sportService = new SportService();
             SportCollection = new ObservableCollection<string>();
 
@@ -162,6 +164,10 @@ namespace TruSport.ViewModels
                 };
 
                 await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                await notificationRegistrationService.RegisterDeviceAsync(tags);
+                
                 await SecureStorage.SetAsync("CricketAlert", CricketAlert.ToString());
             }
             catch(Exception ex)
@@ -181,6 +187,10 @@ namespace TruSport.ViewModels
                 };
 
                 await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                await notificationRegistrationService.RegisterDeviceAsync(tags);
+
                 await SecureStorage.SetAsync("FootballAlert", FootballAlert.ToString());
             }
             catch (Exception ex)

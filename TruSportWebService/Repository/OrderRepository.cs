@@ -148,6 +148,11 @@ namespace OnTrackWebService.Repository
         {
             try
             {
+#if DEBUG
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+#else
+                TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+#endif
                 var orders = await _context.Orders.Include(e => e.Customer)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
@@ -156,6 +161,15 @@ namespace OnTrackWebService.Repository
                     .ToListAsync();
 
                 orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+
+                try
+                {
+                    orders.ForEach(e => e.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(e.Date, DateTimeKind.Unspecified), timeInfo));
+                }
+                catch (Exception ex)
+                {
+
+                }
 
                 return orders;
             }
@@ -173,6 +187,11 @@ namespace OnTrackWebService.Repository
 
             try
             {
+#if DEBUG
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+#else
+                TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+#endif
                 var orders = await _context.Orders.Include(e => e.Customer)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
@@ -180,6 +199,18 @@ namespace OnTrackWebService.Repository
                     .ToListAsync();
 
                 orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Name));
+
+                try
+                {
+                    orders.ForEach(e => e.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(e.Date, DateTimeKind.Unspecified), timeInfo));
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                //DateTime orderTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(order.Date, DateTimeKind.Unspecified), timeInfo);
+
                 //var orders = await _context.Orders
                 //    .Include(e => e.Customer)
                 //    .Where(e => e.Customer.Email == email && e.Date.Date >= DateTime.Now.Date.AddDays(-1))
@@ -216,12 +247,26 @@ namespace OnTrackWebService.Repository
         {
             try
             {
+#if DEBUG
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+#else
+                TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+#endif
                 var orders =  await _context.Orders.Include(e => e.Customer)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .ToListAsync();
 
                 orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+
+                try
+                {
+                    orders.ForEach(e => e.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(e.Date, DateTimeKind.Unspecified), timeInfo));
+                }
+                catch (Exception ex)
+                {
+
+                }
 
                 return orders;
             }
