@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Syncfusion.ListView.XForms;
+using TruSport.Data;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
@@ -19,11 +20,13 @@ namespace TruSport.ViewModel.Shop
         private ObservableCollection<CustomerOrder> _orderCollection;
         private FixtureProduct _fixtureProduct;
         private PaymentAuthorize _paymentAuthorize;
+        private Customer _customer;
         private bool _noTickets;
         private bool _isActivityIndicatorVisible;
 
         OrderService orderService;
         MatchTicketService matchTicketService;
+        PushNotificationService pushNotificationService;
 
         INavigation Navigation;
 
@@ -31,6 +34,7 @@ namespace TruSport.ViewModel.Shop
         {
             matchTicketService = new MatchTicketService();
             orderService = new OrderService();
+            pushNotificationService = new PushNotificationService();
             OrderCollection = new ObservableCollection<CustomerOrder>();
             MatchTicketCollection = new ObservableCollection<MatchTicket>();
             TransferRequestCollection = new ObservableCollection<AcceptTransfer>();
@@ -85,6 +89,12 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _noTickets, value); }
         }
 
+        public Customer Customer
+        {
+            get { return _customer; }
+            set { Set(ref _customer, value); }
+        }
+
         public bool IsActivityIndicatorVisible
         {
             get { return _isActivityIndicatorVisible; }
@@ -103,6 +113,7 @@ namespace TruSport.ViewModel.Shop
                 {
 
                     var email = await SecureStorage.GetAsync("Email");
+                    Customer = await App.Database.GetCustomerByIDAsync(email);
                     var matchTickets = await matchTicketService.GetMatchTickets();
                     var transferRequests = await matchTicketService.GetTransferRequests();
 
@@ -167,6 +178,20 @@ namespace TruSport.ViewModel.Shop
             if (transferTicket)
             {
                 string accept = await matchTicketService.AcceptTransfer(acceptTransfer);
+
+                try
+                {
+                    await pushNotificationService.Send(new NotificationRequest
+                    {
+                        Text = Customer.FirstName + "has accepted your match ticket transfer.",
+                        Silent = false,
+                        Tags = new string[] { acceptTransfer.Customer.Email }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message, "Transfer Notification");
+                }
 
                 await App.Current.MainPage.DisplayAlert("Ticket Transfer", accept, "Okay");
 

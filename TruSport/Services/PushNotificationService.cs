@@ -50,5 +50,36 @@ namespace TruSport.Services
                 return null;
             }
         }
+
+        public async Task Send(NotificationRequest notificationRequest)
+        {
+            try
+            {
+                string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                if (accessToken != null)
+                {
+                    var client = new RestClient(Constants.APIEndpoint);
+                    var request = new RestRequest("PushNotification/requests", Method.POST);
+                    request.AddJsonBody(notificationRequest);
+                    request.AddHeader("authorization", "Bearer " + accessToken);
+
+                    // We execute the request and capture the response
+                    // in a variable called `response`
+                    IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        string push = JsonConvert.DeserializeObject<string>(response.Content);
+
+                        
+                    }
+                }                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Push");                
+            }
+        }
     }
 }

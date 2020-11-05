@@ -10,7 +10,7 @@ namespace OnTrackWebService.Models.Shop
         public string MatchTicketID { get; set; }
         public string Email { get; set; }
 
-        [JsonIgnore]
+        [NotMapped]
         public MatchTicket MatchTicket { get; set; }
     }
 
@@ -21,10 +21,13 @@ namespace OnTrackWebService.Models.Shop
         public string TransferCustomerID { get; set; }
         public bool Accept { get; set; }
 
-        [JsonIgnore]
+        [NotMapped]
         public MatchTicket MatchTicket { get; set; }
 
-        [JsonIgnore]
+        [NotMapped]
         public Customer Customer { get; set; }
+
+        [NotMapped]
+        public Customer TransferCustomer { get; set; }
     }
 }

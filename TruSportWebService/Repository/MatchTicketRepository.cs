@@ -581,6 +581,7 @@ namespace OnTrackWebService.Repository
                             MatchTicketID = ticket.ID,
                             MatchTicket = ticket,
                             Customer = ticket.Order.Customer,
+                            TransferCustomer = ticket.TransferCustomer,
                             Accept = false
                         });
                     }

@@ -53,6 +53,7 @@ namespace TruSport.ViewModels
         MatchRosterService matchRosterService;
         CoachService coachService;
         LeagueTableService leagueTableService;
+        NotificationRegistrationService notificationRegistrationService;
         INavigation Navigation;
 
         #endregion
@@ -72,6 +73,7 @@ namespace TruSport.ViewModels
             fixtureService = new FixtureService();
             coachService = new CoachService();
             leagueTableService = new LeagueTableService();
+            notificationRegistrationService = new NotificationRegistrationService();
 
             SelectedIndex = 0;
 
@@ -434,8 +436,14 @@ namespace TruSport.ViewModels
 
                     await App.Database.SaveFootballFavourite(favourite);
 
+                    await App.Database.SaveAlertSetting(new NotiAlert
+                    {
+                        Sport = favourite.FixtureID,
+                        IsAlert = true
+                    });
+
                     var tags = await App.Database.GetTags();
-                    //await notificationRegistrationService.RegisterDeviceAsync(tags);
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
                 }
 
             }
