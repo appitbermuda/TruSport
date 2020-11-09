@@ -1261,7 +1261,7 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
                 
-                .Include(e => e.Season).Where(e => e.Date.Date < DateTime.Now.Date && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).ToListAsync();
+                .Include(e => e.Season).Where(e => e.Date.Date < DateTime.Now.AddHours(-4).Date && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).ToListAsync();
 
                 List<Coach> coaches = await _context.Coaches
                     .ToListAsync();
@@ -1295,7 +1295,7 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
-                .Where(e => e.Date.Date >= DateTime.Now.Date).ToListAsync();
+                .Where(e => e.Date.Date >= DateTime.Now.AddHours(-4).Date).ToListAsync();
 
                 List<Coach> coaches = await _context.Coaches
                     .ToListAsync();

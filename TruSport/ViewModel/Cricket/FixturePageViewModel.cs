@@ -35,7 +35,7 @@ namespace TruSport.ViewModels.Cricket
         private ObservableCollection<Award> awardCollection;
         private ObservableCollection<CricketFixture> pastCollection;
         private ObservableCollection<CricketFixture> upcomingCollection;
-        private ObservableCollection<CricketFixture> liveCollection;
+        private ObservableCollection<LiveFixture> liveCollection;
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> onFixtureSelectedCommand;
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> onLiveFixtureSelectedCommand;
         private Command<object> leagueSelectedCommand;
@@ -78,7 +78,7 @@ namespace TruSport.ViewModels.Cricket
 
             PastCollection = new ObservableCollection<CricketFixture>();
             UpcomingCollection = new ObservableCollection<CricketFixture>();
-            LiveCollection = new ObservableCollection<CricketFixture>();
+            LiveCollection = new ObservableCollection<LiveFixture>();
             CalendarInlineEvents = new CalendarEventCollection();
 
             fixtureService = new FixtureService();
@@ -189,7 +189,7 @@ namespace TruSport.ViewModels.Cricket
             set { Set(ref upcomingCollection, value); }
         }
 
-        public ObservableCollection<CricketFixture> LiveCollection
+        public ObservableCollection<LiveFixture> LiveCollection
         {
             get { return liveCollection; }
             set { Set(ref liveCollection, value); }
@@ -429,7 +429,7 @@ namespace TruSport.ViewModels.Cricket
                                 return true;
                             });
 
-                            LiveCollection = new ObservableCollection<CricketFixture>(liveFixtures);
+                            LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
                         }
                         else
                         {
@@ -483,7 +483,7 @@ namespace TruSport.ViewModels.Cricket
                             if (liveFixtures.Count() > 0 && FixtureHeaderCount < 3)
                                 FixtureHeaderCount++;
 
-                            LiveCollection = new ObservableCollection<CricketFixture>(liveFixtures);
+                            LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
                         }
 
                         //var liveFixtures = fixtures.Where(e => e.FixtureTime <= DateTime.Now &&
@@ -606,7 +606,7 @@ namespace TruSport.ViewModels.Cricket
 
                 NoLiveFixtures = liveFixtures.Count > 0;
 
-                LiveCollection = new ObservableCollection<CricketFixture>(liveFixtures);
+                LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
             }
             catch (Exception ex)
             {

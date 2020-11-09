@@ -240,6 +240,8 @@
     <Compile Include="ExtendedFrameRenderer.cs" />
     <Compile Include="ExtendedPageRenderer.cs" />
     <Compile Include="ExtendedTabbedPageRenderer.cs" />
+    <Compile Include="Data\DeviceInstallationService.cs" />
+    <Compile Include="Data\PushNotificationFirebaseMessagingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

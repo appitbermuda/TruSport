@@ -116,6 +116,8 @@
     <Compile Include="ExtendedFrameRenderer.cs" />
     <Compile Include="ExtendedSwitchCellRenderer.cs" />
     <Compile Include="ExtendedTicketTabbedPageRenderer.cs" />
+    <Compile Include="Data\DeviceInstallationService.cs" />
+    <Compile Include="Data\NSDataExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />

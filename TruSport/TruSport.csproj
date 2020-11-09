@@ -70,6 +70,8 @@
     <Compile Remove="Views\Football\MatchStatsPopUpPage %28another copy%29.cs" />
     <Compile Remove="Model\TwitterViewModel.cs" />
     <Compile Remove="Templates\HeadToHeadList %28copy%29.xaml.cs" />
+    <Compile Remove="Templates\ScoreFixtureList %28copy%29.xaml.cs" />
+    <Compile Remove="Templates\CricketScoreFixtureList %28copy%29.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\Football\NewsPage.xaml.cs">
@@ -94,6 +96,9 @@
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\Cricket\TeamProfilePage.xaml.cs">
       <DependentUpon>TeamProfilePage.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Tickets\TransferTicketPage.xaml.cs">
+      <DependentUpon>TransferTicketPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

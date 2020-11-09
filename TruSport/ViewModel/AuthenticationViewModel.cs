@@ -53,6 +53,7 @@ namespace TruSport.ViewModels
         UserService userService;
         TeamService teamService;
         UserTypeService userTypeService;
+        NotificationRegistrationService notificationRegistrationService;
 
         public AuthenticationViewModel()
         {
@@ -65,6 +66,7 @@ namespace TruSport.ViewModels
             userService = new UserService();
             teamService = new TeamService();
             userTypeService = new UserTypeService();
+            notificationRegistrationService = new NotificationRegistrationService();
 
             CountryCollection = new ObservableCollection<string>();
 
@@ -83,7 +85,8 @@ namespace TruSport.ViewModels
         {
             Navigation = navigation;
             userService = new UserService();
-            
+            notificationRegistrationService = new NotificationRegistrationService();
+
             GenerateSource("");
 
             SelectedTeamChangedCommand = new Command<Syncfusion.XForms.ComboBox.SelectionChangedEventArgs>(TeamSelectionChanged);
@@ -347,6 +350,14 @@ namespace TruSport.ViewModels
                                 
                                 //await App.Database.UpdateUser(thisUser);
                                 IsActivityIndicatorVisible = false;
+
+                                var tags = await App.Database.GetTags();
+                                var tagsList = tags.ToList();
+                                tagsList.Add(thisUser.Email);
+
+                                tags = tagsList.ToArray();
+                                
+                                await notificationRegistrationService.RegisterDeviceAsync(tags);
 
                                 //Navigation.InsertPageBefore(new MapPage(), Navigation.NavigationStack.First());
                                 //Navigation.InsertPageBefore(new FootballMasterDetailPage(), Navigation.NavigationStack.First());

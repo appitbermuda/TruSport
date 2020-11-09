@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
+using TruSport.Data;
 using TruSport.ViewModels;
 using TruSport.Views;
 using Xamarin.Essentials;
@@ -9,12 +11,13 @@ namespace TruSport.ViewModel.Shop
 {
     public class TicketTabbedPageViewModel : BaseViewModel
     {
-
+        NotificationRegistrationService notificationRegistrationService;
         INavigation Navigation;
 
         public TicketTabbedPageViewModel(INavigation navigation)
         {
             Navigation = navigation;
+            notificationRegistrationService = new NotificationRegistrationService();
 
             GenerateSource();
         }
@@ -29,6 +32,15 @@ namespace TruSport.ViewModel.Shop
                 {
                     await Navigation.PushAsync(new SignInPage(), true);
                 }
+
+                string email = await SecureStorage.GetAsync("Email");
+                var tags = await App.Database.GetTags();
+                var tagsList = tags.ToList();
+                tagsList.Add(email);
+
+                tags = tagsList.ToArray();
+
+                await notificationRegistrationService.RegisterDeviceAsync(tags);
             }
             catch(Exception ex)
             {

@@ -461,7 +461,7 @@ namespace TruSport.Services
             return null;
         }
 
-        public async Task<List<CricketFixture>> GetLiveCricketFixtures()
+        public async Task<List<LiveFixture>> GetLiveCricketFixtures()
         {
             try
             {
@@ -479,7 +479,7 @@ namespace TruSport.Services
 
                 if (response.IsSuccessful)
                 {
-                    List<CricketFixture> fixtures = JsonConvert.DeserializeObject<List<CricketFixture>>(response.Content);
+                    List<LiveFixture> fixtures = JsonConvert.DeserializeObject<List<LiveFixture>>(response.Content);
 
                     return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
                 }
@@ -495,7 +495,7 @@ namespace TruSport.Services
             return null;
         }
 
-        public async Task<List<Fixture>> GetLiveFootballFixtures()
+        public async Task<List<LiveFixture>> GetLiveFootballFixtures()
         {
             try
             {
@@ -513,7 +513,7 @@ namespace TruSport.Services
 
                 if (response.IsSuccessful)
                 {
-                    List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+                    List<LiveFixture> fixtures = JsonConvert.DeserializeObject<List<LiveFixture>>(response.Content);
 
                     return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
                 }
