@@ -18,6 +18,8 @@ namespace OnTrackWebService.Data
         public DbSet<BowlingPlayerSeason> BowlingPlayerSeasons { get; set; }
         public DbSet<BowlingLeagueStanding> BowlingLeagueStandings { get; set; }
         public DbSet<BowlingGame> BowlingGames { get; set; }
+        public DbSet<BowlingTeam> BowlingTeams { get; set; }
+        public DbSet<BowlingTeamSeason> BowlingTeamSeasons { get; set; }
         public DbSet<Coach> Coaches { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Field> Fields { get; set; }
@@ -77,6 +79,8 @@ namespace OnTrackWebService.Data
         {
             modelBuilder.Entity<BowlingRoster>().ToTable("BowlingRoster");
             modelBuilder.Entity<BowlingGame>().ToTable("BowlingGame");
+            modelBuilder.Entity<BowlingTeam>().ToTable("BowlingTeam");
+            modelBuilder.Entity<BowlingTeamSeason>().ToTable("BowlingTeamSeason");
             modelBuilder.Entity<BowlingPlayerSeason>().ToTable("BowlingPlayerSeason");
             modelBuilder.Entity<BowlingLeagueStanding>().ToTable("BowlingLeagueStanding");
             modelBuilder.Entity<Coach>().ToTable("Coach");

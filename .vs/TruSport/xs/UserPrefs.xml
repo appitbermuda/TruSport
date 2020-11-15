@@ -1,27 +1,28 @@
 ﻿<Properties StartupConfiguration="{2B8BBBC2-64F1-4CA8-93A4-CE0C0FCA282F}|Default">
   <MonoDevelop.Ide.ItemProperties.TruSport.Android AndroidDesignerPreferredDevice="Nexus 4" PreferredExecutionTarget="Android.pixel_xl_r_11_0_-_api_30" />
-  <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.CCFC5824-9F7F-4ABF-9803-3BBAFCF79AF8" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSport/ViewModel/Shop/AccountPageViewModel.cs">
+  <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.8F57DE7F-BB7F-4AB5-856B-2DC3DFDE52DD" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSport/ViewModel/Shop/PurchaseTicketPageViewModel.cs">
     <Files>
       <File FileName="TruSport/Data/NotificationRegistrationService.cs" Line="54" Column="27" />
       <File FileName="TruSport/ViewModel/Shop/MyTicketPageViewModel.cs" Line="185" Column="22" />
-      <File FileName="TruSport/Views/Tickets/TransferTicketPage.xaml.cs" Line="15" Column="62" />
-      <File FileName="TruSport/ViewModel/Shop/TransferTicketPageViewModel.cs" Line="109" Column="22" />
-      <File FileName="TruSport/Services/PushNotificationService.cs" Line="77" Column="18" />
-      <File FileName="TruSportWebService/Controllers/TransfersController.cs" Line="1" Column="1" />
-      <File FileName="TruSportWebService/Controllers/MatchTicketController.cs" Line="78" Column="100" />
-      <File FileName="TruSport/ViewModel/SettingViewModel.cs" Line="169" Column="55" />
-      <File FileName="TruSport/Views/SignInPage.xaml" Line="1" Column="1" />
-      <File FileName="TruSport/ViewModel/AuthenticationViewModel.cs" Line="365" Column="68" />
-      <File FileName="TruSport/ViewModel/Football/FixtureDetailPageViewModel.cs" Line="446" Column="59" />
-      <File FileName="TruSport/Data/INotificationRegistrationService.cs" Line="9" Column="14" />
-      <File FileName="TruSport/Data/OnTrackDatabase.cs" Line="1101" Column="37" />
-      <File FileName="TruSport/App.xaml.cs" Line="1" Column="1" />
-      <File FileName="TruSport/Views/Tickets/TicketTabbedPage.xaml.cs" Line="20" Column="58" />
-      <File FileName="TruSport/ViewModel/Shop/TicketTabbedPageViewModel.cs" Line="39" Column="31" />
-      <File FileName="TruSport/ViewModel/Shop/AccountPageViewModel.cs" Line="167" Column="1" />
+      <File FileName="TruSport/Views/Tickets/TransferTicketPage.xaml.cs" />
+      <File FileName="TruSport/ViewModel/Shop/TransferTicketPageViewModel.cs" />
+      <File FileName="TruSport/Services/PushNotificationService.cs" />
+      <File FileName="TruSportWebService/Controllers/TransfersController.cs" />
+      <File FileName="TruSportWebService/Controllers/MatchTicketController.cs" />
+      <File FileName="TruSport/ViewModel/SettingViewModel.cs" />
+      <File FileName="TruSport/Views/SignInPage.xaml" />
+      <File FileName="TruSport/ViewModel/AuthenticationViewModel.cs" />
+      <File FileName="TruSport/ViewModel/Football/FixtureDetailPageViewModel.cs" />
+      <File FileName="TruSport/Data/INotificationRegistrationService.cs" />
+      <File FileName="TruSport/Data/OnTrackDatabase.cs" />
+      <File FileName="TruSport/App.xaml.cs" />
+      <File FileName="TruSport/Views/Tickets/TicketTabbedPage.xaml.cs" />
+      <File FileName="TruSport/ViewModel/Shop/TicketTabbedPageViewModel.cs" />
+      <File FileName="TruSport/ViewModel/Shop/AccountPageViewModel.cs" Line="169" Column="46" />
+      <File FileName="TruSport/ViewModel/Shop/PurchaseTicketPageViewModel.cs" Line="309" Column="17" />
       <File FileName="TruSportWebService/Controllers/PushNotificationController.cs" Line="67" Column="34" NotebookId="1" />
-      <File FileName="TruSportWebService/Repository/PushNotificationRepository.cs" Line="170" Column="14" NotebookId="1" />
+      <File FileName="TruSportWebService/Repository/PushNotificationRepository.cs" NotebookId="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -45,7 +46,7 @@
               <Node name="ViewModel" expanded="True">
                 <Node name="Football" expanded="True" />
                 <Node name="Shop" expanded="True">
-                  <Node name="AccountPageViewModel.cs" selected="True" />
+                  <Node name="PurchaseTicketPageViewModel.cs" selected="True" />
                 </Node>
               </Node>
               <Node name="Views" expanded="True">
@@ -53,7 +54,6 @@
                 <Node name="Setting" expanded="True" />
                 <Node name="Tickets" expanded="True">
                   <Node name="TicketTabbedPage.xaml" expanded="True" />
-                  <Node name="TransferTicketPage.xaml" expanded="True" />
                 </Node>
               </Node>
               <Node name="App.xaml" expanded="True" />

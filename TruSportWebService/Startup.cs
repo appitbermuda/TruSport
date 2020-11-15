@@ -81,6 +81,8 @@ namespace OnTrackWebService
                 };
             });
 
+            services.AddScoped<IOnTrackRepository<BowlingGame>, BowlingGameRepository>();
+            services.AddScoped<IOnTrackRepository<BowlingRoster>, BowlingRosterRepository>();
             services.AddScoped<IOnTrackRepository<ContactTrace>, ContactTraceRepository>();
             services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
             services.AddScoped<IEmailRepository<string>, EmailRepository>();

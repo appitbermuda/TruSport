@@ -9,6 +9,7 @@ using OnTrackWebService.Models;
 using System.Diagnostics;
 using OnTrackWebService.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace OnTrackWebService.Controllers
 {
@@ -61,6 +62,48 @@ namespace OnTrackWebService.Controllers
 
             return NoContent();
         }
+
+        [HttpGet]
+        [Route("CurrentBowling")]
+        public async Task<IActionResult> BowlingPlayerSeason()
+        {
+            try
+            {
+                List<BowlingPlayerSeason> playerSeasons = await _playerSeasonRepository.GetCurrentBowlingPlayerSeason();
+
+                if (playerSeasons != null)
+                    return Ok(playerSeasons);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "PlayerSeason");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("ImportBowlingPlayers")]
+        public async Task<IActionResult> UploadBowlingPlayers([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportBowlingPlayer fileUploadResponse = await _playerSeasonRepository.UploadBowlingTeams(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Bowling Players");
+            }
+
+            return NoContent();
+        }
+
+
 
         // GET api/values/5
         [HttpGet]

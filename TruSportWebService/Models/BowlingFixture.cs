@@ -22,10 +22,10 @@ namespace OnTrackWebService.Models
         public DateTime? End { get; set; }
 
         [ForeignKey("HomeTeamID")]
-        public Team HomeTeam { get; set; }
+        public BowlingTeam HomeTeam { get; set; }
 
         [ForeignKey("AwayTeamID")]
-        public Team AwayTeam { get; set; }
+        public BowlingTeam AwayTeam { get; set; }
 
         [ForeignKey("FieldID")]
         public Field Field { get; set; }
@@ -78,5 +78,19 @@ namespace OnTrackWebService.Models
 
         //[NotMapped]
         //public virtual List<MatchRosterSummary> MatchRosterSummary { get; set; }
+    }
+
+    public class BowlingFixtures
+    {
+        public int HomeTeamID { get; set; }
+        public int AwayTeamID { get; set; }
+        public string Field { get; set; }
+        public string League { get; set; }
+        public string MatchType { get; set; }
+        public DateTime Date { get; set; }
+        //public DateTime Time { get; set; }
+
+        [NotMapped]
+        public string Exception { get; set; }
     }
 }

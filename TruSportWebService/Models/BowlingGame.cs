@@ -14,14 +14,28 @@ namespace OnTrackWebService.Models
         public int Score { get; set; }
         public int Game { get; set; }
 
-        [ForeignKey("FixtureID")]
-        public Fixture Fixture { get; set; }
+        [ForeignKey("BowlingFixtureID")]
+        public BowlingFixture Fixture { get; set; }
 
         [ForeignKey("TeamID")]
-        public Team Team { get; set; }
+        public BowlingTeam Team { get; set; }
 
         [ForeignKey("BowlingRosterID")]
         public BowlingRoster BowlingRoster { get; set; }
 
+    }
+
+    public class BowlingGames
+    {
+        public int TeamID { get; set; }
+        public DateTime Date { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Score { get; set; }
+        public int Game { get; set; }
+        public decimal Points { get; set; }
+
+        [NotMapped]
+        public string Exception { get; set; }
     }
 }

@@ -14,7 +14,6 @@ namespace OnTrackWebService.Models
         public int? Pins { get; set; }
         public int? Average { get; set; }
         public decimal? PointsWon { get; set; }
-        public int? RunsConceded { get; set; }
         public bool IsActive { get; set; }
 
         [ForeignKey("PlayerID")]
@@ -24,7 +23,21 @@ namespace OnTrackWebService.Models
         public Season Season { get; set; }
 
         [ForeignKey("TeamID")]
-        public Team Team { get; set; }
+        public BowlingTeam Team { get; set; }
 
+    }
+
+    public class BowlingPlayerSeasons
+    {
+        public string TeamID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int? Games { get; set; }
+        public int? Pins { get; set; }
+        public int? Average { get; set; }
+        public decimal? PointsWon { get; set; }
+
+        [NotMapped]
+        public string Exception { get; set; }
     }
 }

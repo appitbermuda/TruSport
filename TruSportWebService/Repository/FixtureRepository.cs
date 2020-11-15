@@ -182,7 +182,7 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<IEnumerable<BowlingFixture>> GetBowlingFixtures()
+        public async Task<List<BowlingFixture>> GetBowlingFixtures()
         {
             try
             {
@@ -1662,6 +1662,64 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<BowlingFixture>> GetBowlingTeamFixtures(string teamID)
+        {
+            try
+            {
+                List<BowlingFixture> fixtures = new List<BowlingFixture>();
+
+                fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => e.AwayTeamID == teamID || e.HomeTeamID == teamID).ToListAsync();
+
+                fixtures.ForEach(e => e.SelectedTeamID = teamID);
+                //fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingFixture>> GetBowlingTeamForm(string teamID)
+        {
+            try
+            {
+                List<BowlingFixture> fixtures = new List<BowlingFixture>();
+
+                fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .Where(e => (e.AwayTeamID == teamID || e.HomeTeamID == teamID) && e.Date.Date < DateTime.Now.Date && e.Season.IsCurrent).OrderByDescending(e => e.Date).Take(6).ToListAsync();
+
+                fixtures.ForEach(e => e.SelectedTeamID = teamID);
+                //fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty > e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty > e.Match.AwayTeamPenalty) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.AwayTeamID == teamID && e.Match.AwayTeamPenalty < e.Match.HomeTeamPenalty) || ((e.Match.IsPenalties.HasValue && e.Match.IsPenalties.Value) && e.HomeTeamID == teamID && e.Match.HomeTeamPenalty < e.Match.AwayTeamPenalty) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<Fixture>> GetFootballTeamForm(string teamID)
         {
             try
@@ -2217,6 +2275,30 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<BowlingFixture>> GetBowlingFixturesByLeague(string leagueID)
+        {
+            try
+            {
+                var fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingGame)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)                
+                .Where(e => e.LeagueID == leagueID).ToListAsync();
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Cricket League Fixtures");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<CricketFixture>> GetCricketFixturesByLeague(string leagueID)
         {
             try
@@ -2607,6 +2689,116 @@ namespace OnTrackWebService.Repository
 
         }
 
+        public async Task<ImportBowlingFixtures> UploadBowlingFixtures(IFormFile file)
+        {
+            try
+            {
+                List<BowlingFixtures> errorFixtures = new List<BowlingFixtures>();
+                List<BowlingFixture> fixtures = new List<BowlingFixture>();
+                List<Field> fields = await _context.Fields.ToListAsync();
+                List<BowlingTeam> teams = await teamRepository.GetBowlingTeams();
+                List<MatchType> matchTypes = await _context.MatchTypes.ToListAsync();
+                List<League> leagues = await leagueRepository.GetBowlingLeagues();
+                List<Season> seasons = await seasonRepository.GetBowlingSeason();
+                League league = null;
+                Field field = null;
+                MatchType matchType = null;
+                BowlingTeam homeTeam = null;
+                BowlingTeam awayTeam = null;
+                Season season = null;
+
+                //Stream reader = file.OpenReadStream();
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
+                    var records = csv.GetRecords<BowlingFixtures>();
+
+                    foreach (var record in records)
+                    {
+                        try
+                        {
+                            league = leagues.FirstOrDefault(e => e.Name == record.League.Trim());
+                            field = fields.FirstOrDefault(e => e.Name == record.Field.Trim());
+                            matchType = matchTypes.FirstOrDefault(e => e.Name == record.MatchType.Trim());
+                            homeTeam = teams.FirstOrDefault(e => (e.TeamID == record.HomeTeamID));
+                            awayTeam = teams.FirstOrDefault(e => (e.TeamID == record.AwayTeamID));
+                            season = seasons.FirstOrDefault(e => e.IsCurrent);
+
+                            fixtures.Add(new BowlingFixture
+                            {
+                                Date = record.Date,
+                                //Time = record.Time.AddHours(4).ToString("HH:mm:ss"),
+                                HomeTeamID = homeTeam.ID,
+                                AwayTeamID = awayTeam.ID,
+                                LeagueID = league.ID,
+                                MatchTypeID = matchType.ID,
+                                FieldID = field.ID,
+                                SeasonID = season.ID,
+                                //SportID = season.SportID
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorFixtures.Add(record);
+
+                        }
+                    }
+
+                    try
+                    {
+                        await AddFixtures(fixtures);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ImportBowlingFixtures
+                        {
+                            Message = "Error importing schedule to database.",
+                            Exception = ex.Message
+                        };
+                    }
+                }
+
+                if (errorFixtures != null && errorFixtures.Count > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorFixtures);
+                        streamWriter.Flush();
+
+                        return new ImportBowlingFixtures
+                        {
+                            Message = "Successfully imported schedule with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorFixtures,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportBowlingFixtures
+                {
+                    Message = "Successfully imported schedule!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportBowlingFixtures
+                {
+                    Message = "Error importing schedule!",
+                    Exception = ex.Message
+                };
+            }
+
+
+        }
 
         public async Task Update(Fixture item)
         {
@@ -2805,6 +2997,20 @@ namespace OnTrackWebService.Repository
             try
             {
                 await _context.CricketFixtures.AddRangeAsync(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Fixtures");
+            }
+        }
+
+        public async Task AddFixtures(List<BowlingFixture> items)
+        {
+            try
+            {
+                await _context.BowlingFixtures.AddRangeAsync(items);
 
                 await _context.SaveChangesAsync();
             }

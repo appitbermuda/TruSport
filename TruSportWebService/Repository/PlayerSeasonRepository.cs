@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,26 @@ namespace OnTrackWebService.Repository
         public async Task<IEnumerable<PlayerSeason>> GetAll()
         {
             return await _context.PlayerSeasons.Include("Player").ToListAsync();
+        }
+
+        public async Task<List<BowlingPlayerSeason>> GetCurrentBowlingPlayerSeason()
+        {
+            try
+            {
+                var players = await _context.BowlingPlayerSeasons
+                    .Include(e => e.Player)
+                    .Include(e => e.Season)
+                    .Include(e => e.Team).ThenInclude(e => e.League)
+                    .Where(e => e.Season.IsCurrent).ToListAsync();
+
+                return players;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetCurrentBowlingPlayerSeason");
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<PlayerSeason>> GetBySeason(int season)
