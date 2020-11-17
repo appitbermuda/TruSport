@@ -29,7 +29,7 @@ namespace OnTrackWebService.Models
 
     public class BowlingPlayerSeasons
     {
-        public string TeamID { get; set; }
+        public int TeamID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int? Games { get; set; }

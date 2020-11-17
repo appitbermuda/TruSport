@@ -20,7 +20,7 @@ namespace OnTrackWebService.Models
         [ForeignKey("TeamID")]
         public Team Team { get; set; }
 
-        [ForeignKey("BowlingPlayerSeason")]
+        [ForeignKey("BowlingPlayerSeasonID")]
         public BowlingPlayerSeason BowlingPlayerSeason { get; set; }
     }
 }

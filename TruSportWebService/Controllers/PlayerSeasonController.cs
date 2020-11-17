@@ -10,6 +10,7 @@ using System.Diagnostics;
 using OnTrackWebService.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using OnTrackWebService.Models.Imports;
 
 namespace OnTrackWebService.Controllers
 {
@@ -90,7 +91,7 @@ namespace OnTrackWebService.Controllers
             {
                 if (file != null)
                 {
-                    ImportBowlingPlayer fileUploadResponse = await _playerSeasonRepository.UploadBowlingTeams(file);
+                    ImportBowlingPlayers fileUploadResponse = await _playerSeasonRepository.UploadBowlingPlayers(file);
 
                     return Ok(fileUploadResponse);
                 }

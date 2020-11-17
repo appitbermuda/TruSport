@@ -71,7 +71,7 @@ namespace OnTrackWebService.Models.Imports
     {
         public string Message { get; set; }
         public string Exception { get; set; }
-        public List<BowlingPlayerSeason> ErrorRows { get; set; }
+        public List<BowlingPlayerSeasons> ErrorRows { get; set; }
         public byte[] ErrorFile { get; set; }
     }
 }
