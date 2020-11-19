@@ -48,8 +48,6 @@ namespace OnTrackWebService.Repository
             try
             {
                 var bowlingGames = await _context.BowlingGames
-                    .Include(e => e.Fixture)
-                    .Include(e => e.Team)
                     .Include(e => e.BowlingRoster)
                     .FirstOrDefaultAsync(e => e.ID == id);
 
@@ -68,8 +66,6 @@ namespace OnTrackWebService.Repository
             try
             {
                 var bowlingGames = await _context.BowlingGames
-                    .Include(e => e.Fixture)
-                    .Include(e => e.Team)
                     .Include(e => e.BowlingRoster)
                     .ToListAsync();
 
@@ -88,10 +84,8 @@ namespace OnTrackWebService.Repository
             try
             {
                 var bowlingGames = await _context.BowlingGames
-                    .Include(e => e.Fixture)
-                    .Include(e => e.Team)
                     .Include(e => e.BowlingRoster)
-                    .FirstOrDefaultAsync(e => e.BowlingFixtureID == fixtureID);
+                    .FirstOrDefaultAsync(e => e.BowlingRoster.BowlingFixtureID == fixtureID);
 
                 return bowlingGames;
             }
@@ -158,11 +152,10 @@ namespace OnTrackWebService.Repository
                             {
                                 //Date = record.Date,
                                 //Time = record.Time.AddHours(4).ToString("HH:mm:ss"),
-                                TeamID = team.ID,
-                                BowlingFixtureID = fixture.ID,
                                 BowlingRosterID = bowlingRoster.ID,
                                 Score = record.Score,
-                                Game = record.Game                                
+                                Game = record.Game,
+                                Points = record.Points
                             });
                         }
                         catch (Exception ex)

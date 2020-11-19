@@ -322,6 +322,9 @@
     <BundleResource Include="Resources\ontracklogo.png" />
     <BundleResource Include="Resources\ontracklogo%403x.png" />
     <BundleResource Include="Resources\ontracklogo%402x.png" />
+    <BundleResource Include="Resources\footballfeature.jpg" />
+    <BundleResource Include="Resources\cricketfeature.jpg" />
+    <BundleResource Include="Resources\bowlingfeature.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

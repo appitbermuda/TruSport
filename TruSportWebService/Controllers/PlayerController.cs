@@ -159,6 +159,63 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("BowlingPlayers")]
+        public async Task<IActionResult> BowlingPlayers()
+        {
+            try
+            {
+                IEnumerable<BowlingPlayerSeason> players = await _playerRepository.GetBowlingPlayers();
+
+                if (players != null)
+                    return Ok(players);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BowlingTeamPlayers")]
+        public async Task<IActionResult> BowlingPlayersByTeam(string teamID)
+        {
+            try
+            {
+                IEnumerable<BowlingPlayerSeason> players = await _playerRepository.GetBowlingPlayersByTeam(teamID);
+
+                if (players != null)
+                    return Ok(players);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("GetBowlingPlayer")]
+        public async Task<IActionResult> GetBowlingPlayer(string id)
+        {
+            try
+            {
+                BowlingPlayerSeason player = await _playerRepository.GetBowlingPlayer(id);
+
+                if (player != null)
+                    return Ok(player);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+
+            return NoContent();
+        }
+
         // POST api/values
         [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]

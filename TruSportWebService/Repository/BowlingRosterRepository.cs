@@ -37,13 +37,15 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.BowlingRosters
+                var rosters = await _context.BowlingRosters
                     .Include(e => e.BowlingFixture)
                     .Include(e => e.BowlingPlayerSeason).ThenInclude(e => e.Player)
                     .Include(e => e.BowlingPlayerSeason).ThenInclude(e => e.Team)
                     .Include(e => e.BowlingPlayerSeason).ThenInclude(e => e.Season)
                     .Include(e => e.Team)
                     .Where(e => e.BowlingPlayerSeason.Season.IsCurrent).ToListAsync();
+
+                return rosters;
             }
             catch(Exception ex)
             {
@@ -55,7 +57,67 @@ namespace OnTrackWebService.Repository
 
         public async Task<IEnumerable<BowlingRoster>> GetByFixture(string fixtureID)
         {
-            return await _context.BowlingRosters.Include("BowlingFixture").Include("Player").Include("Team").Include("SubstitutePlayer").Where(e => e.BowlingFixtureID == fixtureID).ToListAsync();
+            
+            try
+            {
+                List<BowlingGameResult> bowlingGameResults = new List<BowlingGameResult>();
+
+                var rosters = await _context.BowlingRosters
+                    .Include(e => e.BowlingFixture)
+                    .Include(e => e.BowlingPlayerSeason).ThenInclude(e => e.Player)
+                    .Include(e => e.BowlingPlayerSeason).ThenInclude(e => e.Team)
+                    .Include(e => e.BowlingPlayerSeason).ThenInclude(e => e.Season)
+                    .Include(e => e.Team)
+                    .Include(e => e.BowlingGames)
+                    .Where(e => e.BowlingFixtureID == fixtureID).ToListAsync();
+
+                foreach(var homeRoster in rosters)
+                {
+                    foreach(var awayRoster in rosters)
+                    {
+                        if(homeRoster.Position == awayRoster.Position && homeRoster.TeamID != awayRoster.TeamID)
+                        {
+                            foreach(var homeGame in homeRoster.BowlingGames)
+                            {
+                                foreach(var awayGame in awayRoster.BowlingGames)
+                                {
+                                    if(homeGame.Game == awayGame.Game)
+                                    {
+                                        bowlingGameResults.Add(new BowlingGameResult
+                                        {
+                                            BowlingRosterID1 = homeGame.BowlingRosterID,
+                                            BowlingRoster1 = homeGame.BowlingRoster,
+                                            BowlingRosterID2 = awayGame.BowlingRosterID,
+                                            BowlingRoster2 = awayGame.BowlingRoster,
+                                            Game = homeGame.Game,
+                                            Score1 = homeGame.Score,
+                                            Score2 = awayGame.Score,
+                                            Winner = homeGame.Score > awayGame.Score ? homeGame.BowlingRosterID : awayGame.Score > homeGame.Score ? awayGame.BowlingRosterID : null
+                                        });
+
+                                        homeGame.Win = homeGame.Score > awayGame.Score;
+                                        awayGame.Win = awayGame.Score > homeGame.Score;
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                rosters.ForEach(e => e.BowlingGameResults = bowlingGameResults.Where(d => d.BowlingRosterID1 == e.ID || d.BowlingRosterID2 == e.ID).ToList());
+
+                return rosters;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "All Bowling Fixture Roster");
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<BowlingRoster>> GetByFixtureByTeam(string fixtureID, string teamID)

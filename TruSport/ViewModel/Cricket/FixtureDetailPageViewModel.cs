@@ -51,7 +51,7 @@ namespace TruSport.ViewModels.Cricket
         private bool rosterOrSquadAvailable;
         private bool cancelFixtureRefresh;
         FixtureService fixtureService;
-        MatchRosterService matchRosterService;
+        RosterService rosterService;
         CoachService coachService;
         LeagueTableService leagueTableService;
         INavigation Navigation;
@@ -69,7 +69,7 @@ namespace TruSport.ViewModels.Cricket
             RosterCollection = new ObservableCollection<RosterListView>();
             SubRosterCollection = new ObservableCollection<RosterListView>();
             TableCollection = new ObservableCollection<CricketLeagueTable>();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             fixtureService = new FixtureService();
             coachService = new CoachService();
             leagueTableService = new LeagueTableService();
@@ -254,7 +254,7 @@ namespace TruSport.ViewModels.Cricket
 
                 MatchInningCollection = new ObservableCollection<MatchInning>(fixture.MatchInnings);
 
-                //var matchRostersList = await matchRosterService.GetFixtureMatchRosters(fixture.ID);
+                //var matchRostersList = await rosterService.GetFixtureMatchRosters(fixture.ID);
 
                 //if (matchRostersList == null || matchRostersList.Count == 0)
                 //{

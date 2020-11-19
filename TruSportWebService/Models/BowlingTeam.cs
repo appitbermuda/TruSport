@@ -25,13 +25,13 @@ namespace OnTrackWebService.Models
         public virtual List<BowlingTeamSeason> TeamSeasons { get; set; }
 
         [NotMapped]
-        public virtual List<BowlingFixture> Fixtures { get; set; }
+        public virtual List<BowlingFixture> BowlingFixtures { get; set; }
 
         [NotMapped]
-        public virtual List<BowlingFixture> Form { get; set; }
+        public virtual List<BowlingFixture> BowlingForm { get; set; }
 
         [NotMapped]
-        public virtual List<BowlingPlayerSeason> Players { get; set; }
+        public virtual List<BowlingPlayerSeason> BowlingPlayers { get; set; }
     }
 
     public class BowlingTeams

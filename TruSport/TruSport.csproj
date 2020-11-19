@@ -65,6 +65,7 @@
     <Folder Include="Views\Setting\" />
     <Folder Include="ViewModel\Shop\" />
     <Folder Include="ViewModel\Bowling\" />
+    <Folder Include="Views\Bowling\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Views\Football\MatchStatsPopUpPage %28another copy%29.cs" />
@@ -99,6 +100,41 @@
     </Compile>
     <Compile Update="Views\Tickets\TransferTicketPage.xaml.cs">
       <DependentUpon>TransferTicketPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Templates\CricketFixtureList %28copy%29.xaml.cs">
+      <DependentUpon>CricketFixtureList %28copy%29.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Bowling\BowlingMasterDetailPageDetail.xaml.cs">
+      <DependentUpon>BowlingMasterDetailPageDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\BowlingMasterDetailPageMaster.xaml.cs">
+      <DependentUpon>BowlingMasterDetailPageMaster.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\FixturePage.xaml.cs">
+      <DependentUpon>FixturePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\FixtureDetailsPage.xaml.cs">
+      <DependentUpon>FixtureDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\FavouritePage.xaml.cs">
+      <DependentUpon>FavouritePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\LeagueStatsPage.xaml.cs">
+      <DependentUpon>LeagueStatsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\TeamPage.xaml.cs">
+      <DependentUpon>TeamPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\TeamProfilePage.xaml.cs">
+      <DependentUpon>TeamProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\TablePage.xaml.cs">
+      <DependentUpon>TablePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Templates\CricketFormFixtureList %28copy%29.xaml.cs">
+      <DependentUpon>CricketFormFixtureList %28copy%29.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 </Project>

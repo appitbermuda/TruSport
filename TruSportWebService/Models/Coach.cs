@@ -12,6 +12,8 @@ namespace OnTrackWebService.Models
         public string TeamID { get; set; }
         public string SportID { get; set; }
 
+        public string Name => FirstName + " " + LastName;
+
         [ForeignKey("TeamID")]
         public Team Team { get; set; }
 

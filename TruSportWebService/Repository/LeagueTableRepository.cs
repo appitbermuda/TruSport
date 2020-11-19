@@ -542,6 +542,64 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<BowlingLeagueStanding>> GetBowlingTableByTeam(string teamID)
+        {
+            try
+            {
+                var currentSeason = await _context.BowlingTeamSeasons.FirstOrDefaultAsync(e => e.BowlingTeamID == teamID && e.Season.IsCurrent);
+                var bowlingLeagueStanding = await _context.BowlingLeagueStandings
+                    .Include(e => e.Team)
+                    .Include(e => e.Season)
+                    .Include(e => e.League)
+                    .Where(e => e.LeagueID == currentSeason.LeagueID).ToListAsync();
+
+                bowlingLeagueStanding.ForEach(e => e.IsSelectedTeam = e.TeamID == teamID);
+
+                //List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
+
+                //foreach (var standing in bowlingLeagueStanding)
+                //{
+                //    BowlingLeagueStanding table = new BowlingLeagueStanding
+                //    {
+                //        TeamID = standing.TeamID,
+                //        Team = standing.Team,
+                //        LeagueID = standing.LeagueID,
+                //        League = standing.League,
+                //        SeasonID = standing.SeasonID,
+                //        Season = standing.Season,
+                //        PointsWon = standing.PointsWon,
+                //        PointsLost = standing.Loss,
+                //        Draws = standing.Draws,
+                //        Played = standing.Played,
+                //        IsSelectedTeam = standing.TeamID == teamID,
+                //        Points = standing.Points,
+                //        NetRunRate = standing.NetRunRate
+                //    };
+
+                //    makeLeagueTable.Add(table);
+                //}
+
+                List<BowlingLeagueStanding> leagueTable = new List<BowlingLeagueStanding>();
+                var tablePositions = bowlingLeagueStanding.OrderByDescending(e => e.PointsWon).ThenBy(e => e.PointsLost);
+                int position = 1;
+                foreach (var table in tablePositions)
+                {
+                    table.Position = position;
+                    leagueTable.Add(table);
+
+                    position++;
+                }
+
+                return leagueTable.ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBowlingLeagueTable");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<LeagueTable>> GetTablesByTeam(string teamID)
         {
             var currentSeason = await _context.TeamSeasons.FirstOrDefaultAsync(e => e.TeamID == teamID && e.Season.IsCurrent);

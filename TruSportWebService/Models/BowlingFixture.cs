@@ -46,7 +46,7 @@ namespace OnTrackWebService.Models
         public bool IsPostponedOrCancelled => IsPostponed || IsCancelled;
 
         [NotMapped]
-        public DateTime FixtureTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? Date.AddDays(1).Add(TimeSpan.Parse(Time)) : Date.Add(TimeSpan.Parse(Time));
+        public DateTime FixtureTime => !String.IsNullOrEmpty(Time) ? TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? Date.AddDays(1).Add(TimeSpan.Parse(Time)) : Date.Add(TimeSpan.Parse(Time)) : Date;
 
         [NotMapped]
         public string SelectedTeamID { get; set; }
@@ -71,13 +71,16 @@ namespace OnTrackWebService.Models
 
         //public virtual List<MatchInning> MatchInnings { get; set; }
 
-        [NotMapped]
-        public virtual List<BowlingGame> BowlingGame { get; set; }
+        //[NotMapped]
+        //public virtual List<BowlingGame> BowlingGames { get; set; }
 
         public virtual List<BowlingRoster> BowlingRosters { get; set; }
 
-        //[NotMapped]
-        //public virtual List<MatchRosterSummary> MatchRosterSummary { get; set; }
+        [NotMapped]
+        public virtual List<BowlingGameResult> BowlingGameResults { get; set; }
+
+        [NotMapped]
+        public virtual List<BowlingRosterListView> BowlingRosterList { get; set; }
     }
 
     public class BowlingFixtures

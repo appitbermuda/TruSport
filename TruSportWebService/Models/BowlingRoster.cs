@@ -18,9 +18,25 @@ namespace OnTrackWebService.Models
         public BowlingFixture BowlingFixture { get; set; }
 
         [ForeignKey("TeamID")]
-        public Team Team { get; set; }
+        public BowlingTeam Team { get; set; }
 
         [ForeignKey("BowlingPlayerSeasonID")]
         public BowlingPlayerSeason BowlingPlayerSeason { get; set; }
+
+
+        public List<BowlingGame> BowlingGames { get; set; }
+
+        [NotMapped]
+        public List<BowlingGameResult> BowlingGameResults { get; set; }
+    }
+
+    public class BowlingRosterListView
+    {
+        public string ID { get; set; }
+        public string FixtureID { get; set; }
+        public string HomeTeamID { get; set; }
+        public string HomePlayerName { get; set; }
+        public string AwayTeamID { get; set; }
+        public string AwayPlayerName { get; set; }
     }
 }

@@ -62,5 +62,26 @@ namespace TruSport.Views
 
             }
         }
+
+        async void BowlingCell_Tapped(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                string sport = "Bowling";
+                sportSettingViewModel.DefaultSport = sport;
+                //await SecureStorage.SetAsync("DefaultSport", sport);
+
+                Sport bowling = await App.Database.GetSport(sport);
+                await App.Database.SetDefaultSport(bowling);
+
+                MessagingCenter.Send<string>(sport, "SelectedSport");
+                await Navigation.PopAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

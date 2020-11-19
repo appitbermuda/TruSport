@@ -9,7 +9,7 @@ using Xamarin.Forms.Internals;
 using System.Threading.Tasks;
 using TruSport.Services;
 using System.Collections.Generic;
-using TruSport.Views.Cricket;
+using TruSport.Views.Bowling;
 using Syncfusion.DataSource.Extensions;
 using TruSport.Extensions;
 using Xamarin.Essentials;
@@ -31,22 +31,17 @@ namespace TruSport.ViewModels.Bowling
         
         public CalendarEventCollection calendarInlineEvents;
         private int selectedIndex;
-        private int fixtureHeaderCount;
         private ObservableCollection<Award> awardCollection;
-        private ObservableCollection<CricketFixture> pastCollection;
-        private ObservableCollection<CricketFixture> upcomingCollection;
-        private ObservableCollection<CricketFixture> liveCollection;
+        private ObservableCollection<BowlingFixture> pastCollection;
+        private ObservableCollection<BowlingFixture> upcomingCollection;
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> onFixtureSelectedCommand;
-        private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> onLiveFixtureSelectedCommand;
         private Command<object> leagueSelectedCommand;
         private Command calendarVisibilityClickedCommand;
         private Command<object> refreshPastFixturesCommand;
         private Command<object> refreshUpcomingFixturesCommand;
-        private Command<object> refreshLiveFixturesCommand;
         private bool showPOW;
         private bool refreshActive;
         private bool noUpcomingFixtures;
-        private bool noLiveFixtures;
         private bool _isActivityIndicatorVisible;
         private bool isFavourite;
         private bool isFavouriteVisible;
@@ -56,10 +51,6 @@ namespace TruSport.ViewModels.Bowling
         private bool showSport;
         private bool hasAwards;
         private bool isPreviousVisible;
-        private bool isLiveVisible;
-        private bool _isFootball;
-        private bool _isCricket;
-        private string selectedSport;
         private DateTime _minDate;
         Sport _sport;
 
@@ -76,9 +67,8 @@ namespace TruSport.ViewModels.Bowling
         {
             Navigation = navigation;
 
-            PastCollection = new ObservableCollection<CricketFixture>();
-            UpcomingCollection = new ObservableCollection<CricketFixture>();
-            LiveCollection = new ObservableCollection<CricketFixture>();
+            PastCollection = new ObservableCollection<BowlingFixture>();
+            UpcomingCollection = new ObservableCollection<BowlingFixture>();
             CalendarInlineEvents = new CalendarEventCollection();
 
             fixtureService = new FixtureService();
@@ -92,19 +82,15 @@ namespace TruSport.ViewModels.Bowling
 
             RefreshPastFixturesCommand = new Command<object>(async (obj) => await RefreshPastFixtures());
             RefreshUpcomingFixturesCommand = new Command<object>(async (obj) => await RefreshUpcomingFixtures());
-            RefreshLiveFixturesCommand = new Command<object>(async (obj) => await RefreshLiveFixtures());
 
             OnFixtureSelectedCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(FixtureSelected);
-            OnLiveFixtureSelectedCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(LiveFixtureSelected);
             LeagueSelectedCommand = new Command<object>(SelectedLeague);
             CalendarVisibilityClickedCommand = new Command(CalendarVisibilityClicked);
-            SelectSportCommand = new Command(SelectSport);
-            SelectedSportCommand = new Command<string>(SportSelected);
 
             MessagingCenter.Subscribe<string>("Fixtures", "RefreshFixtures", async (sender) =>
             {
                 MessagingCenter.Unsubscribe<string>("Fixtures", "RefreshFixtures");
-                RefreshFixturesTimer();
+                await RefreshFixtures();
 
             });
         }
@@ -132,9 +118,6 @@ namespace TruSport.ViewModels.Bowling
             set { calendarVisibilityClickedCommand = value; }
         }
 
-        public Command SelectSportCommand { get; }
-        public Command<string> SelectedSportCommand { get; }
-
         public Command<object> RefreshPastFixturesCommand
         {
             get { return refreshPastFixturesCommand; }
@@ -147,22 +130,10 @@ namespace TruSport.ViewModels.Bowling
             set { refreshUpcomingFixturesCommand = value; }
         }
 
-        public Command<object> RefreshLiveFixturesCommand
-        {
-            get { return refreshLiveFixturesCommand; }
-            set { refreshLiveFixturesCommand = value; }
-        }
-
         public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> OnFixtureSelectedCommand
         {
             get { return onFixtureSelectedCommand; }
             set { onFixtureSelectedCommand = value; }
-        }
-
-        public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> OnLiveFixtureSelectedCommand
-        {
-            get { return onLiveFixtureSelectedCommand; }
-            set { onLiveFixtureSelectedCommand = value; }
         }
 
         public Sport Sport
@@ -177,22 +148,16 @@ namespace TruSport.ViewModels.Bowling
             set { Set(ref awardCollection, value); }
         }
 
-        public ObservableCollection<CricketFixture> PastCollection
+        public ObservableCollection<BowlingFixture> PastCollection
         {
             get { return pastCollection; }
             set { Set(ref pastCollection, value); }
         }
 
-        public ObservableCollection<CricketFixture> UpcomingCollection
+        public ObservableCollection<BowlingFixture> UpcomingCollection
         {
             get { return upcomingCollection; }
             set { Set(ref upcomingCollection, value); }
-        }
-
-        public ObservableCollection<CricketFixture> LiveCollection
-        {
-            get { return liveCollection; }
-            set { Set(ref liveCollection, value); }
         }
 
         public int SelectedIndex
@@ -237,12 +202,6 @@ namespace TruSport.ViewModels.Bowling
             set { Set(ref noUpcomingFixtures, value); }
         }
 
-        public bool NoLiveFixtures
-        {
-            get { return noLiveFixtures; }
-            set { Set(ref noLiveFixtures, value); }
-        }
-
         public bool CancelFixtureRefresh
         {
             get { return cancelFixtureRefresh; }
@@ -259,12 +218,6 @@ namespace TruSport.ViewModels.Bowling
         {
             get { return _minDate; }
             set { Set(ref _minDate, value); }
-        }
-
-        public string SelectedSport
-        {
-            get { return selectedSport; }
-            set { Set(ref selectedSport, value); }
         }
 
         public bool ShowSport
@@ -285,34 +238,10 @@ namespace TruSport.ViewModels.Bowling
             set { Set(ref showPOW, value); }
         }
 
-        public bool IsLiveVisible
-        {
-            get { return isLiveVisible; }
-            set { Set(ref isLiveVisible, value); }
-        }
-
         public bool IsPreviousVisible
         {
             get { return isPreviousVisible; }
             set { Set(ref isPreviousVisible, value); }
-        }
-
-        public bool IsCricket
-        {
-            get { return _isCricket; }
-            set { Set(ref _isCricket, value); }
-        }
-
-        public bool IsFootball
-        {
-            get { return _isFootball; }
-            set { Set(ref _isFootball, value); }
-        }
-
-        public int FixtureHeaderCount
-        {
-            get { return fixtureHeaderCount; }
-            set { Set(ref fixtureHeaderCount, value); }
         }
 
         #endregion
@@ -327,10 +256,7 @@ namespace TruSport.ViewModels.Bowling
 
             try
             {
-                //SelectedSport = await SecureStorage.GetAsync("Sport");
-                var awards = await awardService.GetCricketPlayerOfTheWeek();
-
-                IsCricket = true;
+                var awards = await awardService.GetBowlingPlayerOfTheWeek();
 
                 var _showPOW = await SecureStorage.GetAsync("ShowPOW");
                 ShowPOW = ((_showPOW != null ? Convert.ToBoolean(_showPOW) : true) && awards != null);
@@ -350,16 +276,15 @@ namespace TruSport.ViewModels.Bowling
                     MinDate = DateTime.Now.Date;
 
                     //var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now).ToList();
-                    var pastFixtures = await fixtureService.GetPastCricketFixtures();
+                    var pastFixtures = await fixtureService.GetPastBowlingFixtures();
 
                     if (pastFixtures != null)
                     {
                         //var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now);
                         if (pastFixtures.Count() > 0)
                         {
-                            FixtureHeaderCount++;
                             IsPreviousVisible = true;
-                            PastCollection = new ObservableCollection<CricketFixture>(pastFixtures.OrderByDescending(e => e.FixtureTime));
+                            PastCollection = new ObservableCollection<BowlingFixture>(pastFixtures.OrderByDescending(e => e.FixtureTime));
                         }
                         else
                         {
@@ -368,11 +293,11 @@ namespace TruSport.ViewModels.Bowling
                     }
 
                     //var upcomingFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now).ToList();
-                    var upcomingFixtures = await fixtureService.GetUpcomingCricketFixtures();
+                    var upcomingFixtures = await fixtureService.GetUpcomingBowlingFixtures();
                     if (upcomingFixtures != null)
                     {
                         //var upcomingFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now);
-                        UpcomingCollection = new ObservableCollection<CricketFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
+                        UpcomingCollection = new ObservableCollection<BowlingFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
 
                         if (upcomingFixtures.Count() > 0)
                         {
@@ -394,52 +319,8 @@ namespace TruSport.ViewModels.Bowling
                         {
                             NoUpcomingFixtures = true;
                         }
-
-                        FixtureHeaderCount++;
                     }
-
-                    //var liveFixtures = fixtures.Where(e => e.FixtureTime <= DateTime.Now && e.FixtureTime.AddMinutes(110) >= DateTime.Now && !e.IsPostponed).ToList();
-                    var liveFixtures = await fixtureService.GetLiveCricketFixtures();
-
-                    if (liveFixtures != null)
-                    {
-                        //var liveFixtures = fixtures.Where(e => e.FixtureTime <= DateTime.Now &&
-                        //e.FixtureTime.AddMinutes(110) >= DateTime.Now && !e.IsPostponed);
-
-                        if (liveFixtures.Count() > 0)
-                        {
-                            RefreshActive = true;
-                            NoLiveFixtures = false;
-                            FixtureHeaderCount++;
-
-                            Device.StartTimer(TimeSpan.FromSeconds(60), () =>
-                            {
-                                if (liveFixtures.Count() > 0)
-                                {
-                                    RefreshActive = true;
-                                    Device.BeginInvokeOnMainThread(async () => await RefreshFixtures());
-                                }
-                                else
-                                {
-                                    RefreshActive = false;
-                                    NoLiveFixtures = true;
-                                    return false;
-                                }
-
-                                return true;
-                            });
-
-                            LiveCollection = new ObservableCollection<CricketFixture>(liveFixtures);
-                        }
-                        else
-                        {
-                            RefreshActive = false;
-
-                            NoLiveFixtures = true;
-                        }
-                    }
-                    }
-
+                }
             }
             catch (Exception ex)
             {
@@ -459,40 +340,24 @@ namespace TruSport.ViewModels.Bowling
                 {
                     NoConnectivity = false;
 
-                    var fixtures = await fixtureService.GetCricketFixtures();
+                    var fixtures = await fixtureService.GetBowlingFixtures();
 
                     if (fixtures != null)
                     {
                         //var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) <= DateTime.Now);
-                        var pastFixtures = await fixtureService.GetPastCricketFixtures();
+                        var pastFixtures = await fixtureService.GetPastBowlingFixtures();
                         if (pastFixtures != null)
                         {
-                            PastCollection = new ObservableCollection<CricketFixture>(pastFixtures);
+                            PastCollection = new ObservableCollection<BowlingFixture>(pastFixtures);
                         }
 
                         //var upcomingFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now);
-                        var upcomingFixtures = await fixtureService.GetUpcomingCricketFixtures();
+                        var upcomingFixtures = await fixtureService.GetUpcomingBowlingFixtures();
                         if (upcomingFixtures != null)
                         {
-                            UpcomingCollection = new ObservableCollection<CricketFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
+                            UpcomingCollection = new ObservableCollection<BowlingFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
                         }
 
-                        var liveFixtures = await fixtureService.GetLiveCricketFixtures();
-                        if (liveFixtures != null)
-                        {
-                            if (liveFixtures.Count() > 0 && FixtureHeaderCount < 3)
-                                FixtureHeaderCount++;
-
-                            LiveCollection = new ObservableCollection<CricketFixture>(liveFixtures);
-                        }
-
-                        //var liveFixtures = fixtures.Where(e => e.FixtureTime <= DateTime.Now &&
-                        //        e.FixtureTime.AddMinutes(110) >= DateTime.Now && !e.IsPostponed);
-
-                        //if (liveFixtures.Count() > 0)
-                        //    FixtureHeaderCount++;
-
-                        
                     }
                 }
                 else
@@ -510,12 +375,12 @@ namespace TruSport.ViewModels.Bowling
         {
             try
             {
-                var fixtures = await fixtureService.GetPastCricketFixtures();
+                var fixtures = await fixtureService.GetPastBowlingFixtures();
 
                 if (fixtures != null)
                 {
                     var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) <= DateTime.Now);
-                    PastCollection = new ObservableCollection<CricketFixture>(pastFixtures);
+                    PastCollection = new ObservableCollection<BowlingFixture>(pastFixtures);
                 }
             }
             catch (Exception ex)
@@ -529,13 +394,13 @@ namespace TruSport.ViewModels.Bowling
         {
             try
             {
-                var fixtures = await fixtureService.GetUpcomingCricketFixtures();
+                var fixtures = await fixtureService.GetUpcomingBowlingFixtures();
 
                 if (fixtures != null)
                 {
                     var upcomingFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now);
 
-                    UpcomingCollection = new ObservableCollection<CricketFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
+                    UpcomingCollection = new ObservableCollection<BowlingFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
 
 
                     if (upcomingFixtures.Count() > 0)
@@ -554,92 +419,9 @@ namespace TruSport.ViewModels.Bowling
             }
         }
 
-        internal async Task RefreshFixturesTimer()
-        {
-            try
-            {
-                if (!RefreshActive)
-                {
-                    var fixtures = await fixtureService.GetCricketFixtures();
-
-                    Device.StartTimer(TimeSpan.FromSeconds(60), () =>
-                    {
-                        if (fixtures != null && fixtures.Count > 0)
-                        {
-                            var liveFixtures = fixtures.Where(e => e.FixtureTime <= DateTime.Now &&
-                                e.FixtureTime.AddMinutes(110) >= DateTime.Now);
-
-                            if (liveFixtures != null && liveFixtures.Count() > 0)
-                            {
-                                RefreshActive = true;
-                                Device.BeginInvokeOnMainThread(async () => await RefreshFixtures());
-                            }
-                            else
-                            {
-                                RefreshActive = false;
-                                NoLiveFixtures = true;
-                                return false;
-                            }
-
-                            return true;
-                        }
-                        else
-                        {
-                            RefreshActive = false;
-                            return false;
-                        }
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-                Debug.WriteLine(ex.Message, "RefreshFixturesTimer");
-            }
-        }
-
-        internal async Task RefreshLiveFixtures()
-        {
-            try
-            {
-                var liveFixtures = await fixtureService.GetLiveCricketFixtures();
-
-                NoLiveFixtures = liveFixtures.Count > 0;
-
-                LiveCollection = new ObservableCollection<CricketFixture>(liveFixtures);
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-                Debug.WriteLine(ex.Message, "RefreshLiveFixtures");
-            }
-        }
-
         private async void CalendarVisibilityClicked()
         {
             IsUpcomingCalendarVisible = !IsUpcomingCalendarVisible;
-        }
-
-        private async void SelectSport()
-        {
-            ShowSport = !ShowSport;
-        }
-
-        private async void SportSelected(string sport)
-        {
-            try
-            {
-                if (sport != SelectedSport)
-                {
-                    //await SecureStorage.SetAsync("Sport", sport);
-                    Application.Current.MainPage = new FootballMasterDetailPage();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message, "Sport Selected");
-            }
-
         }
 
         private async void SelectedLeague(object obj)
@@ -648,14 +430,14 @@ namespace TruSport.ViewModels.Bowling
             {
                 var groupResult = obj as Syncfusion.DataSource.Extensions.GroupResult;
 
-                var items = new List<CricketFixture>(groupResult.Items.ToList<CricketFixture>());
-                var data = items[0];
+                //var items = new List<BowlingFixture>(groupResult.Items.ToList<BowlingFixture>());
+                //var data = items[0];
 
-                //var fixture = fixtures.FirstOrDefault();
+                ////var fixture = fixtures.FirstOrDefault();
 
-                var league = data.League;
+                //var league = data.League;
 
-                await Navigation.PushAsync(new CompetitionDetailsPage(league));
+                //await Navigation.PushAsync(new CompetitionDetailsPage(league));
             }
             catch (Exception ex)
             {
@@ -664,52 +446,9 @@ namespace TruSport.ViewModels.Bowling
             }
         }
 
-        //async Task Favourite()
-        //{
-        //    try
-        //    {
-        //        if (IsFavourite)
-        //        {
-        //            IsFavourite = false;
-
-        //            await App.Database.DeleteFixtureFavourite(FixtureItem.ID);
-        //        }
-        //        else
-        //        {
-        //            IsFavourite = true;
-
-        //            var favourite = new Favourite
-        //            {
-        //                FixtureID = FixtureItem.ID,
-        //                Type = "CricketFixture"
-        //            };
-
-        //            await App.Database.SaveFavourite(favourite);
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        IsFavourite = !IsFavourite;
-        //        await App.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
-        //    }
-        //    finally
-        //    {
-
-        //    }
-        //}
-
         private async void FixtureSelected(Syncfusion.ListView.XForms.ItemTappedEventArgs e)
         {
-            var item = e.ItemData as CricketFixture;
-
-            if (item != null)
-                await Navigation.PushAsync(new FixtureDetailsPage(item));
-        }
-
-        private async void LiveFixtureSelected(Syncfusion.ListView.XForms.ItemTappedEventArgs e)
-        {
-            var item = e.ItemData as CricketFixture;
+            var item = e.ItemData as BowlingFixture;
 
             if (item != null)
                 await Navigation.PushAsync(new FixtureDetailsPage(item));

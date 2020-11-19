@@ -1,0 +1,445 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:converter="clr-namespace:TruSport.Converters" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms" x:Class="TruSport.Views.Bowling.TablePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:BowlingImageConverter x:Key="imageConverter"/>
+            <converter:TeamNameConverter x:Key="teamNameConverter"/>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converter:TableIndexToColorConverter x:Key="tableIndexConverter"/>
+            <converter:GameTimeConverter x:Key="gameTimeConverter"/>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Name="TableItemTemplate"  x:Key="TableItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center">
+                    <StackLayout 
+                                 HorizontalOptions="FillAndExpand"
+                                 VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid"
+                      Padding="0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <!--<ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>-->
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="45" />
+                            <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label x:Name="PositionLabel"
+                                       HorizontalTextAlignment="Center"
+                                   FontSize="12"
+                                       Text="{Binding Position}"
+                                   TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                            <!--<StackLayout Padding="0" VerticalOptions="Center">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
+                        <ff:CachedImage Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
+                                                        ErrorPlaceholder="bcblogo.png"
+                                        LoadingPlaceholder="bcblogo.png"
+                                                        CacheDuration="50"
+                                                        RetryCount="3"
+                                                        RetryDelay="600"
+                                        Aspect="AspectFit"
+                                        HeightRequest="30"
+                                                  WidthRequest="30"
+                                                        DownsampleToViewSize="True"> 
+                                        </ff:CachedImage>
+                            </Frame>
+                    </StackLayout>-->
+                            <Label x:Name="TeamAlias" Text="{Binding Team.Alias}" IsVisible="false"/>
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Team.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference TeamAlias}}"/>
+                            <!--<Label x:Name="TeamNameLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="{Binding Name}"/>-->
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding PointsWon, StringFormat='{0:G29}'}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding PointsLost, StringFormat='{0:G29}'}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="LossLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding TeamAvg}"/>
+                        </StackLayout>
+                        <!--<StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="DrawLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding ScratchPins}"/>
+                        </StackLayout>
+                     <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="HighGameLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding HighGame}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="HighSersLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding HighSers}"/>
+                        </StackLayout>-->
+                         <BoxView Grid.Row="1" Grid.ColumnSpan="5"
+                                         BackgroundColor="{DynamicResource controlHeaderBackgroundColor}"
+                                         HeightRequest="1"/>
+                        </Grid>
+                    </StackLayout>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout Spacing="0"
+                     Padding="0"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+        <Grid x:Name="PageGrid"
+              RowSpacing="0"
+              BackgroundColor="{DynamicResource backgroundColor}"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <tabView:SfTabView Grid.Row="0" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}" VisibleHeaderCount="1"
+                                 TabHeaderBackgroundColor="{StaticResource tabHeaderColor}"
+                               BackgroundColor="Transparent"
+                                 DisplayMode="Text"
+                               SelectedIndex="0"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                        <tabView:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}"
+                                                              Position="Bottom" 
+                                                          StrokeThickness="2"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                    <tabView:SfTabItem Title="Somersby Men's Classic" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              RowSpacing="0" BackgroundColor="{DynamicResource backgroundColor}">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="30" />
+                                    <RowDefinition Height="2" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0">
+                        <Grid Grid.Row="1" 
+                              x:Name="PremierDivTableHeaderGrid"
+                              Padding="0,0"
+                              RowSpacing="1"
+                              ColumnSpacing="1"
+
+                              VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand">    
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="50"/>
+                                <!--<ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="50"/>-->
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.ColumnSpan="2" Padding="10,0,0,0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="TEAM"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="Pts W"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="Pts L"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="Avg"/>
+                        </StackLayout>
+                        <!--<StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="SP"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="HG"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="HS"/>
+                        </StackLayout>-->
+                        </Grid>
+                    </StackLayout>
+                                <BoxView Grid.Row="1"
+                                         BackgroundColor="{DynamicResource borderColor}"
+                                         HeightRequest="2"/>
+                             
+                                <listView:SfListView Grid.Row="2" x:Name="PremierLeagueList"
+                                ItemsSource="{Binding SomersbyLeagueCollection}"
+                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                   SelectionMode="Single"
+                                    TapCommand="{Binding TableTappedCommand}"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="{DynamicResource controlHeaderBackgroundColor}"
+                                 AutoFitMode="DynamicHeight"
+                                                      
+                                />
+                            
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                    <!--<tabView:SfTabItem Title="First Division" TitleFontColor="Gray"  SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                        <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              RowSpacing="0" BackgroundColor="{DynamicResource backgroundColor}">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="30" />
+                                    <RowDefinition Height="2" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0">
+                            
+                        <Grid Grid.Row="0" 
+                              x:Name="FirstDivTableHeaderGrid"
+                              Padding="0,0"
+                              RowSpacing="1"
+                              ColumnSpacing="1"
+                              
+                              VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand">    
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.ColumnSpan="2" Padding="10,0,0,0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="TEAM"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="W"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="L"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="Avg"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="SP"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="HG"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="HS"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                                <BoxView Grid.Row="1"
+                                         BackgroundColor="{DynamicResource borderColor}"
+                                         HeightRequest="2"/>
+                            <listView:SfListView Grid.Row="2" x:Name="FirstDivisionList"
+                                                ItemsSource="{Binding FirstDivisionTeamCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                                   SelectionMode="None"
+                                                   ItemSpacing="0"
+                                                    SelectionBackgroundColor="White"
+                                                 AutoFitMode="DynamicHeight"
+                                                 
+                                            
+                                />
+                            
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>-->
+            </tabView:SfTabView>
+            <StackLayout Padding="10"  IsVisible="{Binding NoConnectivity}">
+                <Label Text="There are no standings available" FontSize="Caption" TextColor="{DynamicResource TextPrimaryColor}" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+                <!--<model:AdMobView Grid.Row="1"  VerticalOptions="EndAndExpand" MinimumHeightRequest="50" Size="Standardbanner"/>-->
+                
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

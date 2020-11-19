@@ -12,6 +12,8 @@ namespace OnTrackWebService.Models
         public string LastName { get; set; }
         public int? JerseyNumber { get; set; }
 
+        public string Name => FirstName + " " + LastName;
+
         public virtual List<PlayerSeason> PlayerSeasons { get; set; }
     }
 }

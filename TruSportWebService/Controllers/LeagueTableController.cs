@@ -123,6 +123,26 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("BowlingLeagueStanding")]
+        public async Task<IActionResult> BowlingLeagueStanding()
+        {
+            try
+            {
+
+                IEnumerable<BowlingLeagueStanding> leagueTables = await _leagueTableRepository.GetBowlingStandings();
+
+                if (leagueTables != null)
+                    return Ok(leagueTables);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("CricketPremierDivision")]
         public async Task<IActionResult> CricketPremierDivisionTable()
         {
@@ -303,6 +323,26 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("BowlingTeam")]
+        public async Task<IActionResult> BowlingTeamLeagueTable(string teamID)
+        {
+            try
+            {
+                //League league = _context.Leagues.FirstOrDefaultAsync(e => e.ID == leagueID)
+                var leagueTables = await _leagueTableRepository.GetBowlingTableByTeam(teamID);
+
+                if (leagueTables != null)
+                    return Ok(leagueTables);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("CricketTeam")]
         public async Task<IActionResult> CricketTeamLeagueTable(string teamID)
         {
@@ -372,6 +412,26 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<CricketLeagueTable> leagueTables = await _leagueTableRepository.GetCricketTableByLeague(leagueID);
+
+                if (leagueTables != null)
+                    return Ok(leagueTables);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BowlingLeague")]
+        public async Task<IActionResult> BowlingLeagueTablesByLeague(string leagueID)
+        {
+            try
+            {
+
+                IEnumerable<BowlingLeagueStanding> leagueTables = await _leagueTableRepository.GetBowlingLeagueStandings(leagueID);
 
                 if (leagueTables != null)
                     return Ok(leagueTables);

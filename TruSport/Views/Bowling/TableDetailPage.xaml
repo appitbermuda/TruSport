@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TruSport.Views.Bowling.TableDetailPage" BackgroundColor="{DynamicResource backgroundColor}">
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid HorizontalOptions="FillAndExpand" RowSpacing="0"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="0,0,0,0" BackgroundColor="{DynamicResource navBackgroundColor}">
+            <StackLayout.Padding>
+               <OnPlatform x:TypeArguments="Thickness">
+                 <On Platform="Android" Value="0, 0, 0, 0"/>
+                 <On Platform="iOS" Value="0, 30, 0, 0"/>
+                </OnPlatform>
+              </StackLayout.Padding>
+            <Grid HorizontalOptions="FillAndExpand" HeightRequest="50">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Column="1" Padding="0,0,0,0" HeightRequest="30" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Label Text="{Binding Standing.Team.Name}" FontAttributes="Bold" TextColor="{DynamicResource navTextColor}"/>
+                    </StackLayout>
+                <Button x:Name="BackButton" Text="" TextColor="{DynamicResource navTextColor}" FontSize="25" BackgroundColor="Transparent" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="BackButton_Clicked"/>
+            </Grid>
+        </StackLayout>
+
+        <Grid Grid.Row="1" HorizontalOptions="FillAndExpand" RowSpacing="0" VerticalOptions="FillAndExpand">
+            <StackLayout VerticalOptions="FillAndExpand" Padding="0,50,0,0">
+                <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Column="0" Grid.Row="0" Padding="5">
+                        <Label Text="Position" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="End"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="1" Padding="5">
+                        <Label Text="Points Won" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="End"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="2" Padding="5">
+                        <Label Text="Points Lost" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="End"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="3" Padding="5">
+                        <Label Text="Team Average" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="End"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="4" Padding="5">
+                        <Label Text="Scratch Pins" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="End"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="5" Padding="5">
+                        <Label Text="High Game" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="End"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="6" Padding="5">
+                        <Label Text="High Sers" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="End"/>
+                    </StackLayout>
+
+                    <StackLayout Grid.Column="1" Grid.Row="0" Padding="5">
+                        <Label Text="{Binding Standing.Position}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" Grid.Row="1" Padding="5">
+                        <Label Text="{Binding Standing.PointsWon, StringFormat='{0:G29}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" Grid.Row="2" Padding="5">
+                        <Label Text="{Binding Standing.PointsLost, StringFormat='{0:G29}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" Grid.Row="3" Padding="5">
+                        <Label Text="{Binding Standing.TeamAvg}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" Grid.Row="4" Padding="5">
+                        <Label Text="{Binding Standing.ScratchPins}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" Grid.Row="5" Padding="5">
+                        <Label Text="{Binding Standing.HighGame}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" Grid.Row="6" Padding="5">
+                        <Label Text="{Binding Standing.HighSers}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Medium"/>
+                    </StackLayout>
+                </Grid>
+            </StackLayout>
+        </Grid>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

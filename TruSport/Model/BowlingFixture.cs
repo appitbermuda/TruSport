@@ -29,11 +29,11 @@ namespace TruSport.Model
         public string SelectedTeamResult { get; set; }
 
         [Ignore]
-        public DateTime FixtureTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
+        public DateTime FixtureTime => !String.IsNullOrEmpty(Time) ? TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
                         TimeZoneInfo.ConvertTime(Date.AddDays(1).Add((TimeSpan.Parse(Time) + (TimeZoneInfo.Local.GetUtcOffset(new DateTime().Date + TimeSpan.Parse(Time)) - TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)))), TimeZoneInfo.Utc, TimeZoneInfo.Local) :
                         TimeZoneInfo.ConvertTime(Date.AddDays(1).Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local) : TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
                         TimeZoneInfo.ConvertTime(Date.Add((TimeSpan.Parse(Time) + (TimeZoneInfo.Local.GetUtcOffset(new DateTime().Date + TimeSpan.Parse(Time)) - TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)))), TimeZoneInfo.Utc, TimeZoneInfo.Local) :
-                        TimeZoneInfo.ConvertTime(Date.Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local);
+                        TimeZoneInfo.ConvertTime(Date.Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local) : Date;
 
         [Ignore]
         public string PostOrCanc => IsPostponed ? "Post." : IsCancelled ? "Canc." : String.Empty;
@@ -56,11 +56,11 @@ namespace TruSport.Model
         [Ignore]
         public MatchType MatchType { get; set; }
 
-        [Ignore]
-        public BowlingMatch BowlingMatch { get; set; }
+        //[Ignore]
+        //public BowlingMatch BowlingMatch { get; set; }
 
         [Ignore]
-        public virtual List<BowlingLeagueTable> LeagueTable { get; set; }
+        public virtual List<BowlingLeagueStanding> LeagueTable { get; set; }
 
         [Ignore]
         public Season Season { get; set; }
@@ -72,7 +72,13 @@ namespace TruSport.Model
         public ObservableCollection<BowlingRoster> BowlingRosters { get; set; }
 
         [Ignore]
-        public ObservableCollection<Game> Games { get; set; }
+        public ObservableCollection<BowlingGame> BowlingGames { get; set; }
+
+        [Ignore]
+        public virtual List<BowlingGameResult> BowlingGameResults { get; set; }
+
+        [Ignore]
+        public virtual List<BowlingRosterListView> BowlingRosterList { get; set; }
 
         [Ignore]
         public string HomeTeamScore { get; set; }

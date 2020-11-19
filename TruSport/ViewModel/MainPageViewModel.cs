@@ -5,6 +5,7 @@ using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
 using TruSport.Views;
+using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -38,6 +39,7 @@ namespace TruSport.ViewModel
 
             RefreshCommand = new Command(() => GenerateSource());
 
+            BowlingTappedCommand = new Command(() => BowlingTapped());
             FootballTappedCommand = new Command(() => FootballTapped());
             CricketTappedCommand = new Command(() => CricketTapped());
             //TennisTappedCommand = new Command(() => TennisTapped());
@@ -56,6 +58,7 @@ namespace TruSport.ViewModel
 
         public Command RefreshCommand { get; }
         public Command FootballTappedCommand { get; }
+        public Command BowlingTappedCommand { get; }
         public Command CricketTappedCommand { get; }
         public Command TennisTappedCommand { get; }
         public Command TrackTappedCommand { get; }
@@ -179,6 +182,37 @@ namespace TruSport.ViewModel
                 await App.Database.SetDefaultSport(sport);
                 Application.Current.MainPage = new CricketMasterDetailPage();
                 
+                //Navigation.InsertPageBefore(new CricketMasterDetailPage(), Navigation.NavigationStack.First());
+                //await Navigation.PopToRootAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void BowlingTapped()
+        {
+            try
+            {
+                //await SecureStorage.SetAsync("DefaultSport", "Cricket");
+                //await SecureStorage.SetAsync("Sport", "Cricket");
+                Sport sport = new Sport();
+
+                if (Sports == null)
+                {
+                    var sports = await sportService.GetSports();
+                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "bowling");
+                }
+                else
+                {
+                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "bowling");
+                }
+
+
+                await App.Database.SetDefaultSport(sport);
+                Application.Current.MainPage = new BowlingMasterDetailPage();
+
                 //Navigation.InsertPageBefore(new CricketMasterDetailPage(), Navigation.NavigationStack.First());
                 //await Navigation.PopToRootAsync();
             }

@@ -9,9 +9,9 @@ using Xamarin.Essentials;
 
 namespace TruSport.Services
 {
-    public class MatchRosterService
+    public class RosterService
     {
-        public MatchRosterService()
+        public RosterService()
         {
         }
 
