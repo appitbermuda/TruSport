@@ -12569,74 +12569,71 @@ namespace TruSport.Droid
 			// aapt resource value: 0x7F070191
 			public const int ontrackindicator = 2131165585;
 			
-			// aapt resource value: 0x7F070192
-			public const int ontracklogo = 2131165586;
-			
 			// aapt resource value: 0x7F07018F
 			public const int ontrack_wordmark_ = 2131165583;
 			
 			// aapt resource value: 0x7F070190
 			public const int ontrack_wordmark_reversed = 2131165584;
 			
+			// aapt resource value: 0x7F070192
+			public const int paget = 2131165586;
+			
 			// aapt resource value: 0x7F070193
-			public const int paget = 2131165587;
+			public const int parish = 2131165587;
 			
 			// aapt resource value: 0x7F070194
-			public const int parish = 2131165588;
+			public const int phc = 2131165588;
 			
 			// aapt resource value: 0x7F070195
-			public const int phc = 2131165589;
+			public const int rhood = 2131165589;
 			
 			// aapt resource value: 0x7F070196
-			public const int rhood = 2131165590;
+			public const int shadow_effect = 2131165590;
 			
 			// aapt resource value: 0x7F070197
-			public const int shadow_effect = 2131165591;
+			public const int somerset = 2131165591;
 			
 			// aapt resource value: 0x7F070198
-			public const int somerset = 2131165592;
+			public const int splash_screen = 2131165592;
 			
 			// aapt resource value: 0x7F070199
-			public const int splash_screen = 2131165593;
+			public const int srangers = 2131165593;
 			
 			// aapt resource value: 0x7F07019A
-			public const int srangers = 2131165594;
+			public const int stdavids = 2131165594;
 			
 			// aapt resource value: 0x7F07019B
-			public const int stdavids = 2131165595;
+			public const int stgeorges = 2131165595;
 			
 			// aapt resource value: 0x7F07019C
-			public const int stgeorges = 2131165596;
+			public const int tooltip_frame_dark = 2131165596;
 			
 			// aapt resource value: 0x7F07019D
-			public const int tooltip_frame_dark = 2131165597;
+			public const int tooltip_frame_light = 2131165597;
 			
 			// aapt resource value: 0x7F07019E
-			public const int tooltip_frame_light = 2131165598;
+			public const int tuffdogs = 2131165598;
 			
 			// aapt resource value: 0x7F07019F
-			public const int tuffdogs = 2131165599;
+			public const int UpButton = 2131165599;
 			
 			// aapt resource value: 0x7F0701A0
-			public const int UpButton = 2131165600;
+			public const int vasco = 2131165600;
 			
 			// aapt resource value: 0x7F0701A1
-			public const int vasco = 2131165601;
+			public const int village = 2131165601;
 			
 			// aapt resource value: 0x7F0701A2
-			public const int village = 2131165602;
+			public const int westend = 2131165602;
 			
 			// aapt resource value: 0x7F0701A3
-			public const int westend = 2131165603;
+			public const int wolves = 2131165603;
 			
 			// aapt resource value: 0x7F0701A4
-			public const int wolves = 2131165604;
+			public const int xroads = 2131165604;
 			
 			// aapt resource value: 0x7F0701A5
-			public const int xroads = 2131165605;
-			
-			// aapt resource value: 0x7F0701A6
-			public const int ymsc = 2131165606;
+			public const int ymsc = 2131165605;
 			
 			static Drawable()
 			{
@@ -13948,17 +13945,14 @@ namespace TruSport.Droid
 			// aapt resource value: 0x7F0C0004
 			public const int menu = 2131492868;
 			
-			// aapt resource value: 0x7F0C0005
-			public const int ontrack = 2131492869;
+			// aapt resource value: 0x7F0C0007
+			public const int ontracklogo = 2131492871;
 			
-			// aapt resource value: 0x7F0C0008
-			public const int ontracklogo = 2131492872;
+			// aapt resource value: 0x7F0C0005
+			public const int ontrack_launcher = 2131492869;
 			
 			// aapt resource value: 0x7F0C0006
-			public const int ontrack_launcher = 2131492870;
-			
-			// aapt resource value: 0x7F0C0007
-			public const int ontrack_wordmark_reversed = 2131492871;
+			public const int ontrack_wordmark_reversed = 2131492870;
 			
 			static Mipmap()
 			{

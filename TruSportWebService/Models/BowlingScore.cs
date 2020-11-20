@@ -15,5 +15,11 @@ namespace OnTrackWebService.Models
 
         [ForeignKey("BowlingFixtureID")]
         public BowlingFixture BowlingFixture { get; set; }
+
+        [NotMapped]
+        public int? HomeTeamTotalPoints => HomeTeamMatchPoints + HomeTeamPoints;
+
+        [NotMapped]
+        public int? AwayTeamTotalPoints => AwayTeamMatchPoints + AwayTeamPoints;
     }
 }

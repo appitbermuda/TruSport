@@ -13,6 +13,10 @@ namespace OnTrackWebService.Data
         }
 
         public DbSet<Batting> Battings { get; set; }
+        public DbSet<BowlingSeasonHG> BowlingSeasonHG { get; set; }
+        public DbSet<BowlingSeasonHS> BowlingSeasonHS { get; set; }
+        public DbSet<BowlingSeasonTeamHG> BowlingSeasonTeamHG { get; set; }
+        public DbSet<BowlingSeasonTeamHS> BowlingSeasonTeamHS { get; set; }
         public DbSet<BowlingFixture> BowlingFixtures { get; set; }
         public DbSet<BowlingScore> BowlingScores { get; set; }
         public DbSet<BowlingRoster> BowlingRosters { get; set; }
@@ -146,6 +150,10 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<GoalsScoredByPlayer>(entity => { entity.HasKey(e => new { e.PlayerID, e.LeagueID }); }) ;
             modelBuilder.Entity<RunsByPlayer>(entity => { entity.HasKey(e => new { e.PlayerID, e.LeagueID }); });
             modelBuilder.Entity<WicketsByPlayer>(entity => { entity.HasKey(e => new { e.PlayerID, e.LeagueID }); });
+            modelBuilder.Entity<BowlingSeasonHG>(entity => { entity.HasKey(e => new { e.PlayerID, e.LeagueID }); });
+            modelBuilder.Entity<BowlingSeasonHS>(entity => { entity.HasKey(e => new { e.PlayerID, e.LeagueID }); });
+            modelBuilder.Entity<BowlingSeasonTeamHG>(entity => { entity.HasKey(e => new { e.TeamID, e.LeagueID }); });
+            modelBuilder.Entity<BowlingSeasonTeamHS>(entity => { entity.HasKey(e => new { e.TeamID, e.LeagueID }); });
             modelBuilder.Entity<AllUsers>(entity => { entity.HasKey(e => e.ID); });
             modelBuilder.Entity<Match>().ToTable("Match");
             modelBuilder.Entity<MatchInning>().ToTable("MatchInning");

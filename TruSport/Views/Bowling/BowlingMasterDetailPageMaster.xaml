@@ -25,14 +25,14 @@
                            VerticalOptions="EndAndExpand"
                            HorizontalOptions="CenterAndExpand"
                        />
-                    <Frame Padding="2" HeightRequest="100" VerticalOptions="Center" HorizontalOptions="Center">
+                    <!--<Frame Padding="2" HeightRequest="100" VerticalOptions="Center" HorizontalOptions="Center">
                         <Image x:Name="SportLogoImage"
                            Source="bcblogo.png"
                            Aspect="AspectFit"
                            VerticalOptions="Center"
                            HorizontalOptions="Center"
                        />
-                    </Frame>
+                    </Frame>-->
                 </StackLayout>
                 </Grid>
             <BoxView Grid.Row="1" HeightRequest="1" BackgroundColor="WhiteSmoke"/>

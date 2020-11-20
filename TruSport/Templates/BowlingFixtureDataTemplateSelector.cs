@@ -13,7 +13,7 @@ namespace TruSport.Templates
         {
             try
             {
-                var template = ((BowlingFixture)item).BowlingGames != null && ((BowlingFixture)item).BowlingGames.Count > 0 ? BowlingScoreFixtureTemplate : BowlingFixtureTemplate;
+                var template = (((BowlingFixture)item).BowlingScore.HomeTeamTotalPoints != null || ((BowlingFixture)item).BowlingScore.AwayTeamTotalPoints != null) ? BowlingScoreFixtureTemplate : BowlingFixtureTemplate;
 
                 return template;
             }

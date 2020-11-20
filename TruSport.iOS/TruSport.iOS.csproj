@@ -139,6 +139,47 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-83.5x83.5%402x.png" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ItunesArtwork%402x.png" />
     <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\40-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\60.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\58.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\87.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\80.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\120.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\120-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\180.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\20.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\40.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\29.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\58-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\40-2.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\80-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\76.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\152.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\167.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\1024.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\120-2.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\180-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\48.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\55.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\58-2.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\87-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\80-2.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\88.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\100.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\172.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\196.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\216.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\1024-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\16.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\32.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\32-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\64.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\128.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\256.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\256-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\512.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\512-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon-1.appiconset\1024-2.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -260,7 +301,6 @@
     <BundleResource Include="Resources\FootballFavourites24.png" />
     <BundleResource Include="Resources\Close_White64.png" />
     <BundleResource Include="Resources\YellowCards_75px.png" />
-    <BundleResource Include="Resources\OnTrack_512.png" />
     <BundleResource Include="Resources\Save32.png" />
     <BundleResource Include="Resources\TruSportDB.db" />
     <BundleResource Include="Resources\icomoon.ttf" />
@@ -304,8 +344,6 @@
     <BundleResource Include="Resources\star.png" />
     <BundleResource Include="Resources\star%402x.png" />
     <BundleResource Include="Resources\OnTrack_Wordmark.png" />
-    <BundleResource Include="Resources\ontrack.png" />
-    <BundleResource Include="Resources\ontrackindicator.png" />
     <BundleResource Include="Resources\Selected.png" />
     <BundleResource Include="Resources\menu.png" />
     <BundleResource Include="Resources\menu_2x.png" />
@@ -319,18 +357,19 @@
     <BundleResource Include="Resources\bcblogo.png" />
     <BundleResource Include="Resources\bcblogo%402x.png" />
     <BundleResource Include="Resources\bcblogo%403x.png" />
-    <BundleResource Include="Resources\ontracklogo.png" />
-    <BundleResource Include="Resources\ontracklogo%403x.png" />
-    <BundleResource Include="Resources\ontracklogo%402x.png" />
     <BundleResource Include="Resources\footballfeature.jpg" />
     <BundleResource Include="Resources\cricketfeature.jpg" />
     <BundleResource Include="Resources\bowlingfeature.jpg" />
+    <BundleResource Include="Resources\ontracklogo.png" />
+    <BundleResource Include="Resources\ontracklogo%402x.png" />
+    <BundleResource Include="Resources\ontracklogo%403x.png" />
+    <BundleResource Include="Resources\OnTrack_512.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ITunesArtwork Include="iTunesArtwork%402x" />
     <ITunesArtwork Include="iTunesArtwork" />
+    <ITunesArtwork Include="iTunesArtwork%402x" />
   </ItemGroup>
 </Project>

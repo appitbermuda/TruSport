@@ -16,9 +16,11 @@ namespace TruSport.ViewModels.Bowling
     {
         #region Fields
         private LeagueStat tappedInfo; 
-        private ObservableCollection<LeagueStat> _playerMostPinsCollection;
-        private ObservableCollection<LeagueStat> _playerMostWicketsCollection;
-        
+        private ObservableCollection<LeagueStat> _playerSeasonHG;
+        private ObservableCollection<LeagueStat> _playerSeasonHS;
+        private ObservableCollection<LeagueStat> _teamSeasonHG;
+        private ObservableCollection<LeagueStat> _teamSeasonHS;
+
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> itemtapCommand;
         private Command<object> favoriteTapCommand;
         private Command<object> resetTapCommand;
@@ -33,8 +35,10 @@ namespace TruSport.ViewModels.Bowling
 
         public LeagueStatPageViewModel()
         {
-            PlayerMostPinsCollection = new ObservableCollection<LeagueStat>();
-            PlayerMostWicketsCollection = new ObservableCollection<LeagueStat>();
+            PlayerSeasonHGCollection = new ObservableCollection<LeagueStat>();
+            PlayerSeasonHSCollection = new ObservableCollection<LeagueStat>();
+            TeamSeasonHGCollection = new ObservableCollection<LeagueStat>();
+            TeamSeasonHSCollection = new ObservableCollection<LeagueStat>();
 
             leagueStatsService = new LeagueStatService();
             GenerateSource();
@@ -69,16 +73,28 @@ namespace TruSport.ViewModels.Bowling
             set { resetTapCommand = value; }
         }
 
-        public ObservableCollection<LeagueStat> PlayerMostPinsCollection
+        public ObservableCollection<LeagueStat> PlayerSeasonHGCollection
         {
-            get { return _playerMostPinsCollection; }
-            set { Set(ref this._playerMostPinsCollection, value); }
+            get { return _playerSeasonHG; }
+            set { Set(ref this._playerSeasonHG, value); }
         }
 
-        public ObservableCollection<LeagueStat> PlayerMostWicketsCollection
+        public ObservableCollection<LeagueStat> PlayerSeasonHSCollection
         {
-            get { return _playerMostWicketsCollection; }
-            set { Set(ref this._playerMostWicketsCollection, value); }
+            get { return _playerSeasonHS; }
+            set { Set(ref this._playerSeasonHS, value); }
+        }
+
+        public ObservableCollection<LeagueStat> TeamSeasonHGCollection
+        {
+            get { return _teamSeasonHG; }
+            set { Set(ref this._teamSeasonHG, value); }
+        }
+
+        public ObservableCollection<LeagueStat> TeamSeasonHSCollection
+        {
+            get { return _teamSeasonHS; }
+            set { Set(ref this._teamSeasonHS, value); }
         }
 
         public bool NoConnectivity
@@ -112,10 +128,25 @@ namespace TruSport.ViewModels.Bowling
 
                 try
                 {
-                    var pinsByPlayer = await leagueStatsService.GetMostPinsByPlayer();
+                    var playerSeasonHG = await leagueStatsService.GetBowlingSeasonHG();
 
-                    if(pinsByPlayer != null)
-                        PlayerMostPinsCollection = new ObservableCollection<LeagueStat>(pinsByPlayer);
+                    if(playerSeasonHG != null)
+                        PlayerSeasonHGCollection = new ObservableCollection<LeagueStat>(playerSeasonHG);
+
+                    var playerSeasonHS = await leagueStatsService.GetBowlingSeasonHS();
+
+                    if (playerSeasonHS != null)
+                        PlayerSeasonHSCollection = new ObservableCollection<LeagueStat>(playerSeasonHS);
+
+                    var teamSeasonHG = await leagueStatsService.GetBowlingSeasonTeamHG();
+
+                    if (teamSeasonHG != null)
+                        TeamSeasonHGCollection = new ObservableCollection<LeagueStat>(teamSeasonHG);
+
+                    var teamSeasonHS = await leagueStatsService.GetBowlingSeasonTeamHS();
+
+                    if (teamSeasonHS != null)
+                        TeamSeasonHGCollection = new ObservableCollection<LeagueStat>(teamSeasonHS);
 
                     //var wicketsByPlayer = await leagueStatsService.GetMostWicketsByPlayer();
 

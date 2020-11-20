@@ -56,6 +56,9 @@ namespace TruSport.Model
         [Ignore]
         public MatchType MatchType { get; set; }
 
+        [Ignore]
+        public BowlingScore BowlingScore { get; set; }
+
         //[Ignore]
         //public BowlingMatch BowlingMatch { get; set; }
 

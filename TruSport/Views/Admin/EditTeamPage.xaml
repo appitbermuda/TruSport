@@ -109,7 +109,7 @@
                         <!--<controls:CircleImage FillColor="White" Aspect="AspectFit" Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="40" WidthRequest="40" />-->
                         <Frame HeightRequest="100" WidthRequest="100" CornerRadius="50" Padding="0" HorizontalOptions="Center" VerticalOptions="CenterAndExpand">
                         <ff:CachedImage Source="{Binding TeamItem.TeamLogo, Converter={StaticResource imageConverter}}"
-                                                        ErrorPlaceholder="ontrack.png"
+                                                        ErrorPlaceholder="ontracklogo.png"
                                                         CacheDuration="50"
                                                         RetryCount="3"
                                                         RetryDelay="600"

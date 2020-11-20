@@ -374,7 +374,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Image Grid.Row="0"
-                       Source="ontrack.png"
+                       Source="ontracklogo.png"
                        Aspect="AspectFit"
                            HeightRequest="100"
                            WidthRequest="100"
@@ -487,7 +487,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Image Grid.Row="0"
-                       Source="ontrack.png"
+                       Source="ontracklogo.png"
                        Aspect="AspectFit"
                            HeightRequest="100"
                            WidthRequest="100"

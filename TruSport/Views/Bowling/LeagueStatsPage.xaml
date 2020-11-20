@@ -6,8 +6,7 @@
             <converter:BowlingImageConverter x:Key="imageConverter"/>
             <DataTemplate x:Name="PlayerItemTemplate"  x:Key="PlayerItemTemplate">
                 <StackLayout HorizontalOptions="FillAndExpand"
-                             VerticalOptions="Center"
-                             >
+                             VerticalOptions="Center">
                 <Grid x:Name="grid"
                       Padding="1"
                       RowSpacing="1"
@@ -155,7 +154,7 @@
                     <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
 
-            <tabView:SfTabView Grid.Row="0" VisibleHeaderCount="2"
+            <tabView:SfTabView Grid.Row="0" VisibleHeaderCount="3"
                 TabHeaderBackgroundColor="{StaticResource tabHeaderColor}"
                 DisplayMode="Text"
             SelectedIndex="0"
@@ -166,7 +165,7 @@
                                                               Position="Bottom" 
                                                           StrokeThickness="2"/>
                 </tabView:SfTabView.SelectionIndicatorSettings>
-                                     <tabView:SfTabItem Title="Most Pins" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                                     <tabView:SfTabItem Title="Bowler High Game" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
                         <tabView:SfTabItem.Content>
                             <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
                               VerticalOptions="FillAndExpand"
@@ -175,8 +174,8 @@
                                 <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                                <listView:SfListView Grid.Row="0" x:Name="PlayerMostPinsList"
-                                ItemsSource="{Binding PlayerMostPinsCollection}"
+                                <listView:SfListView Grid.Row="0" x:Name="PlayerSeasonHGList"
+                                ItemsSource="{Binding PlayerSeasonHGCollection}"
                                     ItemTemplate="{StaticResource PlayerItemTemplate}"
                                                      GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
                                    SelectionMode="None"
@@ -197,7 +196,7 @@
                                 </Grid>
                                 </tabView:SfTabItem.Content>
                                 </tabView:SfTabItem>
-                            <!--<tabView:SfTabItem Title="Most Wickets" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                            <tabView:SfTabItem Title="Bowler High Series" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
                          <tabView:SfTabItem.Content>
                             <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
                               VerticalOptions="FillAndExpand"
@@ -206,8 +205,8 @@
                                 <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                                <listView:SfListView Grid.Row="0" x:Name="PlayerMostWicketsList"
-                                ItemsSource="{Binding PlayerMostWicketsCollection}"
+                                <listView:SfListView Grid.Row="0" x:Name="PlayerSeasonHSList"
+                                ItemsSource="{Binding PlayerSeasonHSCollection}"
                                     ItemTemplate="{StaticResource PlayerItemTemplate}"
                                                      GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
                                    SelectionMode="None"
@@ -227,7 +226,69 @@
                                 </listView:SfListView>
                                 </Grid>
                                 </tabView:SfTabItem.Content>
-                                </tabView:SfTabItem>-->
+                                </tabView:SfTabItem>
+                <tabView:SfTabItem Title="Team High Game" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{DynamicResource backgroundColor}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <listView:SfListView Grid.Row="0" x:Name="TeamSeasonHGList"
+                                ItemsSource="{Binding TeamSeasonHGCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                                     GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 AutoFitMode="DynamicHeight"      
+                                >
+                                    <listView:SfListView.DataSource>
+                <data:DataSource>
+                    <data:DataSource.SortDescriptors>
+                        <data:SortDescriptor PropertyName="LeagueName" Direction="Descending"/>
+                    </data:DataSource.SortDescriptors>
+                </data:DataSource>
+            </listView:SfListView.DataSource>
+                                </listView:SfListView>
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
+                            <tabView:SfTabItem Title="Team High Series" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                         <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="{DynamicResource backgroundColor}"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <listView:SfListView Grid.Row="0" x:Name="TeamSeasonHSList"
+                                ItemsSource="{Binding TeamSeasonHSCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                                     GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 AutoFitMode="DynamicHeight"     
+                                >
+                                    <listView:SfListView.DataSource>
+                <data:DataSource>
+                    <data:DataSource.SortDescriptors>
+                        <data:SortDescriptor PropertyName="LeagueName" Direction="Descending"/>
+                    </data:DataSource.SortDescriptors>
+                </data:DataSource>
+            </listView:SfListView.DataSource>
+                                </listView:SfListView>
+                                </Grid>
+                                </tabView:SfTabItem.Content>
+                                </tabView:SfTabItem>
                             </tabView:SfTabView>
             <StackLayout Padding="10"  IsVisible="{Binding NoConnectivity}">
                 <Label Text="There are no stats available" FontSize="Caption" TextColor="{DynamicResource TextPrimaryColor}" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>

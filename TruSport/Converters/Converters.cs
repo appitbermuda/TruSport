@@ -1729,7 +1729,7 @@ namespace TruSport.Converters
                 return image;
             }
             else
-                return "ontrack.png";
+                return "ontracklogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1769,7 +1769,7 @@ namespace TruSport.Converters
                 return image;
             }
             else
-                return "ontrack.png";
+                return "ontracklogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1904,6 +1904,9 @@ namespace TruSport.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (((IList)value) == null)
+                return false;
+
             return !(((IList)value).Count == 0);
         }
 

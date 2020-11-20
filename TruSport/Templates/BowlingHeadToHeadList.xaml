@@ -28,7 +28,7 @@
                             <RowDefinition Height="50" />
                         <RowDefinition Height="1" />
                     </Grid.RowDefinitions>
-                    <Frame Grid.Row="0" Grid.Column="0" Padding="10,0" HeightRequest="30" CornerRadius="15" HasShadow="False" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="Start">
+                    <Frame Grid.Row="0" Grid.ColumnSpan="2" Padding="10,0" HeightRequest="30" CornerRadius="15" HasShadow="False" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="Start">
                     <StackLayout Spacing="5" Padding="5,10"
                                  HorizontalOptions="FillAndExpand"
                                      Orientation="Horizontal">
@@ -57,33 +57,12 @@
                                          Orientation="Vertical"
                                  Padding="5,2"
                                  Spacing="5">
-                            <StackLayout IsVisible="{Binding Match.IsPenalties}" Orientation="Horizontal" HorizontalOptions="Center" >
-                            <Label x:Name="HomeTeamPenaltyLabel"
-                                   FontSize="Micro"
-                                   FontAttributes="Bold"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding Match.HomeTeamPenalty, StringFormat='({0}'}"/>
-                            <Label 
-                                   
-                                   FontSize="Micro"
-                                   FontAttributes="Bold"
-                                   HorizontalOptions="Center"
-                                                  VerticalOptions="Center"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="-"/>
-                            <Label x:Name="AwayTeamPenaltyLabel"
-                                   FontSize="Micro"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                   FontAttributes="Bold"
-                                        Text="{Binding Match.AwayTeamPenalty, StringFormat='{0})'}"/>
-                                
-                        </StackLayout>
                      <StackLayout Orientation="Horizontal"  HorizontalOptions="Center" >
                             <Label x:Name="HomeTeamScoreLabel"
                                    FontSize="Medium"
                                    FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding Match.HomeTeamScore}"/>
+                                        Text="{Binding BowlingScore.HomeTeamTotalPoints}"/>
                             <Label 
                                    x:Name="Versus"
                                    FontSize="Small"
@@ -91,12 +70,12 @@
                                    HorizontalOptions="Center"
                                                   VerticalOptions="Center"
                                    TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding Match.HomeTeamScore, Converter={StaticResource showScoreConverter}}" />
+                                        Text="{Binding BowlingScore.HomeTeamTotalPoints, Converter={StaticResource showScoreConverter}}" />
                             <Label x:Name="AwayTeamScoreLabel"
                                    FontSize="Medium"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
-                                        Text="{Binding Match.AwayTeamScore}"/>
+                                        Text="{Binding BowlingScore.AwayTeamTotalPoints}"/>
                                 
                         </StackLayout>
                     </StackLayout>

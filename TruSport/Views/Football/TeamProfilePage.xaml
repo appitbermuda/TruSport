@@ -445,7 +445,7 @@
                     <StackLayout Grid.Row="1" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                             <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
-                                                        ErrorPlaceholder="ontrack.png"
+                                                        ErrorPlaceholder="ontracklogo.png"
                                                         CacheDuration="50"
                                                         RetryCount="3"
                                                         RetryDelay="600"
@@ -459,8 +459,8 @@
                     <StackLayout Grid.Row="1" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                              <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
-                                                        ErrorPlaceholder="ontrack.png"
-                                        LoadingPlaceholder="ontrack.png"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                        LoadingPlaceholder="ontracklogo.png"
                                                         CacheDuration="50"
                                                         RetryCount="3"
                                                         RetryDelay="600"
@@ -821,8 +821,8 @@
                                               HorizontalOptions="CenterAndExpand">
                                         <Frame HeightRequest="130" WidthRequest="130" CornerRadius="65" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding TeamItem.TeamLogo, Converter={StaticResource imageConverter}}"
-                                                        ErrorPlaceholder="ontrack.png"
-                                        LoadingPlaceholder="ontrack.png"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                        LoadingPlaceholder="ontracklogo.png"
                                                         CacheDuration="50"
                                                         RetryCount="3"
                                                         RetryDelay="600"

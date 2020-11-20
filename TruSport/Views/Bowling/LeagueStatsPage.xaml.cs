@@ -19,7 +19,7 @@ namespace TruSport.Views.Bowling
 
             this.BindingContext = leagueStatPageViewModel;
 
-            PlayerMostPinsList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
+            PlayerSeasonHGList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
             {
                 PropertyName = "LeagueName",
                 KeySelector = (object obj1) =>
@@ -29,15 +29,34 @@ namespace TruSport.Views.Bowling
                 }
             });
 
-            //PlayerMostWicketsList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
-            //{
-            //    PropertyName = "LeagueName",
-            //    KeySelector = (object obj1) =>
-            //    {
-            //        var item = (obj1 as LeagueStat);
-            //        return item.LeagueName;
-            //    }
-            //});
+            PlayerSeasonHSList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
+            {
+                PropertyName = "LeagueName",
+                KeySelector = (object obj1) =>
+                {
+                    var item = (obj1 as LeagueStat);
+                    return item.LeagueName;
+                }
+            });
+            TeamSeasonHGList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
+            {
+                PropertyName = "LeagueName",
+                KeySelector = (object obj1) =>
+                {
+                    var item = (obj1 as LeagueStat);
+                    return item.LeagueName;
+                }
+            });
+
+            TeamSeasonHSList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
+            {
+                PropertyName = "LeagueName",
+                KeySelector = (object obj1) =>
+                {
+                    var item = (obj1 as LeagueStat);
+                    return item.LeagueName;
+                }
+            });
         }
 
 

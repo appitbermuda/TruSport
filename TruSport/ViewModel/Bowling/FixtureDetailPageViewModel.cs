@@ -21,12 +21,14 @@ using System.Windows.Input;
 using Syncfusion.SfCalendar.XForms;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using TruSport.Views.Bowling;
 
 namespace TruSport.ViewModels.Bowling
 {
     public class FixtureDetailPageViewModel : BaseViewModel
     {
         #region Fields
+        private BowlingLeagueStanding tappedInfo;
         private int selectedIndex;
         private BowlingFixture _fixtureItem;
         private RosterCoachListView rosterCoach;
@@ -49,6 +51,7 @@ namespace TruSport.ViewModels.Bowling
         private bool summaryAvailable;
         private bool rosterOrSquadAvailable;
         private bool cancelFixtureRefresh;
+        private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> itemtapCommand;
         FixtureService fixtureService;
         RosterService rosterService;
         CoachService coachService;
@@ -77,12 +80,17 @@ namespace TruSport.ViewModels.Bowling
             GenerateSource(fixture);
 
             FavouriteCommand = new Command(async () => await Favourite());
+            TableTappedCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(ItemTapped);
         }
 
         #endregion
 
         #region Properties
-
+        public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> TableTappedCommand
+        {
+            get { return itemtapCommand; }
+            set { itemtapCommand = value; }
+        }
         public Command FavouriteCommand { get; }
 
         public BowlingFixture FixtureItem
@@ -310,6 +318,21 @@ namespace TruSport.ViewModels.Bowling
                 IsFavourite = !IsFavourite;
                 await App.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
+        }
+
+        private async void ItemTapped(Syncfusion.ListView.XForms.ItemTappedEventArgs e)
+        {
+            try
+            {
+                tappedInfo = e.ItemData as BowlingLeagueStanding;
+
+                await Navigation.PushModalAsync(new TableDetailPage(tappedInfo));
+            }
+            catch (Exception ex)
+            {
+
+            }
+
         }
 
         #endregion
