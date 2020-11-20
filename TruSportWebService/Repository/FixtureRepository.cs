@@ -281,6 +281,7 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.League)
                 .Include(e => e.BowlingRosters).ThenInclude(e => e.BowlingPlayerSeason).ThenInclude(e => e.Player)
                 .Include(e => e.BowlingRosters).ThenInclude(e => e.BowlingGames)
+                .Include(e => e.BowlingScore)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
                 .Where(e => e.Date.Date < DateTime.Now.Date).ToListAsync();
@@ -316,7 +317,7 @@ namespace OnTrackWebService.Repository
                             }
 
                             fixture.BowlingRosters.ForEach(e => e.BowlingGameResults = bowlingGameResults.Where(d => d.BowlingRosterID1 == e.ID || d.BowlingRosterID2 == e.ID).ToList());
-                            
+
                         }
                     }
 
@@ -337,6 +338,10 @@ namespace OnTrackWebService.Repository
                     }
 
                     fixture.BowlingRosterList = bowlingRosterLists;
+
+                    //Calculate Scores
+
+
                 }
 
                 fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
@@ -395,6 +400,7 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.League)
                 .Include(e => e.BowlingRosters).ThenInclude(e => e.BowlingPlayerSeason).ThenInclude(e => e.Player)
                 .Include(e => e.BowlingRosters).ThenInclude(e => e.BowlingGames)
+                .Include(e => e.BowlingScore)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season).FirstOrDefaultAsync(e => e.ID == id);
 
@@ -461,6 +467,8 @@ namespace OnTrackWebService.Repository
                 }
 
                 fixture.BowlingRosterList = bowlingRosterLists;
+
+                
 
                 return fixture;
             }

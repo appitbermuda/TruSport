@@ -39,6 +39,8 @@ namespace OnTrackWebService.Models
         [ForeignKey("SeasonID")]
         public Season Season { get; set; }
 
+        public BowlingScore BowlingScore { get; set; }
+
         [NotMapped]
         public string PostOrCanc => IsPostponed ? "Post." : IsCancelled ? "Canc." : String.Empty;
 
@@ -55,10 +57,10 @@ namespace OnTrackWebService.Models
         public string SelectedTeamResult { get; set; }
 
         [NotMapped]
-        public string HomeTeamScore { get; set; }
+        public int HomeTeamScore { get; set; }
 
         [NotMapped]
-        public string AwayTeamScore { get; set; }
+        public int AwayTeamScore { get; set; }
 
         [NotMapped]
         public string MatchResult { get; set; }
