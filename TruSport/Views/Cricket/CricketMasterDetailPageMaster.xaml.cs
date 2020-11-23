@@ -28,34 +28,6 @@ namespace TruSport.Views.Cricket
             OnTrackListView = OnTrackMenuItemsListView;
         }
 
-        //async void SignOutTapped(object sender, System.EventArgs e)
-        //{
-        //    try
-        //    {
-        //        var signout = await DisplayAlert("Sign Out", "Are your sure you want to sign out?", "Sign Out", "Cancel");
-
-        //        if (signout)
-        //        {
-        //            SignOutLabel.BackgroundColor = (Color)App.Current.Resources["primaryBarBlue"];
-
-        //            SecureStorage.RemoveAll();
-
-        //            App.IsLoggedIn = false;
-
-        //            App.Current.MainPage = new FootballMasterDetailPage();
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await Application.Current.MainPage.DisplayAlert("SIGN OUT", "There was an issue logging you out. Please try again.", "Okay");
-        //    }
-        //    finally
-        //    {
-        //        SignOutLabel.BackgroundColor = Color.Transparent;
-        //    }
-        //}
-
         class CricketMasterDetailPageMasterViewModel : INotifyPropertyChanged
         {
             private ObservableCollection<CricketMasterDetailPageMenuItem> _onTrackMenuItems { get; set; }
@@ -84,6 +56,7 @@ namespace TruSport.Views.Cricket
                 new CricketMasterDetailPageMenuItem { Id = 3, Title = "Leaderboard", IconSource="" , TargetType = typeof(Cricket.LeagueStatsPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 4, Title = "Competitions", IconSource="" , TargetType = typeof(Cricket.CompetitionsPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 5, Title = "Favourites", IconSource="" , TargetType = typeof(Cricket.FavouritePage), Group = "OnTrack" },
+                new CricketMasterDetailPageMenuItem { Id = 9, Title = "Shop Merchandise", IconSource="" , TargetType = typeof(ShopPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 6, Title = "What's Happening?", IconSource="" , TargetType = typeof(FlyersPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 7, Title = "News", IconSource="" , TargetType = typeof(NewsPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 8, Title = "Help", IconSource="" , TargetType = typeof(HelpPage), Group = "OnTrack" },

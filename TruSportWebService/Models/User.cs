@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models
 {
     public class User
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string RoleID { get; set; }
         public string FirstName { get; set; }
@@ -22,12 +23,14 @@ namespace OnTrackWebService.Models
         [ForeignKey("RoleID")]
         public Role Role { get; set; }
 
-        [ForeignKey("TeamID")]
+        //[ForeignKey("TeamID")]
+        [NotMapped]
         public Team Team { get; set; }
     }
 
     public class AllUsers
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -47,6 +50,7 @@ namespace OnTrackWebService.Models
 
     public class UserResponse
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string RoleID { get; set; }
         public string TeamID { get; set; }

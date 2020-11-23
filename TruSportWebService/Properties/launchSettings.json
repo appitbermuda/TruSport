@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/team/allteams",
+      "launchUrl": "api/team/all",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,7 +20,7 @@
     "OnTrackWebService": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/team/allteams",
+      "launchUrl": "api/team/all",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

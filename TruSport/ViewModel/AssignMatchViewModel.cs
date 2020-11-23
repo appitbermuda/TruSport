@@ -49,7 +49,7 @@ namespace TruSport.ViewModel
         private bool isSubstituteVisible;
 
         PlayerService playerService;
-        MatchRosterService matchRosterService;
+        RosterService rosterService;
         MatchService matchService;
         MatchStatService matchStatService;
         INavigation Navigation;
@@ -62,7 +62,7 @@ namespace TruSport.ViewModel
 
             PlayerCollection = new ObservableCollection<Player>();
             RosterCollection = new ObservableCollection<Player>();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             matchService = new MatchService();
             matchStatService = new MatchStatService();
             playerService = new PlayerService();
@@ -76,7 +76,7 @@ namespace TruSport.ViewModel
             RosterPlayer = rosterPlayer;
             PlayerCollection = new ObservableCollection<Player>();
             RosterCollection = new ObservableCollection<Player>();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             matchStatService = new MatchStatService();
             matchService = new MatchService();
             playerService = new PlayerService();
@@ -102,7 +102,7 @@ namespace TruSport.ViewModel
             RosterPlayer = rosterPlayer;
             PlayerCollection = new ObservableCollection<Player>();
             RosterCollection = new ObservableCollection<Player>();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             matchStatService = new MatchStatService();
             matchService = new MatchService();
             playerService = new PlayerService();
@@ -128,7 +128,7 @@ namespace TruSport.ViewModel
             HomeTeamCollection = new ObservableCollection<Player>();
             AwayTeamCollection = new ObservableCollection<Player>();
 
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             matchService = new MatchService();
             playerService = new PlayerService();
 
@@ -470,7 +470,7 @@ namespace TruSport.ViewModel
                 SubButtonSelected = false;
 
 
-                var roster = await matchRosterService.GetTeamMatchRosters(RosterPlayer.FixtureID, RosterPlayer.TeamID);
+                var roster = await rosterService.GetTeamMatchRosters(RosterPlayer.FixtureID, RosterPlayer.TeamID);
 
                 roster = roster.Where(e => e.PlayerID != RosterPlayer.PlayerID && ((e.IsStarter && e.SubstitutePlayerID == null) || (!e.IsStarter && e.SubstitutePlayerID != null)) && e.MatchStats.All(x => ((x.RedCard.HasValue && x.RedCard == 0) || x.RedCard == null) || ((x.YellowCard.HasValue && x.YellowCard == 0) || x.YellowCard == null))).ToList();
 
@@ -527,7 +527,7 @@ namespace TruSport.ViewModel
 
 
                 //await matchService.Update(match);
-                //await matchRosterService.Update(RosterPlayer);
+                //await rosterService.Update(RosterPlayer);
                 
 
                 //if (AssistPlayerID != null)
@@ -535,11 +535,11 @@ namespace TruSport.ViewModel
                 //    RosterPlayer.AssistPlayerID = AssistPlayerID;
 
 
-                //    var assistPlayer = await matchRosterService.GetMatchRosterPlayer(RosterPlayer.FixtureID, AssistPlayerID);
+                //    var assistPlayer = await rosterService.GetMatchRosterPlayer(RosterPlayer.FixtureID, AssistPlayerID);
 
                 //    assistPlayer.Assists = assistPlayer.Assists == null ? 1 : assistPlayer.Assists + 1;
 
-                //    //await matchRosterService.Update(assistPlayer);
+                //    //await rosterService.Update(assistPlayer);
                 //}
 
 
@@ -691,7 +691,7 @@ namespace TruSport.ViewModel
                 GoalButtonSelected = false;
                 SubButtonSelected = true;
 
-                var roster = await matchRosterService.GetTeamMatchRosters(RosterPlayer.FixtureID, RosterPlayer.TeamID);
+                var roster = await rosterService.GetTeamMatchRosters(RosterPlayer.FixtureID, RosterPlayer.TeamID);
                 var subs = roster.Where(e => !e.IsStarter);
                 List<MatchRoster> cleanSubs = new List<MatchRoster>();
 
@@ -738,13 +738,13 @@ namespace TruSport.ViewModel
                     RosterPlayer.SubstitutePlayerID = SubstitutePlayerID;
                     RosterPlayer.SubstituteTime = Minute;
 
-                    var subPlayer = await matchRosterService.GetMatchRosterPlayer(RosterPlayer.FixtureID, SubstitutePlayerID);
+                    var subPlayer = await rosterService.GetMatchRosterPlayer(RosterPlayer.FixtureID, SubstitutePlayerID);
 
                     subPlayer.SubstitutePlayerID = RosterPlayer.PlayerID;
                     subPlayer.SubstituteTime = Minute;
 
-                    await matchRosterService.Update(RosterPlayer);
-                    await matchRosterService.Update(subPlayer);
+                    await rosterService.Update(RosterPlayer);
+                    await rosterService.Update(subPlayer);
                 }
             }
             catch (Exception ex)
@@ -778,7 +778,7 @@ namespace TruSport.ViewModel
 
                 var match = await matchService.GetFixtureMatch(RosterPlayer.FixtureID);
 
-                var matchRoster = await matchRosterService.GetFixtureMatchRosters(RosterPlayer.FixtureID);
+                var matchRoster = await rosterService.GetFixtureMatchRosters(RosterPlayer.FixtureID);
                 //var matchStats = matchRoster.Select(x => x.MatchStats);
 
                 //var stats = matchStats.Where(x => x.Any(i => i.Goal > 0)).ToList();
@@ -840,7 +840,7 @@ namespace TruSport.ViewModel
                         }
 
 
-                        ////await matchRosterService.Update(RosterPlayer);
+                        ////await rosterService.Update(RosterPlayer);
                         await matchStatService.Update(insertMatchStat);
 
                         await Task.Delay(300);
@@ -895,7 +895,7 @@ namespace TruSport.ViewModel
                     RosterPlayer.SubstitutePlayerID = SubstitutePlayerID;
                     RosterPlayer.SubstituteTime = Minute;
 
-                    var subPlayer = await matchRosterService.GetMatchRosterPlayer(RosterPlayer.FixtureID, SubstitutePlayerID);
+                    var subPlayer = await rosterService.GetMatchRosterPlayer(RosterPlayer.FixtureID, SubstitutePlayerID);
 
                     subPlayer.SubstitutePlayerID = RosterPlayer.PlayerID;
                     subPlayer.SubstituteTime = Minute;
@@ -903,8 +903,8 @@ namespace TruSport.ViewModel
                     var saveCard = await App.Current.MainPage.DisplayAlert("Substitute", "OUT: " + RosterPlayer.Player.Name + "\n\nIN: " + subPlayer.Player.Name, "Yes", "Cancel");
                     if (saveCard)
                     {
-                        await matchRosterService.Update(RosterPlayer);
-                        await matchRosterService.Update(subPlayer);
+                        await rosterService.Update(RosterPlayer);
+                        await rosterService.Update(subPlayer);
 
                         await Navigation.PopModalAsync();
 
@@ -934,7 +934,7 @@ namespace TruSport.ViewModel
 
                 if (addGoal)
                 {
-                    var playerInRoster = await matchRosterService.GetMatchRosterPlayer(FixtureItem.ID, item.ID);
+                    var playerInRoster = await rosterService.GetMatchRosterPlayer(FixtureItem.ID, item.ID);
 
                     if (playerInRoster != null)
                     {
@@ -978,7 +978,7 @@ namespace TruSport.ViewModel
 
                         //if (addGoal)
                         //{
-                            var inserted = await matchRosterService.Insert(matchRoster);
+                            var inserted = await rosterService.Insert(matchRoster);
 
                             if (inserted)
                                 HomeTeamScore = HomeTeamScore + 1;
@@ -1016,7 +1016,7 @@ namespace TruSport.ViewModel
 
                 if (addGoal)
                 {
-                    var playerInRoster = await matchRosterService.GetMatchRosterPlayer(FixtureItem.ID, item.ID);
+                    var playerInRoster = await rosterService.GetMatchRosterPlayer(FixtureItem.ID, item.ID);
 
                     if (playerInRoster != null)
                     {
@@ -1060,7 +1060,7 @@ namespace TruSport.ViewModel
 
                         //if (addGoal)
                         //{
-                        var inserted = await matchRosterService.Insert(matchRoster);
+                        var inserted = await rosterService.Insert(matchRoster);
 
                         if (inserted)
                             AwayTeamScore = AwayTeamScore + 1;

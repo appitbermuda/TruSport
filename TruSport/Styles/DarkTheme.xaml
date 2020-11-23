@@ -10,6 +10,7 @@
     <Color x:Key="frameBackgroundColor">#272727</Color>
     <Color x:Key="controlHeaderBackgroundColor">#131313</Color>
     <Color x:Key="controlElementBackgroundColor">#1d1d1d</Color>
+    <Color x:Key="unfocusedBackgroundColor">#F5F5F5</Color>
     <Color x:Key="TextPrimaryColor">#FFFFFF</Color>
     <Color x:Key="TextSecondaryColor">#FFFFFF</Color>
     <Color x:Key="TextThirdColor">#FFFFFF</Color>
@@ -18,7 +19,9 @@
     <Color x:Key="tabHeaderColor">#080808</Color>
     <Color x:Key="tabTextColor">#FFFFFF</Color>
     <Color x:Key="tabIndicatorColor">#1d2462</Color>
-    <Color x:Key="indicatorColor">#FFFFFF</Color>
+    <Color x:Key="indicatorColor">#F5F5F5</Color>
     <Color x:Key="indicatorTextColor">#000000</Color>
     <Color x:Key="iconColor">#FFFFFF</Color>
+    <Color x:Key="buttonBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="buttonTextColor">#1d2462</Color>
 </ResourceDictionary>

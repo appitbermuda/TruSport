@@ -7,9 +7,11 @@ namespace OnTrackWebService.Models
 {
     public class Team
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string HomeFieldID { get; set; }
         public string LeagueID { get; set; }
+        public string SportID { get; set; }
         public string Name { get; set; }
         public string Alias { get; set; }
         public string TeamLogo { get; set; }
@@ -18,14 +20,19 @@ namespace OnTrackWebService.Models
         [ForeignKey("HomeFieldID")]
         public Field Field { get; set; }
 
+        [ForeignKey("SportID")]
+        public Sport Sport { get; set; }
+
         [NotMapped]
         public virtual LeagueTable FootballTable { get; set; }
 
         [NotMapped]
         public virtual CricketLeagueTable CricketTable { get; set; }
 
+        [NotMapped]
         public virtual List<TeamSeason> TeamSeasons { get; set; }
 
+        [NotMapped]
         public virtual List<Coach> Coaches { get; set; }
 
         [NotMapped]

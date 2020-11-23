@@ -17,21 +17,196 @@ namespace TruSport.Data
         {
             database = new SQLiteAsyncConnection(dbPath);
             database.CreateTableAsync<Coach>().Wait();
+            database.CreateTableAsync<Customer>().Wait();
+            database.CreateTableAsync<CustomerOrder>().Wait();
+            database.CreateTableAsync<CreditCard>().Wait();
             database.CreateTableAsync<Token>().Wait();
             database.CreateTableAsync<NotiAlert>().Wait();
+            database.CreateTableAsync<BowlingFixture>().Wait();
             database.CreateTableAsync<CricketFixture>().Wait();
             database.CreateTableAsync<DefaultSport>().Wait();
             database.CreateTableAsync<Favourite>().Wait();
             database.CreateTableAsync<Field>().Wait();
             database.CreateTableAsync<Fixture>().Wait();
+            database.CreateTableAsync<Product>().Wait();
+            database.CreateTableAsync<Order>().Wait();
             database.CreateTableAsync<League>().Wait();
             database.CreateTableAsync<Match>().Wait();
+            database.CreateTableAsync<MatchTicket>().Wait();
             database.CreateTableAsync<MatchType>().Wait();
             database.CreateTableAsync<Player>().Wait();
             database.CreateTableAsync<Sport>().Wait();
             database.CreateTableAsync<Team>().Wait();
             database.CreateTableAsync<User>().Wait();
             database.CreateTableAsync<UserType>().Wait();
+        }
+
+        //Coach
+        public async Task<List<CreditCard>> GetCreditCards(string email)
+        {
+            try
+            {
+                //PasswordHasher passwordHasher = new PasswordHasher();
+                
+                var creditCards = await database.Table<CreditCard>().Where(e => e.Email == email).ToListAsync();
+
+                return creditCards;
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<CreditCard> GetCreditCard(int ID)
+        {
+            try
+            {
+                //PasswordHasher passwordHasher = new PasswordHasher();
+
+                var creditCard = await database.Table<CreditCard>().FirstOrDefaultAsync(e => e.ID == ID);
+
+                //creditCard.CardNumber = passwordHasher.DecryptString(creditCard.CardNumber);
+
+                return creditCard;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<int> Insert(CreditCard item)
+        {
+            try
+            {
+                if(item.IsDefault)
+                {
+                    var creditcards = await database.Table<CreditCard>().Where(e => e.Email == item.Email).ToListAsync();
+
+                    if (creditcards != null && creditcards.Count > 0)
+                    {
+                        creditcards.ForEach(e => e.IsDefault = false);
+
+                        await database.UpdateAllAsync(creditcards);
+                    }
+                }
+
+                item.Last4 = "****-****-****-" + item.CardNumber.Substring(item.CardNumber.Length - 4, 4);
+                //PasswordHasher passwordHasher = new PasswordHasher();
+                //item.CardNumber = passwordHasher.EncryptString(item.CardNumber);
+
+                await database.InsertAsync(item);
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Insert Card");
+            }
+
+            return -1;
+        }
+
+        public async Task<int> Update(CreditCard item)
+        {
+            try
+            {
+                if (item.IsDefault)
+                {
+                    var creditcards = await database.Table<CreditCard>().Where(e => e.Email == item.Email).ToListAsync();
+
+                    if (creditcards != null && creditcards.Count > 0)
+                    {
+                        creditcards.ForEach(e => e.IsDefault = false);
+
+                        await database.UpdateAllAsync(creditcards);
+                    }
+                }
+
+                item.Last4 = "****-****-****-" + item.CardNumber.Substring(item.CardNumber.Length - 4, 4);
+                //PasswordHasher passwordHasher = new PasswordHasher();
+                //item.CardNumber = passwordHasher.EncryptString(item.CardNumber);
+
+                await database.UpdateAsync(item);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Insert Card");
+            }
+
+            return -1;
+        }
+
+        public Task<int> Delete(int ID)
+        {
+            return database.DeleteAsync<CreditCard>(ID);
+        }
+
+        //Order
+        public async Task<List<CustomerOrder>> GetMatchDayOrder(string email)
+        {
+            List<CustomerOrder> orders = new List<CustomerOrder>();
+            try
+            {
+                var customer = await GetCustomerByIDAsync(email);
+                orders = await database.Table<CustomerOrder>().Where(e => e.CustomerID == customer.ID).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetMatchDayOrder");
+            }
+
+            return orders;
+        }
+
+        public async Task<List<MatchTicket>> GetMatchDayTickets(string email)
+        {
+            List<MatchTicket> matchTickets = new List<MatchTicket>();
+            try
+            {
+                var customer = await GetCustomerByIDAsync(email);
+                //orders = await database.Table<CustomerOrder>().Where(e => e.CustomerID == customer.ID).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetMatchDayOrder");
+            }
+
+            return matchTickets;
+        }
+
+        public async Task<List<Order>> GetOrderHistory(string email)
+        {
+            List<Order> orders = new List<Order>();
+            try
+            {
+                var customer = await GetCustomerByIDAsync(email);
+                orders = await database.Table<Order>().Where(e => e.CustomerID == customer.ID).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetMatchDayOrder");
+            }
+
+            return orders;
+        }
+
+        public Task<int> Insert(Order item)
+        {
+            return database.InsertAsync(item);
+        }
+
+        public Task<int> DeleteOrder(int ID)
+        {
+            return database.DeleteAsync<Order>(ID);
+        }
+
+        public Task<int> DeleteOrders()
+        {
+            return database.DeleteAllAsync<Order>();
         }
 
         //Coach
@@ -140,6 +315,13 @@ namespace TruSport.Data
             return favourite != null;
         }
 
+        public async Task<bool> IsBowlingTeamFavourite(string TeamID)
+        {
+            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TeamID == TeamID && e.Sport == "Bowling");
+
+            return favourite != null;
+        }
+
         public async Task<bool> IsCricketTeamFavourite(string TeamID)
         {
             var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TeamID == TeamID && e.Sport == "Cricket");
@@ -154,9 +336,16 @@ namespace TruSport.Data
             return favourite != null;
         }
 
+        public async Task<bool> IsBowlingFixtureFavourite(string FixtureID)
+        {
+            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.BowlingFixtureID == FixtureID && e.Sport == "Bowling");
+
+            return favourite != null;
+        }
+
         public async Task<bool> IsCricketFixtureFavourite(string FixtureID)
         {
-            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.FixtureID == FixtureID && e.Sport == "Cricket");
+            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.CricketFixtureID == FixtureID && e.Sport == "Cricket");
 
             return favourite != null;
         }
@@ -173,6 +362,40 @@ namespace TruSport.Data
             var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.FixtureID == FixtureID);
 
             return favourite != null;
+        }
+
+        public async Task<List<Favourite>> GetBowlingTeamFavourites()
+        {
+            try
+            {
+                TeamService teamService = new TeamService();
+                var favourites = await database.Table<Favourite>().Where(e => e.Type == "Team" && e.Sport == "Bowling").ToListAsync();
+
+                if (favourites.Count > 0)
+                {
+                    var teamsList = await teamService.GetBowlingTeams();
+                    //var teams = teamsList.Where(e => e.Season.IsCurrent).Select(e => e.Team);
+                    var teams = teamsList.Where(e => e.TeamSeasons.Any(d => d.Season.IsCurrent));
+
+                    var teamFavourites = (from favourite in favourites
+                                          join team in teams on favourite.TeamID equals team.ID
+                                          select new Favourite
+                                          {
+                                              Team = team,
+                                              League = team.League,
+                                              Type = favourite.Type,
+                                              TeamID = favourite.TeamID,
+                                              Sport = "Bowling"
+                                          }).ToList();
+
+
+                    return teamFavourites;
+                }
+            }
+            catch (Exception ex)
+            { }
+
+            return null;
         }
 
         public async Task<List<Favourite>> GetCricketTeamFavourites()
@@ -239,6 +462,54 @@ namespace TruSport.Data
             }
             catch (Exception ex)
             { }
+
+            return null;
+        }
+
+
+        public async Task<List<Favourite>> GetBowlingFixtureFavourites()
+        {
+            try
+            {
+                FixtureService fixtureService = new FixtureService();
+                var favourites = await database.Table<Favourite>().Where(e => e.Type == "Fixture" && e.Sport == "Bowling").ToListAsync();
+
+                if (favourites.Count > 0)
+                {
+                    var fixtures = await fixtureService.GetUpcomingBowlingFixtures();
+
+                    var fixtureFavourites = (from favourite in favourites
+                                             join fixture in fixtures on favourite.BowlingFixtureID equals fixture.ID
+                                             select new Favourite
+                                             {
+                                                 BowlingFixture = fixture,
+                                                 Type = favourite.Type,
+                                                 BowlingFixtureID = favourite.BowlingFixtureID,
+                                                 Sport = "Bowling"
+                                             }).ToList();
+
+                    var needToDelete = favourites.Where(e => !fixtureFavourites.Any(d => d.BowlingFixtureID == e.BowlingFixtureID));
+
+                    foreach(var favourite in needToDelete)
+                    {
+                        await DeleteBowlingFixtureFavourite(favourite.BowlingFixtureID);
+                    }
+
+                    //foreach (var favourite1 in favourites)
+                    //{
+                    //    if(fixtureFavourites.FirstOrDefault(e => e.BowlingFixtureID == favourite1.BowlingFixtureID) == null)
+                    //        await DeleteBowlingFixtureFavourite(favourite1.BowlingFixtureID);                        
+                    //}
+
+                    return fixtureFavourites;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+            }
 
             return null;
         }
@@ -369,6 +640,20 @@ namespace TruSport.Data
             return null;
         }
 
+        public async Task<Favourite> GetFavouriteByBowlingFixtureID(string FixtureID)
+        {
+            try
+            {
+                var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.BowlingFixtureID == FixtureID);
+
+                return favourite;
+            }
+            catch (Exception ex)
+            { }
+
+            return null;
+        }
+
         public async Task<Favourite> GetFavouriteByCricketFixtureID(string FixtureID)
         {
             try
@@ -416,6 +701,20 @@ namespace TruSport.Data
             return database.DeleteAllAsync<Favourite>();
         }
 
+        public async Task<int> SaveBowlingFavourite(Favourite item)
+        {
+            try
+            {
+                item.Sport = "Bowling";
+                return await database.InsertAsync(item);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Save Bowling Favourite");
+            }
+            return -1;
+        }
+
         public async Task<int> SaveCricketFavourite(Favourite item)
         {
             try
@@ -454,6 +753,21 @@ namespace TruSport.Data
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Delete Team Favourite");
+            }
+            return -1;
+        }
+
+        public async Task<int> DeleteBowlingFixtureFavourite(string FixtureID)
+        {
+
+            try
+            {
+                var favourite = await GetFavouriteByBowlingFixtureID(FixtureID);
+                return await database.DeleteAsync(favourite);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Delete Bowling Favourite");
             }
             return -1;
         }
@@ -697,6 +1011,99 @@ namespace TruSport.Data
         public Task<int> DeleteUser(User item)
         {
             return database.DeleteAsync(item);
+        }
+
+        //Customer
+        public async Task<Customer> GetCustomerByIDAsync(string email)
+        {
+            return await database.Table<Customer>().Where(i => i.Email == email).FirstOrDefaultAsync();
+        }
+
+        //public async Task<bool> IsUserLoggedIn()
+        //{
+        //    //User user = await database.Table<User>().Where(i => i.IsLoggedIn == true).FirstOrDefaultAsync();
+
+        //    //if (user != null)
+        //    //{
+        //    //    App.UserID = user.ID;
+        //    //    App.UserFirstName = user.FirstName;
+        //    //    App.UserLastName = user.LastName;
+        //    //    App.UserFullName = user.FirstName + " " + user.LastName;
+        //    //    App.UserType = user.UserTypeID;
+        //    //    return true;
+        //    //}
+
+        //    return false;
+        //}
+
+        public Task<int> SaveCustomer(Customer item)
+        {
+            return database.InsertAsync(item);
+        }
+
+        public async Task<int> UpdateCustomer(Customer item)
+        {
+            var thisCustomerExist = await database.Table<Customer>().Where(e => e.ID == item.ID).FirstOrDefaultAsync();
+
+            if (thisCustomerExist != null)
+                return await database.UpdateAsync(item);
+            else
+                return await database.InsertAsync(item);
+        }
+
+        public Task<int> DeleteCustomer(Customer item)
+        {
+            return database.DeleteAsync(item);
+        }
+
+        public async Task<bool> SignIn(Customer customer)
+        {
+            try
+            {
+                await database.InsertAsync(customer);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> SignOut()
+        {
+            try
+            {
+                await database.DeleteAllAsync<User>();
+                await database.DeleteAllAsync<Customer>();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> CustomerAuthenticated(string email)
+        {
+            try
+            {
+                var user = await database.Table<Customer>().FirstOrDefaultAsync(e => e.Email == email);
+
+                if (user != null)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
         }
 
         //User Type

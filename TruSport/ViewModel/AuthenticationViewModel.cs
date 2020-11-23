@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Xamarin.Forms;
 using TruSport.Services;
 using Xamarin.Essentials;
+using TruSport.Views.Tickets;
 
 namespace TruSport.ViewModels
 {
@@ -52,6 +53,7 @@ namespace TruSport.ViewModels
         UserService userService;
         TeamService teamService;
         UserTypeService userTypeService;
+        NotificationRegistrationService notificationRegistrationService;
 
         public AuthenticationViewModel()
         {
@@ -64,6 +66,7 @@ namespace TruSport.ViewModels
             userService = new UserService();
             teamService = new TeamService();
             userTypeService = new UserTypeService();
+            notificationRegistrationService = new NotificationRegistrationService();
 
             CountryCollection = new ObservableCollection<string>();
 
@@ -82,7 +85,8 @@ namespace TruSport.ViewModels
         {
             Navigation = navigation;
             userService = new UserService();
-            
+            notificationRegistrationService = new NotificationRegistrationService();
+
             GenerateSource("");
 
             SelectedTeamChangedCommand = new Command<Syncfusion.XForms.ComboBox.SelectionChangedEventArgs>(TeamSelectionChanged);
@@ -331,6 +335,7 @@ namespace TruSport.ViewModels
 
                                 //await App.Database.SaveUser(localUser);
 
+                                await SecureStorage.SetAsync("Email", thisUser.Email);
                                 await SecureStorage.SetAsync("Token", thisUser.Token);
                                 await SecureStorage.SetAsync("UserLoggedIn", "true");
                                 await SecureStorage.SetAsync("UserRole", thisUser.UserType.Name);
@@ -346,6 +351,14 @@ namespace TruSport.ViewModels
                                 //await App.Database.UpdateUser(thisUser);
                                 IsActivityIndicatorVisible = false;
 
+                                var tags = await App.Database.GetTags();
+                                var tagsList = tags.ToList();
+                                tagsList.Add(thisUser.Email);
+
+                                tags = tagsList.ToArray();
+                                
+                                await notificationRegistrationService.RegisterDeviceAsync(tags);
+
                                 //Navigation.InsertPageBefore(new MapPage(), Navigation.NavigationStack.First());
                                 //Navigation.InsertPageBefore(new FootballMasterDetailPage(), Navigation.NavigationStack.First());
                                 //Navigation.InsertPageBefore(new AKVOMasterDetailPage(), Navigation.NavigationStack.First());
@@ -354,7 +367,7 @@ namespace TruSport.ViewModels
                                 //await Navigation.PopAsync();
                                 //await Navigation.PushAsync(new NavigationPage(new MapPage()));
 
-                                App.Current.MainPage = new FootballMasterDetailPage();
+                                await Navigation.PopAsync();
                             }
                             else
                             {
@@ -448,7 +461,9 @@ namespace TruSport.ViewModels
 
                                             //Navigation.InsertPageBefore(new FootballMasterDetailPage(), Navigation.NavigationStack.First());
                                             //await Navigation.PopToRootAsync();
-                                            App.Current.MainPage = new FootballMasterDetailPage();
+                                            //App.Current.MainPage = new FootballMasterDetailPage();
+
+                                            await Navigation.PopAsync();
                                         }
                                         else
                                         {
@@ -603,9 +618,50 @@ namespace TruSport.ViewModels
 
                                         await Application.Current.MainPage.DisplayAlert("Success", "Password reset successfully!.", "Okay");
 
-                                        await Navigation.PopModalAsync();
+                                        //await Navigation.PopModalAsync();
 
-                                        PasswordResetRequestSent = true;
+                                        //PasswordResetRequestSent = true;
+
+                                        UserAuthentication userAuthentication = new UserAuthentication();
+                                        userAuthentication.Email = Email;
+                                        userAuthentication.Password = Password;
+
+                                        User thisUser = await userService.SignIn(userAuthentication);
+
+                                        if (thisUser != null)
+                                        {
+                                            bool isEnabled = await Microsoft.AppCenter.Push.Push.IsEnabledAsync();
+                                            Guid DeviceID = Guid.Empty;
+                                            if (isEnabled)
+                                            {
+                                                Guid? deviceID = await AppCenter.GetInstallIdAsync();
+                                                DeviceID = deviceID.GetValueOrDefault();
+                                                App.DeviceID = DeviceID.ToString();
+                                            }
+
+                                            //await App.Database.SaveUser(localUser);
+
+                                            await SecureStorage.SetAsync("Email", thisUser.Email);
+                                            await SecureStorage.SetAsync("Token", thisUser.Token);
+                                            await SecureStorage.SetAsync("UserLoggedIn", "true");
+                                            await SecureStorage.SetAsync("UserRole", thisUser.UserType.Name);
+
+                                            App.UserID = thisUser.ID;
+                                            App.UserFirstName = thisUser.FirstName;
+                                            App.UserLastName = thisUser.LastName;
+                                            App.UserFullName = thisUser.FirstName + " " + thisUser.LastName;
+
+                                            //await App.Database.UpdateUser(thisUser);
+                                            IsActivityIndicatorVisible = false;
+
+
+                                            await Navigation.PopModalAsync();
+                                        }
+                                        else
+                                        {
+                                            IsActivityIndicatorVisible = false;
+                                            await Application.Current.MainPage.DisplayAlert("Sign In", "You have either entered an incorrect email or password, or your account has not been validated. Please try again later.", "Okay");
+                                        }
 
                                     }
                                     else

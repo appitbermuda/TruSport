@@ -4,66 +4,90 @@ using Xamarin.Forms;
 using TruSport.Data;
 using TruSport.Views.Football;
 using TruSport.ViewModels;
+using Xamarin.Essentials;
+using System.Diagnostics;
+using TruSport.ViewModel.Shop;
+using System.Linq;
 
 namespace TruSport.Views
 {
     public partial class SignInPage : ContentPage
     {
         
-        AuthenticationViewModel authenticationViewModel;
+        LoginViewModel loginViewModel;
 
         public SignInPage()
         {
-            authenticationViewModel = new AuthenticationViewModel(Navigation);
-            this.BindingContext = authenticationViewModel;
+            loginViewModel = new LoginViewModel(Navigation);
+            this.BindingContext = loginViewModel;
             InitializeComponent();
 
             
         }
 
-        private async void OnSignInClicked(object sender, EventArgs e)
+        protected override async void OnAppearing()
         {
-            //BusyIndicator.IsVisible = true;
-            SigninButton.IsEnabled = false;
-            bool userNameValid = true;
-            bool passwordValid = true;
+            base.OnAppearing();
 
-            if (EmailEntry.Text == null || EmailEntry.Text == "")
-                userNameValid = false;
-
-            if (PasswordEntry.Text == null || PasswordEntry.Text == "")
-                passwordValid = false;
-
-            if(userNameValid && passwordValid)
+            try
             {
-                //var userID = await databaseManager.UserSignIn(EmailEntry.Text.ToLower(), PasswordEntry.Text);
+                //BusyIndicator.IsVisible = true;
 
-                //if (userID == null)
-                //{
-                //    //BusyIndicator.IsVisible = false;
-                //    await DisplayAlert("Sign In", "The email or password is incorrect.", "Okay");
-                //}
-                //else
-                //{
-                //    App.UserID = userID;
-                //    //BusyIndicator.IsVisible = false;
-                //    await PopupNavigation.Instance.PopAllAsync();
-                //    App.Current.MainPage = new FootballMainPage();
-                //}
+                loginViewModel.IsActivityIndicatorVisible = true;
+
+                var userLoggedIn = await SecureStorage.GetAsync("UserLoggedIn");
+
+                if (!String.IsNullOrEmpty(userLoggedIn) && Convert.ToBoolean(userLoggedIn))
+                {
                     
+                    await Navigation.PopAsync();
+                    
+                }
             }
-            else
+            catch (Exception ex)
             {
-                //BusyIndicator.IsVisible = false;
+                Debug.WriteLine(ex.Message, "LoginPageOnAppearing");
             }
+            finally
+            {
+                loginViewModel.IsActivityIndicatorVisible = false;
+            }
+        }
 
-            SigninButton.IsEnabled = true;
-            //var loadingPage = new LoadingPopupPage();
-            //await Navigation.PushPopupAsync(loadingPage);
-            //await Task.Delay(2000);
-            //await Navigation.RemovePopupPageAsync(loadingPage);
-            //await Navigation.PushPopupAsync(new LoginSuccessPopupPage());
-            //await PopupNavigation.Instance.PushAsync(_signInPopup);
+        private void LoginPage_BindingContextChanged(object sender, EventArgs e)
+        {
+            loginViewModel.ErrorsChanged += LoginViewmodel_ErrorsChanged;
+        }
+
+        private void LoginViewmodel_ErrorsChanged(object sender, System.ComponentModel.DataErrorsChangedEventArgs e)
+        {
+            var propHasErrors = (loginViewModel.GetErrors(e.PropertyName) as List<string>)?.Any() == true;
+            switch (e.PropertyName)
+            {
+                case nameof(loginViewModel.Email):
+                    EmailLabel.ErrorColor = propHasErrors
+                    ? Color.Red : Color.Gray;
+                    break;
+                case nameof(loginViewModel.Password):
+                    PasswordLabel.ErrorColor = propHasErrors
+                    ? Color.Red : Color.Gray;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
+
+        void Menu_Clicked(System.Object sender, System.EventArgs e)
+        {
+            if (Application.Current.MainPage is MasterDetailPage mdp)
+            {
+                mdp.IsPresented = true;
+            }
         }
     }
 }

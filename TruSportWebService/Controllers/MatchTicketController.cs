@@ -25,6 +25,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         [Route("All")]
         public async Task<IActionResult> MatchTickets()
@@ -45,7 +46,50 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpGet]
+        [Route("Customer")]
+        public async Task<IActionResult> CustomerMatchTickets()
+        {
+            try
+            {
+                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.GetCustomerTickets(User);
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpGet]
+        [Route("TransferRequests")]
+        public async Task<IActionResult> TransferRequests()
+        {
+            try
+            {
+                IEnumerable<AcceptTransfer> matchTickets = await _matchTicketRepository.GetTransferRequests(User);
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values/5
+        [Authorize(Roles = Roles.Tickets)]
         [HttpGet]
         [Route("Get")]
         public async Task<IActionResult> Get(string id)
@@ -65,8 +109,115 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values
+        [Authorize(Roles = Roles.Tickets)]
+        [HttpGet]
+        [Route("Today")]
+        public async Task<IActionResult> TodaysMatchTickets(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.GetTodayMatchTickets(teamID);
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Fixture")]
+        public async Task<IActionResult> FixtureMatchTickets(string fixtureID)
+        {
+            try
+            {
+
+                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.Fixture(fixtureID);
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Validate")]
+        public async Task<IActionResult> ValidateCustomer(string matchTicketID)
+        {
+            try
+            {
+                bool validated = await _matchTicketRepository.ValidateCustomer(matchTicketID);
+
+                return Ok(validated);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Team")]
+        public async Task<IActionResult> TeamMatchTickets(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.Team(teamID);
+
+                if (matchTickets != null)
+                    return Ok(matchTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpPost]
+        [Route("Scan")]
+        public async Task<IActionResult> Scan([FromBody] MatchTicket matchTicket)
+        {
+            try
+            {
+                
+                TicketResponse ticketResponse = await _matchTicketRepository.Scan(matchTicket, User);
+
+                return Ok(ticketResponse);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
         // POST api/values
-        [Authorize(Roles = Roles.AllUsers)]
+        [Authorize(Roles = Roles.Customer)]
         [HttpPost]
         [Route("Purchase")]
         public async Task<IActionResult> Purchase([FromBody] PaymentAuthorize paymentAuthorize)
@@ -75,15 +226,105 @@ namespace OnTrackWebService.Controllers
             {
                 if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
                 {
-                    //Authorize.Request request = new Authorize.Request();
-                    //var response = await request.Payment(paymentAuthorize);
+                    PaymentResponse authorized = await _matchTicketRepository.Purchase(paymentAuthorize); 
 
-                    //return Ok(response);
+                    return Ok(authorized);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        //[Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("PurchaseTest")]
+        public async Task<IActionResult> PurchaseTest([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
+                {
+                    PaymentResponse authorized = await _matchTicketRepository.PurchaseTest(paymentAuthorize);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+
+        //[Authorize(Roles = Roles.Ad)]
+        [HttpGet]
+        [Route("ResendPurchaseConfirmation")]
+        public async Task<IActionResult> ResendPurchaseConfirmation(string OrderNumber)
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(OrderNumber))
+                {
+                    string confirmation = await _matchTicketRepository.ResendPurchaseConfirmation(OrderNumber);
+
+                    return Ok(confirmation);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Resend Match Ticket Confirmation");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("Transfer")]
+        public async Task<IActionResult> Transfer([FromBody] TransferRequest transferRequest)
+        {
+            try
+            {
+                if (transferRequest != null && transferRequest.MatchTicketID != null && transferRequest.Email != null)
+                {
+                    string transferred = await _matchTicketRepository.TransferRequest(transferRequest, User);
+
+                    return Ok(transferred);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Transfer Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("AcceptTransfer")]
+        public async Task<IActionResult> AcceptTransfer([FromBody] AcceptTransfer accept)
+        {
+            try
+            {
+                if (accept != null && accept.CustomerID != null && accept.MatchTicketID != null && accept.TransferCustomerID != null && accept.Accept)
+                {
+                    string transferred = await _matchTicketRepository.AcceptTransferRequest(accept);
+
+                    return Ok(transferred);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Transfer Match Ticket");
             }
 
             return NoContent();

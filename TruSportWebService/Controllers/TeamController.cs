@@ -9,6 +9,8 @@ using OnTrackWebService.Models;
 using System.Diagnostics;
 using OnTrackWebService.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using OnTrackWebService.Models.Imports;
 
 namespace OnTrackWebService.Controllers
 {
@@ -31,6 +33,26 @@ namespace OnTrackWebService.Controllers
             try
             {
                 IEnumerable<TeamSeason> teams = await _teamRepository.GetTeams();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> AllTeams()
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetAll();
 
                 if (teams != null)
                     return Ok(teams);
@@ -102,6 +124,44 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("AllBowling")]
+        public async Task<IActionResult> GetBowlingTeams()
+        {
+            try
+            {
+                IEnumerable<BowlingTeam> teams = await _teamRepository.GetBowlingTeams();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("Ticketing")]
+        public async Task<IActionResult> Ticketing(string SportID)
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetTicketingTeams(SportID);
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("AllFootball")]
         public async Task<IActionResult> GetFootballTeams()
         {
@@ -139,6 +199,25 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("BowlingLeague")]
+        public async Task<IActionResult> TeamsByBowlingLeague(string leagueID)
+        {
+            try
+            {
+                IEnumerable<BowlingTeamSeason> teams = await _teamRepository.GetTeamsByBowlingLeague(leagueID);
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values/5
         [HttpGet]
         [Route("Get")]
@@ -147,6 +226,26 @@ namespace OnTrackWebService.Controllers
             try
             {
                 TeamSeason team = await _teamRepository.GetTeam(id);
+
+                if (team != null)
+                    return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("Bowling")]
+        public async Task<IActionResult> GetBowlingTeam(string id)
+        {
+            try
+            {
+                BowlingTeamSeason team = await _teamRepository.GetBowlingTeam(id);
 
                 if (team != null)
                     return Ok(team);
@@ -239,6 +338,47 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values/5
+        [HttpGet]
+        [Route("BowlingProfile")]
+        public async Task<IActionResult> GetBowlingProfile(string id)
+        {
+            try
+            {
+                BowlingTeam team = await _teamRepository.GetBowlingProfile(id);
+
+                if (team != null)
+                    return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("ImportBowling")]
+        public async Task<IActionResult> UploadFootballFixtures([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportBowlingTeam fileUploadResponse = await _teamRepository.UploadBowlingTeams(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Bowling Team");
+            }
+
+            return NoContent();
+        }
+
         // POST api/values
         [Authorize(Roles = Roles.Admin)]
         [HttpPost]
@@ -267,6 +407,25 @@ namespace OnTrackWebService.Controllers
             try
             {
                 await _teamRepository.Update(team);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.TeamAdmin)]
+        [HttpPost]
+        [Route("UpdateBowling")]
+        public async Task<IActionResult> UpdateBowling([FromBody] BowlingTeam team)
+        {
+            try
+            {
+                await _teamRepository.UpdateBowling(team);
 
                 return Ok();
             }

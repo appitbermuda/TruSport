@@ -325,7 +325,7 @@
                                     SelectionBackgroundColor="Transparent"
                                  ItemSize="50"
                                                      IsStickyGroupHeader="True"
-                                                     GroupHeaderSize="30"
+                                                     GroupHeaderSize="60"
                                                  SelectionChanged="TeamSelected"
                                                  
                                 >
@@ -343,11 +343,11 @@
                                   <DataTemplate>
                                       <ViewCell>
                                         <ViewCell.View>
-                                          <StackLayout Padding="8,25,8,0">
-                                                        <Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
-                                                            <Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                                          <StackLayout Padding="8,25,8,0" HeightRequest="50" VerticalOptions="FillAndExpand">
+                                                        <Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent"  HeightRequest="50" VerticalOptions="FillAndExpand">
+                                                            <Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  HeightRequest="50" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
                                                                 <Grid HeightRequest="50">
-                                                                    <StackLayout Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                                    <StackLayout Padding="10,0" VerticalOptions="CenterAndExpand" HorizontalOptions="Start">
                                                                         <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingTeamConverter}, ConverterParameter={x:Reference TeamsList}}"
                                                      FontSize="{Binding Key, 
                                                             Converter={StaticResource groupHeaderSizeConverter}}"
@@ -370,7 +370,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Image Grid.Row="0"
-                       Source="ontrack.png"
+                       Source="ontracklogo.png"
                        Aspect="AspectFit"
                            HeightRequest="100"
                            WidthRequest="100"
@@ -463,7 +463,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Image Grid.Row="0"
-                       Source="ontrack.png"
+                       Source="ontracklogo.png"
                        Aspect="AspectFit"
                            HeightRequest="100"
                            WidthRequest="100"

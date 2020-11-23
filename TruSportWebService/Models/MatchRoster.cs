@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models
 {
     public class MatchRoster
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string FixtureID { get; set; }
         public string TeamID { get; set; }

@@ -1,32 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Owin;
-using Microsoft.Owin.Builder;
-using Microsoft.Owin.Security.OAuth;
+//using Microsoft.Owin;
 using Newtonsoft.Json;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Ad;
 using OnTrackWebService.Models.Shop;
 using OnTrackWebService.Repository;
-using Owin;
+//using Owin;
 
-[assembly: OwinStartup(typeof(OnTrackWebService.Startup))]
+//[assembly: OwinStartup(typeof(OnTrackWebService.Startup))]
 namespace OnTrackWebService
 {
     public class Startup
@@ -43,7 +34,15 @@ namespace OnTrackWebService
         {
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddCors();
-            services.AddMvc().AddJsonOptions(options => {
+            //services.AddMvc().AddJsonOptions(options => {
+            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            //});
+
+            services.AddMvc().AddMvcOptions(options =>
+            {
+                options.EnableEndpointRouting = false;
+            });
+            services.AddMvc().AddNewtonsoftJson(options => {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
@@ -51,9 +50,9 @@ namespace OnTrackWebService
             services.AddDbContext<OnTrackContext>
                 (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
-            //#else
+            //////#else
             //services.AddDbContext<OnTrackContext>
-            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
+            //  (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
             //#endif
 
@@ -83,6 +82,10 @@ namespace OnTrackWebService
                 };
             });
 
+            services.AddScoped<IOnTrackRepository<Ad>, AdRepository>();
+            services.AddScoped<IOnTrackRepository<BowlingGame>, BowlingGameRepository>();
+            services.AddScoped<IOnTrackRepository<BowlingRoster>, BowlingRosterRepository>();
+            services.AddScoped<IOnTrackRepository<ContactTrace>, ContactTraceRepository>();
             services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
             services.AddScoped<IEmailRepository<string>, EmailRepository>();
             services.AddScoped<INewsRepository<RssFeedItem>, NewsRepository>();
@@ -93,26 +96,33 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<LeagueStat>, LeagueStatRepository>();
             services.AddScoped<IOnTrackRepository<LTable>, LeagueTableRepository>();
             services.AddScoped<IOnTrackRepository<Inventory>, InventoryRepository>();
-            services.AddScoped<IOnTrackRepository<MatchTicket>, MatchTicketRepository>();
+            services.AddScoped<IOnTrackRepository<FixtureProduct>, FixtureProductRepository>();
             services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
             services.AddScoped<IOnTrackRepository<Match>, MatchRepository>();
+            services.AddScoped<IOnTrackRepository<MatchTicket>, MatchTicketRepository>();
             services.AddScoped<IOnTrackRepository<MatchInning>, MatchInningRepository>();
             services.AddScoped<IOnTrackRepository<MatchRoster>, MatchRosterRepository>();
             services.AddScoped<IOnTrackRepository<MatchStat>, MatchStatRepository>();
             services.AddScoped<IOnTrackRepository<MatchType>, MatchTypeRepository>();
+            services.AddScoped<IOnTrackRepository<Order>, OrderRepository>();
             services.AddScoped<IOnTrackRepository<Player>, PlayerRepository>();
             services.AddScoped<IOnTrackRepository<Award>, AwardRepository>();
             services.AddScoped<IOnTrackRepository<PlayerSeason>, PlayerSeasonRepository>();
             services.AddScoped<IOnTrackRepository<Team>, TeamRepository>();
+            services.AddScoped<IOnTrackRepository<TicketConfiguration>, TicketConfigurationRepository>();
             services.AddScoped<IOnTrackRepository<Role>, RoleRepository>();
             services.AddScoped<ISettingRepository<Setting>, SettingRepository>();
             services.AddScoped<IOnTrackRepository<Season>, SeasonRepository>();
             services.AddScoped<IOnTrackRepository<Sport>, SportRepository>();
-            services.AddScoped<IDisposable, UserRepository>();
+            //services.AddScoped<IDisposable, UserRepository>();
+            services.AddScoped<IDisposable, AuthenticationRepository>();
             services.AddScoped<IPushNotificationRepository<Push>, PushNotificationRepository>();
             services.AddScoped<IOnTrackRepository<UserType>, UserTypeRepository>();
             //services.AddSingleton<BackgroundWorker>();
 
+            services.AddOptions<NotificationHubOptions>()
+            .Configure(Configuration.GetSection("NotificationHub").Bind)
+            .ValidateDataAnnotations();
             //string domain = $"https://{Configuration["Auth0:Domain"]}/";
             //services.AddAuthentication(options =>
             //{

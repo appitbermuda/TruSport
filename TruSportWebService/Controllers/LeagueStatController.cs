@@ -144,6 +144,120 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("BowlingSeasonHG")]
+        public async Task<IActionResult> GetBowlingSeasonHG()
+        {
+            try
+            {
+                IEnumerable<BowlingSeasonHG> leagueStats = await _leagueStatRepository.GetBowlingSeasonHG();
+
+                if (leagueStats != null)
+                    return Ok(leagueStats);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BowlingSeasonHS")]
+        public async Task<IActionResult> GetBowlingSeasonHS()
+        {
+            try
+            {
+                IEnumerable<BowlingSeasonHS> leagueStats = await _leagueStatRepository.GetBowlingSeasonHS();
+
+                if (leagueStats != null)
+                    return Ok(leagueStats);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("TeamBowlingSeasonHG")]
+        public async Task<IActionResult> GetBowlingSeasonHGByTeam(string TeamID)
+        {
+            try
+            {
+                IEnumerable<BowlingSeasonHG> leagueStats = await _leagueStatRepository.GetBowlingSeasonHGByTeam(TeamID);
+
+                if (leagueStats != null)
+                    return Ok(leagueStats);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("TeamBowlingSeasonHS")]
+        public async Task<IActionResult> GetBowlingSeasonHSByTeam(string TeamID)
+        {
+            try
+            {
+                IEnumerable<BowlingSeasonHS> leagueStats = await _leagueStatRepository.GetBowlingSeasonHSByTeam(TeamID);
+
+                if (leagueStats != null)
+                    return Ok(leagueStats);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BowlingSeasonTeamHG")]
+        public async Task<IActionResult> GetBowlingSeasoTeamHG()
+        {
+            try
+            {
+                IEnumerable<BowlingSeasonTeamHG> leagueStats = await _leagueStatRepository.GetBowlingSeasonTeamHG();
+
+                if (leagueStats != null)
+                    return Ok(leagueStats);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BowlingSeasonTeamHS")]
+        public async Task<IActionResult> GetBowlingSeasonTeamHS()
+        {
+            try
+            {
+                IEnumerable<BowlingSeasonTeamHS> leagueStats = await _leagueStatRepository.GetBowlingSeasonTeamHS();
+
+                if (leagueStats != null)
+                    return Ok(leagueStats);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("GoalsScoredByPlayerByTeam")]
         public async Task<IActionResult> GoalsScoredByPlayerByTeam(string teamID)
         {

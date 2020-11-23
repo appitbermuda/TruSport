@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models.Shop
 {
     public class Inventory
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string ProductID { get; set; }
         public int Stock { get; set; }

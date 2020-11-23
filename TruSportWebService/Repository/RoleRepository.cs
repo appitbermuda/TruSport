@@ -28,7 +28,9 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Roles.FirstOrDefaultAsync(e => e.ID == id && e.IsSelectable);
+                return await _context.Roles
+                    .Include(e => e.Sport)
+                    .FirstOrDefaultAsync(e => e.ID == id && e.IsSelectable);
             }
             catch(Exception ex)
             {
@@ -42,7 +44,10 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Roles.ToListAsync();
+                List<Role> roles =  await _context.Roles
+                    .Include(e => e.Sport).ToListAsync();
+
+                return roles;
             }
             catch (Exception ex)
             {
@@ -56,7 +61,9 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                return await _context.Roles.Where(e => e.IsSelectable).ToListAsync();
+                return await _context.Roles
+                    .Include(e => e.Sport)
+                    .Where(e => e.IsSelectable).ToListAsync();
             }
             catch (Exception ex)
             {

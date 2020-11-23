@@ -80,8 +80,8 @@
                                                   Aspect="AspectFit" />-->
                         <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0">
                         <ff:CachedImage Source="{Binding HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
-                                                        ErrorPlaceholder="ontrack.png"
-                                        LoadingPlaceholder="ontrack.png"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                        LoadingPlaceholder="ontracklogo.png"
                                                         CacheDuration="50"
                                                         RetryCount="3"
                                                         RetryDelay="600"
@@ -107,8 +107,8 @@
                                                   Aspect="AspectFit"/>-->
                         <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0">
                         <ff:CachedImage Source="{Binding AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
-                                                        ErrorPlaceholder="ontrack.png"
-                                        LoadingPlaceholder="ontrack.png"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                        LoadingPlaceholder="ontracklogo.png"
                                                         CacheDuration="50"
                                                         RetryCount="3"
                                                         RetryDelay="600"

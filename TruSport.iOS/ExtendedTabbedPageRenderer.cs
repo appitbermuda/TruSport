@@ -16,17 +16,17 @@ namespace TruSport.iOS
         {
             base.OnElementChanged(e);
 
-            TabBar.TintColor = UIColor.FromRGB(42, 52, 141);
-            //TabBar.TintColor = UIColor.White;
-            //TabBar.BarTintColor = UIColor.White;
-            TabBar.BarTintColor = UIColor.FromRGB(248, 248, 248);
-            //TabBar.BarTintColor = UIColor.Clear;
-            //TabBar.BarTintColor = UIColor.FromRGB(29, 36, 98);
-            //TabBar.BackgroundColor = UIColor.White;
-            //TabBar.BackgroundColor = UIColor.White;
-            //TabBar.BackgroundColor = UIColor.Black;
-            //TabBar.BackgroundColor = UIColor.FromRGB(29, 36, 98);
-            TabBar.BackgroundColor = UIColor.FromRGB(248, 248, 248);
+            //TabBar.TintColor = UIColor.FromRGB(42, 52, 141);
+            ////TabBar.TintColor = UIColor.White;
+            ////TabBar.BarTintColor = UIColor.White;
+            //TabBar.BarTintColor = UIColor.FromRGB(248, 248, 248);
+            ////TabBar.BarTintColor = UIColor.Clear;
+            ////TabBar.BarTintColor = UIColor.FromRGB(29, 36, 98);
+            ////TabBar.BackgroundColor = UIColor.White;
+            ////TabBar.BackgroundColor = UIColor.White;
+            ////TabBar.BackgroundColor = UIColor.Black;
+            ////TabBar.BackgroundColor = UIColor.FromRGB(29, 36, 98);
+            //TabBar.BackgroundColor = UIColor.FromRGB(248, 248, 248);
         }
     }
 }

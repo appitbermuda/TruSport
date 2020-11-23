@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -27,12 +28,254 @@ namespace OnTrackWebService.Repository
 
         public async Task<Order> Get(string id)
         {
-            return await _context.Orders.FirstOrDefaultAsync(e => e.ID == id);
+            try
+            {
+                //var order = await _context.Orders
+                //    .Include(e => e.Customer)
+                //    .FirstOrDefaultAsync(e => e.ID == id);
+
+                //var orderDetails = await _context.OrderDetails
+                //    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                //    .Where(e => e.Order.ID == id).ToListAsync();
+
+                //order.OrderDetails = orderDetails;
+
+                var order = await _context.Orders.Include(e => e.Customer)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .FirstOrDefaultAsync(e => e.ID == id);
+
+                order.Fixture = (!String.IsNullOrEmpty(order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name);
+
+                return order;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Get Order");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<CustomerOrder>> GetMatchDayOrders(string email)
+        {
+            List<CustomerOrder> matchDayOrders = new List<CustomerOrder>();
+            try
+            {
+
+
+                var orders = await _context.Orders.Include(e => e.Customer)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .Where(e => e.Customer.Email == email)
+                    .ToListAsync();
+
+                foreach (var order in orders)
+                {
+                    foreach(var orderDetail in order.OrderDetails)
+                    {
+                        if (orderDetail.FixtureProduct.Fixture.Date >= DateTime.Now.Date.AddDays(-1))
+                        {
+                            var fixture = orderDetail.FixtureProduct.Fixture;
+
+                            for (var i = 0; i < orderDetail.Qty; i++)
+                            {
+                                matchDayOrders.Add(new CustomerOrder
+                                {
+                                    OrderID = order.ID,
+                                    FixtureID = fixture.ID,
+                                    CustomerID = order.CustomerID,
+                                    OrderNumber = order.OrderNumber,
+                                    Product = orderDetail.FixtureProduct.Product.Age + " Ticket",
+                                    FirstName = order.Customer.FirstName,
+                                    LastName = order.Customer.LastName,
+                                    Email = order.Customer.Email,
+                                    Phone = order.Customer.Phone,
+                                    FixtureDate = fixture.Date,
+                                    Time = fixture.Time,
+                                    FieldName = fixture.Field.Name,
+                                    HomeTeamName = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name,
+                                    AwayTeamName = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.AwayTeam.Name,
+                                    HomeTeamLogo = fixture.HomeTeam.TeamLogo,
+                                    AwayTeamLogo = fixture.AwayTeam.TeamLogo,
+                                    //Validated = order.Validated
+                                });
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order Team");
+            }
+
+            return matchDayOrders;
+        }
+
+        public async Task<IEnumerable<Order>> TodayByTeam(string teamID)
+        {
+            try
+            {
+                var orders = await _context.Orders.Include(e => e.Customer)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .Where(e => e.OrderDetails.Any(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date == DateTime.Now.Date))
+                    .ToListAsync();
+
+                orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+
+                return orders;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order Team");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Order>> Team(string teamID)
+        {
+            try
+            {
+#if DEBUG
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+#else
+                TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+#endif
+                var orders = await _context.Orders.Include(e => e.Customer)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .Where(e => e.OrderDetails.Any(e => e.FixtureProduct.Product.TeamID == teamID))
+                    .ToListAsync();
+
+                orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+
+                try
+                {
+                    orders.ForEach(e => e.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(e.Date, DateTimeKind.Unspecified), timeInfo));
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                return orders;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order Team");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Order>> GetOrderHistory(string email)
+        {
+            List<Order> ordersList = new List<Order>();
+
+            try
+            {
+#if DEBUG
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+#else
+                TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+#endif
+                var orders = await _context.Orders.Include(e => e.Customer)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Where(e => e.Customer.Email == email)
+                    .ToListAsync();
+
+                orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault()?.FixtureProduct.Fixture.AwayTeam.Name));
+
+                try
+                {
+                    orders.ForEach(e => e.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(e.Date, DateTimeKind.Unspecified), timeInfo));
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                //DateTime orderTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(order.Date, DateTimeKind.Unspecified), timeInfo);
+
+                //var orders = await _context.Orders
+                //    .Include(e => e.Customer)
+                //    .Where(e => e.Customer.Email == email && e.Date.Date >= DateTime.Now.Date.AddDays(-1))
+                //    .ToListAsync();
+
+                //var orderDetails = await _context.OrderDetails
+                //    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                //    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                //    .Where(e => e.Order.Customer.Email == email && e.Order.Date.Date >= DateTime.Now.Date.AddDays(-1)).ToListAsync();
+
+                //orders.ForEach(e => e.OrderDetails = orderDetails.Where(o => o.OrderID == e.ID).ToList());
+                //foreach(var orderDetail in orderDetails)
+                //{
+                //    orderDetail.Order.OrderDetail = orderDetail;
+
+                //    ordersList.Add(orderDetail.Order);
+                //}
+
+                return orders;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order History");
+            }
+
+            return ordersList;
         }
 
         public async Task<IEnumerable<Order>> GetAll()
         {
-            return await _context.Orders.ToListAsync();
+            try
+            {
+#if DEBUG
+            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+#else
+                TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+#endif
+                var orders =  await _context.Orders.Include(e => e.Customer)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .ToListAsync();
+
+                orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+
+                try
+                {
+                    orders.ForEach(e => e.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(e.Date, DateTimeKind.Unspecified), timeInfo));
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                return orders;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Get All");
+            }
+
+            return null;
         }
 
         public async Task Insert(NewOrder item)
@@ -69,13 +312,13 @@ namespace OnTrackWebService.Repository
 
                     foreach (var orderItems in item.OrderDetails)
                     {
-                        var product = await _context.Products.FirstOrDefaultAsync(e => e.ID == orderItems.ProductID);
+                        var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == orderItems.FixtureProductID);
 
                         OrderDetail orderDetail = new OrderDetail();
                         orderDetail.OrderID = order.ID;
-                        orderDetail.ProductID = orderItems.ProductID;
+                        orderDetail.FixtureProductID = orderItems.FixtureProductID;
                         orderDetail.Qty = orderItems.Qty;
-                        orderDetail.Subtotal = product.Price * orderItems.Qty;
+                        orderDetail.Subtotal = fixtureProduct.Product.Price * orderItems.Qty;
 
                         _context.OrderDetails.Add(orderDetail);
                         await _context.SaveChangesAsync();
@@ -112,6 +355,28 @@ namespace OnTrackWebService.Repository
         {
             throw new NotImplementedException();
         }
+
+        //public async Task<bool> ValidateCustomer(string orderID)
+        //{
+        //    try
+        //    {
+        //        var order = await _context.Orders.FirstOrDefaultAsync(e => e.ID == orderID);
+
+        //        if (!order.Validated)
+        //        {
+        //            order.Validated = true;
+
+        //            _context.Orders.Update(order);
+        //            await _context.SaveChangesAsync();
+
+        //            return true;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    { }
+
+        //    return false;
+        //}
 
         public async Task Update(Order item)
         {

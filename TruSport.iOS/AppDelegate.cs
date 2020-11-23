@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Foundation;
 using Google.MobileAds;
 using Microsoft.AppCenter;
@@ -17,9 +17,12 @@ using Syncfusion.SfPullToRefresh.XForms.iOS;
 using Syncfusion.XForms.iOS.Buttons;
 using Syncfusion.XForms.iOS.MaskedEdit;
 using Syncfusion.XForms.iOS.TextInputLayout;
+using TruSport.Data;
+using TruSport.iOS.Data;
 using UIKit;
 using UserNotifications;
 using WindowsAzure.Messaging;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace TruSport.iOS
@@ -38,6 +41,24 @@ namespace TruSport.iOS
         // You have 17 seconds to return from this method, or iOS will terminate your application.
         //
 
+        IPushNotificationActionService _notificationActionService;
+        INotificationRegistrationService _notificationRegistrationService;
+        IDeviceInstallationService _deviceInstallationService;
+
+        IPushNotificationActionService NotificationActionService
+            => _notificationActionService ??
+                (_notificationActionService =
+                PushServiceContainer.Resolve<IPushNotificationActionService>());
+
+        INotificationRegistrationService NotificationRegistrationService
+            => _notificationRegistrationService ??
+                (_notificationRegistrationService =
+                PushServiceContainer.Resolve<INotificationRegistrationService>());
+
+        IDeviceInstallationService DeviceInstallationService
+            => _deviceInstallationService ??
+                (_deviceInstallationService =
+                PushServiceContainer.Resolve<IDeviceInstallationService>());
         private SBNotificationHub Hub { get; set; }
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
@@ -48,6 +69,21 @@ namespace TruSport.iOS
 
             global::Xamarin.Forms.Forms.Init();
 
+            Bootstrap.Begin(() => new DeviceInstallationService());
+
+            if (DeviceInstallationService.NotificationsSupported)
+            {
+                UNUserNotificationCenter.Current.RequestAuthorization(
+                        UNAuthorizationOptions.Alert |
+                        UNAuthorizationOptions.Badge |
+                        UNAuthorizationOptions.Sound,
+                        (approvalGranted, error) =>
+                        {
+                            if (approvalGranted && error == null)
+                                RegisterForRemoteNotifications();
+                        });
+            }
+
             App.ScreenWidth = (int)UIScreen.MainScreen.Bounds.Width;
             App.ScreenHeight = (int)UIScreen.MainScreen.Bounds.Height;
 
@@ -56,6 +92,7 @@ namespace TruSport.iOS
             // Initialize Azure Mobile Apps
             Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
 
+            ZXing.Net.Mobile.Forms.iOS.Platform.Init();
             //UIView statusBar = UIApplication.SharedApplication.ValueForKey(new NSString("statusBarWindow")).ValueForKey(new NSString("statusBar")) as UIView;
             //statusBar.TintColor = UIColor.White;
             Syncfusion.XForms.iOS.TabView.SfTabViewRenderer.Init();
@@ -74,6 +111,10 @@ namespace TruSport.iOS
 
             LoadApplication(new App());
 
+            using (var userInfo = options?.ObjectForKey(
+                UIApplication.LaunchOptionsRemoteNotificationKey) as NSDictionary)
+                ProcessNotificationActions(userInfo);
+
             base.FinishedLaunching(app, options);
 
             RegisterForRemoteNotifications();
@@ -85,113 +126,168 @@ namespace TruSport.iOS
         {
         }
 
+        //void RegisterForRemoteNotifications()
+        //{
+        //    // register for remote notifications based on system version
+        //    if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+        //    {
+        //        UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Alert |
+        //            UNAuthorizationOptions.Sound |
+        //            UNAuthorizationOptions.Sound,
+        //            (granted, error) =>
+        //            {
+        //                if (granted)
+        //                    InvokeOnMainThread(UIApplication.SharedApplication.RegisterForRemoteNotifications);
+        //            });
+        //    }
+        //    else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+        //    {
+        //        var pushSettings = UIUserNotificationSettings.GetSettingsForTypes(
+        //        UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
+        //        new NSSet());
+
+        //        UIApplication.SharedApplication.RegisterUserNotificationSettings(pushSettings);
+        //        UIApplication.SharedApplication.RegisterForRemoteNotifications();
+        //    }
+        //    else
+        //    {
+        //        UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge | UIRemoteNotificationType.Sound;
+        //        UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+        //    }
+        //}
+
         void RegisterForRemoteNotifications()
         {
-            // register for remote notifications based on system version
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Alert |
-                    UNAuthorizationOptions.Sound |
-                    UNAuthorizationOptions.Sound,
-                    (granted, error) =>
-                    {
-                        if (granted)
-                            InvokeOnMainThread(UIApplication.SharedApplication.RegisterForRemoteNotifications);
-                    });
-            }
-            else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+            MainThread.BeginInvokeOnMainThread(() =>
             {
                 var pushSettings = UIUserNotificationSettings.GetSettingsForTypes(
-                UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
-                new NSSet());
+                    UIUserNotificationType.Alert |
+                    UIUserNotificationType.Badge |
+                    UIUserNotificationType.Sound,
+                    new NSSet());
 
                 UIApplication.SharedApplication.RegisterUserNotificationSettings(pushSettings);
                 UIApplication.SharedApplication.RegisterForRemoteNotifications();
-            }
-            else
-            {
-                UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge | UIRemoteNotificationType.Sound;
-                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
-            }
-        }
-
-        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
-        {
-            Hub = new SBNotificationHub(Constants.ListenConnectionString, Constants.NotificationHubName);
-
-            // update registration with Azure Notification Hub
-            Hub.UnregisterAll(deviceToken, async (error) =>
-            {
-                if (error != null)
-                {
-                    Debug.WriteLine($"Unable to call unregister {error}");
-                    return;
-                }
-
-                var tags = new NSSet(Constants.SubscriptionTags.ToArray());
-
-                if (App.Database != null)
-                {
-                    var userTags = await App.Database.GetTags();
-
-                    if (userTags != null)
-                    {
-                        tags = new NSSet(userTags);
-                    }
-                }
-
-                Hub.RegisterNative(deviceToken, tags, (errorCallback) =>
-                {
-                    if (errorCallback != null)
-                    {
-                        Debug.WriteLine($"RegisterNativeAsync error: {errorCallback}");
-                    }
-                });
-
-                var templateExpiration = DateTime.Now.AddDays(120).ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-US"));
-                Hub.RegisterTemplate(deviceToken, "defaultTemplate", Constants.APNTemplateBody, templateExpiration, tags, (errorCallback) =>
-                {
-                    if (errorCallback != null)
-                    {
-                        if (errorCallback != null)
-                        {
-                            Debug.WriteLine($"RegisterTemplateAsync error: {errorCallback}");
-                        }
-                    }
-                });
             });
         }
 
-        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        Task CompleteRegistrationAsync(NSData deviceToken)
         {
-            ProcessNotification(userInfo, false);
+            DeviceInstallationService.Token = deviceToken.ToHexString();
+            return NotificationRegistrationService.RefreshRegistrationAsync();
         }
 
-        void ProcessNotification(NSDictionary options, bool fromFinishedLaunching)
+        //public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        //{
+        //    Hub = new SBNotificationHub(Constants.ListenConnectionString, Constants.NotificationHubName);
+
+        //    // update registration with Azure Notification Hub
+        //    Hub.UnregisterAll(deviceToken, async (error) =>
+        //    {
+        //        if (error != null)
+        //        {
+        //            Debug.WriteLine($"Unable to call unregister {error}");
+        //            return;
+        //        }
+
+        //        var tags = new NSSet(Constants.SubscriptionTags.ToArray());
+
+        //        if (App.Database != null)
+        //        {
+        //            var userTags = await App.Database.GetTags();
+
+        //            if (userTags != null)
+        //            {
+        //                tags = new NSSet(userTags);
+        //            }
+        //        }
+
+        //        Hub.RegisterNative(deviceToken, tags, (errorCallback) =>
+        //        {
+        //            if (errorCallback != null)
+        //            {
+        //                Debug.WriteLine($"RegisterNativeAsync error: {errorCallback}");
+        //            }
+        //        });
+
+        //        var templateExpiration = DateTime.Now.AddDays(120).ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-US"));
+        //        Hub.RegisterTemplate(deviceToken, "defaultTemplate", Constants.APNTemplateBody, templateExpiration, tags, (errorCallback) =>
+        //        {
+        //            if (errorCallback != null)
+        //            {
+        //                if (errorCallback != null)
+        //                {
+        //                    Debug.WriteLine($"RegisterTemplateAsync error: {errorCallback}");
+        //                }
+        //            }
+        //        });
+        //    });
+        //}
+
+        public override void RegisteredForRemoteNotifications(
+    UIApplication application,
+    NSData deviceToken)
+    => CompleteRegistrationAsync(deviceToken).ContinueWith((task)
+        => { if (task.IsFaulted) throw task.Exception; });
+
+        //public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        //{
+        //    ProcessNotification(userInfo, false);
+        //}
+
+        public override void ReceivedRemoteNotification(
+        UIApplication application,
+        NSDictionary userInfo)
+        => ProcessNotificationActions(userInfo);
+
+        //void ProcessNotification(NSDictionary options, bool fromFinishedLaunching)
+        //{
+        //    // make sure we have a payload
+        //    if (options != null && options.ContainsKey(new NSString("aps")))
+        //    {
+        //        // get the APS dictionary and extract message payload. Message JSON will be converted
+        //        // into a NSDictionary so more complex payloads may require more processing
+        //        NSDictionary aps = options.ObjectForKey(new NSString("aps")) as NSDictionary;
+        //        string payload = string.Empty;
+        //        NSString payloadKey = new NSString("alert");
+        //        if (aps.ContainsKey(payloadKey))
+        //        {
+        //            payload = aps[payloadKey].ToString();
+        //        }
+
+        //        if (!string.IsNullOrWhiteSpace(payload))
+        //        {
+        //            //(App.Current.MainPage as MainPage)?.AddMessage(payload);
+        //        }
+
+        //    }
+        //    else
+        //    {
+        //        Debug.WriteLine($"Received request to process notification but there was no payload.");
+        //    }
+        //}
+
+        void ProcessNotificationActions(NSDictionary userInfo)
         {
-            // make sure we have a payload
-            if (options != null && options.ContainsKey(new NSString("aps")))
+            if (userInfo == null)
+                return;
+
+            try
             {
-                // get the APS dictionary and extract message payload. Message JSON will be converted
-                // into a NSDictionary so more complex payloads may require more processing
-                NSDictionary aps = options.ObjectForKey(new NSString("aps")) as NSDictionary;
-                string payload = string.Empty;
-                NSString payloadKey = new NSString("alert");
-                if (aps.ContainsKey(payloadKey))
-                {
-                    payload = aps[payloadKey].ToString();
-                }
+                var actionValue = userInfo.ObjectForKey(new NSString("action")) as NSString;
 
-                if (!string.IsNullOrWhiteSpace(payload))
-                {
-                    //(App.Current.MainPage as MainPage)?.AddMessage(payload);
-                }
-
+                if (!string.IsNullOrWhiteSpace(actionValue?.Description))
+                    NotificationActionService.TriggerAction(actionValue.Description);
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine($"Received request to process notification but there was no payload.");
+                Debug.WriteLine(ex.Message);
             }
         }
+
+        public override void FailedToRegisterForRemoteNotifications(
+    UIApplication application,
+    NSError error)
+    => Debug.WriteLine(error.Description);
     }
 }

@@ -141,5 +141,29 @@ namespace OnTrackWebService.Controllers
 
             return NoContent();
         }
+
+        [HttpGet]
+        [Route("TimeZones")]
+        public async Task<IActionResult> TimeZones()
+        {
+            try
+            {
+                TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+                DateTime orderTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified), timeInfo);
+                //var timeZoneInfos = TimeZoneInfo.GetSystemTimeZones();
+
+                List<DateTime> times = new List<DateTime>();
+                times.Add(orderTime);
+                times.Add(DateTime.Now);
+
+                return Ok(times);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TimeZones");
+            }
+
+            return NoContent();
+        }
     }
 }

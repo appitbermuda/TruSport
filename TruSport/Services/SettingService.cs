@@ -64,5 +64,28 @@ namespace TruSport.Services
                 return null;
             }
         }
+
+        public async Task<decimal?> GetProcessingFee()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Setting/ProcessingFee", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                decimal? processingFee = JsonConvert.DeserializeObject<decimal?>(response.Content);
+
+                return processingFee;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+
+                return null;
+            }
+        }
     }
 }

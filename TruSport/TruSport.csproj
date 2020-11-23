@@ -11,7 +11,7 @@
     <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.6.0.726" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1534" />
     <PackageReference Include="Microsoft.Azure.Mobile.Client" Version="4.0.2" />
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
     <PackageReference Include="Syncfusion.Xamarin.SfListView" Version="18.1.0.42" />
@@ -38,6 +38,9 @@
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.11.982" />
     <PackageReference Include="Syncfusion.Xamarin.SfCalendar" Version="18.1.0.42" />
+    <PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />
+    <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
+    <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -60,11 +63,16 @@
     <Folder Include="Views\Tickets\" />
     <Folder Include="ViewModel\Football\" />
     <Folder Include="Views\Setting\" />
+    <Folder Include="ViewModel\Shop\" />
+    <Folder Include="ViewModel\Bowling\" />
+    <Folder Include="Views\Bowling\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Views\Football\MatchStatsPopUpPage %28another copy%29.cs" />
     <Compile Remove="Model\TwitterViewModel.cs" />
     <Compile Remove="Templates\HeadToHeadList %28copy%29.xaml.cs" />
+    <Compile Remove="Templates\ScoreFixtureList %28copy%29.xaml.cs" />
+    <Compile Remove="Templates\CricketScoreFixtureList %28copy%29.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\Football\NewsPage.xaml.cs">
@@ -88,6 +96,44 @@
     </Compile>
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\Cricket\TeamProfilePage.xaml.cs">
       <DependentUpon>TeamProfilePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Tickets\TransferTicketPage.xaml.cs">
+      <DependentUpon>TransferTicketPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Templates\CricketFixtureList %28copy%29.xaml.cs">
+      <DependentUpon>CricketFixtureList %28copy%29.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Bowling\BowlingMasterDetailPageDetail.xaml.cs">
+      <DependentUpon>BowlingMasterDetailPageDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\BowlingMasterDetailPageMaster.xaml.cs">
+      <DependentUpon>BowlingMasterDetailPageMaster.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\FixturePage.xaml.cs">
+      <DependentUpon>FixturePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\FixtureDetailsPage.xaml.cs">
+      <DependentUpon>FixtureDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\FavouritePage.xaml.cs">
+      <DependentUpon>FavouritePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\LeagueStatsPage.xaml.cs">
+      <DependentUpon>LeagueStatsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\TeamPage.xaml.cs">
+      <DependentUpon>TeamPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\TeamProfilePage.xaml.cs">
+      <DependentUpon>TeamProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Bowling\TablePage.xaml.cs">
+      <DependentUpon>TablePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Templates\CricketFormFixtureList %28copy%29.xaml.cs">
+      <DependentUpon>CricketFormFixtureList %28copy%29.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

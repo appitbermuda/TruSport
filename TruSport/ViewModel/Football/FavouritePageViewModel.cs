@@ -204,7 +204,10 @@ namespace TruSport.ViewModels
                     FavouriteTeamCollection = new ObservableCollection<Team>(teams.Where(e => favouriteTeams.Select(x => x.TeamID).Contains(e.TeamID) && e.Season.IsCurrent).Select(e => e.Team).ToList());
                 }
                 else
+                {
                     NoTeamFavourites = true;
+                    FavouriteTeamCollection = new ObservableCollection<Team>();
+                }
             }
             catch (Exception ex)
             {
@@ -225,7 +228,10 @@ namespace TruSport.ViewModels
                     FavouriteFixturesCollection = new ObservableCollection<Fixture>(favouriteFixtures.Select(e => e.Fixture));
                 }
                 else
+                {
                     NoFixtureFavourites = true;
+                    FavouriteFixturesCollection = new ObservableCollection<Fixture>();
+                }
             }
             catch (Exception ex)
             {

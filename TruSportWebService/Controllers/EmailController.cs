@@ -42,5 +42,24 @@ namespace OnTrackWebService.Controllers
 
             return NoContent();
         }
+
+        [HttpGet]
+        [Route("SendPaymentConfirmationTest")]
+        public async Task<IActionResult> SendPaymentConfirmationTest()
+        {
+            try
+            {
+
+                await _emailRepository.SendPaymentConfirmationTest();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Email");
+            }
+
+            return NoContent();
+        }
     }
 }

@@ -50,9 +50,10 @@ namespace TruSport.ViewModels
         private bool cancelFixtureRefresh;
         private bool _hasScore;
         FixtureService fixtureService;
-        MatchRosterService matchRosterService;
+        RosterService rosterService;
         CoachService coachService;
         LeagueTableService leagueTableService;
+        NotificationRegistrationService notificationRegistrationService;
         INavigation Navigation;
 
         #endregion
@@ -68,10 +69,11 @@ namespace TruSport.ViewModels
             RosterCollection = new ObservableCollection<RosterListView>();
             SubRosterCollection = new ObservableCollection<RosterListView>();
             TableCollection = new ObservableCollection<LeagueTable>();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             fixtureService = new FixtureService();
             coachService = new CoachService();
             leagueTableService = new LeagueTableService();
+            notificationRegistrationService = new NotificationRegistrationService();
 
             SelectedIndex = 0;
 
@@ -245,7 +247,7 @@ namespace TruSport.ViewModels
 
                 SubHeight = 7 * 40;
 
-                //var matchRostersList = await matchRosterService.GetFixtureMatchRosters(fixture.ID);
+                //var matchRostersList = await rosterService.GetFixtureMatchRosters(fixture.ID);
 
                 //if (matchRostersList == null || matchRostersList.Count == 0)
                 //{
@@ -433,6 +435,15 @@ namespace TruSport.ViewModels
                     };
 
                     await App.Database.SaveFootballFavourite(favourite);
+
+                    await App.Database.SaveAlertSetting(new NotiAlert
+                    {
+                        Sport = favourite.FixtureID,
+                        IsAlert = true
+                    });
+
+                    var tags = await App.Database.GetTags();
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
                 }
 
             }

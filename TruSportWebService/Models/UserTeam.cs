@@ -5,6 +5,7 @@ namespace OnTrackWebService.Models
 {
     public class UserTeam
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string UserID { get; set; }
         public string TeamID { get; set; }

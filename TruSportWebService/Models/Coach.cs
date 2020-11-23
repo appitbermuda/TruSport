@@ -5,11 +5,14 @@ namespace OnTrackWebService.Models
 {
     public class Coach
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string TeamID { get; set; }
         public string SportID { get; set; }
+
+        public string Name => FirstName + " " + LastName;
 
         [ForeignKey("TeamID")]
         public Team Team { get; set; }

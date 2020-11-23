@@ -27,6 +27,88 @@ namespace TruSport.Converters
             }
         }
 
+    public class CardNumberConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var cardNumber = (string)value;
+
+            if (cardNumber != null)
+            {
+                cardNumber = cardNumber.Replace("-", "");
+
+                if (cardNumber.Length == 16)
+                {
+                    var first4 = cardNumber.Substring(0, 4);
+                    var last4 = cardNumber.Substring(cardNumber.Length - 4, 4);
+                    return first4 + "-****-****-" + last4;
+                }
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (string)value;
+        }
+    }
+
+    public class TicketsAvailableConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var stock = (int)value;
+
+            if (stock <= 10 && stock >= 0)
+                return true;
+
+
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (string)value;
+        }
+    }
+
+    public class PhoneNumberConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var phoneNumber = (string)value;
+
+            if (phoneNumber != null)
+            {
+                phoneNumber = phoneNumber.Replace("-", "");
+
+                string area1 = string.Empty;
+                string area2 = string.Empty;
+
+                if (phoneNumber.Length >= 7)
+                {
+                    if(phoneNumber.Length > 10)
+                        area1 = phoneNumber.Substring(0, 1);
+
+                    if(phoneNumber.Length > 7 && phoneNumber.Length < 11)
+                        area2 = phoneNumber.Substring(phoneNumber.Length - 10, 3);
+
+                    var first3 = phoneNumber.Substring(phoneNumber.Length - 7, 3);
+                    var last4 = phoneNumber.Substring(phoneNumber.Length - 4, 4);
+                    return (!String.IsNullOrEmpty(area1) ? area1 + "-" : "") + (!String.IsNullOrEmpty(area2) ? area2 + "-" : "") + first3 + "-" + last4;
+                }
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (string)value;
+        }
+    }
+
     public class EntryValidationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -155,6 +237,24 @@ namespace TruSport.Converters
                 return "V";
 
             return "-";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return int.Parse((string)value);
+        }
+    }
+
+    public class ShowResultConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var score = (int?)value;
+
+            if (score == null)
+                return false;
+
+            return true;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1262,6 +1362,111 @@ namespace TruSport.Converters
         }
     }
 
+    public class GroupingSelectionBowlingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<BowlingFixture>(groupResult.Items.ToList<BowlingFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    if (!data.MatchType.IsTable)
+                        return data.League.Name + " " + data.MatchType.Name;
+                    else
+                        return data.League.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Season.Date;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingSelectionGameBowlingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<BowlingGameResult>(groupResult.Items.ToList<BowlingGameResult>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    return "Game " + data.Game.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BowlingGameWinnerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return FontAttributes.None;
+
+                var winnerID = parameter as Label;
+
+                if ((string)value == winnerID.Text)
+                    return FontAttributes.Bold;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Bowling Winner Converter");
+            }
+
+            return FontAttributes.None;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class GroupingCompetitionCricketConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1542,7 +1747,7 @@ namespace TruSport.Converters
                 return image;
             }
             else
-                return "ontrack.png";
+                return "ontracklogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1563,6 +1768,26 @@ namespace TruSport.Converters
             }
             else
                 return "bcblogo.png";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BowlingImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((string)value != null && (string)value != "")
+            {
+                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+
+                return image;
+            }
+            else
+                return "ontracklogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1697,6 +1922,9 @@ namespace TruSport.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (((IList)value) == null)
+                return false;
+
             return !(((IList)value).Count == 0);
         }
 
@@ -1716,6 +1944,51 @@ namespace TruSport.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value;
+        }
+    }
+
+    public class PaymentResponseTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var thisValue = (bool)value;
+
+            return thisValue ? "Success" : "Failed";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PaymentResponseIconConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var thisValue = (bool)value;
+
+            return thisValue ? "" : "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PaymentResponseColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var thisValue = (bool)value;
+
+            return thisValue ? Color.Green : Color.Red;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

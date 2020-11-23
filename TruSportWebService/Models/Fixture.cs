@@ -6,6 +6,7 @@ namespace OnTrackWebService.Models
 {
     public class Fixture
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string HomeTeamID { get; set; }
         public string AwayTeamID { get; set; }
@@ -45,6 +46,9 @@ namespace OnTrackWebService.Models
         public string PostOrCanc => IsPostponed ? "Post." : String.Empty;
 
         [NotMapped]
+        public int TicketAvailable { get; set; }
+
+        [NotMapped]
         public DateTime FixtureTime => TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? Date.AddDays(1).Add(TimeSpan.Parse(Time)) : Date.Add(TimeSpan.Parse(Time));
 
         [NotMapped]
@@ -56,6 +60,7 @@ namespace OnTrackWebService.Models
         [NotMapped]
         public virtual List<Fixture> Form { get; set; }
 
+        //[NotMapped]
         public virtual Match Match { get; set; }
 
         [NotMapped]
@@ -64,6 +69,7 @@ namespace OnTrackWebService.Models
         [NotMapped]
         public virtual List<Fixture> HeadToHead { get; set; }
 
+        [NotMapped]
         public virtual List<MatchRoster> MatchRosters { get; set; }
 
         [NotMapped]

@@ -6,6 +6,10 @@ namespace OnTrackWebService.Data
         public static string SETTING_CRICKET_TBD_ID = "932AEB43-1017-4615-BB4B-F88A913C2117";
         public static string SETTING_FOOTBALL_TBD_ID = "BA7124FE-A966-428A-A46A-64AF78B15D62";
         public static string SETTING_PROCESSING_FEE_ID = "E1D4E89C-B118-4155-9D8C-D82791879757";
+        public static string SMTPServer = "SMTP Server";
+        public static string SMTPPort = "SMTP Port";
+        public static string SMTPUsername = "SMTP Username";
+        public static string SMTPPassword = "SMTP Password";
 
         public static string FromAddress = "ontrackbda@gmail.com";
         public static string BCCAddress = "ontrackbda@gmail.com";
@@ -32,14 +36,22 @@ namespace OnTrackWebService.Data
         public const string DeviceTarget = "devices_target";
         public class Apis { public const string Notification = "push/notifications"; }
 
+        public const string ImageEndpoint = "http://ontrackimagestore.blob.core.windows.net/images/";
+
 #if DEBUG
+        public static string OnTrackEndpoint = "http://localhost:40139/api/";
+        //public static string OnTrackEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
+        //public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
         public static string[] SubscriptionTags { get; set; } = { "default", "cricket", "football" };
         public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";
         public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=uusrAVZy6JrvlTLtYZHUEoVR7EKbtqRGTJ3t0A6q0yE=";
 #else
-        public static string[] SubscriptionTags { get; set; } = { "default" };
-        public static string NotificationHubName { get; set; } = "OnTrackPusHub";
-        public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=UA17J5DQ+x/8zKbnOjhrQWdjEaXWPuZg1ijAmcj3gHs=";
+        public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
+        public static string[] SubscriptionTags { get; set; } = { "default", "cricket", "football" };
+        //public static string NotificationHubName { get; set; } = "OnTrackPushHub";
+        //public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=UA17J5DQ+x/8zKbnOjhrQWdjEaXWPuZg1ijAmcj3gHs=";
+        public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";
+        public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=uusrAVZy6JrvlTLtYZHUEoVR7EKbtqRGTJ3t0A6q0yE=";
 #endif
     }
 }

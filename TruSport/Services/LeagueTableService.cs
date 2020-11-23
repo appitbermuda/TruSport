@@ -81,6 +81,41 @@ namespace TruSport.Services
             }
             return null;
         }
+        
+            public async Task<List<BowlingLeagueStanding>> GetSomersbyLeagueBowlingTables()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/BowlingLeagueStanding", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BowlingLeagueStanding> table = JsonConvert.DeserializeObject<List<BowlingLeagueStanding>>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
 
         public async Task<List<CricketLeagueTable>> GetPremierLeagueCricketTables()
         {
@@ -381,6 +416,41 @@ namespace TruSport.Services
                     List<CricketLeagueTable> coaches = JsonConvert.DeserializeObject<List<CricketLeagueTable>>(response.Content);
 
                     return coaches;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<BowlingLeagueStanding>> GetBowlingTeamLeagueTable(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/BowlingTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BowlingLeagueStanding> tables = JsonConvert.DeserializeObject<List<BowlingLeagueStanding>>(response.Content);
+
+                    return tables;
                 }
                 //}
 

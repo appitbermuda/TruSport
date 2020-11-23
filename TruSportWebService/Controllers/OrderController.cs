@@ -26,16 +26,16 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
-        [Route("AllOrders")]
-        public async Task<IActionResult> Orders()
+        [Route("MatchDay")]
+        public async Task<IActionResult> MatchDayOrders(string Email)
         {
             try
             {
 
-                IEnumerable<Order> orderes = await _orderRepository.GetAll();
+                IEnumerable<CustomerOrder> orders = await _orderRepository.GetMatchDayOrders(Email);
 
-                if (orderes != null)
-                    return Ok(orderes);
+                if (orders != null)
+                    return Ok(orders);
             }
             catch (Exception ex)
             {
@@ -44,6 +44,111 @@ namespace OnTrackWebService.Controllers
 
             return NoContent();
         }
+
+
+        // GET api/values
+        [HttpGet]
+        [Route("History")]
+        public async Task<IActionResult> History(string Email)
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.GetOrderHistory(Email);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+
+        // GET api/values
+        [HttpGet]
+        [Route("TodayByTeam")]
+        public async Task<IActionResult> TodayByTeam(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.TodayByTeam(teamID);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("Team")]
+        public async Task<IActionResult> Team(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.Team(teamID);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("AllOrders")]
+        public async Task<IActionResult> Orders()
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.GetAll();
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+        //// GET api/values/5
+        //[HttpGet]
+        //[Route("Validate")]
+        //public async Task<IActionResult> ValidateCustomer(string orderID)
+        //{
+        //    try
+        //    {
+        //        bool validated = await _orderRepository.ValidateCustomer(orderID);
+
+        //       return Ok(validated);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message, "Order");
+        //    }
+
+        //    return NoContent();
+        //}
 
         // GET api/values/5
         [HttpGet]

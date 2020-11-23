@@ -365,7 +365,7 @@
                         <!--<abstractions:CircleImage FillColor="White" HeightRequest="70" WidthRequest="70" HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" Source="{Binding FixtureItem.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"/>-->
                         <Frame HeightRequest="80" WidthRequest="80" CornerRadius="40" Padding="0" HorizontalOptions="Center">
                         <ff:CachedImage Source="{Binding FixtureItem.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
-                                                        ErrorPlaceholder="ontrack.png"
+                                                        ErrorPlaceholder="ontracklogo.png"
                                                         CacheDuration="50"
                                                         RetryCount="3"
                                                         RetryDelay="600"
@@ -408,7 +408,7 @@
                         <!--<abstractions:CircleImage FillColor="White" HeightRequest="70" WidthRequest="70" HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" Source="{Binding FixtureItem.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"/>-->
                         <Frame HeightRequest="80" WidthRequest="80" CornerRadius="40" Padding="0" HorizontalOptions="Center">
                         <ff:CachedImage Source="{Binding FixtureItem.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
-                                                        ErrorPlaceholder="ontrack.png"
+                                                        ErrorPlaceholder="ontracklogo.png"
                                                         CacheDuration="50"
                                                         RetryCount="3"
                                                         RetryDelay="600"

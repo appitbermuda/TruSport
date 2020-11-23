@@ -1,0 +1,427 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" x:Class="TruSport.Views.Tickets.PurchaseTicketPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ListCountConverter x:Key="listCountConverter" />
+            <DataTemplate x:Name="ContactTracingItemTemplate" x:Key="ContactTracingItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                   <Grid x:Name="grid" Padding="0,0,0,0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <!--<RowDefinition Height="Auto" />-->
+                        <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                       <Grid.ColumnDefinitions>
+                           <ColumnDefinition Width="*"/>
+                           <ColumnDefinition Width="Auto"/>
+                       </Grid.ColumnDefinitions>
+                    <StackLayout VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="StartAndExpand">
+                                <Label x:Name="NameLabel"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                    Text="{Binding Name}"/>
+                        </StackLayout>
+                        <!--<StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand">
+                            <Label x:Name="EmailLabel"
+                                   FontSize="Micro"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Email}"/>
+                        </StackLayout>-->
+                       <StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand">
+                            <Label x:Name="PhoneLabel"
+                                   FontSize="Micro"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Phone}"/>
+                        </StackLayout>
+                       <StackLayout Grid.RowSpan="2" Grid.Column="1" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand">
+                            <Label x:Name="DeleteLabel"
+                                   FontSize="Micro"
+                                   TextColor="Red"
+                                        Text=""
+                                   FontFamily="{StaticResource fontAwesomeSolidFamily}"
+                                   VerticalOptions="CenterAndExpand"/>
+                        </StackLayout>
+                       <BoxView Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="White" />
+                        </Grid>
+            </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid  BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,0" HeightRequest="90">
+                <StackLayout VerticalOptions="FillAndExpand">
+                    <Label Text="Purchase Ticket" FontSize="Small" FontAttributes="Bold" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                </StackLayout>
+                 <StackLayout VerticalOptions="FillAndExpand">
+                    <Button Text="" BackgroundColor="Transparent" FontSize="25" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" WidthRequest="30" HeightRequest="30" Padding="0" HorizontalOptions="StartAndExpand" Command="{Binding CloseClickedCommand}"/>
+                </StackLayout>
+            </Grid>
+        <Grid VerticalOptions="FillAndExpand">
+        <ScrollView VerticalOptions="FillAndExpand" Padding="0,0,0,50">
+            <StackLayout>
+                <Grid>
+                    <StackLayout>
+                <Grid>
+                    
+                    <StackLayout HorizontalOptions="FillAndExpand"
+                                 VerticalOptions="FillAndExpand" Padding="8,8,8,8" BackgroundColor="{DynamicResource frameBackgroundColor}">
+                        <Frame Padding="0" CornerRadius="10" BackgroundColor="Transparent" HasShadow="False">
+                            <Frame Padding="0" CornerRadius="10" IsClippedToBounds="True" BackgroundColor="Transparent" HasShadow="False">
+                    <Grid x:Name="grid" Padding="0,0,0,0"
+                          RowSpacing="5"
+                          ColumnSpacing="1"
+                          BackgroundColor="Transparent"
+                          VerticalOptions="FillAndExpand"
+                          HorizontalOptions="FillAndExpand">
+                        <Grid.Resources>
+                            <ResourceDictionary>
+                                <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+                                <converters:ImageConverter x:Key="imageConverter"/>
+                                <converters:TimeConverter x:Key="timeConverter"/>
+                            </ResourceDictionary>
+                        </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="1" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="1" Grid.ColumnSpan="5" Spacing="5" Padding="5,10"
+                                     VerticalOptions="EndAndExpand"
+                                         HorizontalOptions="CenterAndExpand"
+                                         Orientation="Horizontal">
+                                <StackLayout Padding="2">
+                                    <Label x:Name="FieldIcon"
+                                       FontSize="Small"
+                                           Text="&#xe901;"
+                                           VerticalOptions="Center"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                        FontFamily="{StaticResource fontFamily}"/>
+                                    </StackLayout>
+                                <StackLayout>
+                                    <Label x:Name="FieldName"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Fixture.Field.Name}"/>
+                                    </StackLayout>
+                            </StackLayout>
+                            <StackLayout Grid.Row="2" Grid.ColumnSpan="5"
+                                     VerticalOptions="Center"
+                                         HorizontalOptions="CenterAndExpand"
+                                         Orientation="Horizontal"
+                                     Padding="5,10">
+                                    <Label x:Name="TimeIcon"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                            Text="&#xe904;"
+                                           FontFamily="{StaticResource fontFamily}"/>
+                                <Label x:Name="TimeLabel"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       VerticalTextAlignment="End"
+                                            Text="{Binding Fixture.FixtureTime, StringFormat='{0:MMM dd - hh:mm tt}'}"/>
+                                
+                            </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding Fixture.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                                                            ErrorPlaceholder="ontracklogo.png"
+                                            LoadingPlaceholder="ontracklogo.png"
+                                                            CacheDuration="50"
+                                                            RetryCount="3"
+                                                            RetryDelay="600"
+                                             Aspect="AspectFit"
+                                            HeightRequest="30"
+                                                      WidthRequest="30"
+                                                            DownsampleToViewSize="True">
+
+                            </ff:CachedImage>
+                                </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                 <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding Fixture.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                                                            ErrorPlaceholder="ontracklogo.png"
+                                            LoadingPlaceholder="ontracklogo.png"
+                                                            CacheDuration="50"
+                                                            RetryCount="3"
+                                                            RetryDelay="600"
+                                             Aspect="AspectFit"
+                                            HeightRequest="30"
+                                                      WidthRequest="30"
+                                                            DownsampleToViewSize="True">  
+                                            </ff:CachedImage>
+                                </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="2" VerticalOptions="Center"
+                                         HorizontalOptions="Center"
+                                             Orientation="Vertical"
+                                     Padding="5,2"
+                                     Spacing="5">
+                     
+                                <Label 
+                                       x:Name="Versus"
+                                       FontSize="Small"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                                      VerticalOptions="Center"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                            Text="V" />
+                        </StackLayout>
+                                <StackLayout Grid.Row="0" Grid.Column="1"
+                                     VerticalOptions="Center"
+                                         HorizontalOptions="FillAndExpand"
+                                     Padding="5,2"
+                                     Spacing="0">
+                                <Label x:Name="HomeTeamNameLabel"
+                                       HorizontalOptions="EndAndExpand"
+                                       HorizontalTextAlignment="End"
+                                       FontSize="Micro"
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                            Text="{Binding Fixture.HomeTeam.Name}">
+                                    <Label.FontSize>
+                                        <OnPlatform x:TypeArguments="x:Double">  
+                            <OnPlatform.Android> 
+                                <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" /> 
+                            </OnPlatform.Android> 
+                            <OnPlatform.iOS> 
+                                <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" /> 
+                            </OnPlatform.iOS> 
+                        </OnPlatform> 
+                                    </Label.FontSize>
+                                </Label>
+                            </StackLayout>
+                                <StackLayout Grid.Row="0" Grid.Column="3"
+                                     VerticalOptions="Center"
+                                         HorizontalOptions="FillAndExpand"
+                                     Padding="5,2"
+                                     Spacing="0">
+                                <Label x:Name="AwayTeamNameLabel"
+                                       HorizontalOptions="StartAndExpand"
+                                       HorizontalTextAlignment="Start"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       FontAttributes="Bold"
+                                            Text="{Binding Fixture.AwayTeam.Name}">
+                                    <Label.FontSize>
+                                        <OnPlatform x:TypeArguments="x:Double">  
+                            <OnPlatform.Android> 
+                                <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" /> 
+                            </OnPlatform.Android> 
+                            <OnPlatform.iOS> 
+                                <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" /> 
+                            </OnPlatform.iOS> 
+                        </OnPlatform> 
+                                    </Label.FontSize>
+                                </Label>
+                            </StackLayout>
+                            </Grid>
+                            </Frame>
+                            </Frame>
+                        </StackLayout>
+                </Grid>
+
+                <!--<BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />-->
+
+                <Grid Padding="10,30,10,50">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <!--<StackLayout Grid.ColumnSpan="2">
+                        
+                       
+                    </StackLayout>-->
+                    <StackLayout Grid.Row="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,0,0,20">
+                        <Label Text="Match Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="25" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="StartAndExpand" Padding="0,0,0,20" IsVisible="{Binding FixtureProductCollection, Converter={StaticResource listCountConverter}}">
+                        <StackLayout BindableLayout.ItemsSource="{Binding FixtureProductCollection}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalOptions="FillAndExpand">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="60"/>
+                                        </Grid.ColumnDefinitions>
+                                    <StackLayout HorizontalOptions="StartAndExpand">
+                                        <!--<Label Text="Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="Start"/>-->
+                                        <Label Text="{Binding Product.Age}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                                    </StackLayout>
+                                    <StackLayout Grid.Column="1" HorizontalOptions="StartAndExpand">
+                                        <!--<Label Text="QTY" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>-->
+                                        <Entry Text="{Binding Quantity}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Keyboard="Numeric" Placeholder="1"/>
+                                    </StackLayout>
+                                    <StackLayout Grid.Column="2" HorizontalOptions="EndAndExpand">
+                                        <!--<Label Text="Price" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="Start"/>-->
+                                        <Label Text="{Binding Product.Price, StringFormat='{0:C}'}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                                    </StackLayout>
+                                        </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                        <StackLayout Padding="0,20,0,10">
+                            <Button Text="UPDATE TOTAL" FontSize="Micro" HeightRequest="30" Padding="20,0" HorizontalOptions="Center" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" Command="{Binding UpdateQuantityCommand}"/>
+                        </StackLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" HorizontalOptions="StartAndExpand">
+                        <Label Text="Subtotal" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" Grid.Column="1" HorizontalOptions="EndAndExpand">
+                        <Label Text="{Binding Subtotal, StringFormat='{0:C}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="3" HorizontalOptions="StartAndExpand">
+                        <Label Text="Processing Fee" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="3" Grid.Column="1" HorizontalOptions="EndAndExpand">
+                        <Label Text="{Binding ProcessingFee, StringFormat='{0:C}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
+                    </StackLayout>
+                    <BoxView Grid.ColumnSpan="2" HeightRequest="1" Grid.Row="4" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />
+                    <StackLayout Grid.Row="5" HorizontalOptions="StartAndExpand">
+                        <Label Text="Total" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="5" Grid.Column="1" HorizontalOptions="EndAndExpand">
+                        <Label Text="{Binding Total, StringFormat='{0:C}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
+                    </StackLayout>
+                </Grid>
+
+                        <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
+                            <Label Text="Contact Tracing" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </StackLayout>
+                <Grid Padding="10" ColumnSpacing="20" Margin="0,0,0,30">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/> 
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.ColumnSpan="2">
+                        <Label Text="Due to COVID-19, we must ensure the correct approach is taken for contact tracing. Please provide the name(s) and contact details required by government to ensure the match is in compliance." LineBreakMode="WordWrap" FontSize="9" />
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.Column="0">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                            <Entry Text="{Binding FirstName}" Placeholder="First Name" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </textinputlayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.Column="1">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                            <Entry Text="{Binding LastName}" Placeholder="Last Name" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </textinputlayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" Grid.ColumnSpan="2">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Phone" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                            <Entry Text="{Binding Phone}" Placeholder="Phone" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </textinputlayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="3" Grid.ColumnSpan="2">
+                        <Button Text="Add" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="30" CornerRadius="15" Padding="50,0" Command="{Binding AddContactTraceCommand}"/> 
+                    </StackLayout>
+                    <StackLayout Grid.Row="4" Grid.ColumnSpan="2" >
+                        <Frame IsClippedToBounds="True" BackgroundColor="{DynamicResource controlElementBackgroundColor}" CornerRadius="10" HeightRequest="{Binding ContactTracingHeight}" Padding="5">
+                        <listView:SfListView x:Name="ContactTracingList"
+                                    ItemsSource="{Binding ContactTraces}"
+                                    ItemTemplate="{StaticResource ContactTracingItemTemplate}"
+                                    SelectionMode="Single"
+                                    SelectionChangedCommand="{Binding ContactTracingSelectedCommand}"
+                                    SelectionChangedCommandParameter="{x:Reference ContactTracingList}"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    ItemSpacing="5"
+                                    Padding="1"
+                                    SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                                    ItemSize="32"
+                                    HeightRequest="{Binding ContactTracingHeight}"
+                                />
+                            </Frame>
+                    </StackLayout>
+                </Grid>
+
+                <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
+                    <Label Text="Card Details" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                </StackLayout>
+                <Grid Padding="10" ColumnSpacing="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.ColumnSpan="2">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Name of Card" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                            <Entry Text="{Binding CustomerName}" Placeholder="Name" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </textinputlayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Card Number" ContainerType="Outlined" CharMaxLength="16" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                            <Entry Text="{Binding CreditCard.CardNumber}" MaxLength="16" Keyboard="Numeric" Placeholder="1111222233334444" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </textinputlayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" Grid.Column="0">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Expiry (MMYY)" ContainerType="Outlined" CharMaxLength="4" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                            <Entry Text="{Binding CreditCard.Expiry}" MaxLength="4" Keyboard="Numeric" Placeholder="0125" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </textinputlayout:SfTextInputLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" Grid.Column="1">
+                        <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="CVV" ContainerType="Outlined" CharMaxLength="3" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                            <Entry Text="{Binding CreditCard.CVV}" MaxLength="3" Keyboard="Numeric" Placeholder="123" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </textinputlayout:SfTextInputLayout>
+                    </StackLayout>
+                </Grid>
+
+                <StackLayout Padding="10" Spacing="10">
+                    <Label Text="Due to your privacy and protection, OnTrack will not be storing your card information." FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>
+
+                    <Label Text="First Division ticket holders must arrive before half time of the match. Premier Divison ticket holders will not be permitted to use their ticket before half time of the First Division match." FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>
+
+                    <Label Text="Due to COVID-19 regulations set by the governing body, all patrons are required to wear their mask at all times." FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small"/>
+                </StackLayout>
+
+                <StackLayout Padding="10">
+                    <Button Text="Purchase" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding PurchaseCommand}"/>
+                </StackLayout>
+                        </StackLayout>
+                </Grid>
+            </StackLayout>
+        </ScrollView>
+            <extension:CustomBusyIndicator IsVisible="{Binding IsBusy}"/>
+            </Grid>
+            </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

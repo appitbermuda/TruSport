@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -75,10 +76,16 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var user = await _context.Users.Include(e => e.Role).Include(e => e.Team).FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
+                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
 
                 if (user != null)
                 {
+                    if (!String.IsNullOrEmpty(user.TeamID))
+                    {
+                        var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
+                        user.Team = team;
+                    }
+
                     PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.Password, userAuthentication.password);
 
                     if(passwordVerificationResult == PasswordVerificationResult.Success)
@@ -119,28 +126,52 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                //encrypt password
-                user.Password = _passwordHasher.HashPassword(user.Password);
-
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-
-                user = await _context.Users.Include(e => e.Role).Include(e => e.Team).FirstOrDefaultAsync(e => e.ID == user.ID);
-
-                //SEND EMAIL
-                await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.Role.Name, user.Team != null ? user.Team.Name : null);
-                
-                return new UserResponse
+                if (Regex.IsMatch(user.Email, "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$"))
                 {
-                    ID = user.ID,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Role = user.Role,
-                    RoleID = user.RoleID,
-                    Email = user.Email,
-                    TeamID = user.TeamID,
-                    Team = user.Team
-                };
+                    if (user.Password.Length >= 8)
+                    {
+                        var userExists = await _context.Users.AnyAsync(e => e.Email == user.Email);
+                        if (!userExists)
+                        {
+                            //encrypt password
+                            user.Password = _passwordHasher.HashPassword(user.Password);
+
+                            _context.Users.Add(user);
+                            await _context.SaveChangesAsync();
+
+                            user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.ID == user.ID);
+
+                            if (!String.IsNullOrEmpty(user.TeamID))
+                            {
+                                var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
+                                user.Team = team;
+                            }
+
+                            //SEND EMAIL
+                            try
+                            {
+                                await emailRepository.Welcome(user.Email);
+                                await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.Role.Name, user.Team != null ? user.Team.Name : null);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message, "Welcome Email");
+                            }
+
+                            return new UserResponse
+                            {
+                                ID = user.ID,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Role = user.Role,
+                                RoleID = user.RoleID,
+                                Email = user.Email,
+                                TeamID = user.TeamID,
+                                Team = user.Team
+                            };
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -148,6 +179,39 @@ namespace OnTrackWebService.Repository
             }
 
             return null;
+        }
+
+        public async Task<bool> Validate(string email)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email && !e.IsValidated);
+
+                if (user != null)
+                {
+                    user.IsValidated = true;
+
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    try
+                    {
+                        await emailRepository.UserValidated(email);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message, "User Validate");
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return false;
         }
 
         public async Task<bool> ForgotPassword(ForgotPassword forgotPassword)

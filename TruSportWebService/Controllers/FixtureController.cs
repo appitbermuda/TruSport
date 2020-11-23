@@ -109,6 +109,27 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [HttpPost]
+        [Route("UploadBowling")]
+        public async Task<IActionResult> UploadBowlingFixtures([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportBowlingFixtures fileUploadResponse = await _fixtureRepository.UploadBowlingFixtures(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Bowling");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values
         [HttpGet]
         [Route("AllCricket")]
@@ -191,6 +212,46 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("AllBowling")]
+        public async Task<IActionResult> GetBowlingFixtures()
+        {
+            try
+            {
+                BowlingFixtureListView fixtures = await _fixtureRepository.GetBowlingFixtures();
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("Bowling")]
+        public async Task<IActionResult> GetBowlingFixture(string id)
+        {
+            try
+            {
+                BowlingFixture fixture = await _fixtureRepository.GetBowlingFixture(id);
+
+                if (fixture != null)
+                    return Ok(fixture);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("Sport")]
         public async Task<IActionResult> GetSportFixtures(string Sport)
         {
@@ -239,6 +300,27 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<CricketFixture> fixtures = await _fixtureRepository.GetCricketHeadToHead(FixtureID);
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("BowlingHeadToHead")]
+        public async Task<IActionResult> GetBowlingHeadToHeadFixtures(string FixtureID)
+        {
+            try
+            {
+
+                IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetBowlingHeadToHead(FixtureID);
 
                 if (fixtures != null)
                     return Ok(fixtures);
@@ -377,6 +459,46 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("BowlingTeam")]
+        public async Task<IActionResult> GetBowlingFixturesByTeam(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetBowlingTeamFixtures(teamID);
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BowlingTeamForm")]
+        public async Task<IActionResult> GetBowlingFormByTeam(string teamID)
+        {
+            try
+            {
+
+                IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetBowlingTeamForm(teamID);
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("CricketTeam")]
         public async Task<IActionResult> GetCricketFixturesByTeam(string teamID)
         {
@@ -444,6 +566,26 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<Fixture> fixtures = await _fixtureRepository.GetFootballFixturesByLeague(leagueID);
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BowlingLeague")]
+        public async Task<IActionResult> FixturesByBowlingLeague(string leagueID)
+        {
+            try
+            {
+
+                IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetBowlingFixturesByLeague(leagueID);
 
                 if (fixtures != null)
                     return Ok(fixtures);
@@ -624,6 +766,66 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<spLiveFixtures> fixtures = await _fixtureRepository.GetLiveFootball();
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BowlingResults")]
+        public async Task<IActionResult> BowlingResults()
+        {
+            try
+            {
+
+                IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetBowlingResults();
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("PastBowling")]
+        public async Task<IActionResult> PastBowlingFixtures()
+        {
+            try
+            {
+
+                IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetPastBowlingFixtures();
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("UpcomingBowling")]
+        public async Task<IActionResult> UpcomingBowlingFixtures()
+        {
+            try
+            {
+
+                IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetUpcomingBowlingFixtures();
 
                 if (fixtures != null)
                     return Ok(fixtures);
