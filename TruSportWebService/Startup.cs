@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Ad;
 using OnTrackWebService.Models.Shop;
 using OnTrackWebService.Repository;
 //using Owin;
@@ -81,6 +82,7 @@ namespace OnTrackWebService
                 };
             });
 
+            services.AddScoped<IOnTrackRepository<Ad>, AdRepository>();
             services.AddScoped<IOnTrackRepository<BowlingGame>, BowlingGameRepository>();
             services.AddScoped<IOnTrackRepository<BowlingRoster>, BowlingRosterRepository>();
             services.AddScoped<IOnTrackRepository<ContactTrace>, ContactTraceRepository>();

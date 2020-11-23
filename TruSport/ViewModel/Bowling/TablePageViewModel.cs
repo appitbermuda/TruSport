@@ -10,6 +10,8 @@ using TruSport.Services;
 using Xamarin.Essentials;
 using System.Diagnostics;
 using TruSport.Views.Bowling;
+using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 
 namespace TruSport.ViewModels.Bowling
 {
@@ -23,8 +25,10 @@ namespace TruSport.ViewModels.Bowling
         private Command<object> resetTapCommand;
         private bool _isActivityIndicatorVisible;
         private bool noConnectivity;
+        private Ad _ad;
         INavigation Navigation;
         LeagueTableService leagueTableService;
+        AdService adService;
 
         #endregion
 
@@ -36,14 +40,17 @@ namespace TruSport.ViewModels.Bowling
             SomersbyLeagueCollection = new ObservableCollection<BowlingLeagueStanding>();
             
             leagueTableService = new LeagueTableService();
+            adService = new AdService();
             GenerateSource();
 
             TableTappedCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(ItemTapped);
+            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
 
         #region Properties
+        public Command AdTappedCommand { get; }
         public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> TableTappedCommand
         {
             get { return itemtapCommand; }
@@ -68,6 +75,12 @@ namespace TruSport.ViewModels.Bowling
             set { Set(ref _isActivityIndicatorVisible, value); }
         }
 
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         #endregion
 
         #region Generate Source
@@ -83,6 +96,19 @@ namespace TruSport.ViewModels.Bowling
                 {
                     NoConnectivity = false;
 
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
+
                     var somersbyLeague = await leagueTableService.GetSomersbyLeagueBowlingTables();
                     if (somersbyLeague != null)
                         SomersbyLeagueCollection = new ObservableCollection<BowlingLeagueStanding>(somersbyLeague.OrderBy(e => e.Position));
@@ -96,6 +122,24 @@ namespace TruSport.ViewModels.Bowling
             }
 
             IsActivityIndicatorVisible = false;
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
         }
 
         #endregion

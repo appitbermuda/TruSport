@@ -9,6 +9,8 @@ using Xamarin.Forms.Internals;
 using TruSport.Services;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 
 namespace TruSport.ViewModels.Bowling
 {
@@ -26,8 +28,10 @@ namespace TruSport.ViewModels.Bowling
         private Command<object> resetTapCommand;
         private bool _isActivityIndicatorVisible;
         private bool noConnectivity;
-        
+        private Ad _ad;
+
         LeagueStatService leagueStatsService;
+        AdService adService;
 
         #endregion
 
@@ -41,12 +45,16 @@ namespace TruSport.ViewModels.Bowling
             TeamSeasonHSCollection = new ObservableCollection<LeagueStat>();
 
             leagueStatsService = new LeagueStatService();
+            adService = new AdService();
             GenerateSource();
+
+            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
 
         #region Properties
+        public Command AdTappedCommand { get; }
         internal SfListView PlayerCategoryList
         {
             get;
@@ -109,6 +117,12 @@ namespace TruSport.ViewModels.Bowling
             set { Set(ref _isActivityIndicatorVisible, value); }
         }
 
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         #endregion
 
         #region Generate Source
@@ -128,6 +142,19 @@ namespace TruSport.ViewModels.Bowling
 
                 try
                 {
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
+
                     var playerSeasonHG = await leagueStatsService.GetBowlingSeasonHG();
 
                     if(playerSeasonHG != null)
@@ -163,6 +190,24 @@ namespace TruSport.ViewModels.Bowling
                 NoConnectivity = true;
             IsActivityIndicatorVisible = false;
             //ItemTapCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(ItemTapped);
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
         }
 
         #endregion

@@ -40,6 +40,7 @@ namespace TruSport.ViewModels.Bowling
         private ObservableCollection<BowlingRosterListView> rosterCollection;
         private ObservableCollection<BowlingGameResult> bowlingScoreCollection;
 
+        private Ad _ad;
         private double subHeight;
         private bool _isHeadToHeadActivityIndicatorVisible;
         private bool _isTableActivityIndicatorVisible;
@@ -56,6 +57,7 @@ namespace TruSport.ViewModels.Bowling
         RosterService rosterService;
         CoachService coachService;
         LeagueTableService leagueTableService;
+        AdService adService;
         INavigation Navigation;
 
         #endregion
@@ -74,6 +76,7 @@ namespace TruSport.ViewModels.Bowling
             fixtureService = new FixtureService();
             coachService = new CoachService();
             leagueTableService = new LeagueTableService();
+            adService = new AdService();
 
             SelectedIndex = 0;
 
@@ -81,11 +84,13 @@ namespace TruSport.ViewModels.Bowling
 
             FavouriteCommand = new Command(async () => await Favourite());
             TableTappedCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(ItemTapped);
+            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
 
         #region Properties
+        public Command AdTappedCommand { get; }
         public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> TableTappedCommand
         {
             get { return itemtapCommand; }
@@ -219,6 +224,12 @@ namespace TruSport.ViewModels.Bowling
             set { Set(ref cancelFixtureRefresh, value); }
         }
 
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         #endregion
 
         #region Generate Source
@@ -235,12 +246,25 @@ namespace TruSport.ViewModels.Bowling
             {
                 FixtureItem = fixtureItem;
 
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
+
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
+
                 if (fixtureItem.FixtureTime > DateTime.Now)
                     IsFavouriteVisible = true;
                 else
                     IsFavouriteVisible = false;
 
-                IsFavourite = await App.Database.IsFixtureFavourite(fixtureItem.ID);
+                IsFavourite = await App.Database.IsBowlingFixtureFavourite(fixtureItem.ID);
 
                 var fixture = await fixtureService.GetBowlingFixture(FixtureItem.ID);
 
@@ -289,6 +313,24 @@ namespace TruSport.ViewModels.Bowling
             }
         }
 
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
+        }
+
         async Task Favourite()
         {
             try
@@ -306,7 +348,8 @@ namespace TruSport.ViewModels.Bowling
                     var favourite = new Favourite
                     {
                         BowlingFixtureID = FixtureItem.ID,
-                        Type = "Fixture"
+                        Type = "Fixture",
+                        Sport = "Bowling"
                     };
 
                     await App.Database.SaveBowlingFavourite(favourite);

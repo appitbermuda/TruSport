@@ -217,7 +217,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetBowlingFixtures();
+                BowlingFixtureListView fixtures = await _fixtureRepository.GetBowlingFixtures();
 
                 if (fixtures != null)
                     return Ok(fixtures);

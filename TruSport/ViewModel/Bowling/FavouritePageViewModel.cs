@@ -177,7 +177,10 @@ namespace TruSport.ViewModels.Bowling
                     FavouriteTeamCollection = new ObservableCollection<Team>(teams.Where(e => favouriteTeams.Select(x => x.TeamID).Contains(e.TeamID) && e.Season.IsCurrent).Select(e => e.Team).ToList());
                 }
                 else
+                {
                     NoTeamFavourites = true;
+                    FavouriteTeamCollection = new ObservableCollection<Team>();
+                }
             }
             catch (Exception ex)
             {
@@ -198,7 +201,10 @@ namespace TruSport.ViewModels.Bowling
                     FavouriteFixturesCollection = new ObservableCollection<BowlingFixture>(favouriteFixtures.Select(e => e.BowlingFixture));
                 }
                 else
+                {
                     NoFixtureFavourites = true;
+                    FavouriteFixturesCollection = new ObservableCollection<BowlingFixture>();
+                }
             }
             catch (Exception ex)
             {

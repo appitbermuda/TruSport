@@ -182,98 +182,18 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<List<BowlingFixture>> GetBowlingFixtures()
+        public async Task<BowlingFixtureListView> GetBowlingFixtures()
         {
             try
             {
-                List<BowlingRosterListView> bowlingRosterLists = new List<BowlingRosterListView>();
+                var pastFixtures = await GetPastBowlingFixtures();
+                var upcomingFixtures = await GetUpcomingBowlingFixtures();
 
-                List<BowlingFixture> fixtures = new List<BowlingFixture>();
-                fixtures = await _context.BowlingFixtures
-                .Include(e => e.HomeTeam)
-                .Include(e => e.AwayTeam)
-                .Include(e => e.Field)
-                .Include(e => e.League)
-                .Include(e => e.BowlingRosters).ThenInclude(e => e.BowlingPlayerSeason).ThenInclude(e => e.Player)
-                .Include(e => e.BowlingRosters).ThenInclude(e => e.BowlingGames)
-                .Include(e => e.BowlingScore)
-                .Include(e => e.MatchType)
-                .Include(e => e.Season)
-                .ToListAsync();
-
-                List<BowlingGameResult> bowlingGameResults = new List<BowlingGameResult>();
-
-                foreach (var fixture in fixtures)
+                return new BowlingFixtureListView
                 {
-                    foreach (var homeFixtureRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
-                    {
-                        var awayFixtureRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeFixtureRoster.Position && e.TeamID == fixture.AwayTeamID);
-
-                        bowlingRosterLists.Add(new BowlingRosterListView
-                        {
-                            FixtureID = homeFixtureRoster.BowlingFixtureID,
-                            HomeTeamID = homeFixtureRoster.TeamID,
-                            AwayTeamID = awayFixtureRoster.TeamID,
-                            HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
-                            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name
-                        });
-
-                        if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)
-                        {
-                            foreach (var homeGame in homeFixtureRoster.BowlingGames)
-                            {
-                                var awayGame = awayFixtureRoster.BowlingGames.FirstOrDefault(e => e.Game == homeGame.Game);
-                                bowlingGameResults.Add(new BowlingGameResult
-                                {
-                                    BowlingRosterID1 = homeGame.BowlingRosterID,
-                                    BowlingRoster1 = homeGame.BowlingRoster,
-                                    BowlingRosterID2 = awayGame.BowlingRosterID,
-                                    BowlingRoster2 = awayGame.BowlingRoster,
-                                    Game = homeGame.Game,
-                                    Position = homeFixtureRoster.Position,
-                                    Score1 = homeGame.Score,
-                                    Score2 = awayGame.Score,
-                                    Winner = homeGame.Score > awayGame.Score ? homeGame.BowlingRosterID : awayGame.Score > homeGame.Score ? awayGame.BowlingRosterID : null
-                                });
-
-                                homeGame.Win = homeGame.Score > awayGame.Score;
-                                awayGame.Win = awayGame.Score > homeGame.Score;
-                            }
-
-                            fixture.BowlingRosters.ForEach(e => e.BowlingGameResults = bowlingGameResults.Where(d => d.BowlingRosterID1 == e.ID || d.BowlingRosterID2 == e.ID).ToList());
-                            
-                        }
-                    }
-
-                    fixture.BowlingGameResults = bowlingGameResults;
-
-                    //foreach (var homeRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
-                    //{
-                    //    var awayRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeRoster.Position && e.TeamID == fixture.AwayTeamID);
-
-                    //    bowlingRosterLists.Add(new BowlingRosterListView
-                    //    {
-                    //        FixtureID = homeRoster.BowlingFixtureID,
-                    //        HomeTeamID = homeRoster.TeamID,
-                    //        AwayTeamID = awayRoster.TeamID,
-                    //        HomePlayerName = homeRoster?.BowlingPlayerSeason?.Player?.Name,
-                    //        AwayPlayerName = awayRoster?.BowlingPlayerSeason?.Player?.Name
-                    //    });
-                    //}
-
-                    fixture.BowlingRosterList = bowlingRosterLists;
-
-                    //fixture.BowlingScore.HomeTeamTotalPoints = fixture.BowlingScore.HomeTeamMatchPoints + fixture.BowlingScore.HomeTeamPoints;
-                    //fixture.BowlingScore.AwayTeamTotalPoints = fixture.BowlingScore.AwayTeamMatchPoints + fixture.BowlingScore.AwayTeamPoints;
-
-                    fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
-                    fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
-                }
-
-                //fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
-                //fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
-
-                return fixtures;
+                    PastFixtures = pastFixtures.ToList(),
+                    UpcomingFixtures = upcomingFixtures.ToList()
+                };
             }
             catch (Exception ex)
             {
@@ -304,7 +224,7 @@ namespace OnTrackWebService.Repository
 
                 List<BowlingGameResult> bowlingGameResults = new List<BowlingGameResult>();
 
-                foreach (var fixture in fixtures)
+                Parallel.ForEach(fixtures, fixture =>
                 {
                     foreach (var homeFixtureRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
                     {
@@ -368,14 +288,14 @@ namespace OnTrackWebService.Repository
                     //fixture.BowlingScore.HomeTeamTotalPoints = fixture.BowlingScore.HomeTeamMatchPoints + fixture.BowlingScore.HomeTeamPoints;
                     //fixture.BowlingScore.AwayTeamTotalPoints = fixture.BowlingScore.AwayTeamMatchPoints + fixture.BowlingScore.AwayTeamPoints;
 
-                    fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
-                    fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
-                }
+                    //fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
+                    //fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
+                });
 
-                //fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
-                //fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
 
-                
+
 
                 return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
             }
@@ -547,78 +467,59 @@ namespace OnTrackWebService.Repository
 
                 List<BowlingGameResult> bowlingGameResults = new List<BowlingGameResult>();
 
-                foreach (var fixture in fixtures)
-                {
-                    foreach (var homeFixtureRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
-                    {
-                        var awayFixtureRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeFixtureRoster.Position && e.TeamID == fixture.AwayTeamID);
+                //Parallel.ForEach(fixtures, fixture =>
+                //{
+                //    foreach (var homeFixtureRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
+                //    {
+                //        var awayFixtureRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeFixtureRoster.Position && e.TeamID == fixture.AwayTeamID);
 
-                        bowlingRosterLists.Add(new BowlingRosterListView
-                        {
-                            FixtureID = homeFixtureRoster.BowlingFixtureID,
-                            HomeTeamID = homeFixtureRoster.TeamID,
-                            AwayTeamID = awayFixtureRoster.TeamID,
-                            HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
-                            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name
-                        });
+                //        bowlingRosterLists.Add(new BowlingRosterListView
+                //        {
+                //            FixtureID = homeFixtureRoster.BowlingFixtureID,
+                //            HomeTeamID = homeFixtureRoster.TeamID,
+                //            AwayTeamID = awayFixtureRoster.TeamID,
+                //            HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
+                //            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name
+                //        });
 
-                        if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)
-                        {
-                            foreach (var homeGame in homeFixtureRoster.BowlingGames)
-                            {
-                                var awayGame = awayFixtureRoster.BowlingGames.FirstOrDefault(e => e.Game == homeGame.Game);
-                                bowlingGameResults.Add(new BowlingGameResult
-                                {
-                                    BowlingRosterID1 = homeGame.BowlingRosterID,
-                                    BowlingRoster1 = homeGame.BowlingRoster,
-                                    BowlingRosterID2 = awayGame.BowlingRosterID,
-                                    BowlingRoster2 = awayGame.BowlingRoster,
-                                    Game = homeGame.Game,
-                                    Position = homeFixtureRoster.Position,
-                                    Score1 = homeGame.Score,
-                                    Score2 = awayGame.Score,
-                                    Winner = homeGame.Score > awayGame.Score ? homeGame.BowlingRosterID : awayGame.Score > homeGame.Score ? awayGame.BowlingRosterID : null
-                                });
+                //        if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)
+                //        {
+                //            foreach (var homeGame in homeFixtureRoster.BowlingGames)
+                //            {
+                //                var awayGame = awayFixtureRoster.BowlingGames.FirstOrDefault(e => e.Game == homeGame.Game);
+                //                bowlingGameResults.Add(new BowlingGameResult
+                //                {
+                //                    BowlingRosterID1 = homeGame.BowlingRosterID,
+                //                    BowlingRoster1 = homeGame.BowlingRoster,
+                //                    BowlingRosterID2 = awayGame.BowlingRosterID,
+                //                    BowlingRoster2 = awayGame.BowlingRoster,
+                //                    Game = homeGame.Game,
+                //                    Position = homeFixtureRoster.Position,
+                //                    Score1 = homeGame.Score,
+                //                    Score2 = awayGame.Score,
+                //                    Winner = homeGame.Score > awayGame.Score ? homeGame.BowlingRosterID : awayGame.Score > homeGame.Score ? awayGame.BowlingRosterID : null
+                //                });
 
-                                homeGame.Win = homeGame.Score > awayGame.Score;
-                                awayGame.Win = awayGame.Score > homeGame.Score;
-                            }
+                //                homeGame.Win = homeGame.Score > awayGame.Score;
+                //                awayGame.Win = awayGame.Score > homeGame.Score;
+                //            }
 
-                            fixture.BowlingRosters.ForEach(e => e.BowlingGameResults = bowlingGameResults.Where(d => d.BowlingRosterID1 == e.ID || d.BowlingRosterID2 == e.ID).ToList());
-                            
-                        }
-                    }
+                //            fixture.BowlingRosters.ForEach(e => e.BowlingGameResults = bowlingGameResults.Where(d => d.BowlingRosterID1 == e.ID || d.BowlingRosterID2 == e.ID).ToList());
 
-                    fixture.BowlingGameResults = bowlingGameResults;
+                //        }
+                //    }
 
-                    //foreach (var homeRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
-                    //{
-                    //    var awayRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeRoster.Position && e.TeamID == fixture.AwayTeamID);
+                //    fixture.BowlingGameResults = bowlingGameResults;
 
-                    //    bowlingRosterLists.Add(new BowlingRosterListView
-                    //    {
-                    //        FixtureID = homeRoster.BowlingFixtureID,
-                    //        HomeTeamID = homeRoster.TeamID,
-                    //        AwayTeamID = awayRoster.TeamID,
-                    //        HomePlayerName = homeRoster?.BowlingPlayerSeason?.Player?.Name,
-                    //        AwayPlayerName = awayRoster?.BowlingPlayerSeason?.Player?.Name
-                    //    });
-                    //}
+                //    fixture.BowlingRosterList = bowlingRosterLists;
 
-                    fixture.BowlingRosterList = bowlingRosterLists;
+                //    fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
+                //    fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
+                //});
 
-                    //fixture.BowlingScore.HomeTeamTotalPoints = fixture.BowlingScore.HomeTeamMatchPoints + fixture.BowlingScore.HomeTeamPoints;
-                    //fixture.BowlingScore.AwayTeamTotalPoints = fixture.BowlingScore.AwayTeamMatchPoints + fixture.BowlingScore.AwayTeamPoints;
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
 
-                    fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
-                    fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
-                }
-
-                
-
-                //fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
-                //fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
-                
                 return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
             }
             catch (Exception ex)
@@ -2658,72 +2559,75 @@ namespace OnTrackWebService.Repository
 
                 List<BowlingGameResult> bowlingGameResults = new List<BowlingGameResult>();
 
-                foreach (var fixture in fixtures)
-                {
-                    foreach (var homeFixtureRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
-                    {
-                        var awayFixtureRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeFixtureRoster.Position && e.TeamID == fixture.AwayTeamID);
+                //foreach (var fixture in fixtures)
+                //{
+                //    foreach (var homeFixtureRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
+                //    {
+                //        var awayFixtureRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeFixtureRoster.Position && e.TeamID == fixture.AwayTeamID);
 
-                        bowlingRosterLists.Add(new BowlingRosterListView
-                        {
-                            FixtureID = homeFixtureRoster.BowlingFixtureID,
-                            HomeTeamID = homeFixtureRoster.TeamID,
-                            AwayTeamID = awayFixtureRoster.TeamID,
-                            HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
-                            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name
-                        });
+                //        bowlingRosterLists.Add(new BowlingRosterListView
+                //        {
+                //            FixtureID = homeFixtureRoster.BowlingFixtureID,
+                //            HomeTeamID = homeFixtureRoster.TeamID,
+                //            AwayTeamID = awayFixtureRoster.TeamID,
+                //            HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
+                //            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name
+                //        });
 
-                        if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)
-                        {
-                            foreach (var homeGame in homeFixtureRoster.BowlingGames)
-                            {
-                                var awayGame = awayFixtureRoster.BowlingGames.FirstOrDefault(e => e.Game == homeGame.Game);
-                                bowlingGameResults.Add(new BowlingGameResult
-                                {
-                                    BowlingRosterID1 = homeGame.BowlingRosterID,
-                                    BowlingRoster1 = homeGame.BowlingRoster,
-                                    BowlingRosterID2 = awayGame.BowlingRosterID,
-                                    BowlingRoster2 = awayGame.BowlingRoster,
-                                    Game = homeGame.Game,
-                                    Position = homeFixtureRoster.Position,
-                                    Score1 = homeGame.Score,
-                                    Score2 = awayGame.Score,
-                                    Winner = homeGame.Score > awayGame.Score ? homeGame.BowlingRosterID : awayGame.Score > homeGame.Score ? awayGame.BowlingRosterID : null
-                                });
+                //        if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)
+                //        {
+                //            foreach (var homeGame in homeFixtureRoster.BowlingGames)
+                //            {
+                //                var awayGame = awayFixtureRoster.BowlingGames.FirstOrDefault(e => e.Game == homeGame.Game);
+                //                bowlingGameResults.Add(new BowlingGameResult
+                //                {
+                //                    BowlingRosterID1 = homeGame.BowlingRosterID,
+                //                    BowlingRoster1 = homeGame.BowlingRoster,
+                //                    BowlingRosterID2 = awayGame.BowlingRosterID,
+                //                    BowlingRoster2 = awayGame.BowlingRoster,
+                //                    Game = homeGame.Game,
+                //                    Position = homeFixtureRoster.Position,
+                //                    Score1 = homeGame.Score,
+                //                    Score2 = awayGame.Score,
+                //                    Winner = homeGame.Score > awayGame.Score ? homeGame.BowlingRosterID : awayGame.Score > homeGame.Score ? awayGame.BowlingRosterID : null
+                //                });
 
-                                homeGame.Win = homeGame.Score > awayGame.Score;
-                                awayGame.Win = awayGame.Score > homeGame.Score;
-                            }
+                //                homeGame.Win = homeGame.Score > awayGame.Score;
+                //                awayGame.Win = awayGame.Score > homeGame.Score;
+                //            }
 
-                            fixture.BowlingRosters.ForEach(e => e.BowlingGameResults = bowlingGameResults.Where(d => d.BowlingRosterID1 == e.ID || d.BowlingRosterID2 == e.ID).ToList());
+                //            fixture.BowlingRosters.ForEach(e => e.BowlingGameResults = bowlingGameResults.Where(d => d.BowlingRosterID1 == e.ID || d.BowlingRosterID2 == e.ID).ToList());
 
-                        }
-                    }
+                //        }
+                //    }
 
-                    fixture.BowlingGameResults = bowlingGameResults;
+                //    fixture.BowlingGameResults = bowlingGameResults;
 
-                    //foreach (var homeRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
-                    //{
-                    //    var awayRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeRoster.Position && e.TeamID == fixture.AwayTeamID);
+                //    //foreach (var homeRoster in fixture.BowlingRosters.Where(e => e.TeamID == fixture.HomeTeamID))
+                //    //{
+                //    //    var awayRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeRoster.Position && e.TeamID == fixture.AwayTeamID);
 
-                    //    bowlingRosterLists.Add(new BowlingRosterListView
-                    //    {
-                    //        FixtureID = homeRoster.BowlingFixtureID,
-                    //        HomeTeamID = homeRoster.TeamID,
-                    //        AwayTeamID = awayRoster.TeamID,
-                    //        HomePlayerName = homeRoster?.BowlingPlayerSeason?.Player?.Name,
-                    //        AwayPlayerName = awayRoster?.BowlingPlayerSeason?.Player?.Name
-                    //    });
-                    //}
+                //    //    bowlingRosterLists.Add(new BowlingRosterListView
+                //    //    {
+                //    //        FixtureID = homeRoster.BowlingFixtureID,
+                //    //        HomeTeamID = homeRoster.TeamID,
+                //    //        AwayTeamID = awayRoster.TeamID,
+                //    //        HomePlayerName = homeRoster?.BowlingPlayerSeason?.Player?.Name,
+                //    //        AwayPlayerName = awayRoster?.BowlingPlayerSeason?.Player?.Name
+                //    //    });
+                //    //}
 
-                    fixture.BowlingRosterList = bowlingRosterLists;
+                //    fixture.BowlingRosterList = bowlingRosterLists;
 
-                    //fixture.BowlingScore.HomeTeamTotalPoints = fixture.BowlingScore.HomeTeamMatchPoints + fixture.BowlingScore.HomeTeamPoints;
-                    //fixture.BowlingScore.AwayTeamTotalPoints = fixture.BowlingScore.AwayTeamMatchPoints + fixture.BowlingScore.AwayTeamPoints;
+                //    //fixture.BowlingScore.HomeTeamTotalPoints = fixture.BowlingScore.HomeTeamMatchPoints + fixture.BowlingScore.HomeTeamPoints;
+                //    //fixture.BowlingScore.AwayTeamTotalPoints = fixture.BowlingScore.AwayTeamMatchPoints + fixture.BowlingScore.AwayTeamPoints;
 
-                    fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
-                    fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
-                }
+                //    fixture.HomeTeam.Name = !String.IsNullOrEmpty(fixture.HomeTeam.Alias) ? fixture.HomeTeam.Alias : fixture.HomeTeam.Name;
+                //    fixture.AwayTeam.Name = !String.IsNullOrEmpty(fixture.AwayTeam.Alias) ? fixture.AwayTeam.Alias : fixture.AwayTeam.Name;
+                //}
+
+                fixtures.ForEach(e => e.HomeTeam.Name = !String.IsNullOrEmpty(e.HomeTeam.Alias) ? e.HomeTeam.Alias : e.HomeTeam.Name);
+                fixtures.ForEach(e => e.AwayTeam.Name = !String.IsNullOrEmpty(e.AwayTeam.Alias) ? e.AwayTeam.Alias : e.AwayTeam.Name);
 
                 return fixtures;
             }

@@ -86,7 +86,7 @@ namespace TruSport.Services
             return null;
         }
 
-        public async Task<List<BowlingFixture>> GetBowlingFixtures()
+        public async Task<BowlingFixtureListView> GetBowlingFixtures()
         {
             try
             {
@@ -99,9 +99,9 @@ namespace TruSport.Services
 
                 if (response.IsSuccessful)
                 {
-                    List<BowlingFixture> fixtures = JsonConvert.DeserializeObject<List<BowlingFixture>>(response.Content);
+                    BowlingFixtureListView fixtures = JsonConvert.DeserializeObject<BowlingFixtureListView>(response.Content);
 
-                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                    return fixtures;
                 }
             }
             catch (Exception ex)
@@ -135,6 +135,7 @@ namespace TruSport.Services
             }
             return null;
         }
+
 
         public async Task<BowlingFixture> GetBowlingFixture(string id)
         {

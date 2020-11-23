@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Ad;
 using OnTrackWebService.Models.Shop;
 
 namespace OnTrackWebService.Data
@@ -12,6 +13,7 @@ namespace OnTrackWebService.Data
         {
         }
 
+        public DbSet<Ad> Ads { get; set; }
         public DbSet<Batting> Battings { get; set; }
         public DbSet<BowlingSeasonHG> BowlingSeasonHG { get; set; }
         public DbSet<BowlingSeasonHS> BowlingSeasonHS { get; set; }
@@ -39,6 +41,7 @@ namespace OnTrackWebService.Data
         public DbSet<ContactTrace> ContactTraces { get; set; }
         public DbSet<Flyer> Flyers { get; set; }
         public DbSet<Inventory> Inventorys { get; set; }
+        public DbSet<Impression> Impressions { get; set; }
         public DbSet<League> Leagues { get; set; }
         public DbSet<LeagueTable> LeagueTable { get; set; }
         public DbSet<CricketLeagueTable> CricketLeagueTable { get; set; }
@@ -82,6 +85,7 @@ namespace OnTrackWebService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Ad>().ToTable("Ad");
             modelBuilder.Entity<BowlingRoster>().ToTable("BowlingRoster");
             modelBuilder.Entity<BowlingGame>().ToTable("BowlingGame");
             modelBuilder.Entity<BowlingScore>().ToTable("BowlingScore");
@@ -93,6 +97,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<Customer>().ToTable("Customer");
             modelBuilder.Entity<ContactTrace>().ToTable("ContactTrace");
             modelBuilder.Entity<Inventory>().ToTable("Inventory");
+            modelBuilder.Entity<Impression>().ToTable("Impression");
             modelBuilder.Entity<Order>().ToTable("Order");
             modelBuilder.Entity<OrderDetail>().ToTable("OrderDetail");
             modelBuilder.Entity<ProductType>().ToTable("ProductType");

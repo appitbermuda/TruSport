@@ -476,7 +476,7 @@ namespace TruSport.Data
 
                 if (favourites.Count > 0)
                 {
-                    var fixtures = await fixtureService.GetBowlingFixtures();
+                    var fixtures = await fixtureService.GetUpcomingBowlingFixtures();
 
                     var fixtureFavourites = (from favourite in favourites
                                              join fixture in fixtures on favourite.BowlingFixtureID equals fixture.ID
@@ -488,14 +488,18 @@ namespace TruSport.Data
                                                  Sport = "Bowling"
                                              }).ToList();
 
-                    foreach (var fixture in fixtureFavourites)
+                    var needToDelete = favourites.Where(e => !fixtureFavourites.Any(d => d.BowlingFixtureID == e.BowlingFixtureID));
+
+                    foreach(var favourite in needToDelete)
                     {
-                        if (fixture.BowlingFixture.Date < DateTime.Now.AddDays(1))
-                        {
-                            fixtureFavourites.Remove(fixture);
-                            await DeleteBowlingFixtureFavourite(fixture.FixtureID);
-                        }
+                        await DeleteBowlingFixtureFavourite(favourite.BowlingFixtureID);
                     }
+
+                    //foreach (var favourite1 in favourites)
+                    //{
+                    //    if(fixtureFavourites.FirstOrDefault(e => e.BowlingFixtureID == favourite1.BowlingFixtureID) == null)
+                    //        await DeleteBowlingFixtureFavourite(favourite1.BowlingFixtureID);                        
+                    //}
 
                     return fixtureFavourites;
                 }

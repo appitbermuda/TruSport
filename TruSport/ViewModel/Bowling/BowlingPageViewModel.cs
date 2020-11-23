@@ -61,10 +61,12 @@ namespace TruSport.ViewModels.Bowling
         private bool _isBowling;
         private string selectedSport;
         private DateTime _minDate;
+        private Ad _ad;
         Sport _sport;
 
         FixtureService fixtureService;
         AwardService awardService;
+        AdService adService;
 
         INavigation Navigation;
 
@@ -83,12 +85,14 @@ namespace TruSport.ViewModels.Bowling
 
             fixtureService = new FixtureService();
             awardService = new AwardService();
+            adService = new AdService();
 
             SelectedIndex = 0;
 
             GenerateSource();
 
             CalendarCellTapped = new Command<CalendarTappedEventArgs>(CellTapped);
+            AdTappedCommand = new Command(AdTapped);
 
             RefreshPastFixturesCommand = new Command<object>(async (obj) => await RefreshPastFixtures());
             RefreshUpcomingFixturesCommand = new Command<object>(async (obj) => await RefreshUpcomingFixtures());
@@ -109,6 +113,7 @@ namespace TruSport.ViewModels.Bowling
 
         #region Properties
 
+        public Command AdTappedCommand { get; }
         public CalendarEventCollection CalendarInlineEvents
         {
             get { return calendarInlineEvents; }
@@ -189,6 +194,12 @@ namespace TruSport.ViewModels.Bowling
         {
             get { return liveCollection; }
             set { Set(ref liveCollection, value); }
+        }
+
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
         }
 
         public int SelectedIndex
@@ -327,8 +338,19 @@ namespace TruSport.ViewModels.Bowling
                 //SelectedSport = await SecureStorage.GetAsync("Sport");
                 var awards = await awardService.GetBowlingPlayerOfTheWeek();
 
-                IsBowling = true;
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
 
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
+                
                 var _showPOW = await SecureStorage.GetAsync("ShowPOW");
                 ShowPOW = ((_showPOW != null ? Convert.ToBoolean(_showPOW) : true) && (awards != null && awards.Count > 0));
 
@@ -348,15 +370,14 @@ namespace TruSport.ViewModels.Bowling
 
                     MinDate = DateTime.Now.Date;
 
-                    var pastFixtures = await fixtureService.GetPastBowlingFixtures();
-                    if (pastFixtures != null)
+                    var fixtures = await fixtureService.GetBowlingFixtures();
+                    if (fixtures.PastFixtures != null)
                     {
                         //var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now).ToList();
-                        if (pastFixtures.Count() > 0)
+                        if (fixtures.PastFixtures.Count() > 0)
                         {
-                            FixtureHeaderCount++;
                             IsPreviousVisible = true;
-                            PastCollection = new ObservableCollection<BowlingFixture>(pastFixtures.OrderByDescending(e => e.FixtureTime));
+                            PastCollection = new ObservableCollection<BowlingFixture>(fixtures.PastFixtures.OrderByDescending(e => e.FixtureTime));
                         }
                         else
                         {
@@ -364,20 +385,17 @@ namespace TruSport.ViewModels.Bowling
                         }
                     }
 
-                    FixtureHeaderCount++;
-
-                    var upcomingFixtures = await fixtureService.GetUpcomingBowlingFixtures();
-                    if (upcomingFixtures != null)
+                    //var upcomingFixtures = await fixtureService.GetUpcomingBowlingFixtures();
+                    if (fixtures.UpcomingFixtures != null)
                     {
                         //var upcomingFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now).ToList();
-                        UpcomingCollection = new ObservableCollection<BowlingFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
-
-                        if (upcomingFixtures.Count() > 0)
+                        
+                        if (fixtures.UpcomingFixtures.Count() > 0)
                         {
+                            UpcomingCollection = new ObservableCollection<BowlingFixture>(fixtures.UpcomingFixtures.OrderBy(e => e.FixtureTime));
                             NoUpcomingFixtures = false;
 
-                            if (FixtureHeaderCount > 0)
-                                SelectedIndex = 1;
+                            SelectedIndex = 1;
 
                             foreach (var fixture in UpcomingCollection)
                             {
@@ -416,19 +434,18 @@ namespace TruSport.ViewModels.Bowling
                 {
                     NoConnectivity = false;
 
-                    var pastFixtures = await fixtureService.GetPastBowlingFixtures();
-                    if (pastFixtures != null)
+                    var fixtures = await fixtureService.GetBowlingFixtures();
+                    if (fixtures.PastFixtures != null)
                     {
-                        PastCollection = new ObservableCollection<BowlingFixture>(pastFixtures);
+                        PastCollection = new ObservableCollection<BowlingFixture>(fixtures.PastFixtures.OrderByDescending(e => e.FixtureTime));
                     }
 
                     var upcomingFixtures = await fixtureService.GetUpcomingBowlingFixtures();
-                    if (upcomingFixtures != null)
+                    if (fixtures.UpcomingFixtures != null)
                     {
                         //var upcomingFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now);
 
-                        UpcomingCollection = new ObservableCollection<BowlingFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
-
+                        UpcomingCollection = new ObservableCollection<BowlingFixture>(fixtures.UpcomingFixtures.OrderBy(e => e.FixtureTime));
                     }
                 }
                 else
@@ -493,6 +510,24 @@ namespace TruSport.ViewModels.Bowling
         private async void CalendarVisibilityClicked()
         {
             IsUpcomingCalendarVisible = !IsUpcomingCalendarVisible;
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });                
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
         }
 
         private async void SelectedLeague(object obj)

@@ -124,7 +124,17 @@ namespace OnTrackWebService.Repository
                 List<BowlingGames> errorGames = new List<BowlingGames>();
                 List<BowlingGame> games = new List<BowlingGame>();
                 List<BowlingTeam> teams = await teamRepository.GetBowlingTeams();
-                List<BowlingFixture> fixtures = await fixtureRepository.GetBowlingFixtures();
+                List<BowlingFixture> fixtures = await _context.BowlingFixtures
+                .Include(e => e.HomeTeam)
+                .Include(e => e.AwayTeam)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.BowlingRosters).ThenInclude(e => e.BowlingPlayerSeason).ThenInclude(e => e.Player)
+                .Include(e => e.BowlingRosters).ThenInclude(e => e.BowlingGames)
+                .Include(e => e.BowlingScore)
+                .Include(e => e.MatchType)
+                .Include(e => e.Season)
+                .ToListAsync();
                 List<BowlingRoster> bowlingRosters = await bowlingRosterRepository.GetAll();
                 BowlingTeam team = null;
                 Season season = null;

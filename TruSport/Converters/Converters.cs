@@ -245,6 +245,24 @@ namespace TruSport.Converters
         }
     }
 
+    public class ShowResultConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var score = (int?)value;
+
+            if (score == null)
+                return false;
+
+            return true;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return int.Parse((string)value);
+        }
+    }
+
     public class IsUpcomingFixtureConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
