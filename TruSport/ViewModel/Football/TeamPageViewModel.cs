@@ -8,6 +8,8 @@ using Xamarin.Forms;
 using TruSport.Services;
 using Xamarin.Essentials;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using Microsoft.AppCenter.Crashes;
 
 namespace TruSport.ViewModels
 {
@@ -20,6 +22,7 @@ namespace TruSport.ViewModels
         private bool noConnectivity;
 
         TeamService teamService;
+        AdService adService;
 
         #endregion
 
@@ -30,16 +33,18 @@ namespace TruSport.ViewModels
             TeamCollection = new ObservableCollection<Team>();
 
             teamService = new TeamService();
+            adService = new AdService();
 
             GenerateSource();
 
             TeamFavouriteCommand = new Command<object>(TeamFavourite);
+            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
 
         #region Properties
-
+        public Command AdTappedCommand { get; }
         public Command<object> TeamFavouriteCommand { get; }
 
         public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> ItemTapCommand
@@ -66,6 +71,13 @@ namespace TruSport.ViewModels
             set { Set(ref noConnectivity, value); }
         }
 
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         #endregion
 
         #region Generate Source
@@ -80,6 +92,19 @@ namespace TruSport.ViewModels
                 if (current == NetworkAccess.Internet)
                 {
                     NoConnectivity = false;
+
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
 
                     var teamFavourites = await App.Database.GetFootballTeamFavourites();
 
@@ -101,6 +126,24 @@ namespace TruSport.ViewModels
             finally
             {
                 IsActivityIndicatorVisible = false;
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 

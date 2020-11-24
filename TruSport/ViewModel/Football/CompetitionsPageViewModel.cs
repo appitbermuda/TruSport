@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using TruSport.Services;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using Microsoft.AppCenter.Crashes;
 
 namespace TruSport.ViewModels
 {
@@ -31,6 +32,7 @@ namespace TruSport.ViewModels
         LeagueTableService leagueTableService;
         TransferService transferService;
         LeagueService leagueService;
+        AdService adService;
         INavigation Navigation;
 
         #endregion
@@ -43,18 +45,28 @@ namespace TruSport.ViewModels
             fixtureService = new FixtureService();
             leagueTableService = new LeagueTableService();
             leagueService = new LeagueService();
+            adService = new AdService();
 
             GenerateSource();
+
+            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
 
         #region Properties
-
+        public Command AdTappedCommand { get; }
         public ObservableCollection<League> LeagueCollection
         {
             get { return leagueCollection; }
             set { Set(ref leagueCollection, value); }
+        }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
         }
 
         public bool NoConnectivity
@@ -83,6 +95,19 @@ namespace TruSport.ViewModels
                 {
                     NoConnectivity = false;
 
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
+
                     var leagues = await leagueService.GetFootballLeagues();
                     LeagueCollection = new ObservableCollection<League>(leagues.OrderBy(e => e.Name).ToList());
 
@@ -96,7 +121,24 @@ namespace TruSport.ViewModels
             }
 
             IsActivityIndicatorVisible = false;
-            //ItemTapCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(ItemTapped);
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
         }
 
         #endregion

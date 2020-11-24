@@ -9,6 +9,8 @@ using Xamarin.Forms.Internals;
 using TruSport.Services;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using Microsoft.AppCenter.Crashes;
+using System.Threading.Tasks;
 
 namespace TruSport.ViewModels.Cricket
 {
@@ -26,6 +28,7 @@ namespace TruSport.ViewModels.Cricket
         private bool noConnectivity;
         
         LeagueStatService leagueStatsService;
+        AdService adService;
 
         #endregion
 
@@ -37,12 +40,17 @@ namespace TruSport.ViewModels.Cricket
             PlayerMostWicketsCollection = new ObservableCollection<LeagueStat>();
 
             leagueStatsService = new LeagueStatService();
+            adService = new AdService();
+
             GenerateSource();
+
+            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
 
         #region Properties
+        public Command AdTappedCommand { get; }
         internal SfListView PlayerCategoryList
         {
             get;
@@ -81,6 +89,13 @@ namespace TruSport.ViewModels.Cricket
             set { Set(ref this._playerMostWicketsCollection, value); }
         }
 
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         public bool NoConnectivity
         {
             get { return noConnectivity; }
@@ -112,6 +127,19 @@ namespace TruSport.ViewModels.Cricket
 
                 try
                 {
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
+
                     var runsByPlayer = await leagueStatsService.GetMostRunsByPlayer();
 
                     if(runsByPlayer != null)
@@ -132,6 +160,24 @@ namespace TruSport.ViewModels.Cricket
                 NoConnectivity = true;
             IsActivityIndicatorVisible = false;
             //ItemTapCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(ItemTapped);
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
         }
 
         //private void ResetTapped(object obj)

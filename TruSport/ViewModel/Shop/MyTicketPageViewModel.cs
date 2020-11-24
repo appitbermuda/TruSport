@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
 using Syncfusion.ListView.XForms;
 using TruSport.Data;
@@ -27,6 +30,7 @@ namespace TruSport.ViewModel.Shop
         OrderService orderService;
         MatchTicketService matchTicketService;
         PushNotificationService pushNotificationService;
+        AdService adService;
 
         INavigation Navigation;
 
@@ -34,6 +38,7 @@ namespace TruSport.ViewModel.Shop
         {
             matchTicketService = new MatchTicketService();
             orderService = new OrderService();
+            adService = new AdService();
             pushNotificationService = new PushNotificationService();
             OrderCollection = new ObservableCollection<CustomerOrder>();
             MatchTicketCollection = new ObservableCollection<MatchTicket>();
@@ -41,6 +46,7 @@ namespace TruSport.ViewModel.Shop
 
             GenerateSource();
 
+            AdTappedCommand = new Command(AdTapped);
             TicketSelectedCommand = new Command<object>(TicketSelected);
             AcceptTransferCommand = new Command<object>(AcceptTransfer);
 
@@ -51,6 +57,7 @@ namespace TruSport.ViewModel.Shop
             });
         }
 
+        public Command AdTappedCommand { get; }
         private Command<Object> ticketSelectedCommand;
         public Command<object> TicketSelectedCommand
         {
@@ -83,6 +90,13 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _transferRequestCollection, value); }
         }
 
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         public bool NoTickets
         {
             get { return _noTickets; }
@@ -111,6 +125,18 @@ namespace TruSport.ViewModel.Shop
                 var current = Connectivity.NetworkAccess;
                 if (current == NetworkAccess.Internet)
                 {
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
 
                     var email = await SecureStorage.GetAsync("Email");
                     Customer = await App.Database.GetCustomerByIDAsync(email);
@@ -165,6 +191,24 @@ namespace TruSport.ViewModel.Shop
                 });
 
                 await Navigation.PushModalAsync(new TransferTicketPage(acceptTransfer));                
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using TruSport.Services;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using Microsoft.AppCenter.Crashes;
 
 namespace TruSport.ViewModels.Cricket
 {
@@ -26,6 +27,7 @@ namespace TruSport.ViewModels.Cricket
         TransferService transferService;
         LeagueService leagueService;
         INavigation Navigation;
+        AdService adService;
 
         #endregion
 
@@ -37,14 +39,17 @@ namespace TruSport.ViewModels.Cricket
             fixtureService = new FixtureService();
             leagueTableService = new LeagueTableService();
             leagueService = new LeagueService();
+            adService = new AdService();
 
             GenerateSource();
+
+            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
 
         #region Properties
-
+        public Command AdTappedCommand { get; }
         public ObservableCollection<League> LeagueCollection
         {
             get { return leagueCollection; }
@@ -62,6 +67,14 @@ namespace TruSport.ViewModels.Cricket
             get { return _isActivityIndicatorVisible; }
             set { Set(ref _isActivityIndicatorVisible, value); }
         }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         #endregion
 
         #region Generate Source
@@ -76,6 +89,19 @@ namespace TruSport.ViewModels.Cricket
                 if (current == NetworkAccess.Internet)
                 {
                     NoConnectivity = false;
+
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
 
                     var leagues = await leagueService.GetCricketLeagues();
                     leagues = leagues.OrderBy(e => e.Name).ToList();
@@ -93,6 +119,24 @@ namespace TruSport.ViewModels.Cricket
             finally
             {
                 IsActivityIndicatorVisible = false;
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 

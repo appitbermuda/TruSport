@@ -54,6 +54,7 @@ namespace TruSport.ViewModels
         CoachService coachService;
         LeagueTableService leagueTableService;
         NotificationRegistrationService notificationRegistrationService;
+        AdService adService;
         INavigation Navigation;
 
         #endregion
@@ -74,18 +75,20 @@ namespace TruSport.ViewModels
             coachService = new CoachService();
             leagueTableService = new LeagueTableService();
             notificationRegistrationService = new NotificationRegistrationService();
+            adService = new AdService();
 
             SelectedIndex = 0;
 
             GenerateSource(fixture);
 
+            AdTappedCommand = new Command(AdTapped);
             FavouriteCommand = new Command(async () => await Favourite());
         }
 
         #endregion
 
         #region Properties
-        
+        public Command AdTappedCommand { get; }
         public Command FavouriteCommand { get; }
 
         public Fixture FixtureItem
@@ -146,6 +149,13 @@ namespace TruSport.ViewModels
         {
             get { return matchRosterSummaryCollection; }
             set { Set(ref matchRosterSummaryCollection, value); }
+        }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
         }
 
         public int SelectedIndex
@@ -227,6 +237,19 @@ namespace TruSport.ViewModels
             try
             {
                 FixtureItem = fixtureItem;
+
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
+
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
 
                 HasScore = FixtureItem.Match.HomeTeamScore.HasValue && !FixtureItem.Match.AwayTeamScore.HasValue;
 
@@ -451,6 +474,24 @@ namespace TruSport.ViewModels
             {
                 IsFavourite = !IsFavourite;
                 await App.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 

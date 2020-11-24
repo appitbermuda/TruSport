@@ -9,6 +9,8 @@ using Xamarin.Forms.Internals;
 using TruSport.Services;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 
 namespace TruSport.ViewModels
 {
@@ -33,6 +35,7 @@ namespace TruSport.ViewModels
         private bool noConnectivity;
         
         LeagueStatService leagueStatsService;
+        AdService adService;
 
         #endregion
 
@@ -45,15 +48,18 @@ namespace TruSport.ViewModels
             TeamConcededCollection = new ObservableCollection<LeagueStat>();
             
             leagueStatsService = new LeagueStatService();
+            adService = new AdService();
 
             GenerateSource();
+
+            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
 
         #region Properties
 
-
+        public Command AdTappedCommand { get; }
         public ObservableCollection<LeagueStat> PlayerGoalsCollection
         {
             get { return playerGoalsCollection; }
@@ -71,8 +77,6 @@ namespace TruSport.ViewModels
             get { return teamScoredCollection; }
             set { Set(ref this.teamScoredCollection, value); }
         }
-
-
 
         public ObservableCollection<LeagueStat> PremierPlayerGoalsCollection
         {
@@ -128,6 +132,13 @@ namespace TruSport.ViewModels
             set { Set(ref this.coronaGoalsConcededCollection, value); }
         }
 
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         public bool NoConnectivity
         {
             get { return noConnectivity; }
@@ -155,6 +166,20 @@ namespace TruSport.ViewModels
 
                 try
                 {
+
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
+
                     var goalsScoredByPlayerList = await leagueStatsService.GetGoalsScoredByPlayer();
                     PlayerGoalsCollection = new ObservableCollection<LeagueStat>(goalsScoredByPlayerList);
 
@@ -224,6 +249,24 @@ namespace TruSport.ViewModels
             else
                 NoConnectivity = true;
             IsActivityIndicatorVisible = false;
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
         }
 
         #endregion

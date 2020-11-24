@@ -30,7 +30,8 @@ namespace TruSport.ViewModels.Cricket
         private bool noFixtureFavourites;
         private bool noConnectivity;
         TeamService teamService;
-        
+        AdService adService;
+
         #endregion
 
         #region Constructor
@@ -40,8 +41,11 @@ namespace TruSport.ViewModels.Cricket
             teamService = new TeamService();
             FavouriteTeamCollection = new ObservableCollection<Team>();
             FavouriteFixturesCollection = new ObservableCollection<CricketFixture>();
+            adService = new AdService();
+
             GenerateSource();
 
+            AdTappedCommand = new Command(AdTapped);
             DeleteTeamFavouriteCommand = new Command<object>(DeleteTeamFavourite);
             DeleteFixtureFavouriteCommand = new Command<object>(DeleteFixtureFavourite);
         }
@@ -49,7 +53,7 @@ namespace TruSport.ViewModels.Cricket
         #endregion
 
         #region Properties
-
+        public Command AdTappedCommand { get; }
         public Command<object> DeleteTeamFavouriteCommand { get; }
         public Command<object> DeleteFixtureFavouriteCommand { get; }
 
@@ -69,6 +73,13 @@ namespace TruSport.ViewModels.Cricket
         {
             get { return favouriteFixturesCollection; }
             set { Set(ref favouriteFixturesCollection, value); }
+        }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
         }
 
         public bool NoTeamFavourites
@@ -121,6 +132,19 @@ namespace TruSport.ViewModels.Cricket
                 {
                     NoConnectivity = false;
 
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
+
                     IsTeamActivityIndicatorVisible = true;
                     IsFixtureActivityIndicatorVisible = true;
 
@@ -161,6 +185,24 @@ namespace TruSport.ViewModels.Cricket
             IsFixtureActivityIndicatorVisible = false;
             IsTeamActivityIndicatorVisible = false;
             IsActivityIndicatorVisible = false;
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
         }
 
         public async Task RefreshTeamFavourites()

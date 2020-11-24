@@ -13,6 +13,7 @@ using TruSport.Views.Football;
 using Syncfusion.DataSource.Extensions;
 using Microsoft.AppCenter.Crashes;
 using System.Diagnostics;
+using Xamarin.Essentials;
 
 namespace TruSport.ViewModels.Cricket
 {
@@ -45,6 +46,7 @@ namespace TruSport.ViewModels.Cricket
         PlayerService playerService;
         INavigation Navigation;
         TransferService transferService;
+        AdService adService;
 
         #endregion
 
@@ -69,8 +71,11 @@ namespace TruSport.ViewModels.Cricket
             leagueTableService = new LeagueTableService();
             fixtureService = new FixtureService();
             playerService = new PlayerService();
+            adService = new AdService();
+
             GenerateSource(Team);
 
+            AdTappedCommand = new Command(AdTapped);
             FavouriteCommand = new Command(async () => await Favourite());
             LeagueSelectedCommand = new Command<object>(SelectedLeague);
         }
@@ -78,6 +83,7 @@ namespace TruSport.ViewModels.Cricket
         #endregion
 
         #region Properties
+        public Command AdTappedCommand { get; }
         internal SfListView PlayerCategoryList
         {
             get;
@@ -108,6 +114,13 @@ namespace TruSport.ViewModels.Cricket
         {
             get { return resetTapCommand; }
             set { resetTapCommand = value; }
+        }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
         }
 
         public ObservableCollection<Transfers> TransferCollection
@@ -205,6 +218,18 @@ namespace TruSport.ViewModels.Cricket
 
             try
             {
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
+
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
 
                 var _team = await teamService.GetCricketProfile(Team.ID);
 
@@ -326,6 +351,24 @@ namespace TruSport.ViewModels.Cricket
 
                 //IsSavingFavourite = false;
                 //EnableFavourite = true;
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 

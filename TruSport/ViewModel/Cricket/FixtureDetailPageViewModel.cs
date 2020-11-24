@@ -54,6 +54,7 @@ namespace TruSport.ViewModels.Cricket
         RosterService rosterService;
         CoachService coachService;
         LeagueTableService leagueTableService;
+        AdService adService;
         INavigation Navigation;
 
         #endregion
@@ -73,18 +74,20 @@ namespace TruSport.ViewModels.Cricket
             fixtureService = new FixtureService();
             coachService = new CoachService();
             leagueTableService = new LeagueTableService();
+            adService = new AdService();
 
             SelectedIndex = 0;
 
             GenerateSource(fixture);
 
+            AdTappedCommand = new Command(AdTapped);
             FavouriteCommand = new Command(async () => await Favourite());
         }
 
         #endregion
 
         #region Properties
-
+        public Command AdTappedCommand { get; }
         public Command FavouriteCommand { get; }
 
         public CricketFixture FixtureItem
@@ -145,6 +148,13 @@ namespace TruSport.ViewModels.Cricket
         {
             get { return cricketScoreCollection; }
             set { Set(ref cricketScoreCollection, value); }
+        }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
         }
 
         public int SelectedIndex
@@ -233,7 +243,21 @@ namespace TruSport.ViewModels.Cricket
 
             try
             {
+
                 FixtureItem = fixtureItem;
+
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
+
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
 
                 if (fixtureItem.FixtureTime > DateTime.Now)
                     IsFavouriteVisible = true;
@@ -503,6 +527,24 @@ namespace TruSport.ViewModels.Cricket
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "CricketFixture Refresh");
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 

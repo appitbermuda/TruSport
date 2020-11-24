@@ -30,7 +30,8 @@ namespace TruSport.ViewModels
         private bool noFixtureFavourites;
         private bool noConnectivity;
         TeamService teamService;
-        
+        AdService adService;
+
         #endregion
 
         #region Constructor
@@ -40,8 +41,11 @@ namespace TruSport.ViewModels
             teamService = new TeamService();
             FavouriteTeamCollection = new ObservableCollection<Team>();
             FavouriteFixturesCollection = new ObservableCollection<Fixture>();
+            adService = new AdService();
+
             GenerateSource();
 
+            AdTappedCommand = new Command(AdTapped);
             DeleteTeamFavouriteCommand = new Command<object>(DeleteTeamFavourite);
             DeleteFixtureFavouriteCommand = new Command<object>(DeleteFixtureFavourite);
         }
@@ -57,6 +61,7 @@ namespace TruSport.ViewModels
         #endregion
 
         #region Properties
+        public Command AdTappedCommand { get; }
         internal SfListView PlayerCategoryList
         {
             get;
@@ -96,6 +101,13 @@ namespace TruSport.ViewModels
         {
             get { return favouriteFixturesCollection; }
             set { Set(ref favouriteFixturesCollection, value); }
+        }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
         }
 
         public bool NoTeamFavourites
@@ -148,6 +160,20 @@ namespace TruSport.ViewModels
                 if (current == NetworkAccess.Internet)
                 {
                     NoConnectivity = false;
+
+                    await Task.Run(async () =>
+                    {
+                        var ads = await adService.GetAds();
+
+                        if (ads != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                            });
+                        }
+                    });
+
                     IsTeamActivityIndicatorVisible = true;
                     IsFixtureActivityIndicatorVisible = true;
 
@@ -275,6 +301,24 @@ namespace TruSport.ViewModels
             {
                 Crashes.TrackError(ex);
                 Debug.WriteLine(ex.Message, "DeleteFixtureFavourite");
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 

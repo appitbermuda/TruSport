@@ -61,7 +61,6 @@ namespace TruSport.ViewModels.Bowling
         private bool _isBowling;
         private string selectedSport;
         private DateTime _minDate;
-        private Ad _ad;
         Sport _sport;
 
         FixtureService fixtureService;
@@ -196,6 +195,7 @@ namespace TruSport.ViewModels.Bowling
             set { Set(ref liveCollection, value); }
         }
 
+        private Ad _ad;
         public Ad Ad
         {
             get { return _ad; }

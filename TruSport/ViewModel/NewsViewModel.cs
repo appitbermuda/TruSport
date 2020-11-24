@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 using TruSport.Data;
 using TruSport.Model;
 using TruSport.Services;
@@ -18,16 +21,21 @@ namespace TruSport.ViewModels
         private bool _isActivityIndicatorVisible;
 
         NewsService newsService;
+        AdService adService;
 
         public NewsViewModel()
         {
             Feed = new ObservableCollection<RssFeedItem>();
 
             newsService = new NewsService();
+            adService = new AdService();
 
             GenerateSource();
+
+            AdTappedCommand = new Command(AdTapped);
         }
 
+        public Command AdTappedCommand { get; }
         public bool IsActivityIndicatorVisible
         {
             get { return _isActivityIndicatorVisible; }
@@ -48,6 +56,13 @@ namespace TruSport.ViewModels
                 OnItemSelected(value);
                 Set(ref _selectedItem, value);
             }
+        }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
         }
 
         public bool NoConnectivity
@@ -74,6 +89,19 @@ namespace TruSport.ViewModels
 
                 NoConnectivity = false;
 
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
+
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
+
                 var feed = await newsService.GetFeed();
 
                 Feed = new ObservableCollection<RssFeedItem>(feed.OrderByDescending(e => e.Date));
@@ -82,6 +110,24 @@ namespace TruSport.ViewModels
                 NoConnectivity = true;
 
             IsActivityIndicatorVisible = false;
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
         }
     }
 }

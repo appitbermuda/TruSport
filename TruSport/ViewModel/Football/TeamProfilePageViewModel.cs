@@ -13,6 +13,7 @@ using TruSport.Views.Football;
 using Syncfusion.DataSource.Extensions;
 using System.Diagnostics;
 using Microsoft.AppCenter.Crashes;
+using Xamarin.Essentials;
 
 namespace TruSport.ViewModels
 {
@@ -45,6 +46,7 @@ namespace TruSport.ViewModels
         PlayerService playerService;
         INavigation Navigation;
         TransferService transferService;
+        AdService adService;
 
         #endregion
 
@@ -69,15 +71,18 @@ namespace TruSport.ViewModels
             leagueTableService = new LeagueTableService();
             fixtureService = new FixtureService();
             playerService = new PlayerService();
+            adService = new AdService();
 
             GenerateSource(Team);
 
+            AdTappedCommand = new Command(AdTapped);
             FavouriteCommand = new Command(async () => await Favourite());
             LeagueSelectedCommand = new Command<object>(SelectedLeague);
         }
         #endregion
 
         #region Properties
+        public Command AdTappedCommand { get; }
         internal SfListView PlayerCategoryList
         {
             get;
@@ -166,6 +171,13 @@ namespace TruSport.ViewModels
             set { Set(ref _coach, value); }
         }
 
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         public ObservableCollection<string> SyncTitleCollection
         {
             get { return syncTitleCollection; }
@@ -202,6 +214,19 @@ namespace TruSport.ViewModels
             try
             {
                 TeamItem = await teamService.GetFootballProfile(Team.ID);
+
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
+
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
 
                 IsFavourite = await App.Database.IsTeamFavourite(Team.ID);
 
@@ -275,6 +300,24 @@ namespace TruSport.ViewModels
             catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Select League");
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 

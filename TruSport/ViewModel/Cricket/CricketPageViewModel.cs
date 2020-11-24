@@ -65,6 +65,7 @@ namespace TruSport.ViewModels.Cricket
 
         FixtureService fixtureService;
         AwardService awardService;
+        AdService adService;
 
         INavigation Navigation;
 
@@ -83,11 +84,13 @@ namespace TruSport.ViewModels.Cricket
 
             fixtureService = new FixtureService();
             awardService = new AwardService();
+            adService = new AdService();
 
             SelectedIndex = 0;
 
             GenerateSource();
 
+            AdTappedCommand = new Command(AdTapped);
             CalendarCellTapped = new Command<CalendarTappedEventArgs>(CellTapped);
 
             RefreshPastFixturesCommand = new Command<object>(async (obj) => await RefreshPastFixtures());
@@ -112,7 +115,7 @@ namespace TruSport.ViewModels.Cricket
         #endregion
 
         #region Properties
-
+        public Command AdTappedCommand { get; }
         public CalendarEventCollection CalendarInlineEvents
         {
             get { return calendarInlineEvents; }
@@ -297,6 +300,13 @@ namespace TruSport.ViewModels.Cricket
             set { Set(ref isPreviousVisible, value); }
         }
 
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
         public bool IsCricket
         {
             get { return _isCricket; }
@@ -330,6 +340,19 @@ namespace TruSport.ViewModels.Cricket
 
                 //SelectedSport = await SecureStorage.GetAsync("Sport");
                 var awards = await awardService.GetCricketPlayerOfTheWeek();
+
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
+
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
 
                 IsCricket = true;
 
@@ -595,6 +618,24 @@ namespace TruSport.ViewModels.Cricket
             {
                 Crashes.TrackError(ex);
                 Debug.WriteLine(ex.Message, "RefreshLiveFixtures");
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
             }
         }
 
