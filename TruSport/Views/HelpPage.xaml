@@ -83,11 +83,17 @@
         <Grid VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
                 <extensions:CustomWebView x:Name="Web" Source="{Binding HelpSource}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
             <extensions:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
-            <model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="50" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AdTappedCommand}"/>
+                </StackLayout.GestureRecognizers>
+                <Image Source="{Binding Ad.Image}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Aspect="AspectFill"/>
+            </StackLayout>
+            <!--<model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>-->
             </Grid>
             </StackLayout>
         <!--<Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource frameBackgroundColor}">

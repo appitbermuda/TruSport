@@ -1,47 +1,54 @@
 ﻿<Properties StartupConfiguration="{2B8BBBC2-64F1-4CA8-93A4-CE0C0FCA282F}|Default">
-  <MonoDevelop.Ide.ItemProperties.TruSport.Android AndroidDesignerPreferredTheme="Theme.AppCompat.Light.NoActionBar" AndroidDesignerPreferredDevice="Nexus 4" PreferredExecutionTarget="Android.Android_Accelerated_x86" />
   <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" TriggeredFromHotReload="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSport/Views/Tickets/ActiveTicketsPage.xaml">
     <Files>
-      <File FileName="TruSport/Views/Bowling/TablePage.xaml" Line="444" Column="27" />
-      <File FileName="TruSport/Views/Bowling/BowlingMasterDetailPageDetail.xaml" Line="377" Column="18" />
-      <File FileName="TruSport/ViewModel/Bowling/BowlingPageViewModel.cs" Line="319" Column="38" />
-      <File FileName="TruSport/Services/AdService.cs" Line="31" Column="1" />
-      <File FileName="TruSport/ViewModel/Bowling/FixtureDetailPageViewModel.cs" Line="256" Column="19" />
-      <File FileName="TruSport/ViewModel/Bowling/FixturePageViewModel.cs" Line="105" Column="48" />
-      <File FileName="TruSport/ViewModel/Bowling/LeagueStatPageViewModel.cs" Line="57" Column="48" />
-      <File FileName="TruSport/ViewModel/Bowling/TablePageViewModel.cs" Line="53" Column="48" />
-      <File FileName="TruSport/ViewModel/Bowling/TeamPageViewModel.cs" Line="47" Column="48" />
-      <File FileName="TruSport/ViewModel/Bowling/TeamProfilePageViewModel.cs" Line="88" Column="48" />
-      <File FileName="TruSportWebService/Models/Batting.cs" Line="22" Column="9" />
-      <File FileName="TruSportWebService/Controllers/AdController.cs" Line="35" Column="62" />
-      <File FileName="TruSportWebService/Models/Ad/Ad.cs" Line="16" Column="33" />
-      <File FileName="TruSport/Model/Ad.cs" Line="9" Column="34" />
-      <File FileName="TruSportWebService/Data/Constants.cs" Line="39" Column="42" />
-      <File FileName="TruSport/Constants/Constants.cs" Line="38" Column="57" />
-      <File FileName="TruSport/Converters/Converters.cs" Line="1785" Column="84" />
-      <File FileName="TruSportWebService/Repository/AdRepository.cs" Line="64" Column="21" />
-      <File FileName="TruSportWebService/Repository/FixtureRepository.cs" Line="186" Column="1" />
-      <File FileName="TruSport/Views/Bowling/FixtureDetailsPage.xaml" Line="1000" Column="27" />
-      <File FileName="TruSport/Views/Bowling/BowlingMasterDetailPageMaster.xaml" Line="1" Column="1" />
-      <File FileName="TruSport/Views/Bowling/FixturePage.xaml" Line="341" Column="27" />
-      <File FileName="TruSport/Views/Bowling/LeagueStatsPage.xaml" Line="304" Column="27" />
-      <File FileName="TruSport/Views/Bowling/TeamPage.xaml" Line="127" Column="23" />
-      <File FileName="TruSport/Views/Bowling/TeamProfilePage.xaml" Line="1346" Column="27" />
-      <File FileName="TruSport/Views/Bowling/TableDetailPage.xaml" Line="1" Column="1" />
-      <File FileName="TruSport.iOS/Info.plist" />
+      <File FileName="TruSport/Views/Bowling/FixtureDetailsPage.xaml" Line="1000" Column="18" />
+      <File FileName="TruSport/Views/Cricket/CompetitionsPage.xaml" Line="97" Column="33" />
+      <File FileName="TruSport/Views/Cricket/CompetitionDetailsPage.xaml" Line="1" Column="1" />
+      <File FileName="TruSport/Views/Football/CompetitionsPage.xaml" Line="91" Column="37" />
+      <File FileName="TruSport/Views/Cricket/CricketMasterDetailPageDetail.xaml" Line="523" Column="27" />
+      <File FileName="TruSport/Views/Bowling/FavouritePage.xaml" Line="456" Column="1" />
+      <File FileName="TruSport/Views/Cricket/FixtureDetailsPage.xaml" Line="1247" Column="27" />
+      <File FileName="TruSport/Views/Football/FixtureDetailsPage.xaml" Line="1686" Column="27" />
+      <File FileName="TruSport/Views/Football/FixturePage.xaml" Line="459" Column="37" />
+      <File FileName="TruSport/Views/Cricket/FixturePage.xaml" Line="470" Column="37" />
+      <File FileName="TruSport/Views/FlyersPage.xaml" Line="64" Column="37" />
+      <File FileName="TruSport/Views/FootballMasterDetailPageDetail.xaml" Line="518" Column="18" />
+      <File FileName="TruSport/Views/HelpPage.xaml" Line="86" Column="42" />
+      <File FileName="TruSport/Views/Cricket/LeagueStatsPage.xaml" Line="249" Column="14" />
+      <File FileName="TruSport/Views/Football/LeagueStatsPage.xaml" Line="488" Column="11" />
+      <File FileName="TruSport/Views/Football/NewsPage.xaml" Line="112" Column="15" />
+      <File FileName="TruSport/Views/Cricket/TablePage.xaml" Line="454" Column="14" />
+      <File FileName="TruSport/Views/Football/TablePage.xaml" Line="601" Column="37" />
+      <File FileName="TruSport/Views/Cricket/TeamPage.xaml" Line="148" Column="12" />
+      <File FileName="TruSport/Views/Football/TeamPage.xaml" Line="150" Column="14" />
+      <File FileName="TruSport/Views/Cricket/TeamProfilePage.xaml" Line="1416" Column="16" />
+      <File FileName="TruSport/Views/Football/TeamProfilePage.xaml" Line="1512" Column="1" />
+      <File FileName="TruSport/Views/Tickets/TicketTabbedPage.xaml" Line="1" Column="1" />
+      <File FileName="TruSport/Views/Tickets/PurchasePage.xaml" Line="246" Column="45" />
+      <File FileName="TruSport/Views/Tickets/ActiveTicketsPage.xaml" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="TruSport" expanded="True">
-            <Node name="TruSport" expanded="True">
-              <Node name="ViewModel" expanded="True">
-                <Node name="Bowling" expanded="True" />
+            <Node name="OnTrackWebService" expanded="True">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Models" expanded="True">
+                <Node name="Imports" expanded="True" />
               </Node>
+              <Node name="Properties" expanded="True">
+                <Node name="PublishProfiles" expanded="True" />
+              </Node>
+            </Node>
+            <Node name="TruSport" expanded="True">
+              <Node name="Model" expanded="True" />
               <Node name="Views" expanded="True">
-                <Node name="Bowling" expanded="True">
-                  <Node name="BowlingMasterDetailPageDetail.xaml" selected="True" />
+                <Node name="Bowling" expanded="True" />
+                <Node name="Cricket" expanded="True" />
+                <Node name="Football" expanded="True" />
+                <Node name="Tickets" expanded="True">
+                  <Node name="ActiveTicketsPage.xaml" selected="True" />
                 </Node>
               </Node>
             </Node>

@@ -467,7 +467,13 @@
              <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                         <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
                     </StackLayout>
-                <model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="50" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AdTappedCommand}"/>
+                </StackLayout.GestureRecognizers>
+                <Image Source="{Binding Ad.Image}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Aspect="AspectFill"/>
+            </StackLayout>
+                <!--<model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>-->
             
                 <ContentView Grid.Row="0" BackgroundColor="{DynamicResource backgroundColor}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
                 <extension:CustomBusyIndicator  Grid.Row="0" IsVisible="{Binding IsActivityIndicatorVisible}"/>

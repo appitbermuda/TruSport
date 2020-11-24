@@ -1502,7 +1502,13 @@
                 <StackLayout Grid.Row="2" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                         <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
                     </StackLayout>
-                <model:AdMobView Grid.Row="2" VerticalOptions="EndAndExpand" MinimumHeightRequest="50" Size="Standardbanner" />
+                <StackLayout Grid.Row="2" Padding="0,0,0,0" HeightRequest="50" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AdTappedCommand}"/>
+                </StackLayout.GestureRecognizers>
+                <Image Source="{Binding Ad.Image}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Aspect="AspectFill"/>
+            </StackLayout>
+                <!--<model:AdMobView Grid.Row="2" VerticalOptions="EndAndExpand" MinimumHeightRequest="50" Size="Standardbanner" />-->
 
                 <!--<syncfusion:SfBusyIndicator Grid.RowSpan="3"
                                             x:Name="BusyIndicator"
