@@ -46,6 +46,27 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = Roles.TicketOwner)]
+        [HttpGet]
+        [Route("TicketScanners")]
+        public async Task<IActionResult> TicketScanners()
+        {
+            try
+            {
+
+                IEnumerable<TicketScanner> users = await _authenticationRepository.GetScanners(User);
+
+                if (users != null)
+                    return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Users");
+            }
+
+            return NoContent();
+        }
+
         [Authorize(Roles = Roles.AllUsers)]
         [HttpGet]
         [Route("Get")]
@@ -57,6 +78,24 @@ namespace OnTrackWebService.Controllers
 
                 if (user != null)
                     return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("IsActive")]
+        public async Task<IActionResult> IsActive(string email)
+        {
+            try
+            {
+                bool userExists = await _authenticationRepository.IsActive(email);
+
+                return Ok(userExists);
             }
             catch (Exception ex)
             {
@@ -129,6 +168,25 @@ namespace OnTrackWebService.Controllers
                 var user = await _authenticationRepository.SignInUser(userAuthentication);
 
                 return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.TicketOwner)]
+        [HttpPost]
+        [Route("UpdateTicketScanners")]
+        public async Task<IActionResult> Update(List<TicketScanner> scanners)
+        {
+            try
+            {
+                await _authenticationRepository.Update(scanners,User);
+
+                return Ok();
             }
             catch (Exception ex)
             {

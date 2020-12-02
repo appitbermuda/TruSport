@@ -20,7 +20,7 @@ namespace TruSport.Services
         {
             try
             {
-                string accessToken = await SecureStorage.GetAsync("oauth_token");
+                string accessToken = await SecureStorage.GetAsync("Token");
 
                 if (accessToken != null)
                 {
@@ -55,7 +55,7 @@ namespace TruSport.Services
         {
             try
             {
-                string accessToken = await SecureStorage.GetAsync("oauth_token");
+                string accessToken = await SecureStorage.GetAsync("Token");
 
                 if (accessToken != null)
                 {

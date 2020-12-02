@@ -13,7 +13,7 @@
                         <ResourceDictionary>
                             <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
                             <converters:ImageConverter x:Key="imageConverter"/>
-                            <converters:ShowScoreConverter x:Key="showScoreConverter"/>
+                            <converters:ShowBowlingScoreConverter x:Key="showScoreConverter"/>
                             <converters:TimeConverter x:Key="timeConverter"/>
                             <converters:TeamNameConverter x:Key="teamNameConverter"/>
                         </ResourceDictionary>
@@ -59,10 +59,10 @@
                                  Spacing="5">
                      <StackLayout Orientation="Horizontal"  HorizontalOptions="Center" >
                             <Label x:Name="HomeTeamScoreLabel"
-                                   FontSize="Medium"
+                                   FontSize="Micro"
                                    FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding BowlingScore.HomeTeamTotalPoints}"/>
+                                        Text="{Binding BowlingScore.HomeTeamTotalPoints, StringFormat='{0:G9}'}"/>
                             <Label 
                                    x:Name="Versus"
                                    FontSize="Small"
@@ -72,10 +72,10 @@
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="{Binding BowlingScore.HomeTeamTotalPoints, Converter={StaticResource showScoreConverter}}" />
                             <Label x:Name="AwayTeamScoreLabel"
-                                   FontSize="Medium"
+                                   FontSize="Micro"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
-                                        Text="{Binding BowlingScore.AwayTeamTotalPoints}"/>
+                                        Text="{Binding BowlingScore.AwayTeamTotalPoints, StringFormat='{0:G9}'}"/>
                                 
                         </StackLayout>
                     </StackLayout>

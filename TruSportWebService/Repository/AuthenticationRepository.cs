@@ -56,6 +56,23 @@ namespace OnTrackWebService.Repository
             return user;
         }
 
+        public async Task<bool> IsActive(string email)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email && e.IsActive);
+
+                if (user != null)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return false;
+        }
+
         public async Task<bool> UserExists(string email)
         {
             try
@@ -81,37 +98,45 @@ namespace OnTrackWebService.Repository
 
                 if (user != null)
                 {
-                    if (!String.IsNullOrEmpty(user.TeamID))
+                    if (user.IsActive)
                     {
-                        var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
-                        user.Team = team;
-                    }
-
-                    PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.Password, userAuthentication.password);
-
-                    if(passwordVerificationResult == PasswordVerificationResult.Success)
-                    {
-                        // authentication successful so generate jwt token
-                        var tokenHandler = new JwtSecurityTokenHandler();
-                        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-                        var tokenDescriptor = new SecurityTokenDescriptor
+                        if (!String.IsNullOrEmpty(user.TeamID))
                         {
-                            Subject = new ClaimsIdentity(new Claim[]
+                            var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
+                            user.Team = team;
+                        }
+
+                        PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.Password, userAuthentication.password);
+
+                        if (passwordVerificationResult == PasswordVerificationResult.Success)
+                        {
+                            // authentication successful so generate jwt token
+                            var tokenHandler = new JwtSecurityTokenHandler();
+                            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                            var tokenDescriptor = new SecurityTokenDescriptor
                             {
+                                Subject = new ClaimsIdentity(new Claim[]
+                                {
                                 new Claim(ClaimTypes.Name, user.Email.ToString()),
                                 new Claim(ClaimTypes.Role, user.Role.Name)
-                            }),
-                            Expires = DateTime.UtcNow.AddYears(100),
-                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                        };
-                        var token = tokenHandler.CreateToken(tokenDescriptor);
-                        user.Token = tokenHandler.WriteToken(token);
+                                }),
+                                Expires = DateTime.UtcNow.AddYears(100),
+                                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                            };
+                            var token = tokenHandler.CreateToken(tokenDescriptor);
+                            user.Token = tokenHandler.WriteToken(token);
 
-                        // remove password before returning
-                        user.Password = null;
+                            // remove password before returning
+                            user.Password = null;
 
-                        return user;
+                            return user;
 
+                        }
+                    }
+                    else
+                    {
+                        user = new User();
+                        user.ErrorMessage = "You are not authorized for Ticket scanning at this time. Please contact your team manager.";
                     }
                 }
             }
@@ -283,6 +308,40 @@ namespace OnTrackWebService.Repository
             return "There was an error resetting your password.";
         }
 
+        public async Task<IEnumerable<TicketScanner>> GetScanners(ClaimsPrincipal claimsUser)
+        {
+            try
+            {
+                // Get the claims values
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                if (Roles.TicketOwner.Contains(role))
+                {
+                    User owner = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == email && e.Role.Name == role);
+
+
+                    List<TicketScanner> scanners = await _context.Users.Include(e => e.Role).Where(e => e.Role.Name == Constants.TicketingAdmin && e.TeamID == owner.TeamID)
+                        .Select(e => new TicketScanner
+                        {
+                            Name = e.FirstName + " " + e.LastName,
+                            Email = e.Email,
+                            IsActive = e.IsActive
+                        }).ToListAsync();
+
+                    return scanners;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<AllUsers>> GetAllUsers()
         {
             return await _context.AllUsers.Include(e => e.UserType).Include(e => e.Team).ToListAsync();
@@ -296,6 +355,47 @@ namespace OnTrackWebService.Repository
         public Task Insert(User item)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task Update(List<TicketScanner> scanners, ClaimsPrincipal claimsUser)
+        {
+            List<User> updateScanners = new List<User>();
+            try
+            {
+                // Get the claims values
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                User owner = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == email && e.Role.Name == role);
+
+                var users = await _context.Users.Where(e => e.TeamID == owner.TeamID).ToListAsync();
+
+                foreach(var scanner in scanners)
+                {
+                    User user = users.FirstOrDefault(e => e.Email == scanner.Email);
+
+                    if (user.IsActive != scanner.IsActive)
+                    {
+                        user.IsActive = scanner.IsActive;
+
+                        updateScanners.Add(user);
+                    }
+                }
+
+                if (updateScanners.Count > 0)
+                {
+                    _context.UpdateRange(updateScanners);
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
         }
 
         public async Task Update(User item)

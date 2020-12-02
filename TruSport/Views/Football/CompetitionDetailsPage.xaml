@@ -32,7 +32,7 @@
             <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
             <converter:GroupingSelectionFootballConverter x:Key="groupingSelectionConverter"/>
             <converter:GroupingLeagueDateSelectionFootballConverter x:Key="groupingLeagueDateSelectionConverter"/>
-            <converter:ShowScoreConverter x:Key="showScoreConverter"/>
+            <converter:ShowBowlingScoreConverter x:Key="showScoreConverter"/>
             <converter:TeamNameConverter x:Key="teamNameConverter"/>
             <converter:GroupingCompetitionFootballConverter x:Key="groupingCompetitionConverter"/>
             <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />

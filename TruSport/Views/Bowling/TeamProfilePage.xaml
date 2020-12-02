@@ -25,7 +25,7 @@
             <converter:FavouriteFontConverter x:Key="favouriteFontConverter"/>
             <converter:FavouriteConverter x:Key="favouriteConverter"/>
             <converter:TeamNameConverter x:Key="teamNameConverter" />
-            <converter:ShowScoreConverter x:Key="showScoreConverter" />
+            <converter:ShowBowlingScoreConverter x:Key="showScoreConverter" />
             <converter:ShowNoContentListConverter x:Key="showNoContentListConverter"/>
             <converter:IsNullConverter x:Key="isNullConverter"/>
             <converter:NumberExtensionConverter x:Key="numberExtensionConverter"/>

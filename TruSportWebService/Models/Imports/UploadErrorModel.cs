@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OnTrackWebService.Models.Shop;
 
 namespace OnTrackWebService.Models.Imports
 {
@@ -72,6 +73,14 @@ namespace OnTrackWebService.Models.Imports
         public string Message { get; set; }
         public string Exception { get; set; }
         public List<BowlingPlayerSeasons> ErrorRows { get; set; }
+        public byte[] ErrorFile { get; set; }
+    }
+
+    public class ImportTicketMembers
+    {
+        public string Message { get; set; }
+        public string Exception { get; set; }
+        public List<TicketMembers> ErrorRows { get; set; }
         public byte[] ErrorFile { get; set; }
     }
 }

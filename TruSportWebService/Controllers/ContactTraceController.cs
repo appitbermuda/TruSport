@@ -113,6 +113,27 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [Authorize(Roles = Roles.TicketAdmin)]
         [HttpGet]
+        [Route("Reports")]
+        public async Task<IActionResult> Reports()
+        {
+            try
+            {
+
+                List<TicketReport> fixtures = await _contactTraceRepository.Reports(User);
+
+                return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
         [Route("Team")]
         public async Task<IActionResult> TeamContactTraces()
         {

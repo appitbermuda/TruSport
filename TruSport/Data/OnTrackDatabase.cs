@@ -317,30 +317,66 @@ namespace TruSport.Data
 
         public async Task<bool> IsBowlingTeamFavourite(string TeamID)
         {
-            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TeamID == TeamID && e.Sport == "Bowling");
+            try
+            {
+                var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TeamID == TeamID && e.Sport == "Bowling");
 
             return favourite != null;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return false;
         }
 
         public async Task<bool> IsCricketTeamFavourite(string TeamID)
         {
-            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TeamID == TeamID && e.Sport == "Cricket");
+            try
+            {
+                var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TeamID == TeamID && e.Sport == "Cricket");
 
             return favourite != null;
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return false;
         }
 
         public async Task<bool> IsFootballTeamFavourite(string TeamID)
         {
-            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TeamID == TeamID && e.Sport == "Football");
+            try
+            {
+                var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TeamID == TeamID && e.Sport == "Football");
 
             return favourite != null;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return false;
         }
 
         public async Task<bool> IsBowlingFixtureFavourite(string FixtureID)
         {
-            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.BowlingFixtureID == FixtureID && e.Sport == "Bowling");
+            try
+            {
+                var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.BowlingFixtureID == FixtureID && e.Sport == "Bowling");
 
-            return favourite != null;
+                return favourite != null;
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return false;
         }
 
         public async Task<bool> IsCricketFixtureFavourite(string FixtureID)

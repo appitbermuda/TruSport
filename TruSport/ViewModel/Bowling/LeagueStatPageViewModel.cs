@@ -173,7 +173,7 @@ namespace TruSport.ViewModels.Bowling
                     var teamSeasonHS = await leagueStatsService.GetBowlingSeasonTeamHS();
 
                     if (teamSeasonHS != null)
-                        TeamSeasonHGCollection = new ObservableCollection<LeagueStat>(teamSeasonHS);
+                        TeamSeasonHSCollection = new ObservableCollection<LeagueStat>(teamSeasonHS);
 
                     //var wicketsByPlayer = await leagueStatsService.GetMostWicketsByPlayer();
 

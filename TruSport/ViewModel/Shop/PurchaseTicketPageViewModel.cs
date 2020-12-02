@@ -228,7 +228,7 @@ namespace TruSport.ViewModel.Shop
 
                 if (Customer != null)
                 {
-                    var fixtureProducts = await fixtureProductService.GetFixtureFixtureProducts(fixture.ID);
+                    var fixtureProducts = await fixtureProductService.GetFixtureFixtureProducts(fixture.ID, Email);
 
                     CreditCard = new CreditCard();
                     Fixture = fixture;

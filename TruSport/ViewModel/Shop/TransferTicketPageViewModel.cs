@@ -94,24 +94,30 @@ namespace TruSport.ViewModel.Shop
                 {
                     string transferred = await matchTicketService.Transfer(TransferRequest);
 
-                    try
+                    if (transferred.Contains("success"))
                     {
-                        await pushNotificationService.Send(new NotificationRequest
+                        try
                         {
-                            Text = Customer.FirstName + "has transferred you a match ticket, please go to 'My Tickets' to accept.",
-                            Silent = false,
-                            Tags = new string[] { TransferRequest.Email }
-                        });
-                    }
-                    catch(Exception ex)
-                    {
-                        Debug.WriteLine(ex.Message, "Transfer Notification");
-                    }
+                            await pushNotificationService.Send(new NotificationRequest
+                            {
+                                Text = Customer.Name + " has transferred you a match ticket, please go to 'My Tickets' to accept.",
+                                Silent = false,
+                                Tags = new string[] { TransferRequest.Email }
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message, "Transfer Notification");
+                        }
 
-                    await App.Current.MainPage.DisplayAlert("Ticket Transfer", transferred, "Okay");
+                        await App.Current.MainPage.DisplayAlert("Ticket Transfer", transferred, "Okay");
+
+                        MessagingCenter.Send(this, "TicketTransferred", true);
+                        await Navigation.PopModalAsync();
+                    }
                 }
 
-                await Navigation.PopModalAsync();
+
             }
             catch (Exception ex)
             {

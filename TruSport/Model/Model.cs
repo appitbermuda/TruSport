@@ -1020,6 +1020,7 @@ namespace TruSport.Model
         public string HomePlayerName { get; set; }
         public string AwayTeamID { get; set; }
         public string AwayPlayerName { get; set; }
+        public int Position { get; set; }
     }
 
     public class RosterListView

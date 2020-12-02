@@ -5,7 +5,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
@@ -16,12 +19,12 @@ namespace OnTrackWebService.Repository
     public class MatchTicketRepository : IOnTrackRepository<MatchTicket>
     {
         OnTrackContext _context;
-        EmailRepository emailRepository;
+        EmailRepository emailRepository;        
 
-        public MatchTicketRepository(OnTrackContext context)
+        public MatchTicketRepository(OnTrackContext context, IOptions<NotificationHubOptions> options, ILogger<PushNotificationRepository> logger)
         {
             _context = context;
-            emailRepository = new EmailRepository(context);
+            emailRepository = new EmailRepository(context);            
         }
         public Task Delete(string id)
         {
@@ -96,7 +99,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && ((e.Order.Customer.Email == email && e.TransferCustomerID == null) || (e.TransferCustomer != null && e.TransferCustomer.Email == email && e.IsTransfer)))
+                    .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && ((e.Order.Customer.Email == email && e.TransferCustomerID == null) || (e.TransferCustomer != null && e.TransferCustomer.Email == email && e.IsTransfer.HasValue && e.IsTransfer.Value)))
                     .ToListAsync();
 
                 matchTickets.ForEach(e => e.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.FixtureProduct.Fixture.HomeTeam.Alias) ? e.FixtureProduct.Fixture.HomeTeam.Alias : e.FixtureProduct.Fixture.HomeTeam.Name);
@@ -115,27 +118,38 @@ namespace OnTrackWebService.Repository
             return matchTickets;
         }
 
-        public async Task<IEnumerable<MatchTicket>> Team(string teamID)
+        public async Task<IEnumerable<MatchTicket>> Team(string teamID, ClaimsPrincipal claimsUser)
         {
             List<MatchTicket> matchTickets = new List<MatchTicket>();
 
             try
             {
-                matchTickets = await _context.MatchTickets
-                    .Include(e => e.Order).ThenInclude(e => e.Customer)
-                    .Include(e => e.Order).ThenInclude(e => e.OrderDetails)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.League)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.MatchType)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
-                    .Where(e => e.FixtureProduct.Product.TeamID == teamID).ToListAsync();
+                // Get the claims values
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
 
-                matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
-                
+                var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == email && e.Role.Name == role);
+
+                if (user != null && user.IsActive)
+                {
+                    matchTickets = await _context.MatchTickets
+                        .Include(e => e.Order).ThenInclude(e => e.Customer)
+                        .Include(e => e.Order).ThenInclude(e => e.OrderDetails)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.League)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.MatchType)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
+                        .Where(e => e.FixtureProduct.Product.TeamID == teamID).ToListAsync();
+
+                    matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
+                }
             }
             catch (Exception ex)
             { }
@@ -171,6 +185,92 @@ namespace OnTrackWebService.Repository
             }
 
             return matchTickets;
+        }
+
+        public async Task<bool> Download(string fixtureID, ClaimsPrincipal iUser)
+        {
+            try
+            {
+                var email = iUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+
+                var members = await _context.TicketMembers.Include(e => e.TicketTeam).Where(e => e.TicketTeam.TeamID == user.TeamID).ToListAsync();
+
+                var orderDetails = await _context.OrderDetails
+                    .Include(e => e.Order).ThenInclude(e => e.Customer)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                    .Where(e => e.FixtureProduct.Fixture.ID == fixtureID && e.FixtureProduct.Product.TeamID == user.TeamID).ToListAsync();
+
+                List<TicketBilling> billing = orderDetails.Select(e => new TicketBilling
+                {
+                    CustomerID = e.Order.CustomerID,
+                    Name = e.Order.Customer.Name,
+                    Quantity = e.Qty,
+                    Price = members.FirstOrDefault(m => m.CustomerID == e.Order.CustomerID) != null ? Convert.ToDouble(e.FixtureProduct.Product.MemberPrice) : Convert.ToDouble(e.FixtureProduct.Product.Price),
+                    Subtotal = Convert.ToDouble(e.Subtotal),
+                    Total = Convert.ToDouble(e.Subtotal) - ((e.Qty * .25))
+                }).ToList();
+
+                string fixture = orderDetails.FirstOrDefault().Order.Fixture;
+                double qty = billing.Sum(e => e.Quantity);
+                double subtotal = Convert.ToDouble(billing.Sum(e => e.Subtotal));
+                double fee = billing.Sum(e => (.25 * e.Quantity));
+                double total = subtotal - fee;
+
+                try
+                {
+                    await emailRepository.DownloadTicketBilling(user.FirstName, user.Email, fixture, billing.OrderBy(e => e.Name).ToList(), qty, subtotal, fee, total);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message, "Payment Email");
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<List<TicketReport>> Reports(ClaimsPrincipal claimsUser)
+        {
+            List<TicketReport> ticketReports = new List<TicketReport>();
+
+            try
+            {
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+
+                var matchTickets = await _context.MatchTickets.Include(e => e.FixtureProduct).ThenInclude(e => e.Product).Where(e => e.FixtureProduct.Product.TeamID == user.TeamID).ToListAsync();
+
+                ticketReports = await _context.FixtureProducts.Include(e => e.Product)
+                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Where(e => e.Product.TeamID == user.TeamID && e.Fixture.Date <= DateTime.Now.Date && matchTickets.Any(d => d.FixtureProductID == e.ID))
+                    .Select(e => new TicketReport
+                    {
+                        FixtureID = e.FixtureID,
+                        Fixture = e.Fixture.HomeTeam.Name + " v " + e.Fixture.AwayTeam.Name,
+                        Date = e.Fixture.Date.ToString("MMM dd, yyyy")
+                    }).ToListAsync();
+
+                return ticketReports;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return ticketReports;
         }
 
         public async Task<bool> ValidateCustomer(string matchTicketID)
@@ -253,37 +353,46 @@ namespace OnTrackWebService.Repository
 
                 var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == email && e.Role.Name == role);
 
-                var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.FixtureProductID);
-
-                var matchTicket = await _context.MatchTickets
-                    .Include(e => e.Order)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.ID && e.FixtureProduct.Product.TeamID == user.TeamID);
-
-                if (matchTicket != null)
+                if (user != null && user.IsActive)
                 {
-                    if (!matchTicket.Validated)
+                    var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.FixtureProductID);
+
+                    var matchTicket = await _context.MatchTickets
+                        .Include(e => e.Order)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                        .FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.ID && e.FixtureProduct.Product.TeamID == user.TeamID);
+
+                    if (matchTicket != null)
                     {
-                        matchTicket.Validated = true;
-                        matchTicket.ValidatedTime = DateTime.Now.ToUniversalTime();
+                        if (!matchTicket.Validated)
+                        {
+                            matchTicket.Validated = true;
+                            matchTicket.ValidatedTime = DateTime.Now.ToUniversalTime();
 
-                        _context.MatchTickets.Update(matchTicket);
-                        await _context.SaveChangesAsync();
+                            _context.MatchTickets.Update(matchTicket);
+                            await _context.SaveChangesAsync();
 
-                        ticketResponse.Response = "Validated Successfully!";
-                        ticketResponse.Ticket = fixtureProduct.Product.Age + " Ticket";
-                        ticketResponse.IsValidated = true;
+                            ticketResponse.Response = "Validated Successfully!";
+                            ticketResponse.Ticket = fixtureProduct.Product.Age + " Ticket";
+                            ticketResponse.IsValidated = true;
+
+                            return ticketResponse;
+                        }
+
+                        ticketResponse.Response = "Ticket already validated!";
+                        ticketResponse.IsValidated = false;
 
                         return ticketResponse;
                     }
 
-                    ticketResponse.Response = "Ticket already validated!";
+                    ticketResponse.Response = "Invalid Ticket!";
                     ticketResponse.IsValidated = false;
 
                     return ticketResponse;
+
                 }
 
-                ticketResponse.Response = "Invalid Ticket!";
+                ticketResponse.Response = "You are not authorized to scan!";
                 ticketResponse.IsValidated = false;
 
                 return ticketResponse;
@@ -382,7 +491,6 @@ namespace OnTrackWebService.Repository
                     }
 
                     PaymentAmount = PaymentAmount != Convert.ToDecimal(paymentAuthorization.Amount) ? Convert.ToDecimal(paymentAuthorization.Amount) : PaymentAmount;
-
 
                     paymentAuthorization.Amount = paymentAuthorization.Amount.Replace(".", "");
 
@@ -494,49 +602,53 @@ namespace OnTrackWebService.Repository
                 var email = user.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email);
-
                 var transferToCustomer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == transferRequest.Email);
 
-                var matchTicket = await _context.MatchTickets
-                    .Include(e => e.Order)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .FirstOrDefaultAsync(e => e.ID == transferRequest.MatchTicketID);
-
-                matchTicket.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(matchTicket.FixtureProduct.Fixture.HomeTeam.Alias) ? matchTicket.FixtureProduct.Fixture.HomeTeam.Alias : matchTicket.FixtureProduct.Fixture.HomeTeam.Name;
-                matchTicket.FixtureProduct.Fixture.AwayTeam.Name = !String.IsNullOrEmpty(matchTicket.FixtureProduct.Fixture.AwayTeam.Alias) ? matchTicket.FixtureProduct.Fixture.AwayTeam.Alias : matchTicket.FixtureProduct.Fixture.AwayTeam.Name;
-
-
-                if (matchTicket != null && customer != null && transferToCustomer != null)
+                if (transferToCustomer != null)
                 {
-                    if (!matchTicket.Validated)
+                    var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email);
+
+                    var matchTicket = await _context.MatchTickets
+                        .Include(e => e.Order)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                        .FirstOrDefaultAsync(e => e.ID == transferRequest.MatchTicketID);
+
+                    matchTicket.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(matchTicket.FixtureProduct.Fixture.HomeTeam.Alias) ? matchTicket.FixtureProduct.Fixture.HomeTeam.Alias : matchTicket.FixtureProduct.Fixture.HomeTeam.Name;
+                    matchTicket.FixtureProduct.Fixture.AwayTeam.Name = !String.IsNullOrEmpty(matchTicket.FixtureProduct.Fixture.AwayTeam.Alias) ? matchTicket.FixtureProduct.Fixture.AwayTeam.Alias : matchTicket.FixtureProduct.Fixture.AwayTeam.Name;
+
+                    if (matchTicket != null && customer != null)
                     {
-                        try
+                        if (!matchTicket.Validated)
                         {
-                            matchTicket.TransferCustomerID = transferToCustomer.ID;
-                            matchTicket.IsTransfer = false;
-                            matchTicket.TransferTime = null;
+                            try
+                            {
+                                matchTicket.TransferCustomerID = transferToCustomer.ID;
+                                matchTicket.IsTransfer = false;
+                                matchTicket.TransferTime = null;
 
-                            _context.MatchTickets.Add(matchTicket);
-                            await _context.SaveChangesAsync();
+                                _context.MatchTickets.Update(matchTicket);
+                                await _context.SaveChangesAsync();
 
-                            await emailRepository.SendTransferRequest(customer, transferToCustomer, matchTicket);
+                                await emailRepository.SendTransferRequest(customer, transferToCustomer, matchTicket);
 
+                                return "Ticket transferred successfully.";
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message, "Transfer Request Email");
+                            }
+
+                            return "There was an issue transferring the match ticket.";
                         }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(ex.Message, "Transfer Request Email");
-                        }
-
-                        return "Ticket transferred successfully.";
+                        else
+                            return "This ticket is not valid for transferring.";
                     }
-                    else
-                        return "This ticket is not valid for transferring.";
                 }
-                
+
+                return "Please provide a valid user account.";
             }
             catch (Exception ex)
             {
@@ -566,7 +678,7 @@ namespace OnTrackWebService.Repository
                         .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
                         .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
                         .Include(e => e.TransferCustomer)
-                        .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && (e.TransferCustomer.Email == email && !e.IsTransfer))
+                        .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && (e.TransferCustomer.Email == email && ((e.IsTransfer.HasValue && !e.IsTransfer.Value) || (!e.IsTransfer.HasValue))))
                         .ToListAsync();
 
                     matchTickets.ForEach(e => e.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.FixtureProduct.Fixture.HomeTeam.Alias) ? e.FixtureProduct.Fixture.HomeTeam.Alias : e.FixtureProduct.Fixture.HomeTeam.Name);
@@ -607,6 +719,12 @@ namespace OnTrackWebService.Repository
                     var transferToCustomer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == acceptTransfer.TransferCustomerID);
 
                     var matchTicket = await _context.MatchTickets
+                        .Include(e => e.Order).ThenInclude(e => e.Customer)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                        .Include(e => e.TransferCustomer)
                         .FirstOrDefaultAsync(e => e.ID == acceptTransfer.MatchTicketID && e.TransferCustomerID != null);
 
                     if (matchTicket != null && transferToCustomer != null)
@@ -616,19 +734,28 @@ namespace OnTrackWebService.Repository
                             matchTicket.IsTransfer = true;
                             matchTicket.TransferTime = DateTime.Now;
 
-                            _context.MatchTickets.Add(matchTicket);
+                            _context.MatchTickets.Update(matchTicket);
                             await _context.SaveChangesAsync();
 
-                            await emailRepository.SendTransferAccept(customer, transferToCustomer, matchTicket);
+                            try
+                            {
+                                await emailRepository.SendTransferAccept(customer, transferToCustomer, matchTicket);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message, "Transfer Request Email");
+                            }
 
+                            return "Transfer completed successfully!";
                         }
-                        catch (Exception ex)
+                        catch(Exception ex)
                         {
-                            Debug.WriteLine(ex.Message, "Transfer Request Email");
+                            Debug.WriteLine(ex.Message, "Transfer Request Accept");
                         }
+
+                        return "There was an issue completing this match ticket transfer request.";
                     }
 
-                    return "Transfer completed successfully!";
                 }
                 else
                 {
@@ -637,6 +764,12 @@ namespace OnTrackWebService.Repository
                     var transferToCustomer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == acceptTransfer.TransferCustomerID);
 
                     var matchTicket = await _context.MatchTickets
+                        .Include(e => e.Order).ThenInclude(e => e.Customer)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
+                        .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
+                        .Include(e => e.TransferCustomer)
                         .FirstOrDefaultAsync(e => e.ID == acceptTransfer.MatchTicketID && e.TransferCustomerID != null);
 
                     if (matchTicket != null && transferToCustomer != null)
@@ -647,19 +780,27 @@ namespace OnTrackWebService.Repository
                             matchTicket.TransferTime = null;
                             matchTicket.TransferCustomerID = null;
 
-                            _context.MatchTickets.Add(matchTicket);
+                            _context.MatchTickets.Update(matchTicket);
                             await _context.SaveChangesAsync();
 
-                            await emailRepository.SendTransferReject(customer, transferToCustomer, matchTicket);
+                            try
+                            {
+                                await emailRepository.SendTransferReject(customer, transferToCustomer, matchTicket);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message, "Transfer Request Email");
+                            }
 
+                            return "Transfer rejected successfully!";
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine(ex.Message, "Transfer Request Email");
+                            Debug.WriteLine(ex.Message, "Transfer Request Reject");
                         }
                     }
 
-                    return "Transfer rejected successfully!";
+                    return "There was an issue completing this match ticket transfer request.";
                 }
             }
             catch (Exception ex)
@@ -742,78 +883,78 @@ namespace OnTrackWebService.Repository
                     //{
 
 
-                    //    var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
-                    //    updateOrder.Authorisation = response.CreditCardTransactionResults.AuthCode;
-                    //    updateOrder.OrderNumber = response.OrderNumber;
+                    var updateOrder = await _context.Orders.FirstOrDefaultAsync(e => e.ID == order.ID);
+                    updateOrder.Authorisation = "TESTAUTHCODE";
+                    updateOrder.OrderNumber = "TESTORDERNUM";
 
-                    //    _context.Orders.Update(updateOrder);
-                    //    await _context.SaveChangesAsync();
+                    _context.Orders.Update(updateOrder);
+                    await _context.SaveChangesAsync();
 
 
 
-                    //    if (paymentAuthorization.OrderDetails != null && paymentAuthorization.OrderDetails.Count > 0)
-                    //    {
-                    //        try
-                    //        {
-                    //            paymentAuthorization.OrderDetails.ForEach(e => e.OrderID = order.ID);
-                    //            _context.OrderDetails.AddRange(paymentAuthorization.OrderDetails);
-                    //            await _context.SaveChangesAsync();
-                    //        }
-                    //        catch (Exception ex)
-                    //        { }
+                    if (paymentAuthorization.OrderDetails != null && paymentAuthorization.OrderDetails.Count > 0)
+                    {
+                        try
+                        {
+                            paymentAuthorization.OrderDetails.ForEach(e => e.OrderID = order.ID);
+                            _context.OrderDetails.AddRange(paymentAuthorization.OrderDetails);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (Exception ex)
+                        { }
 
-                    //        List<MatchTicket> matchTickets = new List<MatchTicket>();
-                    //        foreach (var orderDetail in paymentAuthorization.OrderDetails)
-                    //        {
-                    //            for (var i = 0; i < orderDetail.Qty; i++)
-                    //            {
-                    //                matchTickets.Add(new MatchTicket
-                    //                {
-                    //                    FixtureProductID = orderDetail.FixtureProductID,
-                    //                    OrderID = order.ID,
-                    //                    Validated = false
-                    //                });
-                    //            }
-                    //        }
+                        List<MatchTicket> matchTickets = new List<MatchTicket>();
+                        foreach (var orderDetail in paymentAuthorization.OrderDetails)
+                        {
+                            for (var i = 0; i < orderDetail.Qty; i++)
+                            {
+                                matchTickets.Add(new MatchTicket
+                                {
+                                    FixtureProductID = orderDetail.FixtureProductID,
+                                    OrderID = order.ID,
+                                    Validated = false
+                                });
+                            }
+                        }
 
-                    //        _context.MatchTickets.AddRange(matchTickets);
-                    //        await _context.SaveChangesAsync();
+                        _context.MatchTickets.AddRange(matchTickets);
+                        await _context.SaveChangesAsync();
 
-                    //    }
+                    }
 
-                    //    if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
-                    //    {
-                    //        paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
+                    if (paymentAuthorization.ContactTraces != null && paymentAuthorization.ContactTraces.Count > 0)
+                    {
+                        paymentAuthorization.ContactTraces.ForEach(e => e.OrderID = order.ID);
 
-                    //        _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
-                    //        await _context.SaveChangesAsync();
-                    //    }
+                        _context.ContactTraces.AddRange(paymentAuthorization.ContactTraces);
+                        await _context.SaveChangesAsync();
+                    }
 
-                    //    _context.Database.CommitTransaction();
-                    //    paymentResponse.IsApproved = true;
+                    _context.Database.CommitTransaction();
+                    paymentResponse.IsApproved = true;
 
-                    //    try
-                    //    {
-                    //        var fixture = await _context.Fixtures
-                    //            .Include(e => e.HomeTeam)
-                    //            .Include(e => e.AwayTeam)
-                    //            .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.FixtureID);
+                    try
+                    {
+                        var fixture = await _context.Fixtures
+                            .Include(e => e.HomeTeam)
+                            .Include(e => e.AwayTeam)
+                            .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.FixtureID);
 
-                    //        var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
-                    //        await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), fixture);
+                        var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
+                        await emailRepository.SendPaymentConfirmation(customer, "TESTAUTHCODE", order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), fixture);
 
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        Debug.WriteLine(ex.Message, "Payment Email");
-                    //    }
-                    //}
-
-                    //paymentResponse.Code = response.CreditCardTransactionResults.ResponseCode;
-                    //paymentResponse.Description = response.CreditCardTransactionResults.ReasonCodeDescription;
-                    _context.Database.RollbackTransaction();
-                    return paymentResponse;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message, "Payment Email");
+                    }
                 }
+
+                paymentResponse.Code = "1";
+                paymentResponse.Description = "Success";
+
+                return paymentResponse;
+                //}
             }
             catch (Exception ex)
             {

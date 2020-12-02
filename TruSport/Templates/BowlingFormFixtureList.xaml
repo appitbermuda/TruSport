@@ -15,7 +15,7 @@
                         <ResourceDictionary>
                             <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
                             <converters:ImageConverter x:Key="imageConverter"/>
-                            <converters:ShowScoreConverter x:Key="showScoreConverter"/>
+                            <converters:ShowBowlingScoreConverter x:Key="showScoreConverter"/>
                             <converters:TimeConverter x:Key="timeConverter"/>
                             <converters:TeamNameConverter x:Key="teamNameConverter"/>
                             <converters:SelectedTeamResultConverter x:Key="selectedTeamResultConverter"/>

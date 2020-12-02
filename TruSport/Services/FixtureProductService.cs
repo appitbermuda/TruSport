@@ -85,7 +85,7 @@ namespace TruSport.Services
             return null;
         }
 
-        public async Task<List<FixtureProduct>> GetFixtureFixtureProducts(string fixtureID)
+        public async Task<List<FixtureProduct>> GetFixtureFixtureProducts(string fixtureID, string email)
         {
             try
             {
@@ -94,8 +94,9 @@ namespace TruSport.Services
                 //if (accessToken != null)
                 //{
                 var client = new RestClient(Constants.APIEndpoint);
-                var request = new RestRequest("FixtureProduct/Fixture", Method.GET);
+                var request = new RestRequest("FixtureProduct/FixtureTicket", Method.GET);
                 request.AddParameter("fixtureID", fixtureID);
+                request.AddParameter("email", email);
                 //request.AddHeader("authorization", "Bearer " + accessToken);
 
                 // We execute the request and capture the response

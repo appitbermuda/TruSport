@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -97,12 +98,16 @@ namespace OnTrackWebService.Repository
 
         public async Task<bool> RequestNotificationAsync(NotificationRequest notificationRequest, CancellationToken token)
         {
-            if ((notificationRequest.Silent &&
-                string.IsNullOrWhiteSpace(notificationRequest?.Action)) ||
-                (!notificationRequest.Silent &&
-                (string.IsNullOrWhiteSpace(notificationRequest?.Text)) ||
-                string.IsNullOrWhiteSpace(notificationRequest?.Action)))
+            if ((notificationRequest.Silent && string.IsNullOrWhiteSpace(notificationRequest?.Action)) ||
+                (!notificationRequest.Silent && string.IsNullOrWhiteSpace(notificationRequest?.Text)))
                 return false;
+
+            //if ((notificationRequest.Silent &&
+            //    string.IsNullOrWhiteSpace(notificationRequest?.Action)) ||
+            //    (!notificationRequest.Silent &&
+            //    ((string.IsNullOrWhiteSpace(notificationRequest?.Text)) &&
+            //    string.IsNullOrWhiteSpace(notificationRequest?.Action))))
+            //    return false;
 
             var androidPushTemplate = notificationRequest.Silent ?
                 PushTemplates.Silent.Android :
@@ -169,13 +174,13 @@ namespace OnTrackWebService.Repository
 
         Task SendPlatformNotificationsAsync(string androidPayload, string iOSPayload, IEnumerable<string> tags, CancellationToken token)
         {
-            var sendTasks = new Task[]
-            {
-                _hub.SendFcmNativeNotificationAsync(androidPayload, tags, token),
-                _hub.SendAppleNativeNotificationAsync(iOSPayload, tags, token)
-            };
+                var sendTasks = new Task[]
+                {
+                    _hub.SendFcmNativeNotificationAsync(androidPayload, tags, token),
+                    _hub.SendAppleNativeNotificationAsync(iOSPayload, tags, token)
+                };
 
-            return Task.WhenAll(sendTasks);
+                return Task.WhenAll(sendTasks);
         }
 
         public async Task<string> SendTest(string message)
@@ -224,28 +229,64 @@ namespace OnTrackWebService.Repository
             return "Notification sent successfully!";
         }
 
-        public async Task<string> SendNotification(string message)
+        public async Task SendFootballNotification(string message, CancellationToken token)
         {
-            // let's assume you have a User object that contains 
-            // * iOS Devices 
-            // * Android Devices
-            NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString(Constants.FullAccessConnectionString, Constants.NotificationHubName);
-            Dictionary<string, string> templateParameters = new Dictionary<string, string>();
-
-            templateParameters["messageParam"] = message;
-
             try
             {
-                await hub.SendTemplateNotificationAsync(templateParameters, "default");
-                Console.WriteLine($"Sent message to default subscribers.");
+                NotificationRequest notificationRequest = new NotificationRequest
+                {
+                    Text = message,
+                    Silent = false,
+                    Tags = new string[] { "football" }
+                };
+
+                await RequestNotificationAsync(notificationRequest, token);
+
+            }
+            catch(Exception ex)
+            { }
+        }
+
+        public async Task SendNotification(string message, CancellationToken token, string tag = null)
+        {
+            try
+            {
+                NotificationRequest notificationRequest = new NotificationRequest
+                {
+                    Text = message,
+                    Silent = false,
+                    Tags = new string[] { tag }
+                };
+
+                await RequestNotificationAsync(notificationRequest, token);
+
             }
             catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to send template notification: {ex.Message}");
-            }
-
-            return "Notification sent successfully!";
+            { }
         }
+
+        //public async Task<string> SendNotification(string message)
+        //{
+        //    // let's assume you have a User object that contains 
+        //    // * iOS Devices 
+        //    // * Android Devices
+        //    NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString(Constants.FullAccessConnectionString, Constants.NotificationHubName);
+        //    Dictionary<string, string> templateParameters = new Dictionary<string, string>();
+
+        //    templateParameters["messageParam"] = message;
+
+        //    try
+        //    {
+        //        await hub.SendTemplateNotificationAsync(templateParameters, "default");
+        //        Console.WriteLine($"Sent message to default subscribers.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Failed to send template notification: {ex.Message}");
+        //    }
+
+        //    return "Notification sent successfully!";
+        //}
 
         public Task<string> Send(string name, string title, string body)
         {

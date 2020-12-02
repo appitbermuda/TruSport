@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" x:Class="TruSport.Views.Tickets.TransferTicketPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters" x:Class="TruSport.Views.Tickets.TransferTicketPage">
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
             <Grid VerticalOptions="FillAndExpand">
@@ -22,12 +22,176 @@
                     </Grid>
                 </StackLayout>
                 <StackLayout Grid.Row="1">
+                    <Grid>
+                    
+                    <StackLayout HorizontalOptions="FillAndExpand"
+                                 VerticalOptions="FillAndExpand" Padding="8,8,8,8" BackgroundColor="{DynamicResource frameBackgroundColor}">
+                        <Frame Padding="0" CornerRadius="10" BackgroundColor="Transparent" HasShadow="False">
+                            <Frame Padding="0" CornerRadius="10" IsClippedToBounds="True" BackgroundColor="Transparent" HasShadow="False">
+                    <Grid x:Name="grid" Padding="0,0,0,0"
+                          RowSpacing="5"
+                          ColumnSpacing="1"
+                          BackgroundColor="Transparent"
+                          VerticalOptions="FillAndExpand"
+                          HorizontalOptions="FillAndExpand">
+                        <Grid.Resources>
+                            <ResourceDictionary>
+                                <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+                                <converters:ImageConverter x:Key="imageConverter"/>
+                                <converters:TimeConverter x:Key="timeConverter"/>
+                            </ResourceDictionary>
+                        </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="1" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="1" Grid.ColumnSpan="5" Spacing="5" Padding="5,10"
+                                     VerticalOptions="EndAndExpand"
+                                         HorizontalOptions="CenterAndExpand"
+                                         Orientation="Horizontal">
+                                <StackLayout Padding="2">
+                                    <Label x:Name="FieldIcon"
+                                       FontSize="Small"
+                                           Text="&#xe901;"
+                                           VerticalOptions="Center"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                        FontFamily="{StaticResource fontFamily}"/>
+                                    </StackLayout>
+                                <StackLayout>
+                                    <Label x:Name="FieldName"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding MatchTicket.FixtureProduct.Fixture.Field.Name}"/>
+                                    </StackLayout>
+                            </StackLayout>
+                            <StackLayout Grid.Row="2" Grid.ColumnSpan="5"
+                                     VerticalOptions="Center"
+                                         HorizontalOptions="CenterAndExpand"
+                                         Orientation="Horizontal"
+                                     Padding="5,10">
+                                    <Label x:Name="TimeIcon"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                            Text="&#xe904;"
+                                           FontFamily="{StaticResource fontFamily}"/>
+                                <Label x:Name="TimeLabel"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       VerticalTextAlignment="End"
+                                            Text="{Binding MatchTicket.FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd - h:mm tt}'}"/>
+                                
+                            </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding MatchTicket.FixtureProduct.Fixture.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                                                            ErrorPlaceholder="ontracklogo.png"
+                                            LoadingPlaceholder="ontracklogo.png"
+                                                            CacheDuration="50"
+                                                            RetryCount="3"
+                                                            RetryDelay="600"
+                                             Aspect="AspectFit"
+                                            HeightRequest="30"
+                                                      WidthRequest="30"
+                                                            DownsampleToViewSize="True">
+
+                            </ff:CachedImage>
+                                </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                 <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding MatchTicket.FixtureProduct.Fixture.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                                                            ErrorPlaceholder="ontracklogo.png"
+                                            LoadingPlaceholder="ontracklogo.png"
+                                                            CacheDuration="50"
+                                                            RetryCount="3"
+                                                            RetryDelay="600"
+                                             Aspect="AspectFit"
+                                            HeightRequest="30"
+                                                      WidthRequest="30"
+                                                            DownsampleToViewSize="True">  
+                                            </ff:CachedImage>
+                                </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="2" VerticalOptions="Center"
+                                         HorizontalOptions="Center"
+                                             Orientation="Vertical"
+                                     Padding="5,2"
+                                     Spacing="5">
+                     
+                                <Label 
+                                       x:Name="Versus"
+                                       FontSize="Small"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                                      VerticalOptions="Center"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                            Text="V" />
+                        </StackLayout>
+                                <StackLayout Grid.Row="0" Grid.Column="1"
+                                     VerticalOptions="Center"
+                                         HorizontalOptions="FillAndExpand"
+                                     Padding="5,2"
+                                     Spacing="0">
+                                <Label x:Name="HomeTeamNameLabel"
+                                       HorizontalOptions="EndAndExpand"
+                                       HorizontalTextAlignment="End"
+                                       FontSize="Micro"
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                            Text="{Binding MatchTicket.FixtureProduct.Fixture.HomeTeam.Name}">
+                                    <Label.FontSize>
+                                        <OnPlatform x:TypeArguments="x:Double">  
+                            <OnPlatform.Android> 
+                                <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" /> 
+                            </OnPlatform.Android> 
+                            <OnPlatform.iOS> 
+                                <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" /> 
+                            </OnPlatform.iOS> 
+                        </OnPlatform> 
+                                    </Label.FontSize>
+                                </Label>
+                            </StackLayout>
+                                <StackLayout Grid.Row="0" Grid.Column="3"
+                                     VerticalOptions="Center"
+                                         HorizontalOptions="FillAndExpand"
+                                     Padding="5,2"
+                                     Spacing="0">
+                                <Label x:Name="AwayTeamNameLabel"
+                                       HorizontalOptions="StartAndExpand"
+                                       HorizontalTextAlignment="Start"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       FontAttributes="Bold"
+                                            Text="{Binding MatchTicket.FixtureProduct.Fixture.AwayTeam.Name}">
+                                    <Label.FontSize>
+                                        <OnPlatform x:TypeArguments="x:Double">  
+                            <OnPlatform.Android> 
+                                <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" /> 
+                            </OnPlatform.Android> 
+                            <OnPlatform.iOS> 
+                                <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" /> 
+                            </OnPlatform.iOS> 
+                        </OnPlatform> 
+                                    </Label.FontSize>
+                                </Label>
+                            </StackLayout>
+                            </Grid>
+                            </Frame>
+                            </Frame>
+                        </StackLayout>
+                </Grid>                    
                     <StackLayout Padding="10,20">
-                        <Label Text="{Binding MatchTicket.Order.Fixture}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
-                        <Label Text="{Binding MatchTicket.FixtureProduct.Fixture.Date}" FontSize="Small" FontAttributes="Bold" HorizontalTextAlignment="Center" />
-                    </StackLayout>
-                    <StackLayout Padding="10,20">
-                        <Label Text="{Binding MatchTicket.FixtureProduct.Product.Age, StringFormat='1 {0} Ticket'}" FontSize="Small" FontAttributes="Italic" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding MatchTicket.FixtureProduct.Product.Age, StringFormat='1 {0} Ticket'}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center" />
                     </StackLayout>
                     <StackLayout Padding="10,20">
                         <Label Text="Please provide the email of the account you wish to transfer this ticket to. The user must already be registered in order to receive this ticket." FontSize="10" HorizontalTextAlignment="Center" />
@@ -35,7 +199,7 @@
 
                     <StackLayout Padding="10,0">
                         <textinputlayout:SfTextInputLayout x:Name="EmailInput" IsHintAlwaysFloated="True" Hint="Email" ContainerType="Outlined" FocusedColor="{DynamicResource buttonBackgroundColor}" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}">
-                            <Entry Text="{Binding TransferRequest.Email}" Placeholder="Email" TextColor="{DynamicResource TextPrimaryColor}"/>
+                            <Entry Text="{Binding TransferRequest.Email}" Placeholder="Email" TextColor="{DynamicResource TextPrimaryColor}" Keyboard="Email"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
 

@@ -236,7 +236,8 @@ namespace OnTrackWebService.Repository
                             HomeTeamID = homeFixtureRoster.TeamID,
                             AwayTeamID = awayFixtureRoster.TeamID,
                             HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
-                            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name
+                            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
+                            Position = homeFixtureRoster.Position.Value
                         });
 
                         if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)
@@ -386,7 +387,8 @@ namespace OnTrackWebService.Repository
                         HomeTeamID = homeFixtureRoster.TeamID,
                         AwayTeamID = awayFixtureRoster.TeamID,
                         HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
-                        AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name
+                        AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
+                        Position = homeFixtureRoster.Position.Value
                     });
 
                     if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)
@@ -564,7 +566,8 @@ namespace OnTrackWebService.Repository
                             HomeTeamID = homeFixtureRoster.TeamID,
                             AwayTeamID = awayFixtureRoster.TeamID,
                             HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
-                            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name
+                            AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
+                            Position = homeFixtureRoster.Position.Value
                         });
 
                         if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)

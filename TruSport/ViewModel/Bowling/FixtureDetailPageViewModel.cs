@@ -268,8 +268,6 @@ namespace TruSport.ViewModels.Bowling
 
                 var fixture = await fixtureService.GetBowlingFixture(FixtureItem.ID);
 
-                
-
                 TableCollection = new ObservableCollection<BowlingLeagueStanding>(fixture.LeagueTable);
                 IsTableActivityIndicatorVisible = false;
 

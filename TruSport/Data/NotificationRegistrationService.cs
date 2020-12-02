@@ -76,8 +76,10 @@ namespace TruSport.Data
                 string.IsNullOrWhiteSpace(serializedTags) ||
                 string.IsNullOrWhiteSpace(DeviceInstallationService.Token) ||
                 cachedToken == DeviceInstallationService.Token)
-                return;
-
+            {
+                await RegisterDeviceAsync(Constants.SubscriptionTags);
+                //return;
+            }
             var tags = JsonConvert.DeserializeObject<string[]>(serializedTags);
 
             await RegisterDeviceAsync(tags);

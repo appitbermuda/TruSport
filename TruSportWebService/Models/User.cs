@@ -18,7 +18,13 @@ namespace OnTrackWebService.Models
 
         [NotMapped]
         public string Token { get; set; }
+
         public bool IsValidated { get; set; }
+
+        public bool IsActive { get; set; }
+
+        [NotMapped]
+        public string ErrorMessage { get; set; }
 
         [ForeignKey("RoleID")]
         public Role Role { get; set; }

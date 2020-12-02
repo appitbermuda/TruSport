@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using SQLite;
 
 namespace TruSport.Model
 {
@@ -10,13 +11,13 @@ namespace TruSport.Model
         public string TransferCustomerID { get; set; }
         public bool Accept { get; set; }
 
-        [JsonIgnore]
+        [Ignore]
         public MatchTicket MatchTicket { get; set; }
 
-        [JsonIgnore]
+        [Ignore]
         public Customer Customer { get; set; }
 
-        [JsonIgnore]
+        [Ignore]
         public Customer TransferCustomer { get; set; }
     }
 }

@@ -204,6 +204,41 @@ namespace OnTrackWebService.Repository
             return false;
         }
 
+        public async Task<List<TicketReport>> Reports(ClaimsPrincipal claimsUser)
+        {
+            List<TicketReport> contactTraces = new List<TicketReport>();
+
+            try
+            {
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+
+                var matchTickets = await _context.MatchTickets.Include(e => e.FixtureProduct).ThenInclude(e => e.Product).Where(e => e.FixtureProduct.Product.TeamID == user.TeamID).ToListAsync();
+
+                contactTraces = await _context.FixtureProducts.Include(e=> e.Product)
+                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Where(e => e.Product.TeamID == user.TeamID && e.Fixture.Date <= DateTime.Now.Date && matchTickets.Any(d => d.FixtureProductID == e.ID))
+                    .Select(e => new TicketReport
+                    {
+                        FixtureID = e.FixtureID,
+                        Fixture = e.Fixture.HomeTeam.Name + " v " + e.Fixture.AwayTeam.Name,
+                        Date = e.Fixture.Date.ToString("MMM dd, yyyy")
+                    }).ToListAsync();
+
+
+                return contactTraces;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return contactTraces;
+        }
+
         public async Task Insert(ContactTrace item)
         {
             try

@@ -130,6 +130,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values
+        //Deprecated
         [HttpGet]
         [Route("Fixture")]
         public async Task<IActionResult> FixtureFixtureProducts(string fixtureID)
@@ -138,6 +139,26 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<FixtureProduct> fixtureProducts = await _fixtureProductRepository.Fixture(fixtureID);
+
+                if (fixtureProducts != null)
+                    return Ok(fixtureProducts);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "FixtureProduct");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("FixtureTicket")]
+        public async Task<IActionResult> FixtureTicketProducts(string fixtureID, string email)
+        {
+            try
+            {
+
+                IEnumerable<FixtureProduct> fixtureProducts = await _fixtureProductRepository.FixtureTicket(fixtureID, email);
 
                 if (fixtureProducts != null)
                     return Ok(fixtureProducts);

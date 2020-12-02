@@ -38,5 +38,17 @@ namespace OnTrackWebService.Models
         public string HomePlayerName { get; set; }
         public string AwayTeamID { get; set; }
         public string AwayPlayerName { get; set; }
+        public int Position { get; set; }
+    }
+
+    public class BowlingRosters
+    {
+        public string BowlingFixtureID { get; set; }
+        public int TeamID { get; set; }
+        public string BowlingPlayerSeasonID { get; set; }
+        public int Position { get; set; }
+
+        [NotMapped]
+        public string Exception { get; set; }
     }
 }

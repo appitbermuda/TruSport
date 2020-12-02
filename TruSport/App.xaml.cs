@@ -75,7 +75,7 @@ namespace TruSport
             Resources["fontFamily"] = Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS ? "icomoon" : "icomoon.ttf#icomoon";
 
             PushServiceContainer.Resolve<IPushNotificationActionService>()
-        .ActionTriggered += NotificationActionTriggered;
+            .ActionTriggered += NotificationActionTriggered;
 
 
             //MainPage = new AdminMainPage();

@@ -6,7 +6,8 @@ namespace OnTrackWebService.Models
         public class Generic
         {
             public const string Android = "{ \"notification\": { \"title\" : \"PushDemo\", \"body\" : \"$(alertMessage)\"}, \"data\" : { \"action\" : \"$(alertAction)\" } }";
-            public const string iOS = "{ \"aps\" : {\"alert\" : \"$(alertMessage)\"}, \"action\" : \"$(alertAction)\" }";
+            public const string iOS = "{ \"aps\" : {\"alert\" : \"$(alertMessage)\"}, \"action\" : \"$(alertAction)\", \"sound\" : \"default\" }";
+            //public const string iOS = "{ \"aps\" : {\"alert\" : \"$(alertMessage)\"} }";
         }
 
         public class Silent

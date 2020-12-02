@@ -109,6 +109,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<Award>, AwardRepository>();
             services.AddScoped<IOnTrackRepository<PlayerSeason>, PlayerSeasonRepository>();
             services.AddScoped<IOnTrackRepository<Team>, TeamRepository>();
+            services.AddScoped<IOnTrackRepository<TicketMember>, TicketMemberRepository>();
             services.AddScoped<IOnTrackRepository<TicketConfiguration>, TicketConfigurationRepository>();
             services.AddScoped<IOnTrackRepository<Role>, RoleRepository>();
             services.AddScoped<ISettingRepository<Setting>, SettingRepository>();

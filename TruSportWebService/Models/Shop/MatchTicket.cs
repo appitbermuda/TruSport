@@ -13,7 +13,7 @@ namespace OnTrackWebService.Models.Shop
         public string TransferCustomerID { get; set; }
         public bool Validated { get; set; }
         public DateTime? ValidatedTime { get; set; }
-        public bool IsTransfer { get; set; }
+        public bool? IsTransfer { get; set; }
         //public bool TransferRejected { get; set; }
         public DateTime? TransferTime { get; set; }
 

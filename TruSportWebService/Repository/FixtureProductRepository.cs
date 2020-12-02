@@ -182,7 +182,10 @@ namespace OnTrackWebService.Repository
 
                     if (DateTime.Now.Date >= fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
                     {
+                        var matchTicketsListw = await _context.MatchTickets.ToListAsync();
+
                         var matchTicketsList = await _context.MatchTickets
+                        .Include(e => e.FixtureProduct)
                         .Where(e => e.FixtureProduct.FixtureID == fixtureProduct.FixtureID)
                         .ToListAsync();
 
@@ -366,6 +369,50 @@ namespace OnTrackWebService.Repository
 
                     if (DateTime.Now.Date >= fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
                         fixtureProducts.Add(fixtureProduct);
+                }
+            }
+            catch (Exception ex)
+            { }
+
+            return fixtureProducts;
+        }
+
+        public async Task<IEnumerable<FixtureProduct>> FixtureTicket(string fixtureID, string email)
+        {
+            List<FixtureProduct> fixtureProducts = new List<FixtureProduct>();
+
+            try
+            {
+                
+                var fixtureProductsList = await _context.FixtureProducts
+                    .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Field)
+                    .Include(e => e.Fixture).ThenInclude(e => e.League)
+                    .Include(e => e.Fixture).ThenInclude(e => e.MatchType)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Season)
+                    .Include(e => e.Fixture).ThenInclude(e => e.Sport)
+                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
+                    .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
+                    .Include(e => e.Product).ThenInclude(e => e.Team)
+                    .Where(e => e.FixtureID == fixtureID && DateTime.Now.Date <= e.Fixture.Date).ToListAsync();
+
+                var product = fixtureProductsList.FirstOrDefault(e => e.FixtureID == fixtureID).Product;
+                var ticketMember = await _context.TicketMembers.FirstOrDefaultAsync(e => e.Customer.Email == email);
+
+                foreach (var fixtureProduct in fixtureProductsList)
+                {
+                    var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+
+                    if (DateTime.Now.Date >= fixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
+                    {
+                        if (ticketMember != null)
+                        {
+                            fixtureProduct.Product.Price = fixtureProduct.Product.MemberPrice ?? fixtureProduct.Product.Price;
+                        }
+
+                        fixtureProducts.Add(fixtureProduct);
+                    }
                 }
             }
             catch (Exception ex)

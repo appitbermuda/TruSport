@@ -76,6 +76,8 @@ namespace OnTrackWebService.Data
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamSeason> TeamSeasons { get; set; }
         public DbSet<TicketConfiguration> TicketConfigurations { get; set; }
+        public DbSet<TicketMember> TicketMembers { get; set; }
+        public DbSet<TicketTeam> TicketTeams { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<vTransfers> vTransfers { get; set; }
         public DbSet<User> Users { get; set; }
@@ -106,6 +108,8 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<MatchTicket>().ToTable("MatchTicket");
             modelBuilder.Entity<Field>().ToTable("Field");
             modelBuilder.Entity<TicketConfiguration>().ToTable("TicketConfiguration");
+            modelBuilder.Entity<TicketMember>().ToTable("TicketMember");
+            modelBuilder.Entity<TicketTeam>().ToTable("TicketTeam");
 
             modelBuilder.Entity<Order>()
             .HasMany(c => c.OrderDetails)

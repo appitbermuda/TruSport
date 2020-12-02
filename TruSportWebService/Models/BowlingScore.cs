@@ -8,18 +8,18 @@ namespace OnTrackWebService.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string BowlingFixtureID { get; set; }
-        public int? HomeTeamPoints { get; set; }
-        public int? AwayTeamPoints { get; set; }
-        public int? HomeTeamMatchPoints { get; set; }
-        public int? AwayTeamMatchPoints { get; set; }
+        public decimal? HomeTeamPoints { get; set; }
+        public decimal? AwayTeamPoints { get; set; }
+        public decimal? HomeTeamMatchPoints { get; set; }
+        public decimal? AwayTeamMatchPoints { get; set; }
 
         [ForeignKey("BowlingFixtureID")]
         public BowlingFixture BowlingFixture { get; set; }
 
         [NotMapped]
-        public int? HomeTeamTotalPoints => HomeTeamMatchPoints + HomeTeamPoints;
+        public decimal? HomeTeamTotalPoints => HomeTeamMatchPoints + HomeTeamPoints;
 
         [NotMapped]
-        public int? AwayTeamTotalPoints => AwayTeamMatchPoints + AwayTeamPoints;
+        public decimal? AwayTeamTotalPoints => AwayTeamMatchPoints + AwayTeamPoints;
     }
 }

@@ -45,11 +45,13 @@ namespace OnTrackWebService.Models
     {
         public int TeamID { get; set; }
         public DateTime Date { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int Score { get; set; }
-        public int Game { get; set; }
-        public int Points { get; set; }
+        public int Position { get; set; }
+        public string Name { get; set; }
+        public int Game1 { get; set; }
+        public int Game2 { get; set; }
+        public int Game3 { get; set; }
+        public decimal TeamPoints { get; set; }
+        public decimal MatchPoints { get; set; }
 
         [NotMapped]
         public string Exception { get; set; }

@@ -80,18 +80,15 @@ namespace OnTrackWebService.Controllers
             return new OkResult();
         }
 
-        // GET api/values
-        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
-        [Route("Send")]
-        public async Task<IActionResult> Send(string Message)
+        [Route("SendFootball")]
+        public async Task<IActionResult> SendFootball(string Message)
         {
             try
             {
+                await _pushNotificationRepository.SendFootballNotification(Message, HttpContext.RequestAborted);
 
-                string pushNotification = await _pushNotificationRepository.SendNotification(Message);
-
-                return Ok(pushNotification);
+                return new OkResult();
             }
             catch (Exception ex)
             {
@@ -101,6 +98,24 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        
+        [HttpGet]
+        [Route("Send")]
+        public async Task<IActionResult> Send(string Message, string tag)
+        {
+            try
+            {
+                await _pushNotificationRepository.SendNotification(Message, HttpContext.RequestAborted, tag);
+
+                return new OkResult();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Push Notifications");
+            }
+
+            return NoContent();
+        }
+
+
     }
 }

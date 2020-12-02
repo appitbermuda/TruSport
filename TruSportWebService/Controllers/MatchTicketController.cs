@@ -182,7 +182,7 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.Team(teamID);
+                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.Team(teamID, User);
 
                 if (matchTickets != null)
                     return Ok(matchTickets);
@@ -190,6 +190,48 @@ namespace OnTrackWebService.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "MatchTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Download")]
+        public async Task<IActionResult> Download(string fixtureID)
+        {
+            try
+            {
+
+                bool downloaded = await _matchTicketRepository.Download(fixtureID, User);
+
+                return Ok(downloaded);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Reports")]
+        public async Task<IActionResult> Reports()
+        {
+            try
+            {
+
+                List<TicketReport> reports = await _matchTicketRepository.Reports(User);
+
+                return Ok(reports);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
             }
 
             return NoContent();
@@ -239,7 +281,7 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        //[Authorize(Roles = Roles.Customer)]
+        [Authorize(Roles = Roles.Customer)]
         [HttpPost]
         [Route("PurchaseTest")]
         public async Task<IActionResult> PurchaseTest([FromBody] PaymentAuthorize paymentAuthorize)

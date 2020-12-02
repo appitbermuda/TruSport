@@ -36,6 +36,7 @@ namespace TruSport.ViewModel.Shop
 
         public MyTicketPageViewModel(INavigation navigation)
         {
+            Navigation = navigation;
             matchTicketService = new MatchTicketService();
             orderService = new OrderService();
             adService = new AdService();
@@ -47,8 +48,9 @@ namespace TruSport.ViewModel.Shop
             GenerateSource();
 
             AdTappedCommand = new Command(AdTapped);
-            TicketSelectedCommand = new Command<object>(TicketSelected);
-            AcceptTransferCommand = new Command<object>(AcceptTransfer);
+            TicketSelectedCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(TicketSelected);
+            AcceptTransferCommand = new Command<AcceptTransfer>(async (transfer) => await AcceptTransfer(transfer));
+            RejectTransferCommand = new Command<AcceptTransfer>(async (transfer) => await RejectTransfer(transfer));
 
             MessagingCenter.Unsubscribe<ActiveTicketsPage, string>(this, "Refresh");
             MessagingCenter.Subscribe<ActiveTicketsPage>(this, "Refresh", async (obj) =>
@@ -58,15 +60,22 @@ namespace TruSport.ViewModel.Shop
         }
 
         public Command AdTappedCommand { get; }
-        private Command<Object> ticketSelectedCommand;
-        public Command<object> TicketSelectedCommand
+        private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> ticketSelectedCommand;
+        public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> TicketSelectedCommand
         {
             get { return ticketSelectedCommand; }
             set { Set(ref ticketSelectedCommand, value); }
         }
 
-        private Command<Object> acceptTransferCommand;
-        public Command<object> AcceptTransferCommand
+        private Command<AcceptTransfer> rejectTransferCommand;
+        public Command<AcceptTransfer> RejectTransferCommand
+        {
+            get { return rejectTransferCommand; }
+            set { Set(ref rejectTransferCommand, value); }
+        }
+
+        private Command<AcceptTransfer> acceptTransferCommand;
+        public Command<AcceptTransfer> AcceptTransferCommand
         {
             get { return acceptTransferCommand; }
             set { Set(ref acceptTransferCommand, value); }
@@ -155,7 +164,7 @@ namespace TruSport.ViewModel.Shop
                         MatchTicketCollection = new ObservableCollection<MatchTicket>(matchTickets);
                     }
 
-                    if (MatchTicketCollection.Count == 0)
+                    if (MatchTicketCollection.Count == 0 && TransferRequestCollection.Count == 0)
                         NoTickets = true;
                 }
                 else
@@ -173,24 +182,37 @@ namespace TruSport.ViewModel.Shop
             }
         }
 
-        private async void TicketSelected(object obj)
+        private async void TicketSelected(Syncfusion.ListView.XForms.ItemTappedEventArgs e)
         {
-            var listView = obj as SfListView;
-            var acceptTransfer = listView.SelectedItem as MatchTicket;
-
-            bool transferTicket = await App.Current.MainPage.DisplayAlert("Transfer Ticket", "Would you like to transfer this match ticket?", "Yes", "Cancel");
-
-            if (transferTicket)
+            try
             {
-                MessagingCenter.Unsubscribe<PurchaseTicketPageViewModel>(this, "MatchTicketPage");
-                MessagingCenter.Subscribe<PurchaseTicketPageViewModel>(this, "MatchTicketPage", async (objs) =>
-                {
-                    //Purchase tickets saved to local
-                    //var creditCards = await App.Database.T(Customer.Email);
-                    GenerateSource();
-                });
+                var acceptTransfer = e.ItemData as MatchTicket;
 
-                await Navigation.PushModalAsync(new TransferTicketPage(acceptTransfer));                
+                if (!acceptTransfer.Validated)
+                {
+
+                    bool transferTicket = await App.Current.MainPage.DisplayAlert("Transfer Ticket", "Would you like to transfer this match ticket?", "Yes", "Cancel");
+
+                    if (transferTicket)
+                    {
+                        MessagingCenter.Unsubscribe<TransferTicketPageViewModel,bool>(this, "TicketTransferred");
+                        MessagingCenter.Subscribe<TransferTicketPageViewModel,bool>(this, "TicketTransferred", async (objs, transferred) =>
+                        {
+                            //Purchase tickets saved to local
+                            //var creditCards = await App.Database.T(Customer.Email);
+                            
+                            if(transferred)
+                                GenerateSource();
+                        });
+
+                        await Navigation.PushModalAsync(new TransferTicketPage(acceptTransfer));
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TicketSelected");
+
             }
         }
 
@@ -212,15 +234,15 @@ namespace TruSport.ViewModel.Shop
             }
         }
 
-        private async void AcceptTransfer(object obj)
+        private async Task AcceptTransfer(AcceptTransfer acceptTransfer)
         {
-            var listView = obj as SfListView;
-            var acceptTransfer = listView.SelectedItem as AcceptTransfer;
-
+            
+            //var acceptTransfer = obj as AcceptTransfer;
             bool transferTicket = await App.Current.MainPage.DisplayAlert("Accept Ticket Transfer", "Are you sure you want to accept this ticket transfer?", "Yes", "Cancel");
-
+            
             if (transferTicket)
             {
+                acceptTransfer.Accept = true;
                 string accept = await matchTicketService.AcceptTransfer(acceptTransfer);
 
                 try
@@ -228,6 +250,39 @@ namespace TruSport.ViewModel.Shop
                     await pushNotificationService.Send(new NotificationRequest
                     {
                         Text = Customer.FirstName + "has accepted your match ticket transfer.",
+                        Silent = false,
+                        Tags = new string[] { acceptTransfer.Customer.Email }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message, "Transfer Notification");
+                }
+
+                await App.Current.MainPage.DisplayAlert("Ticket Transfer", accept, "Okay");
+
+                GenerateSource();
+            }
+        }
+
+        private async Task RejectTransfer(AcceptTransfer acceptTransfer)
+        {
+
+            //var acceptTransfer = obj as AcceptTransfer;
+            
+            bool transferTicket = await App.Current.MainPage.DisplayAlert("Reject Ticket Transfer", "Are you sure you want to reject this ticket transfer?", "Yes", "Cancel");
+            
+
+            if (transferTicket)
+            {
+                acceptTransfer.Accept = false;
+                string accept = await matchTicketService.AcceptTransfer(acceptTransfer);
+
+                try
+                {
+                    await pushNotificationService.Send(new NotificationRequest
+                    {
+                        Text = Customer.FirstName + "has rejected your match ticket transfer.",
                         Silent = false,
                         Tags = new string[] { acceptTransfer.Customer.Email }
                     });
