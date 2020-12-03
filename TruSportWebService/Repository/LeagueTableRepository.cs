@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Imports;
+using MatchType = OnTrackWebService.Models.MatchType;
 
 namespace OnTrackWebService.Repository
 {
@@ -93,35 +100,40 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Season)
                     .Include(e => e.League).ToListAsync();
 
-                List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
+                //List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
 
-                foreach (var standing in bowlingLeagueStandings)
-                {
-                    BowlingLeagueStanding table = new BowlingLeagueStanding
-                    {
-                        TeamID = standing.TeamID,
-                        Team = standing.Team,
-                        LeagueID = standing.LeagueID,
-                        League = standing.League,
-                        SeasonID = standing.SeasonID,
-                        Season = standing.Season,
-                        PointsWon = standing.PointsWon,
-                        PointsLost = standing.PointsLost,
-                        TeamAvg = standing.TeamAvg,
-                        ScratchPins = standing.ScratchPins,
-                        HighGame = standing.HighGame,
-                        HighSers = standing.HighSers
-                    };
+                //foreach (var standing in bowlingLeagueStandings)
+                //{
+                //    BowlingLeagueStanding table = new BowlingLeagueStanding
+                //    {
+                //        TeamID = standing.TeamID,
+                //        Team = standing.Team,
+                //        LeagueID = standing.LeagueID,
+                //        League = standing.League,
+                //        SeasonID = standing.SeasonID,
+                //        Season = standing.Season,
+                //        PointsWon = standing.PointsWon,
+                //        PointsLost = standing.PointsLost,
+                //        TeamAvg = standing.TeamAvg,
+                //        ScratchPins = standing.ScratchPins,
+                //        HighGame = standing.HighGame,
+                //        HighSers = standing.HighSers,
+                //        Week = standing.Week
+                //    };
 
-                    makeLeagueTable.Add(table);
-                }
+                //    makeLeagueTable.Add(table);
+                //}
+
+                var fixtureDates = await _context.BowlingFixtures.Select(e => e.Date).ToListAsync();
+                int fixtureCount = fixtureDates.GroupBy(e => e.Date).Count();
 
                 List<BowlingLeagueStanding> leagueTable = new List<BowlingLeagueStanding>();
-                var tablePositions = makeLeagueTable.OrderByDescending(e => e.PointsWon).ThenByDescending(e => e.TeamAvg);
+                var tablePositions = bowlingLeagueStandings.OrderByDescending(e => e.PointsWon).ThenByDescending(e => e.TeamAvg);
                 int position = 1;
                 foreach (var table in tablePositions)
                 {
                     table.Position = position;
+                    table.WeekUpdated = "Week " + table.Week +" of " + fixtureCount;
                     leagueTable.Add(table);
 
                     position++;
@@ -737,6 +749,129 @@ namespace OnTrackWebService.Repository
             }
 
             return null;
+        }
+
+        public async Task<ImportBowlingLeagueStandings> UploadBowlingLeagueStandings(IFormFile file)
+        {
+            try
+            {
+                List<BowlingLeagueStandings> errorStandings = new List<BowlingLeagueStandings>();
+                List<BowlingLeagueStanding> standings = new List<BowlingLeagueStanding>();
+                List<BowlingTeam> teams = await _context.BowlingTeams.ToListAsync();
+                List<League> leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
+                List<BowlingLeagueStanding> leagueStandings = await _context.BowlingLeagueStandings.AsNoTracking().ToListAsync();
+                List<Season> seasons = await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
+                League league = null;
+                BowlingTeam team = null;
+                Season season = null;
+                BowlingLeagueStanding leagueStanding = null;
+
+                //Stream reader = file.OpenReadStream();
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
+                    var records = csv.GetRecords<BowlingLeagueStandings>();
+
+                    foreach (var record in records)
+                    {
+                        try
+                        {
+                            league = leagues.FirstOrDefault(e => e.Name == record.League.Trim());
+                            team = teams.FirstOrDefault(e => (e.TeamID == record.TeamID));
+                            season = seasons.FirstOrDefault(e => e.IsCurrent);
+                            leagueStanding = leagueStandings.FirstOrDefault(e => e.TeamID == team.ID);
+
+                            standings.Add(new BowlingLeagueStanding
+                            {
+                                ID = leagueStanding.ID,
+                                TeamID = team.ID,
+                                PointsWon = record.PointsWon,
+                                PointsLost = record.PointsLost,
+                                TeamAvg = record.TeamAvg,
+                                ScratchPins = record.ScratchPins,
+                                HighGame = record.HighGame,
+                                HighSers = record.HighSeries,
+                                LeagueID = league.ID,
+                                SeasonID = season.ID,
+                                Week = record.Week
+                                //SportID = season.SportID
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorStandings.Add(record);
+
+                        }
+                    }
+
+                    try
+                    {
+                        await UpdateStandings(standings);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ImportBowlingLeagueStandings
+                        {
+                            Message = "Error updates standings.",
+                            Exception = ex.Message
+                        };
+                    }
+                }
+
+                if (errorStandings != null && errorStandings.Count > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorStandings);
+                        streamWriter.Flush();
+
+                        return new ImportBowlingLeagueStandings
+                        {
+                            Message = "Successfully updated standings with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorStandings,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportBowlingLeagueStandings
+                {
+                    Message = "Successfully updated standings!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportBowlingLeagueStandings
+                {
+                    Message = "Error updating standings!",
+                    Exception = ex.Message
+                };
+            }
+
+
+        }
+
+        public async Task UpdateStandings(List<BowlingLeagueStanding> items)
+        {
+            try
+            {
+                _context.BowlingLeagueStandings.UpdateRange(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Bowling Standings");
+            }
         }
 
         public Task Insert(LeagueTable item)

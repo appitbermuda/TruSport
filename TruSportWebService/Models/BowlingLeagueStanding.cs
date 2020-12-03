@@ -16,6 +16,7 @@ namespace OnTrackWebService.Models
         public int ScratchPins { get; set; }
         public int HighGame { get; set; }
         public int HighSers { get; set; }
+        public int Week { get; set; }
 
         [ForeignKey("TeamID")]
         public BowlingTeam Team { get; set; }
@@ -31,6 +32,24 @@ namespace OnTrackWebService.Models
 
         [NotMapped]
         public bool IsSelectedTeam { get; set; }
+
+        [NotMapped]
+        public string WeekUpdated { get; set; }
     }
 
+    public class BowlingLeagueStandings
+    {
+        public int TeamID { get; set; }
+        public decimal PointsWon { get; set; }
+        public decimal PointsLost { get; set; }
+        public int TeamAvg { get; set; }
+        public int ScratchPins { get; set; }
+        public int HighGame { get; set; }
+        public int HighSeries { get; set; }
+        public string League { get; set; }
+        public int Week { get; set; }
+
+        [NotMapped]
+        public string Exception { get; set; }
+    }
 }

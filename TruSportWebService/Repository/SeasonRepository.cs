@@ -24,27 +24,27 @@ namespace OnTrackWebService.Repository
 
         public async Task<Season> Get(string id)
         {
-            return await _context.Seasons.FirstOrDefaultAsync(e => e.ID == id);
+            return await _context.Seasons.Include(e => e.Sport).FirstOrDefaultAsync(e => e.ID == id);
         }
 
         public async Task<List<Season>> GetCricketSeason()
         {
-            return await _context.Seasons.Where(e => e.Sport.Name == "Cricket").ToListAsync();
+            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == "Cricket").ToListAsync();
         }
 
         public async Task<List<Season>> GetFootballSeason()
         {
-            return await _context.Seasons.Where(e => e.Sport.Name == "Football").ToListAsync();
+            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == "Football").ToListAsync();
         }
 
         public async Task<List<Season>> GetBowlingSeason()
         {
-            return await _context.Seasons.Where(e => e.Sport.Name == "Bowling").ToListAsync();
+            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
         }
 
         public async Task<IEnumerable<Season>> GetAll()
         {
-            return await _context.Seasons.ToListAsync();
+            return await _context.Seasons.Include(e => e.Sport).ToListAsync();
         }
 
         public Task<IEnumerable<Season>> GetByTeam(string teamID)

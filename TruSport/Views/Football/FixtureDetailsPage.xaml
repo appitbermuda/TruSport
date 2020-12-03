@@ -1134,6 +1134,13 @@
                                                    SelectionMode="None"
                                                    ItemSpacing="0"
                                                  AutoFitMode="DynamicHeight">
+                                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="Date" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
                                     <listView:SfListView.ItemTemplate>
                                     <DataTemplate>
                                         <templates:HeadToHeadList />

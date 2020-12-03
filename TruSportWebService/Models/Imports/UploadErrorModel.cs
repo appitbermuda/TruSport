@@ -68,6 +68,14 @@ namespace OnTrackWebService.Models.Imports
         public byte[] ErrorFile { get; set; }
     }
 
+    public class ImportBowlingLeagueStandings
+    {
+        public string Message { get; set; }
+        public string Exception { get; set; }
+        public List<BowlingLeagueStandings> ErrorRows { get; set; }
+        public byte[] ErrorFile { get; set; }
+    }
+
     public class ImportBowlingPlayers
     {
         public string Message { get; set; }

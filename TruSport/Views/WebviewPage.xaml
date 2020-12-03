@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extensions="clr-namespace:TruSport.Extensions" x:Class="TruSport.Views.WebviewPage">
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand"
+                      BackgroundColor="{DynamicResource backgroundColor}"  Spacing="0">
+            <Grid  BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,0" HeightRequest="50">
+                <!--<StackLayout VerticalOptions="FillAndExpand">
+                    <Label Text="Purchase Ticket" FontSize="Small" FontAttributes="Bold" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                </StackLayout>-->
+                 <StackLayout VerticalOptions="FillAndExpand">
+                    <Button Text="" BackgroundColor="Transparent" FontSize="25" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" WidthRequest="30" HeightRequest="30" Padding="0" HorizontalOptions="StartAndExpand" Command="{Binding CloseClickedCommand}"/>
+                </StackLayout>
+            </Grid>
+        <Grid VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                <extensions:CustomWebView x:Name="Web" Source="{Binding URL}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+            <extensions:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            </Grid>
+            </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

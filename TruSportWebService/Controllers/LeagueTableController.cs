@@ -7,6 +7,8 @@ using OnTrackWebService.Interfaces;
 using OnTrackWebService.Repository;
 using OnTrackWebService.Models;
 using System.Diagnostics;
+using OnTrackWebService.Models.Imports;
+using Microsoft.AspNetCore.Http;
 
 namespace OnTrackWebService.Controllers
 {
@@ -515,6 +517,27 @@ namespace OnTrackWebService.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("UploadBowlingStandings")]
+        public async Task<IActionResult> UploadBowlingFixtures([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportBowlingLeagueStandings fileUploadResponse = await _leagueTableRepository.UploadBowlingLeagueStandings(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Bowling");
             }
 
             return NoContent();

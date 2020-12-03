@@ -1203,7 +1203,6 @@
                             <tabView:SfTabItem.Content>
                                 <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
                               VerticalOptions="FillAndExpand"
-                              BackgroundColor="Black"
                               RowSpacing="0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30" />

@@ -138,7 +138,7 @@
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding Fixture.FixtureTime, StringFormat='{0:MMM dd - hh:mm tt}'}"/>
+                                            Text="{Binding Fixture.FixtureTime, StringFormat='{0:MMM dd - h:mm tt}'}"/>
                                 
                             </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
@@ -241,8 +241,6 @@
                         </StackLayout>
                 </Grid>
 
-                <!--<BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />-->
-
                 <Grid Padding="10,30,10,50">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -256,10 +254,6 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <!--<StackLayout Grid.ColumnSpan="2">
-                        
-                       
-                    </StackLayout>-->
                     <StackLayout Grid.Row="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,0,0,20">
                         <Label Text="Match Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="25" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
                     </StackLayout>
@@ -274,15 +268,12 @@
                                             <ColumnDefinition Width="60"/>
                                         </Grid.ColumnDefinitions>
                                     <StackLayout HorizontalOptions="StartAndExpand">
-                                        <!--<Label Text="Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="Start"/>-->
                                         <Label Text="{Binding Product.Age}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
                                     </StackLayout>
                                     <StackLayout Grid.Column="1" HorizontalOptions="StartAndExpand">
-                                        <!--<Label Text="QTY" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>-->
                                         <Entry Text="{Binding Quantity}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Keyboard="Numeric" Placeholder="1"/>
                                     </StackLayout>
                                     <StackLayout Grid.Column="2" HorizontalOptions="EndAndExpand">
-                                        <!--<Label Text="Price" TextColor="{DynamicResource TextPrimaryColor}" FontSize="8" FontAttributes="Bold" HorizontalOptions="Start"/>-->
                                         <Label Text="{Binding Product.Price, StringFormat='{0:C}'}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
                                     </StackLayout>
                                         </Grid>
@@ -411,10 +402,30 @@
                     <Label Text="First Division ticket holders must arrive before half time of the match. Premier Divison ticket holders will not be permitted to use their ticket before half time of the First Division match." FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>
 
                     <Label Text="Due to COVID-19 regulations set by the governing body, all patrons are required to wear their mask at all times." FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small"/>
+
+                    <StackLayout Orientation="Horizontal" Padding="0,50,0,0">
+                        <StackLayout>
+                            <CheckBox x:Name="AgreeCheckbox" HeightRequest="50" Color="{DynamicResource buttonBackgroundColor}" HorizontalOptions="CenterAndExpand" VerticalOptions="Start" />
+                        </StackLayout>
+                        <StackLayout >
+                            <Label Text="I have read and agree to the current" FontAttributes="Bold" FontSize="Small" HorizontalTextAlignment="Center"/>
+                            <Button Text="Terms of Use" TextColor="{DynamicResource buttonBackgroundColor}" FontAttributes="Bold" FontSize="Small" HorizontalOptions="Center" HeightRequest="15" Clicked="Button_Clicked"/>
+                        </StackLayout>
+                    </StackLayout>
+                    
                 </StackLayout>
 
                 <StackLayout Padding="10">
-                    <Button Text="Purchase" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding PurchaseCommand}"/>
+                    <Button Text="Purchase" IsVisible="False" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding PurchaseCommand}">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button"
+                                         Binding="{Binding Source={x:Reference AgreeCheckbox}, Path=IsChecked}"
+                                         Value="true">
+                                <Setter Property="IsVisible"
+                                        Value="true" />
+                            </DataTrigger>
+    </Button.Triggers>
+                    </Button>
                 </StackLayout>
                         </StackLayout>
                 </Grid>

@@ -23,9 +23,11 @@ namespace TruSport.ViewModels
         public HelpPageViewModel()
         {
             IsActivityIndicatorVisible = true;
-            URL = new Uri("https://www.ontrackbda.com/help");
+            //URL = new Uri("https://www.ontrackbda.com/help");
 
-            Task.Delay(5000).ConfigureAwait(true);
+            GenerateSource();
+
+            //Task.Delay(5000).ConfigureAwait(true);
             IsActivityIndicatorVisible = false;
         }
 

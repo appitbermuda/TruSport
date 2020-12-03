@@ -41,6 +41,16 @@
                                 <Switch Grid.Column="1" IsToggled="{Binding CricketAlert}" OnColor="{StaticResource primaryDarkBlueTwo}" Margin="20,0" VerticalOptions="CenterAndExpand"/>
                             </Grid>
                         </ViewCell>
+                        <ViewCell>
+                            <Grid BackgroundColor="{DynamicResource controlHeaderBackgroundColor}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Bowling" FontAttributes="Bold" FontSize="Medium" Margin="20,0" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                <Switch Grid.Column="1" IsToggled="{Binding BowlingAlert}" OnColor="{StaticResource primaryDarkBlueTwo}" Margin="20,0" VerticalOptions="CenterAndExpand"/>
+                            </Grid>
+                        </ViewCell>
                         <!--<ViewCell>
                             <Grid BackgroundColor="{DynamicResource controlHeaderBackgroundColor}">
                                 <Grid.ColumnDefinitions>

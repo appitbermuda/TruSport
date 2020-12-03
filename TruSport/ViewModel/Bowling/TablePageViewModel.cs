@@ -23,6 +23,7 @@ namespace TruSport.ViewModels.Bowling
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> itemtapCommand;
         private Command<object> favoriteTapCommand;
         private Command<object> resetTapCommand;
+        private string _weekUpdated;
         private bool _isActivityIndicatorVisible;
         private bool noConnectivity;
         private Ad _ad;
@@ -75,6 +76,12 @@ namespace TruSport.ViewModels.Bowling
             set { Set(ref _isActivityIndicatorVisible, value); }
         }
 
+        public string WeekUpdated
+        {
+            get { return _weekUpdated; }
+            set { Set(ref _weekUpdated, value); }
+        }
+
         public Ad Ad
         {
             get { return _ad; }
@@ -111,7 +118,10 @@ namespace TruSport.ViewModels.Bowling
 
                     var somersbyLeague = await leagueTableService.GetSomersbyLeagueBowlingTables();
                     if (somersbyLeague != null)
+                    {
+                        WeekUpdated = somersbyLeague.FirstOrDefault().WeekUpdated;
                         SomersbyLeagueCollection = new ObservableCollection<BowlingLeagueStanding>(somersbyLeague.OrderBy(e => e.Position));
+                    }
                 }
                 else
                     NoConnectivity = true;

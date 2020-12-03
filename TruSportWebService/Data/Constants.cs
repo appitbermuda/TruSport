@@ -11,7 +11,6 @@ namespace OnTrackWebService.Data
         public static string SMTPUsername = "SMTP Username";
         public static string SMTPPassword = "SMTP Password";
 
-        public static string FromAddress = "ontrackbda@gmail.com";
         public static string BCCAddress = "ontrackbda@gmail.com";
         public static string NoReplyFromAddress = "tickets@ontrackbda.com";
         public const string Url = "https://api.appcenter.ms/v0.1/apps/";
@@ -42,18 +41,18 @@ namespace OnTrackWebService.Data
 
 #if DEBUG
         //public static string OnTrackEndpoint = "http://localhost:40139/api/";
-        public static string OnTrackEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
-        //public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
+        //public static string OnTrackEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
+        public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
         public static string[] SubscriptionTags { get; set; } = { "default", "cricket", "football" };
         public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";
         public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=uusrAVZy6JrvlTLtYZHUEoVR7EKbtqRGTJ3t0A6q0yE=";
 #else
         public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
         public static string[] SubscriptionTags { get; set; } = { "default", "cricket", "football" };
-        //public static string NotificationHubName { get; set; } = "OnTrackPushHub";
-        //public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=UA17J5DQ+x/8zKbnOjhrQWdjEaXWPuZg1ijAmcj3gHs=";
-        public static string NotificationHubName { get; set; } = "ontrackdevprodpush";
-        public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=nsIXDAEutaeMsrisPfd0mnYAZNYGggsKpLE9JAjMRKs=";
+        public static string NotificationHubName { get; set; } = "OnTrackPushHub";
+        public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=UA17J5DQ+x/8zKbnOjhrQWdjEaXWPuZg1ijAmcj3gHs=";
+        //public static string NotificationHubName { get; set; } = "ontrackdevprodpush";
+        //public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=nsIXDAEutaeMsrisPfd0mnYAZNYGggsKpLE9JAjMRKs=";
 #endif
     }
 }

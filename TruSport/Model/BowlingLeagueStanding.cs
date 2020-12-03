@@ -15,6 +15,7 @@ namespace TruSport.Model
         public int ScratchPins { get; set; }
         public int HighGame { get; set; }
         public int HighSers { get; set; }
+        public int Week { get; set; }
 
         [Ignore]
         public Team Team { get; set; }
@@ -30,5 +31,8 @@ namespace TruSport.Model
 
         [Ignore]
         public bool IsSelectedTeam { get; set; }
+
+        [Ignore]
+        public string WeekUpdated { get; set; }
     }
 }

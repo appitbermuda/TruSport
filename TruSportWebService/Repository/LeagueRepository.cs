@@ -52,9 +52,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Bowling");
-
-                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.SportID == sport.ID).ToListAsync();
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
 
                 return leagues;
             }

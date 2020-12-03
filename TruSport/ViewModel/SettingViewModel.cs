@@ -18,6 +18,7 @@ namespace TruSport.ViewModels
         private string _defaultSport;
         private bool _footballAlert;
         private bool _cricketAlert;
+        private bool _bowlingAlert;
         private bool _favouriteAlert;
         private bool _isActivityIndicatorVisible;
         INavigation Navigation;
@@ -62,6 +63,16 @@ namespace TruSport.ViewModels
             {
                 Set(ref _footballAlert, value);
                 UpdateFootballAlert();
+            }
+        }
+
+        public bool BowlingAlert
+        {
+            get { return _bowlingAlert; }
+            set
+            {
+                Set(ref _bowlingAlert, value);
+                UpdateBowlingAlert();
             }
         }
 
@@ -120,6 +131,7 @@ namespace TruSport.ViewModels
                 {
                     CricketAlert = true;
                     FootballAlert = true;
+                    BowlingAlert = true;
                     FavouriteAlert = true;
                 }
                 else
@@ -131,6 +143,10 @@ namespace TruSport.ViewModels
                     var footballAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "football").IsAlert;
 
                     FootballAlert = footballAlert;
+
+                    var bowlingAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "bowling").IsAlert;
+
+                    BowlingAlert = bowlingAlert;
 
                     //var favouriteAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "favourite").IsAlert;
 
@@ -196,6 +212,29 @@ namespace TruSport.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Football Alert");
+            }
+        }
+
+        public async Task UpdateBowlingAlert()
+        {
+            try
+            {
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = "Bowling",
+                    IsAlert = BowlingAlert
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                await notificationRegistrationService.RegisterDeviceAsync(tags);
+
+                await SecureStorage.SetAsync("BowlingAlert", BowlingAlert.ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Bowling Alert");
             }
         }
 

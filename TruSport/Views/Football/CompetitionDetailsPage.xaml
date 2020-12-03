@@ -32,24 +32,18 @@
             <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
             <converter:GroupingSelectionFootballConverter x:Key="groupingSelectionConverter"/>
             <converter:GroupingLeagueDateSelectionFootballConverter x:Key="groupingLeagueDateSelectionConverter"/>
-            <converter:ShowBowlingScoreConverter x:Key="showScoreConverter"/>
+            <converter:ShowScoreConverter x:Key="showScoreConverter"/>
             <converter:TeamNameConverter x:Key="teamNameConverter"/>
             <converter:GroupingCompetitionFootballConverter x:Key="groupingCompetitionConverter"/>
             <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
             <OnPlatform x:TypeArguments="x:String" x:Key="fontAwesomeFamily" Android="fa-regular-400.ttf#Font Awesome 5 Pro Regular" iOS="Font Awesome 5 Pro" />
-            <DataTemplate x:Key="cricketFixtureTemplate">
-                <templates:CricketFixtureList />
-            </DataTemplate>
-            <DataTemplate x:Key="cricketScoreFixtureTemplate">
-                <templates:CricketScoreFixtureList />
-            </DataTemplate>
             <DataTemplate x:Key="footballFixtureTemplate">
                 <templates:FixtureList />
             </DataTemplate>
             <DataTemplate x:Key="footballScoreFixtureTemplate">
                 <templates:ScoreFixtureList />
             </DataTemplate>
-            <templates:FootballFixtureDataTemplateSelector x:Key="sportFixtureDataTemplateSelector"
+            <templates:FootballFixtureDataTemplateSelector x:Key="footballFixtureDataTemplateSelector"
                                                         FootballFixtureTemplate="{StaticResource footballFixtureTemplate}"
                                                         FootballScoreFixtureTemplate="{StaticResource footballScoreFixtureTemplate}"
                                                         />
@@ -555,16 +549,12 @@
                                                      LoadMoreCommandParameter="{Binding Source={x:Reference Name=FixtureList}}"
                                                     HorizontalOptions="FillAndExpand"
                                                     VerticalOptions="FillAndExpand"
+                                                 ItemTemplate="{StaticResource footballFixtureDataTemplateSelector}"
                                                    SelectionMode="Single"
                                                    ItemSpacing="0"
                                                      SelectionChanged="OnFixtureSelected"
-                                                    SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                                                    SelectionBackgroundColor="Transparent"
                                                  AutoFitMode="DynamicHeight">
-                                <listView:SfListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <templates:FixtureList />
-                                    </DataTemplate>
-                                </listView:SfListView.ItemTemplate>
                                     <listView:SfListView.HeaderTemplate>
                                     <DataTemplate>
                                       <ViewCell>
