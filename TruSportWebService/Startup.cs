@@ -47,12 +47,12 @@ namespace OnTrackWebService
             });
 
             //#if DEBUG
-            //services.AddDbContext<OnTrackContext>
-            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
-
-            //////#else
             services.AddDbContext<OnTrackContext>
-              (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
+                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
+
+            //#else
+            //services.AddDbContext<OnTrackContext>
+            //  (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
             //#endif
 
@@ -95,6 +95,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<League>, LeagueRepository>();
             services.AddScoped<IOnTrackRepository<LeagueStat>, LeagueStatRepository>();
             services.AddScoped<IOnTrackRepository<LTable>, LeagueTableRepository>();
+            services.AddScoped<IOnTrackRepository<Impression>, ImpressionRepository>();
             services.AddScoped<IOnTrackRepository<Inventory>, InventoryRepository>();
             services.AddScoped<IOnTrackRepository<FixtureProduct>, FixtureProductRepository>();
             services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
@@ -105,10 +106,14 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<MatchStat>, MatchStatRepository>();
             services.AddScoped<IOnTrackRepository<MatchType>, MatchTypeRepository>();
             services.AddScoped<IOnTrackRepository<Order>, OrderRepository>();
+            services.AddScoped<IOnTrackRepository<Product>, ProductRepository>();
+            services.AddScoped<IOnTrackRepository<ProductType>, ProductTypeRepository>();
             services.AddScoped<IOnTrackRepository<Player>, PlayerRepository>();
             services.AddScoped<IOnTrackRepository<Award>, AwardRepository>();
             services.AddScoped<IOnTrackRepository<PlayerSeason>, PlayerSeasonRepository>();
             services.AddScoped<IOnTrackRepository<Team>, TeamRepository>();
+            services.AddScoped<IOnTrackRepository<TicketTeam>, TicketTeamRepository>();
+            services.AddScoped<IOnTrackRepository<TicketCompany>, TicketCompanyRepository>();
             services.AddScoped<IOnTrackRepository<TicketMember>, TicketMemberRepository>();
             services.AddScoped<IOnTrackRepository<TicketConfiguration>, TicketConfigurationRepository>();
             services.AddScoped<IOnTrackRepository<Role>, RoleRepository>();
@@ -147,6 +152,9 @@ namespace OnTrackWebService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            //Register Syncfusion license
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzg0NDc1QDMxMzgyZTM0MmUzMGZrekZYMmdhZXlIejU0aVhxYnhXckhieC93a2dQVG5zR1R1QnpuOVNaU2s9;Mzg0NDc2QDMxMzgyZTM0MmUzMEtYYnplemxwR0I1b0Y3YXp1SnMzVFpIUWtOd3E2Z0g1NjJ3TFpPSFl5TTA9");
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

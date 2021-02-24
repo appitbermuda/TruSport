@@ -132,9 +132,9 @@ namespace OnTrackWebService.Models
         public string LeagueName { get; set; }
         public string PlayerID { get; set; }
         public string PlayerName { get; set; }
-        public string SeasonID { get; set; }
-        public string SeasonDate { get; set; }
         public int Stat { get; set; }
+        public string SeasonID { get; set; }
+        public string SeasonDate { get; set; }        
     }
 
     public class BowlingSeasonHS
@@ -146,8 +146,8 @@ namespace OnTrackWebService.Models
         public string LeagueName { get; set; }
         public string PlayerID { get; set; }
         public string PlayerName { get; set; }
-        public string SeasonID { get; set; }
-        public string SeasonDate { get; set; }
         public int Stat { get; set; }
+        public string SeasonID { get; set; }
+        public string SeasonDate { get; set; }        
     }
 }

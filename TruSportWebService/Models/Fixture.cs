@@ -69,8 +69,12 @@ namespace OnTrackWebService.Models
         [NotMapped]
         public virtual List<Fixture> HeadToHead { get; set; }
 
-        [NotMapped]
+        //[NotMapped]
         public virtual List<MatchRoster> MatchRosters { get; set; }
+
+
+        [NotMapped]
+        public virtual List<RosterListView> Rosters { get; set; }
 
         [NotMapped]
         public virtual List<MatchRosterSummary> MatchRosterSummary { get; set; }

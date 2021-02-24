@@ -32,7 +32,7 @@
                                      HorizontalOptions="FillAndExpand"
                                  Padding="10,5,0,5">
                                 <Label x:Name="PlayerNameLabel"
-                                   FontSize="Medium"
+                                   FontSize="Small"
                                        Text="{Binding PlayerName}"
                                    TextColor="{DynamicResource TextPrimaryColor}"/>
                         </StackLayout>
@@ -41,7 +41,7 @@
                                      HorizontalOptions="EndAndExpand"
                                      Padding="0,5,10,5">
                             <Label x:Name="TeamNameLabel"
-                                   FontSize="Large"
+                                   FontSize="Medium"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    VerticalTextAlignment="Center"
@@ -95,7 +95,7 @@
                                      HorizontalOptions="FillAndExpand"
                                  Padding="0,5">
                                 <Label x:Name="PlayerNameLabel"
-                                   FontSize="Medium"
+                                   FontSize="Small"
                                        Text="{Binding TeamName}"
                                    TextColor="{DynamicResource TextPrimaryColor}"/>
                         </StackLayout>
@@ -104,7 +104,7 @@
                                      HorizontalOptions="EndAndExpand"
                                      Padding="0,5,10,5">
                             <Label x:Name="TeamNameLabel"
-                                   FontSize="Large"
+                                   FontSize="Medium"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                    VerticalTextAlignment="Center"
@@ -122,7 +122,7 @@
                         <Grid VerticalOptions="FillAndExpand" Padding="0,10">
                             <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
                             <Label x:Name="leagueLabel" Text="{Binding .}"
-                                    FontSize="Medium"
+                                    FontSize="Small"
                                     FontAttributes="Bold"
                                     TextColor="White"/>
                             </StackLayout>

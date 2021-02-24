@@ -13,6 +13,8 @@ namespace OnTrackWebService.Models.Shop
         public string Email { get; set; }
         public string Phone { get; set; }
 
+        public string Name => FirstName + " " + LastName;
+
         [ForeignKey("OrderID")]
         public Order Order { get; set; }
     }

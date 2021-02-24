@@ -18,9 +18,23 @@ namespace OnTrackWebService.Repository
         {
             _context = context;
         }
-        public Task Delete(string id)
+        public async Task<bool> Delete(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var player = await _context.Players.FirstOrDefaultAsync(e => e.ID == id);
+
+                _context.Players.Remove(player);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
         }
 
         public async Task<Player> Get(string id)
@@ -28,14 +42,28 @@ namespace OnTrackWebService.Repository
             return await _context.Players.FirstOrDefaultAsync(e => e.ID == id);
         }
 
-        public async Task<List<Player>> GetAll()
-        {
-            return await _context.Players.ToListAsync();
-        }
-
         public async Task<IEnumerable<Player>> GetByTeam(string teamID)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<Player>> GetAll()
+        {
+            try
+            {
+                var players = await _context.Players
+                    .Include(e => e.PlayerSeasons).ThenInclude(e => e.Season)
+                    .Include(e => e.PlayerSeasons).ThenInclude(e => e.Team)
+                    .ToListAsync();
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetCricketPlayersByTeam");
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<PlayerSeason>> GetPlayers()
@@ -182,9 +210,21 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public Task Insert(Player item)
+        public async Task<bool> Insert(Player item)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Players.Add(item);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return false;
         }
 
         public async Task Update(PlayerSeason player)
@@ -303,12 +343,39 @@ namespace OnTrackWebService.Repository
             }
         }
 
-        public Task Update(Player item)
+        public async Task<bool> Update(Player item)
+        {
+            try
+            {
+                _context.Players.Update(item);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return false;
+        }
+
+        Task<IEnumerable<Player>> IOnTrackRepository<Player>.GetAll()
         {
             throw new NotImplementedException();
         }
 
-        Task<IEnumerable<Player>> IOnTrackRepository<Player>.GetAll()
+        Task IOnTrackRepository<Player>.Insert(Player item)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IOnTrackRepository<Player>.Update(Player item)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IOnTrackRepository<Player>.Delete(string id)
         {
             throw new NotImplementedException();
         }

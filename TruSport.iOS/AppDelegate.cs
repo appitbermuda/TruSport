@@ -59,7 +59,7 @@ namespace TruSport.iOS
             => _deviceInstallationService ??
                 (_deviceInstallationService =
                 PushServiceContainer.Resolve<IDeviceInstallationService>());
-        private SBNotificationHub Hub { get; set; }
+        //private SBNotificationHub Hub { get; set; }
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {

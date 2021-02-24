@@ -720,7 +720,7 @@ namespace TruSport.Model
                         TimeZoneInfo.ConvertTime(Date.Add(TimeSpan.Parse(Time)), TimeZoneInfo.Utc, TimeZoneInfo.Local);
 
         [Ignore]
-        public string PostOrCanc => IsPostponed ? "Post." : IsCancelled ? "Canc." : String.Empty;
+        public string PostOrCanc => IsPostponed ? "Postponed" : IsCancelled ? "Cancelled" : String.Empty;
 
         [Ignore]
         public bool IsPostponedOrCancelled { get; set; }
@@ -758,6 +758,9 @@ namespace TruSport.Model
         [Ignore]
         public ObservableCollection<MatchRoster> MatchRosters { get; set; }
 
+        [Ignore]
+        public ObservableCollection<RosterListView> Rosters { get; set; }
+        
         [Ignore]
         public virtual List<MatchRosterSummary> MatchRosterSummary { get; set; }
     }
@@ -1051,6 +1054,7 @@ namespace TruSport.Model
         public int? GoalTime { get; set; }
         public int? YellowCardTime { get; set; }
         public int? RedCardTime { get; set; }
+        public bool IsOwnGoal { get; set; }
 
         //[ForeignKey("SubstitutePlayerID")]
         [Ignore]
@@ -1117,6 +1121,7 @@ namespace TruSport.Model
         public int RedCard { get; set; }
         public bool IsSub { get; set; }
         public bool IsHomeTeam { get; set; }
+        public bool IsOwnGoal { get; set; }
         public int Minute { get; set; }
 
         [Ignore]

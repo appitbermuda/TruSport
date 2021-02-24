@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Data;
@@ -21,14 +22,19 @@ namespace OnTrackWebService.Repository
 
         public async Task<IEnumerable<TicketConfiguration>> All()
         {
-            return await _context.TicketConfigurations.ToListAsync();
+            return await _context.TicketConfigurations.Include(e => e.TicketCompany).ToListAsync();
         }
 
-        public async Task<TicketConfiguration> TeamConfiguration(string teamID)
+        public async Task<TicketConfiguration> TeamConfiguration(ClaimsPrincipal claimsUser)
         {
             try
             {
-                var config = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == teamID);
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                      .Select(c => c.Value).SingleOrDefault();
+
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+
+                var config = await _context.TicketConfigurations.Include(e => e.TicketCompany).FirstOrDefaultAsync(e => e.TicketCompanyID == companyUser.TicketCompanyID);
                 return config;
             }
             catch (Exception ex)
@@ -43,7 +49,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var config = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.ID == id);
+                var config = await _context.TicketConfigurations.Include(e => e.TicketCompany).FirstOrDefaultAsync(e => e.ID == id);
                 return config;
             }
             catch (Exception ex)
@@ -71,7 +77,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var ticketconfigurations = await _context.TicketConfigurations.ToListAsync();
+                var ticketconfigurations = await _context.TicketConfigurations.Include(e => e.TicketCompany).ToListAsync();
 
                 return ticketconfigurations;
             }

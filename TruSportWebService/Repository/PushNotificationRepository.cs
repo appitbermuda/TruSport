@@ -259,7 +259,6 @@ namespace OnTrackWebService.Repository
                 };
 
                 await RequestNotificationAsync(notificationRequest, token);
-
             }
             catch (Exception ex)
             { }

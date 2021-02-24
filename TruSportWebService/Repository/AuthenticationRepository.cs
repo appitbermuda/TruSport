@@ -94,49 +94,61 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
+                var user = await _context.Users.Include(e => e.Role).ThenInclude(e => e.Sport)
+                    .Include(e => e.UserRoles)
+                    .Include(e => e.UserTeams).ThenInclude(e => e.Team)
+                    .Include(e => e.TicketCompanyUsers).ThenInclude(e => e.TicketCompany)
+                    .FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated && ((!String.IsNullOrEmpty(userAuthentication.sport) && userAuthentication.sport.ToLower() == e.Role.Sport.Name.ToLower()) || String.IsNullOrEmpty(userAuthentication.sport)));
+                //var userRoles = await _context.UserRoles.Where(e => e.UserID == user.ID).ToListAsync();
 
                 if (user != null)
                 {
-                    if (user.IsActive)
+                    //if(user.UserRoles != null)
+                    //{
+                    //    if (user.Role.Name.Contains("Team") && user.UserRoles.Any(e => !String.IsNullOrEmpty(e.AdminIdentifier)))
+                    //    {
+                    //        var team = await _context.UserTeams.Where(e => e.UserID == user.ID).ToListAsync();
+                    //        user.Team = team;
+                    //    }
+
+                    //    if (user.Role.Name.Contains("League") && user.UserRoles.Any(e => !String.IsNullOrEmpty(e.AdminIdentifier)))
+                    //    {
+                    //        var league = await _context.Leagues.FirstOrDefaultAsync(e => user.UserRoles.Any(d => d.AdminIdentifier == e.ID));
+                    //        user.League = league;
+                    //    }
+
+                    //    if (user.Role.Name.Contains("Ticket") && user.UserRoles.Any(e => !String.IsNullOrEmpty(e.AdminIdentifier)))
+                    //    {
+                    //        var companys = await _context.TicketCompanyUsers.Where(e => e.UserID == user.ID).ToListAsync();
+                    //        user.TicketCompanyUsers = companys;
+                    //    }
+                    //}
+
+                    PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.Password, userAuthentication.password);
+
+                    if (passwordVerificationResult == PasswordVerificationResult.Success)
                     {
-                        if (!String.IsNullOrEmpty(user.TeamID))
+                        // authentication successful so generate jwt token
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                        var tokenDescriptor = new SecurityTokenDescriptor
                         {
-                            var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
-                            user.Team = team;
-                        }
-
-                        PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.Password, userAuthentication.password);
-
-                        if (passwordVerificationResult == PasswordVerificationResult.Success)
-                        {
-                            // authentication successful so generate jwt token
-                            var tokenHandler = new JwtSecurityTokenHandler();
-                            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-                            var tokenDescriptor = new SecurityTokenDescriptor
+                            Subject = new ClaimsIdentity(new Claim[]
                             {
-                                Subject = new ClaimsIdentity(new Claim[]
-                                {
-                                new Claim(ClaimTypes.Name, user.Email.ToString()),
-                                new Claim(ClaimTypes.Role, user.Role.Name)
-                                }),
-                                Expires = DateTime.UtcNow.AddYears(100),
-                                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                            };
-                            var token = tokenHandler.CreateToken(tokenDescriptor);
-                            user.Token = tokenHandler.WriteToken(token);
+                            new Claim(ClaimTypes.Name, user.Email.ToString()),
+                            new Claim(ClaimTypes.Role, user.Role.Name)
+                            }),
+                            Expires = DateTime.UtcNow.AddYears(100),
+                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                        };
+                        var token = tokenHandler.CreateToken(tokenDescriptor);
+                        user.Token = tokenHandler.WriteToken(token);
 
-                            // remove password before returning
-                            user.Password = null;
+                        // remove password before returning
+                        user.Password = null;
 
-                            return user;
+                        return user;
 
-                        }
-                    }
-                    else
-                    {
-                        user = new User();
-                        user.ErrorMessage = "You are not authorized for Ticket scanning at this time. Please contact your team manager.";
                     }
                 }
             }
@@ -148,7 +160,106 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<UserResponse> SignUp(User user)
+        public async Task<UserResponse> SignUp(UserRequest user)
+        {
+            TicketCompanyUser ticketCompanyUser = null;
+            UserTeam userTeam = null;
+
+            try
+            {
+                if (Regex.IsMatch(user.Email, "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$"))
+                {
+                    if (user.Password.Length >= 8)
+                    {
+                        var userExists = await _context.Users.AnyAsync(e => e.Email == user.Email);
+                        if (!userExists)
+                        {
+
+                            _context.Database.BeginTransaction();
+                            //encrypt password
+                            user.Password = _passwordHasher.HashPassword(user.Password);
+
+                            var role = await _context.Roles.FirstOrDefaultAsync(e => e.ID == user.RoleID);
+
+                            User newUser = new User
+                            {
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Email = user.Email,
+                                Password = user.Password,
+                                RoleID = user.RoleID
+                            };
+
+                            _context.Users.Add(newUser);
+                            await _context.SaveChangesAsync();
+
+                            if (UserInRole.Role(role.Name, Roles.TicketAdmin))
+                            {
+                                ticketCompanyUser = new TicketCompanyUser();
+                                ticketCompanyUser.TicketCompanyID = user.TicketCompanyID;
+
+                                ticketCompanyUser.UserID = user.ID;
+
+                                _context.TicketCompanyUsers.Add(ticketCompanyUser);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            if (UserInRole.Role(role.Name, Roles.TeamAdmin))
+                            {
+                                userTeam = new UserTeam();
+                                userTeam.TeamID = user.TeamID;
+
+                                userTeam.UserID = user.ID;
+
+                                _context.UserTeams.Add(userTeam);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            _context.Database.CommitTransaction();
+
+                            //SEND EMAIL
+                            try
+                            {
+                                newUser.Role = role;
+                                await emailRepository.Welcome(user.Email);
+                                await emailRepository.SendSignUpEmail(newUser, userTeam, ticketCompanyUser);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message, "Welcome Email");
+                            }
+
+                            List<UserTeam> userTeams = new List<UserTeam>();
+                            userTeams.Add(userTeam);
+
+                            List<TicketCompanyUser> ticketCompanyUsers = new List<TicketCompanyUser>();
+                            ticketCompanyUsers.Add(ticketCompanyUser);
+
+                            return new UserResponse
+                            {
+                                ID = user.ID,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Role = role,
+                                RoleID = user.RoleID,
+                                Email = user.Email,
+                                UserTeams = userTeams,
+                                TicketCompanyUsers = ticketCompanyUsers
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _context.Database.RollbackTransaction();
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return null;
+        }
+
+        public async Task<UserResponse> SignUpUser(User user)
         {
             try
             {
@@ -739,7 +850,7 @@ namespace OnTrackWebService.Repository
                 var orders = await _context.OrderDetails
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.Team)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.TicketCompany)
                     .Where(e => e.Order.Date == date).ToListAsync();
 
                 orders.ForEach(e => e.Order.Customer.Password = null);
@@ -760,15 +871,15 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<List<Customer>> GetCustomersByTeam(string TeamID)
+        public async Task<List<Customer>> GetCustomersByTeam(string TicketCompanyID)
         {
             try
             {
                 var orders = await _context.OrderDetails
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.FixtureProduct.Product.TeamID == TeamID).ToListAsync();
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.TicketCompany)
+                    .Where(e => e.FixtureProduct.Product.TicketCompanyID == TicketCompanyID).ToListAsync();
 
                 orders.ForEach(e => e.Order.Customer.Password = null);
                 orders.ForEach(e => e.Order.Customer.TemporaryPassword = null);
@@ -788,15 +899,15 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<List<Customer>> GetCustomersByDateByTeam(DateTime date, string TeamID)
+        public async Task<List<Customer>> GetCustomersByDateByTeam(DateTime date, string TicketCompanyID)
         {
             try
             {
                 var orders = await _context.OrderDetails
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.Order.Date == date && e.FixtureProduct.Product.TeamID == TeamID).ToListAsync();
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.TicketCompany)
+                    .Where(e => e.Order.Date == date && e.FixtureProduct.Product.TicketCompanyID == TicketCompanyID).ToListAsync();
 
                 orders.ForEach(e => e.Order.Customer.Password = null);
                 orders.ForEach(e => e.Order.Customer.TemporaryPassword = null);

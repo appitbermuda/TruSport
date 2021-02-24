@@ -24,6 +24,26 @@ namespace OnTrackWebService.Controllers
             _fixtureProductRepository = (FixtureProductRepository)fixtureProductRepository;
         }
 
+        [HttpGet]
+        [Route("AllFixtureProducts")]
+        public async Task<IActionResult> AllFixtureProducts()
+        {
+            try
+            {
+
+                IEnumerable<FixtureProduct> fixtureProducts = await _fixtureProductRepository.AllFixtureProducts();
+
+                if (fixtureProducts != null)
+                    return Ok(fixtureProducts);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "FixtureProduct");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values
         //Deprecated
         [HttpGet]
@@ -46,7 +66,6 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        //Deprecated
         [HttpGet]
         [Route("Products")]
         public async Task<IActionResult> Products()
@@ -89,13 +108,34 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
-        [Route("TodayFixture")]
-        public async Task<IActionResult> TodayFixture(string teamID)
+        [Route("Upcoming")]
+        public async Task<IActionResult> UpcomingFixtures()
         {
             try
             {
 
-                Fixture fixture = await _fixtureProductRepository.GetTodayFixture(teamID);
+                List<Fixture> upcoming = await _fixtureProductRepository.GetUpcomingFixtures(User);
+
+                if (upcoming != null)
+                    return Ok(upcoming);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "FixtureProduct");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("TodayFixture")]
+        public async Task<IActionResult> TodayFixture()
+        {
+            try
+            {
+
+                Fixture fixture = await _fixtureProductRepository.GetTodayFixture(User);
 
                 if (fixture != null)
                     return Ok(fixture);
@@ -111,12 +151,12 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [HttpGet]
         [Route("TodayByTeam")]
-        public async Task<IActionResult> FixtureProducts(string teamID)
+        public async Task<IActionResult> TodayByTeam()
         {
             try
             {
 
-                IEnumerable<FixtureProduct> fixtureProducts = await _fixtureProductRepository.GetTodayByTeam(teamID);
+                IEnumerable<FixtureProduct> fixtureProducts = await _fixtureProductRepository.GetTodayByTeam(User);
 
                 if (fixtureProducts != null)
                     return Ok(fixtureProducts);
@@ -174,12 +214,12 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [HttpGet]
         [Route("Team")]
-        public async Task<IActionResult> TeamFixtureProducts(string teamID)
+        public async Task<IActionResult> TeamFixtureProducts()
         {
             try
             {
 
-                IEnumerable<FixtureProduct> fixtureProducts = await _fixtureProductRepository.Team(teamID);
+                IEnumerable<FixtureProduct> fixtureProducts = await _fixtureProductRepository.Team(User);
 
                 if (fixtureProducts != null)
                     return Ok(fixtureProducts);

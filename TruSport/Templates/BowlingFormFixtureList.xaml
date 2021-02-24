@@ -43,7 +43,8 @@
                                 <Label x:Name="LeagueName"
                                    FontSize="Micro"
                                    TextColor="{DynamicResource TextPrimaryColor}"
-                                    Text="{Binding League.Name}"/>
+                                    Text="{Binding League.Name}"
+                                       LineBreakMode="TailTruncation"/>
                                 </StackLayout>
                         </StackLayout>
                         </Frame>

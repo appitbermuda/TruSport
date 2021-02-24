@@ -36,6 +36,14 @@ namespace OnTrackWebService.Models.Imports
         public byte[] ErrorFile { get; set; }
     }
 
+    public class ImportGoalStats
+    {
+        public string Message { get; set; }
+        public string Exception { get; set; }
+        public List<GoalStats> ErrorRows { get; set; }
+        public byte[] ErrorFile { get; set; }
+    }
+
     public class ImportRunStats
     {
         public string Message { get; set; }

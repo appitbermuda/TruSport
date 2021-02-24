@@ -163,7 +163,7 @@ namespace TruSport.ViewModel.Shop
                         }
                         else
                         {
-                            await Application.Current.MainPage.DisplayAlert("Login", "You have either entered an incorrect email or password.", "Okay");
+                            await Application.Current.MainPage.DisplayAlert("Sign In", "You have either entered an incorrect email or password.", "Okay");
                         }
                     }
                     else

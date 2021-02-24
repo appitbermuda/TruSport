@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -10,6 +12,10 @@ using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
 using OnTrackWebService.Models.Shop;
+using Syncfusion.Drawing;
+using Syncfusion.Pdf;
+using Syncfusion.Pdf.Graphics;
+using Syncfusion.Pdf.Grid;
 
 namespace OnTrackWebService.Repository
 {
@@ -84,7 +90,7 @@ namespace OnTrackWebService.Repository
                 var email = iUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
 
                 //var Order
                 ContactTraces = await _context.ContactTraces
@@ -93,7 +99,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Where(e => e.Order.OrderDetails.Any(x => x.FixtureProduct.Product.TeamID == user.TeamID)).ToListAsync();
+                    .Where(e => e.Order.OrderDetails.Any(x => x.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID)).ToListAsync();
 
                 ContactTraces.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
                 ContactTraces.ForEach(e => e.Order.FixtureDate = e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.Date);
@@ -115,7 +121,7 @@ namespace OnTrackWebService.Repository
                 var email = iUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
 
                 ContactTraces = await _context.ContactTraces
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
@@ -123,7 +129,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Where(e => e.Order.OrderDetails.Any(x => x.FixtureProduct.Product.TeamID ==  user.TeamID && x.FixtureProduct.Fixture.Date == DateTime.Now.AddHours(-4).Date)).ToListAsync();
+                    .Where(e => e.Order.OrderDetails.Any(x => x.FixtureProduct.Product.TicketCompanyID == companyUser.User.TeamID && x.FixtureProduct.Fixture.Date == DateTime.Now.AddHours(-4).Date)).ToListAsync();
 
                 ContactTraces.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
                 ContactTraces.ForEach(e => e.Order.FixtureDate = e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.Date);
@@ -187,9 +193,16 @@ namespace OnTrackWebService.Repository
                 ContactTraces.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
                 ContactTraces.ForEach(e => e.Order.FixtureDate = e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.Date);
 
+                var stream = CreatePDF(ContactTraces);
+
+                string fileName = "ContactTrace" + DateTime.Now.Date.ToString("MMM-dd-yyyy") + ".pdf";
+
                 try
                 {
-                    await emailRepository.DownloadContactTracing(user.Email, ContactTraces.FirstOrDefault().Order.Fixture, user.FirstName, ContactTraces.OrderBy(e => e.LastName).Distinct().ToList());
+                    if (stream == null)
+                        await emailRepository.DownloadContactTracing(user.Email, ContactTraces.FirstOrDefault().Order.Fixture, user.FirstName, ContactTraces);
+                    else
+                        await emailRepository.DownloadContactTracing(user.Email, ContactTraces.FirstOrDefault().Order.Fixture, user.FirstName, stream, fileName);
                 }
                 catch (Exception ex)
                 {
@@ -213,21 +226,22 @@ namespace OnTrackWebService.Repository
                 var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
 
-                var matchTickets = await _context.MatchTickets.Include(e => e.FixtureProduct).ThenInclude(e => e.Product).Where(e => e.FixtureProduct.Product.TeamID == user.TeamID).ToListAsync();
-
-                contactTraces = await _context.FixtureProducts.Include(e=> e.Product)
+                var matchTickets = await _context.MatchTickets.Include(e => e.FixtureProduct).ThenInclude(e => e.Product).Where(e => e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID).ToListAsync();
+                 //&& matchTickets.Any(d => d.FixtureProductID == e.ID)
+                var fixtures = await _context.FixtureProducts.Include(e => e.Product)
                     .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Where(e => e.Product.TeamID == user.TeamID && e.Fixture.Date <= DateTime.Now.Date && matchTickets.Any(d => d.FixtureProductID == e.ID))
-                    .Select(e => new TicketReport
-                    {
-                        FixtureID = e.FixtureID,
-                        Fixture = e.Fixture.HomeTeam.Name + " v " + e.Fixture.AwayTeam.Name,
-                        Date = e.Fixture.Date.ToString("MMM dd, yyyy")
-                    }).ToListAsync();
+                    .Where(e => e.Product.TicketCompanyID == companyUser.TicketCompanyID && e.Fixture.Date <= DateTime.Now.Date)
+                    .ToListAsync();
 
+                contactTraces = fixtures.Select(e => new TicketReport
+                {
+                    FixtureID = e.FixtureID,
+                    Fixture = e.Fixture.HomeTeam.Name + " v " + e.Fixture.AwayTeam.Name,
+                    Date = e.Fixture.Date.ToString("MMM dd, yyyy")
+                }).ToList();
 
                 return contactTraces;
             }
@@ -265,6 +279,114 @@ namespace OnTrackWebService.Repository
             {
                 Debug.WriteLine(ex.Message, "Update Contract Trace");
             }
+        }
+
+        public Stream CreatePDF(List<ContactTrace> contactTraces)
+        {
+            try
+            {
+                //Create a new PDF document
+                PdfDocument doc = new PdfDocument();
+
+                //Add a page
+                PdfPage page = doc.Pages.Add();
+
+                //Create PDF graphics for the page
+                PdfGraphics graphics = page.Graphics;
+
+                //Loads the image as stream
+                FileStream imageStream = new FileStream("wwwroot/images/OnTrack_WordMark.png", FileMode.Open, FileAccess.Read);
+                RectangleF bounds = new RectangleF(55, 0, 390, 60);
+                PdfImage image = PdfImage.FromStream(imageStream);
+                //Draws the image to the PDF page
+                page.Graphics.DrawImage(image, bounds);
+
+                bounds = new RectangleF(0, bounds.Bottom + 90, graphics.ClientSize.Width, 30);
+
+                //Set the standard font
+                PdfFont headerFont = new PdfStandardFont(PdfFontFamily.TimesRoman, 20);
+                PdfFont subHeaderFont = new PdfStandardFont(PdfFontFamily.TimesRoman, 14);
+                PdfFont bodyFont = new PdfStandardFont(PdfFontFamily.TimesRoman, 12);
+
+                //Draw the text
+                PdfTextElement element = new PdfTextElement("CONTACT TRACING", headerFont);
+
+
+                PdfLayoutResult result = element.Draw(page, new PointF(10, bounds.Top + 8));
+
+                element = new PdfTextElement(contactTraces.FirstOrDefault().Order.Fixture, subHeaderFont);
+                result = element.Draw(page, new PointF(10, result.Bounds.Bottom + 15));
+
+                element = new PdfTextElement(contactTraces.FirstOrDefault().Order.FixtureDate.ToString("MMM dd, yyyy"), subHeaderFont);
+                result = element.Draw(page, new PointF(10, result.Bounds.Bottom + 15));
+
+                //graphics.DrawString("Contact Tracing", headerFont, PdfBrushes.Black, new PointF(0, 0));
+                //graphics.DrawString(contactTraces.FirstOrDefault().Order.Fixture, subHeaderFont, PdfBrushes.Black, new PointF(10, bounds.Top + 8));
+                //graphics.DrawString(contactTraces.FirstOrDefault().Order.FixtureDate.ToString("MMM dd, yyyy"), subHeaderFont, PdfBrushes.Black, new PointF(0, 0));
+
+                //Create a PdfGrid
+                PdfGrid pdfGrid = new PdfGrid();
+
+                //Create a DataTable
+                DataTable dataTable = new DataTable();
+
+                //Add columns to the DataTable
+                dataTable.Columns.Add("Name");
+                dataTable.Columns.Add("Phone #");
+
+                //Add rows to the DataTable
+                foreach(var contactTrace in contactTraces)
+                {
+                    dataTable.Rows.Add(new object[] { contactTrace.Name, contactTrace.Phone });
+                }
+
+                //Assign data source
+                pdfGrid.DataSource = dataTable;
+                //Draw grid to the page of PDF document
+
+                //Creates the grid cell styles
+                PdfGridCellStyle cellStyle = new PdfGridCellStyle();
+                cellStyle.Borders.All = PdfPens.White;
+                PdfGridRow header = pdfGrid.Headers[0];
+
+                //Creates the header style
+                PdfGridCellStyle headerStyle = new PdfGridCellStyle();
+                headerStyle.Borders.All = new PdfPen(new PdfColor(14, 21, 80));
+                headerStyle.BackgroundBrush = new PdfSolidBrush(new PdfColor(14, 21, 80));
+                headerStyle.TextBrush = PdfBrushes.White;
+                headerStyle.Font = new PdfStandardFont(PdfFontFamily.TimesRoman, 14f, PdfFontStyle.Regular);
+
+                header.ApplyStyle(headerStyle);
+                cellStyle.Borders.Bottom = new PdfPen(new PdfColor(217, 217, 217), 0.70f);
+                cellStyle.Font = new PdfStandardFont(PdfFontFamily.TimesRoman, 12f);
+                cellStyle.TextBrush = new PdfSolidBrush(new PdfColor(0, 0, 0));
+
+                //Creates the layout format for grid
+                PdfGridLayoutFormat layoutFormat = new PdfGridLayoutFormat();
+                // Creates layout format settings to allow the table pagination
+                layoutFormat.Layout = PdfLayoutType.Paginate;
+                //Draws the grid to the PDF page.
+                PdfGridLayoutResult gridResult = pdfGrid.Draw(page, new RectangleF(new PointF(0, result.Bounds.Bottom + 40), new SizeF(graphics.ClientSize.Width, graphics.ClientSize.Height - 100)), layoutFormat);
+
+                //Save the PDF document to stream
+                MemoryStream stream = new MemoryStream();
+                doc.Save(stream);
+                //If the position is not set to '0' then the PDF will be empty.
+                stream.Position = 0;
+                //Close the document.
+                doc.Close(true);
+                //Defining the ContentType for pdf file.
+                //string contentType = "application/pdf";
+                
+                //Creates a FileContentResult object by using the file contents, content type, and file name.
+                return stream;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "PDF");
+            }
+
+            return null;
         }
     }
 }

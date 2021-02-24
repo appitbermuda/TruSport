@@ -31,34 +31,6 @@ namespace TruSport.Views
             OnTrackListView = OnTrackMenuItemsListView;
         }
 
-        //async void SignOutTapped(object sender, System.EventArgs e)
-        //{
-        //    try
-        //    {
-        //        var signout = await DisplayAlert("Sign Out","Are your sure you want to sign out?","Sign Out","Cancel");
-
-        //        if (signout)
-        //        {
-        //            SignOutLabel.BackgroundColor = (Color)App.Current.Resources["primaryBarBlue"];
-
-        //            SecureStorage.RemoveAll();
-
-        //            App.IsLoggedIn = false;
-
-        //            App.Current.MainPage = new FootballMasterDetailPage();
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await Application.Current.MainPage.DisplayAlert("SIGN OUT", "There was an issue logging you out. Please try again.", "Okay");
-        //    }
-        //    finally
-        //    {
-        //        SignOutLabel.BackgroundColor = Color.Transparent;
-        //    }
-        //}
-
         class FootballMasterDetailPageMasterViewModel : INotifyPropertyChanged
         {
             private ObservableCollection<FootballMasterDetailPageMenuItem> _onTrackMenuItems { get; set; }

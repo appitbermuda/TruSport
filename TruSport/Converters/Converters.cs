@@ -1503,6 +1503,38 @@ namespace TruSport.Converters
         }
     }
 
+    public class OwnGoalConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return "";
+
+                var playerNameLabel = parameter as Label;
+
+                if (!(bool)value)
+                    return playerNameLabel.Text;
+                else
+                    return "Own Goal";
+                    
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Own Goal Converter");
+            }
+
+            return FontAttributes.None;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class GroupingCompetitionCricketConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

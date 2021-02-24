@@ -9,7 +9,7 @@ namespace OnTrackWebService.Models.Shop
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string ProductTypeID { get; set; }
-        public string TeamID { get; set; }
+        public string TicketCompanyID { get; set; }
         public string Name { get; set; }
         public string Age { get; set; }
         public string Image { get; set; }
@@ -19,10 +19,14 @@ namespace OnTrackWebService.Models.Shop
         [ForeignKey("ProductTypeID")]
         public ProductType ProductType { get; set; }
 
-        [ForeignKey("TeamID")]
-        public Team Team { get; set; }
+        [ForeignKey("TicketCompanyID")]
+        public TicketCompany TicketCompany { get; set; }
 
-        [NotMapped]
-        public virtual Inventory Inventory { get; set; }
+
+        //[ForeignKey("TeamID")]
+        //public Team Team { get; set; }
+
+        //[NotMapped]
+        //public virtual Inventory Inventory { get; set; }
     }
 }

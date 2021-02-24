@@ -12,7 +12,7 @@ using Android.Content;
 
 namespace TruSport.Droid
 {
-    [Activity(Label = "OnTrack", Icon = "@mipmap/ontrack_launcher", Theme = "@style/SplashScreen", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, NoHistory = true)]
+    [Activity(Label = "OnTrack", Icon = "@mipmap/ontracklogo", Theme = "@style/SplashScreen", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, NoHistory = true)]
     public class SplashActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         //public override void OnCreate(Bundle savedInstanceState, PersistableBundle persistentState)

@@ -18,25 +18,29 @@ namespace OnTrackWebService.Repository
         {
             _context = context;
         }
-        public Task Delete(string id)
-        {
-            throw new NotImplementedException();
-        }
 
-        public async Task<Sport> Get(string id)
+        public async Task<bool> Delete(string id)
         {
             try
             {
-                 var sport = await _context.Sports.FirstOrDefaultAsync(e => e.ID == id);
+                var sport = await _context.Sports.FirstOrDefaultAsync(e => e.ID == id);
 
-                return sport;
+                _context.Sports.Remove(sport);
+                await _context.SaveChangesAsync();
+
+                return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Sport");
+                Debug.WriteLine(ex.Message);
             }
 
-            return null;
+            return false;
+        }
+
+        public Task<Sport> Get(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<Sport>> GetAll()
@@ -60,12 +64,51 @@ namespace OnTrackWebService.Repository
             throw new NotImplementedException();
         }
 
-        public Task Insert(Sport item)
+        public async Task<bool> Insert(Sport item)
+        {
+            try
+            {
+                _context.Sports.Add(item);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> Update(Sport item)
+        {
+            try
+            {
+                _context.Sports.Update(item);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
+        Task IOnTrackRepository<Sport>.Delete(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task Update(Sport item)
+        Task IOnTrackRepository<Sport>.Insert(Sport item)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IOnTrackRepository<Sport>.Update(Sport item)
         {
             throw new NotImplementedException();
         }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
 using OnTrackWebService.Models.Shop;
@@ -76,6 +78,83 @@ namespace OnTrackWebService.Controllers
 
                 return Ok(ticketMemberRemoved);
 
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TicketMember");
+            }
+
+            return NoContent();
+        }
+        // GET api/values/5
+        [HttpGet]
+        [Route("Get")]
+        public async Task<IActionResult> Get(string id)
+        {
+            try
+            {
+                TicketMember ticketMember = await _ticketMemberRepository.Get(id);
+
+                if (ticketMember != null)
+                    return Ok(ticketMember);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TicketMember");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpPost]
+        [Route("Insert")]
+        public async Task<IActionResult> Post([FromBody] TicketMember ticketMember)
+        {
+            try
+            {
+                await _ticketMemberRepository.Insert(ticketMember);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TicketMember");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpPost]
+        [Route("Update")]
+        public async Task<IActionResult> Update([FromBody] TicketMember ticketMember)
+        {
+            try
+            {
+                await _ticketMemberRepository.Update(ticketMember);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TicketMember");
+            }
+
+            return NoContent();
+        }
+
+        // DELETE api/values/5
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                await _ticketMemberRepository.Delete(id);
+
+                return Ok();
             }
             catch (Exception ex)
             {

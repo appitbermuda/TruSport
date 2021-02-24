@@ -317,6 +317,28 @@ namespace OnTrackWebService.Controllers
 
 
         [HttpPost]
+        [Route("UploadGoalStats")]
+        public async Task<IActionResult> UploadGoalStat([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportGoalStats fileUploadResponse = await _leagueStatRepository.UploadGoalStats(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Run Stats");
+            }
+
+            return NoContent();
+        }
+
+
+        [HttpPost]
         [Route("UploadRunStats")]
         public async Task<IActionResult> UploadRunStat([FromForm(Name = "file")] IFormFile file)
         {

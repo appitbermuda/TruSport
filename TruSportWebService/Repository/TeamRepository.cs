@@ -334,20 +334,19 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<List<Team>> GetTicketingTeams(string SportID)
+        public async Task<List<TicketCompany>> GetTicketingTeams(string SportID)
         {
             try
             {
-                List<Team> teams = new List<Team>();
+                List<TicketCompany> companies = new List<TicketCompany>();
 
-                var ticketTeams = await _context.Products.Include(e => e.Team).Where(e => e.Team.SportID == SportID).ToListAsync();
-                teams = ticketTeams.Select(e => e.Team).Distinct().ToList();
+                companies = await _context.TicketCompanys.Where(e => e.SportID == SportID).ToListAsync();
 
-                return teams;
+                return companies;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message, "Team");
+                Debug.WriteLine(ex.Message, "Ticketing");
             }
 
             return null;

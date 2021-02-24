@@ -44,12 +44,12 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [HttpGet]
         [Route("Team")]
-        public async Task<IActionResult> TeamConfiguration(string TeamID)
+        public async Task<IActionResult> TeamConfiguration()
         {
             try
             {
 
-                TicketConfiguration ticketConfiguration = await _ticketConfigurationRepository.TeamConfiguration(TeamID);
+                TicketConfiguration ticketConfiguration = await _ticketConfigurationRepository.TeamConfiguration(User);
 
                 if(ticketConfiguration != null)
                     return Ok(ticketConfiguration);
@@ -63,7 +63,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("{id}")]
+        [HttpGet]
         [Route("Get")]
         public async Task<IActionResult> Get(string id)
         {
@@ -104,7 +104,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // PUT api/values/5
-        [HttpPost("{id}")]
+        [HttpPost]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] TicketConfiguration ticketConfiguration)
         {

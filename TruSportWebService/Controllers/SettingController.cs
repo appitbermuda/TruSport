@@ -129,7 +129,7 @@ namespace OnTrackWebService.Controllers
         }
 
         // PUT api/values/5
-        [HttpPost("{id}")]
+        [HttpPost]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] Setting setting)
         {

@@ -67,6 +67,27 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("Bowling")]
+        public async Task<IActionResult> GetBowlingLeagues()
+        {
+            try
+            {
+
+                IEnumerable<League> leagues = await _leagueRepository.GetBowlingLeagues();
+
+                if (leagues != null)
+                    return Ok(leagues);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "League");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("Cricket")]
         public async Task<IActionResult> GetCricketLeagues()
         {

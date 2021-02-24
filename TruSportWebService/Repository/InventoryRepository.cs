@@ -30,18 +30,18 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == id);
         }
         
-        public async Task<int> TeamInventoryLevel(string teamid)
+        public async Task<int> TeamInventoryLevel(string ticketCompanyID)
         {
             try
             {
                 //var product = await _context.Products.FirstOrDefaultAsync(e => e.TeamID == teamid);
 
                 var ticketConfiguration = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == teamid);
+                    .FirstOrDefaultAsync(e => e.TicketCompanyID == ticketCompanyID);
 
                 var orders = await _context.OrderDetails
                     .Include(e => e.FixtureProduct)
-                    .Where(e => e.FixtureProduct.Product.TeamID == teamid)
+                    .Where(e => e.FixtureProduct.Product.TicketCompanyID == ticketCompanyID)
                     .ToListAsync();
 
                 var orderCount = orders.Sum(e => e.Qty);
@@ -65,7 +65,7 @@ namespace OnTrackWebService.Repository
                 var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.FixtureID == fixtureID);
 
                 var ticketConfiguration = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+                    .FirstOrDefaultAsync(e => e.TicketCompanyID == fixtureProduct.Product.TicketCompanyID);
 
                 //var orders = await _context.OrderDetails
                 //    .Include(e => e.FixtureProduct)
@@ -99,7 +99,7 @@ namespace OnTrackWebService.Repository
                     .FirstOrDefaultAsync(e => e.ProductID == productID);
 
                 var ticketConfiguration = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+                    .FirstOrDefaultAsync(e => e.TicketCompanyID == fixtureProduct.Product.TicketCompanyID);
 
                 var matchTicketsList = await _context.MatchTickets
                     .Where(e => e.FixtureProduct.FixtureID == fixtureProduct.FixtureID)
@@ -133,7 +133,7 @@ namespace OnTrackWebService.Repository
                     .FirstOrDefaultAsync(e => e.FixtureID == fixtureID);
 
                 var ticketConfiguration = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+                    .FirstOrDefaultAsync(e => e.TicketCompanyID == fixtureProduct.Product.TicketCompanyID);
 
                 var matchTicketsList = await _context.MatchTickets
                     .Where(e => e.FixtureProduct.FixtureID == fixtureID)

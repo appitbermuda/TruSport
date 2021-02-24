@@ -14,6 +14,7 @@ namespace TruSport.Views.Tickets
     public partial class TicketTabbedPage : TabbedPage
     {
         TicketTabbedPageViewModel ticketTabbedPageViewModel;
+        AppLinkEntry appLinkEntry;
 
         public TicketTabbedPage()
         {
@@ -34,6 +35,24 @@ namespace TruSport.Views.Tickets
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
+            appLinkEntry = new AppLinkEntry
+            {
+                AppLinkUri = new Uri(Constants.ApplicationTicketURL),
+                Description = "ONTRACK Match Ticketing",
+                Title = "ONTRACK Tickets",
+                IsLinkActive = true                
+            };
+
+            Application.Current.AppLinks.RegisterLink(appLinkEntry);
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            appLinkEntry.IsLinkActive = false;
+            Application.Current.AppLinks.RegisterLink(appLinkEntry);
         }
     }
 }

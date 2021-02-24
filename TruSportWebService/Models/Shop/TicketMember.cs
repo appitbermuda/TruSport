@@ -8,13 +8,13 @@ namespace OnTrackWebService.Models.Shop
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string CustomerID { get; set; }
-        public string TicketTeamID { get; set; }
+        public string TicketCompanyID { get; set; }
 
         [ForeignKey("CustomerID")]
         public Customer Customer { get; set; }
 
-        [ForeignKey("TicketTeamID")]
-        public TicketTeam TicketTeam { get; set; }
+        [ForeignKey("TicketCompanyID")]
+        public TicketCompany TicketCompany { get; set; }
     }
 
     public class TicketMembers

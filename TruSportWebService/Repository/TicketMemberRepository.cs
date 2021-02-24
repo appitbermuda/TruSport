@@ -55,21 +55,20 @@ namespace OnTrackWebService.Repository
                 var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var teamUser = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
 
                 var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == CustomerEmail && e.IsValidated);
-                var ticketTeam = await _context.TicketTeams.FirstOrDefaultAsync(e => e.TeamID == teamUser.TeamID);
+                var ticketCompany = await _context.TicketCompanys.FirstOrDefaultAsync(e => e.ID == companyUser.TicketCompanyID);
 
-                if (ticketTeam != null && customer != null)
+                if (ticketCompany != null && customer != null)
                 {
                     ticketMember = new TicketMember
                     {
                         CustomerID = customer.ID,
-                        TicketTeamID = ticketTeam.ID
+                        TicketCompanyID = ticketCompany.ID
                     };
 
                     _context.TicketMembers.Add(ticketMember);
-
                     await _context.SaveChangesAsync();
                 }
 
@@ -77,15 +76,16 @@ namespace OnTrackWebService.Repository
                 customer.TemporaryPassword = null;
 
                 ticketMember.Customer = customer;
-                ticketMember.TicketTeam = ticketTeam;
+                ticketMember.TicketCompany = ticketCompany;
 
+                return ticketMember;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
 
-            return ticketMember;
+            return null;
         }
 
         public async Task<bool> RemoveMember(string CustomerEmail, ClaimsPrincipal claimsUser)
@@ -98,13 +98,12 @@ namespace OnTrackWebService.Repository
                 var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var teamUser = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
 
                 var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == CustomerEmail && e.IsValidated);
-                var ticketTeam = await _context.TicketTeams.FirstOrDefaultAsync(e => e.TeamID == teamUser.TeamID);
+                var ticketCompany = await _context.TicketCompanys.FirstOrDefaultAsync(e => e.ID == companyUser.TicketCompanyID);
 
-
-                var ticketMember = await _context.TicketMembers.Include(e => e.Customer).Include(e => e.TicketTeam).FirstOrDefaultAsync(e => e.Customer.Email == CustomerEmail && e.TicketTeam.TeamID == teamUser.TeamID);
+                var ticketMember = await _context.TicketMembers.Include(e => e.Customer).Include(e => e.TicketCompany).FirstOrDefaultAsync(e => e.Customer.Email == CustomerEmail && e.TicketCompany.ID == companyUser.TicketCompanyID);
 
                 if(ticketMember != null)
                 {
@@ -130,7 +129,7 @@ namespace OnTrackWebService.Repository
             try
             {
                 ticketMember = await _context.TicketMembers
-                    .Include(e => e.TicketTeam).ThenInclude(e => e.Team)
+                    .Include(e => e.TicketCompany)
                     .Include(e => e.Customer)
                     .FirstOrDefaultAsync(e => e.Customer.Email == email);
 
@@ -151,12 +150,12 @@ namespace OnTrackWebService.Repository
                 var email = user.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var teamUser = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
 
                 ticketMembers = await _context.TicketMembers
-                    .Include(e => e.TicketTeam).ThenInclude(e => e.Team)
+                    .Include(e => e.TicketCompany)
                     .Include(e => e.Customer)
-                    .Where(e => e.TicketTeam.TeamID == teamUser.TeamID).ToListAsync();
+                    .Where(e => e.TicketCompanyID == companyUser.TicketCompanyID).ToListAsync();
             }
             catch(Exception ex)
             { }
@@ -170,9 +169,9 @@ namespace OnTrackWebService.Repository
             {
                 List<TicketMembers> errorTicketMembers = new List<TicketMembers>();
                 List<TicketMember> ticketMembers = new List<TicketMember>();
-                List<TicketTeam> teams = _context.TicketTeams.Include(e => e.Team).ToList();
+                List<TicketCompany> companies = _context.TicketCompanys.ToList();
                 List<Customer> customers = _context.Customers.ToList();
-                TicketTeam team = null;
+                TicketCompany company = null;
                 Customer customer = null;
 
                 //Stream reader = file.OpenReadStream();
@@ -190,12 +189,12 @@ namespace OnTrackWebService.Repository
                     {
                         try
                         {
-                            team = teams.FirstOrDefault(e => e.Team.Name.ToLower() == record.Team.ToLower() || e.Team.Alias.ToLower() == record.Team.ToLower());
+                            company = companies.FirstOrDefault(e => e.Name.ToLower() == record.Team.ToLower() || e.Alias.ToLower() == record.Team.ToLower());
                             customer = customers.FirstOrDefault(e => e.Email == record.Email);
 
                             ticketMembers.Add(new TicketMember
                             {
-                                TicketTeamID = team.ID,                                
+                                TicketCompanyID = company.ID,                                
                                 CustomerID = customer.ID
                             });
                         }
@@ -273,6 +272,8 @@ namespace OnTrackWebService.Repository
             {
                 Debug.WriteLine(ex.Message, "Insert Ticket Member");
             }
+
+
         }
 
         public async Task Insert(List<TicketMember> items)

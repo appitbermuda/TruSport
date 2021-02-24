@@ -12,6 +12,7 @@ namespace OnTrackWebService.Models
         public string FixtureID { get; set; }
         public string ProductID { get; set; }
         public DateTime? ValidFrom { get; set; }
+        public bool IsActive { get; set; }
 
         [ForeignKey("FixtureID")]
         public Fixture Fixture { get; set; }

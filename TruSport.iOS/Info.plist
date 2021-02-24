@@ -14,9 +14,9 @@
 	<key>MinimumOSVersion</key>
 	<string>9.0</string>
 	<key>CFBundleDisplayName</key>
-	<string>OnTrackTest</string>
+	<string>OnTrack</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.techreef.ontracktest</string>
+	<string>com.techreef.trusport</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
@@ -46,7 +46,7 @@
 		<true/>
 	</dict>
 	<key>CFBundleVersion</key>
-	<string>1.39</string>
+	<string>1.44</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-1338169805120312~6077936967</string>
 	<key>UIRequiresFullScreen</key>

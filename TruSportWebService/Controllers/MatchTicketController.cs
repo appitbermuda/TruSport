@@ -113,12 +113,12 @@ namespace OnTrackWebService.Controllers
         [Authorize(Roles = Roles.Tickets)]
         [HttpGet]
         [Route("Today")]
-        public async Task<IActionResult> TodaysMatchTickets(string teamID)
+        public async Task<IActionResult> TodaysMatchTickets()
         {
             try
             {
 
-                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.GetTodayMatchTickets(teamID);
+                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.GetTodayMatchTickets(User);
 
                 if (matchTickets != null)
                     return Ok(matchTickets);
@@ -153,6 +153,28 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("FixtureBilling")]
+        public async Task<IActionResult> FixtureContactTraces(string fixtureID)
+        {
+            try
+            {
+
+                TicketBilling ticketBilling = await _matchTicketRepository.FixtureBilling(fixtureID, User);
+
+                if (ticketBilling != null)
+                    return Ok(ticketBilling);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values/5
         [Authorize(Roles = Roles.TicketAdmin)]
         [HttpGet]
@@ -177,12 +199,12 @@ namespace OnTrackWebService.Controllers
         [Authorize(Roles = Roles.TicketAdmin)]
         [HttpGet]
         [Route("Team")]
-        public async Task<IActionResult> TeamMatchTickets(string teamID)
+        public async Task<IActionResult> TeamMatchTickets()
         {
             try
             {
 
-                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.Team(teamID, User);
+                IEnumerable<MatchTicket> matchTickets = await _matchTicketRepository.Team(User);
 
                 if (matchTickets != null)
                     return Ok(matchTickets);

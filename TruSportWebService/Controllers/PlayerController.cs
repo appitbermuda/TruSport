@@ -25,6 +25,26 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> All()
+        {
+            try
+            {
+                IEnumerable<Player> players = await _playerRepository.GetAll();
+
+                if (players != null)
+                    return Ok(players);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("AllPlayers")]
         public async Task<IActionResult> Players()
         {
@@ -224,9 +244,9 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _playerRepository.Insert(player);
+                bool inserted = await _playerRepository.Insert(player);
 
-                return Ok();
+                return Ok(inserted);
             }
             catch (Exception ex)
             {
@@ -239,13 +259,13 @@ namespace OnTrackWebService.Controllers
         [Authorize(Roles = Roles.AllUsers)]
         [HttpPost]
         [Route("Update")]
-        public async Task<IActionResult> Update([FromBody] PlayerSeason player)
+        public async Task<IActionResult> Update([FromBody] Player player)
         {
             try
             {
-                await _playerRepository.Update(player);
+                bool updated = await _playerRepository.Update(player);
 
-                return Ok();
+                return Ok(updated);
             }
             catch (Exception ex)
             {
@@ -282,9 +302,9 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _playerRepository.Delete(id);
+                bool deleted = await _playerRepository.Delete(id);
 
-                return Ok();
+                return Ok(deleted);
             }
             catch (Exception ex)
             {

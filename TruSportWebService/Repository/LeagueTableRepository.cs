@@ -757,6 +757,7 @@ namespace OnTrackWebService.Repository
             {
                 List<BowlingLeagueStandings> errorStandings = new List<BowlingLeagueStandings>();
                 List<BowlingLeagueStanding> standings = new List<BowlingLeagueStanding>();
+                List<BowlingLeagueStanding> addStandings = new List<BowlingLeagueStanding>();
                 List<BowlingTeam> teams = await _context.BowlingTeams.ToListAsync();
                 List<League> leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
                 List<BowlingLeagueStanding> leagueStandings = await _context.BowlingLeagueStandings.AsNoTracking().ToListAsync();
@@ -786,21 +787,41 @@ namespace OnTrackWebService.Repository
                             season = seasons.FirstOrDefault(e => e.IsCurrent);
                             leagueStanding = leagueStandings.FirstOrDefault(e => e.TeamID == team.ID);
 
-                            standings.Add(new BowlingLeagueStanding
+                            if (leagueStanding != null)
                             {
-                                ID = leagueStanding.ID,
-                                TeamID = team.ID,
-                                PointsWon = record.PointsWon,
-                                PointsLost = record.PointsLost,
-                                TeamAvg = record.TeamAvg,
-                                ScratchPins = record.ScratchPins,
-                                HighGame = record.HighGame,
-                                HighSers = record.HighSeries,
-                                LeagueID = league.ID,
-                                SeasonID = season.ID,
-                                Week = record.Week
-                                //SportID = season.SportID
-                            });
+                                standings.Add(new BowlingLeagueStanding
+                                {
+                                    ID = leagueStanding.ID,
+                                    TeamID = team.ID,
+                                    PointsWon = record.PointsWon,
+                                    PointsLost = record.PointsLost,
+                                    TeamAvg = record.TeamAvg,
+                                    ScratchPins = record.ScratchPins,
+                                    HighGame = record.HighGame,
+                                    HighSers = record.HighSeries,
+                                    LeagueID = league.ID,
+                                    SeasonID = season.ID,
+                                    Week = record.Week
+                                    //SportID = season.SportID
+                                });
+                            }
+                            else
+                            {
+                                addStandings.Add(new BowlingLeagueStanding
+                                {
+                                    TeamID = team.ID,
+                                    PointsWon = record.PointsWon,
+                                    PointsLost = record.PointsLost,
+                                    TeamAvg = record.TeamAvg,
+                                    ScratchPins = record.ScratchPins,
+                                    HighGame = record.HighGame,
+                                    HighSers = record.HighSeries,
+                                    LeagueID = league.ID,
+                                    SeasonID = season.ID,
+                                    Week = record.Week
+                                    //SportID = season.SportID
+                                });
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -812,13 +833,17 @@ namespace OnTrackWebService.Repository
 
                     try
                     {
-                        await UpdateStandings(standings);
+                        if(addStandings.Count > 0)
+                            await AddStandings(addStandings);
+
+                        if(standings.Count > 0)
+                            await UpdateStandings(standings);
                     }
                     catch (Exception ex)
                     {
                         return new ImportBowlingLeagueStandings
                         {
-                            Message = "Error updates standings.",
+                            Message = "Error updating standings.",
                             Exception = ex.Message
                         };
                     }
@@ -858,6 +883,20 @@ namespace OnTrackWebService.Repository
             }
 
 
+        }
+
+        public async Task AddStandings(List<BowlingLeagueStanding> items)
+        {
+            try
+            {
+                _context.BowlingLeagueStandings.AddRange(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Bowling Standings");
+            }
         }
 
         public async Task UpdateStandings(List<BowlingLeagueStanding> items)

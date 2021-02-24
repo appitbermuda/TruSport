@@ -125,10 +125,11 @@
                                          Orientation="Vertical"
                                  Padding="5,2"
                                  Spacing="5">
-                     <StackLayout Orientation="Horizontal"  HorizontalOptions="Center" >
+                     <StackLayout Orientation="Horizontal"  HorizontalOptions="Center" VerticalOptions="Center">
                             <Label x:Name="HomeTeamScoreLabel"
                                    FontSize="Micro"
                                    FontAttributes="Bold"
+                                    VerticalOptions="CenterAndExpand"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="{Binding BowlingScore.HomeTeamTotalPoints, StringFormat='{0:G9}'}"/>
                             <Label 
@@ -136,13 +137,14 @@
                                    FontSize="Small"
                                    FontAttributes="Bold"
                                    HorizontalOptions="Center"
-                                                  VerticalOptions="Center"
+                                                  VerticalOptions="CenterAndExpand"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="-" />
                             <Label x:Name="AwayTeamScoreLabel"
                                    FontSize="Micro"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
+                                    VerticalOptions="CenterAndExpand"
                                         Text="{Binding BowlingScore.AwayTeamTotalPoints, StringFormat='{0:G9}'}"/>
                                 
                         </StackLayout>
@@ -155,6 +157,7 @@
                                 <Label x:Name="HomeTeamAlias" Text="{Binding HomeTeam.Alias}" IsVisible="false"/>
                             <Label x:Name="HomeTeamNameLabel"
                                    HorizontalOptions="EndAndExpand"
+                                   VerticalOptions="CenterAndExpand"
                                    HorizontalTextAlignment="End"
                                    FontSize="Micro"
                                    FontAttributes="Bold"
@@ -180,6 +183,7 @@
                                 <Label x:Name="AwayTeamAlias" Text="{Binding AwayTeam.Alias}" IsVisible="false"/>
                             <Label x:Name="AwayTeamNameLabel"
                                    HorizontalOptions="StartAndExpand"
+                                   VerticalOptions="CenterAndExpand"
                                    HorizontalTextAlignment="Start"
                                    FontSize="Micro"
                                    TextColor="{DynamicResource TextPrimaryColor}"

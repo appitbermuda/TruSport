@@ -19,17 +19,58 @@ namespace OnTrackWebService.Repository
         {
             _context = context;
         }
-        public Task Delete(string id)
+        public async Task<bool> Delete(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var ad = await _context.Ads.FirstOrDefaultAsync(e => e.ID == id);
+
+                _context.Ads.Remove(ad);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
         }
 
         public async Task<Ad> Get(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var ad = await _context.Ads.FirstOrDefaultAsync(e => e.ID == id);
+
+                return ad;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<Ad>> GetAll()
+        {
+            try
+            {
+                var ads = await _context.Ads.ToListAsync();
+
+                return ads;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Ad>> Retreive()
         {
             try
             {
@@ -76,12 +117,51 @@ namespace OnTrackWebService.Repository
             }
         }
 
-        public Task Insert(Ad item)
+        public async Task<bool> Insert(Ad item)
+        {
+            try
+            {
+                _context.Ads.Add(item);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> Update(Ad item)
+        {
+            try
+            {
+                _context.Ads.Update(item);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
+        Task IOnTrackRepository<Ad>.Insert(Ad item)
         {
             throw new NotImplementedException();
         }
 
-        public Task Update(Ad item)
+        Task IOnTrackRepository<Ad>.Update(Ad item)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IOnTrackRepository<Ad>.Delete(string id)
         {
             throw new NotImplementedException();
         }

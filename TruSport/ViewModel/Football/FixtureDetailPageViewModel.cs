@@ -268,7 +268,10 @@ namespace TruSport.ViewModels
 
                 MatchRosterSummaryCollection = new ObservableCollection<MatchRosterSummary>(fixture.MatchRosterSummary);
 
-                SubHeight = 7 * 40;
+                RosterCollection = new ObservableCollection<RosterListView>(fixture.Rosters.Where(e => e.IsStarter));
+                SubRosterCollection = new ObservableCollection<RosterListView>(fixture.Rosters.Where(e => !e.IsStarter));
+
+                //SubHeight = 7 * 40;
 
                 //var matchRostersList = await rosterService.GetFixtureMatchRosters(fixture.ID);
 

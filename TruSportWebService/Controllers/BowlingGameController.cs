@@ -28,7 +28,7 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [HttpGet]
         [Route("AllBowlingGames")]
-        public async Task<IActionResult> BowlingGamees()
+        public async Task<IActionResult> BowlingGames()
         {
             try
             {

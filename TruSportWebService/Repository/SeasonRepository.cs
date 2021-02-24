@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,23 @@ namespace OnTrackWebService.Repository
         {
             _context = context;
         }
-        public Task Delete(string id)
+        public async Task<bool> Delete(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var season = await _context.Seasons.FirstOrDefaultAsync(e => e.ID == id);
+
+                _context.Seasons.Remove(season);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
         }
 
         public async Task<Season> Get(string id)
@@ -52,12 +67,51 @@ namespace OnTrackWebService.Repository
             throw new NotImplementedException();
         }
 
-        public Task Insert(Season item)
+        public async Task<bool> Insert(Season item)
+        {
+            try
+            {
+                _context.Seasons.Add(item);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> Update(Season item)
+        {
+            try
+            {
+                _context.Seasons.Update(item);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
+        Task IOnTrackRepository<Season>.Insert(Season item)
         {
             throw new NotImplementedException();
         }
 
-        public Task Update(Season item)
+        Task IOnTrackRepository<Season>.Update(Season item)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IOnTrackRepository<Season>.Delete(string id)
         {
             throw new NotImplementedException();
         }

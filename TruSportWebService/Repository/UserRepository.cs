@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Shop;
 
 namespace OnTrackWebService.Repository
 {
@@ -122,7 +123,7 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<UserResponse> SignUp(User user)
+        public async Task<UserResponse> SignUpUser(User user)
         {
             try
             {
@@ -136,22 +137,18 @@ namespace OnTrackWebService.Repository
                             //encrypt password
                             user.Password = _passwordHasher.HashPassword(user.Password);
 
+                            var role = await _context.Roles.FirstOrDefaultAsync(e => e.ID == user.RoleID);
+
                             _context.Users.Add(user);
                             await _context.SaveChangesAsync();
-
-                            user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.ID == user.ID);
-
-                            if (!String.IsNullOrEmpty(user.TeamID))
-                            {
-                                var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
-                                user.Team = team;
-                            }
 
                             //SEND EMAIL
                             try
                             {
+                                user.Role = role;
+
                                 await emailRepository.Welcome(user.Email);
-                                await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.Role.Name, user.Team != null ? user.Team.Name : null);
+                                await emailRepository.SendSignUpEmail(user);
                             }
                             catch (Exception ex)
                             {
@@ -166,8 +163,7 @@ namespace OnTrackWebService.Repository
                                 Role = user.Role,
                                 RoleID = user.RoleID,
                                 Email = user.Email,
-                                TeamID = user.TeamID,
-                                Team = user.Team
+                                TeamID = user.TeamID
                             };
                         }
                     }
@@ -175,6 +171,106 @@ namespace OnTrackWebService.Repository
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return null;
+        }
+
+        public async Task<UserResponse> SignUp(UserRequest user)
+        {
+            TicketCompanyUser ticketCompanyUser = null;
+            UserTeam userTeam = null;
+            try
+            {
+
+                if (Regex.IsMatch(user.Email, "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$"))
+                {
+                    if (user.Password.Length >= 8)
+                    {
+                        var userExists = await _context.Users.AnyAsync(e => e.Email == user.Email);
+                        if (!userExists)
+                        {
+
+                            _context.Database.BeginTransaction();
+                            //encrypt password
+                            user.Password = _passwordHasher.HashPassword(user.Password);
+
+                            var role = await _context.Roles.FirstOrDefaultAsync(e => e.ID == user.RoleID);
+
+                            User newUser = new User
+                            {
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Email = user.Email,
+                                Password = user.Password,
+                                RoleID = user.RoleID
+                            };
+
+                            _context.Users.Add(newUser);
+                            await _context.SaveChangesAsync();
+
+                            if (UserInRole.Role(role.Name, Roles.TicketAdmin))
+                            {
+                                ticketCompanyUser = new TicketCompanyUser();
+                                ticketCompanyUser.TicketCompanyID = user.TicketCompanyID;
+
+                                ticketCompanyUser.UserID = user.ID;
+
+                                _context.TicketCompanyUsers.Add(ticketCompanyUser);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            if (UserInRole.Role(role.Name, Roles.TeamAdmin))
+                            {
+                                userTeam = new UserTeam();
+                                userTeam.TeamID = user.TeamID;
+
+                                userTeam.UserID = user.ID;
+
+                                _context.UserTeams.Add(userTeam);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            _context.Database.CommitTransaction();
+
+                            //SEND EMAIL
+                            try
+                            {
+                                newUser.Role = role;
+
+                                await emailRepository.Welcome(user.Email);
+                                await emailRepository.SendSignUpEmail(newUser, userTeam, ticketCompanyUser);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message, "Welcome Email");
+                            }
+
+                            List<UserTeam> userTeams = new List<UserTeam>();
+                            userTeams.Add(userTeam);
+
+                            List<TicketCompanyUser> ticketCompanyUsers = new List<TicketCompanyUser>();
+                            ticketCompanyUsers.Add(ticketCompanyUser);
+                                 
+                            return new UserResponse
+                            {
+                                ID = user.ID,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Role = role,
+                                RoleID = user.RoleID,
+                                Email = user.Email,
+                                UserTeams = userTeams,
+                                TicketCompanyUsers = ticketCompanyUsers
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _context.Database.RollbackTransaction();
                 Debug.WriteLine(ex.Message, "User");
             }
 

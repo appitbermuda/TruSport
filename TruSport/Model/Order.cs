@@ -13,6 +13,7 @@ namespace TruSport.Model
         public decimal Discount { get; set; }
         public decimal Total { get; set; }
         public string Authorisation { get; set; }
+        public bool IsRefunded { get; set; }
 
         [Ignore]
         public Customer Customer { get; set; }

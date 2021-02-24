@@ -1,17 +1,12 @@
 ﻿using System;
-using Firebase.Messaging;
 using Firebase.Iid;
-using Android.Util;
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
 using Android.Views;
-using Android.Widget;
 using Android.OS;
-using Android.Gms.Ads;
 using Microsoft.WindowsAzure.MobileServices;
 using ImageCircle.Forms.Plugin.Droid;
-using Android.Gms.Common;
 using Android.Content;
 using Xamarin.Forms;
 using TruSport.Styles;
@@ -20,11 +15,27 @@ using Android.Support.V7.App;
 using Plugin.Permissions;
 using TruSport.Data;
 using TruSport.Droid.Data;
+using Xamarin.Forms.Platform.Android.AppLinks;
 
 namespace TruSport.Droid
 {
-    [Activity(Label = "OnTrack", Icon = "@mipmap/ontrack_launcher", Theme = "@style/SplashScreen", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait, LaunchMode = LaunchMode.SingleTop)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+    [Activity(Label = "OnTrack", Icon = "@mipmap/ontracklogo", Theme = "@style/SplashScreen", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait, LaunchMode = LaunchMode.SingleTop)]
+
+    [IntentFilter(new[] { Intent.ActionView },
+        Categories = new[]
+        {
+            Intent.CategoryDefault,
+            Intent.CategoryBrowsable
+        },
+        DataScheme = "http", DataPathPrefix = "/ticket/", DataHost = Constants.ApplicationURL, AutoVerify = true)]
+    [IntentFilter(new[] { Intent.ActionView },
+        Categories = new[]
+        {
+            Intent.CategoryDefault,
+            Intent.CategoryBrowsable
+        },
+        DataScheme = "https", DataPathPrefix = "/ticket/", DataHost = Constants.ApplicationURL, AutoVerify = true)]
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, Android.Gms.Tasks.IOnSuccessListener
     {
         static readonly string TAG = "MainActivity";
         internal static readonly string CHANNEL_ID = "my_notification_channel";
@@ -44,7 +55,7 @@ namespace TruSport.Droid
 
         protected override void OnCreate(Bundle bundle)
         {
-            MobileAds.Initialize(ApplicationContext, "ca-app-pub-1338169805120312~2954350726");
+            //Android.Gms.Ads.MobileAds.Initialize(ApplicationContext, "ca-app-pub-1338169805120312~2954350726");
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -60,7 +71,7 @@ namespace TruSport.Droid
             {
                 FirebaseInstanceId.GetInstance(Firebase.FirebaseApp.Instance)
                     .GetInstanceId()
-                    .AddOnSuccessListener((Android.Gms.Tasks.IOnSuccessListener)this);
+                    .AddOnSuccessListener(this);
             }
 
             //SetContentView(Resource.Layout.Main);
@@ -73,6 +84,8 @@ namespace TruSport.Droid
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
 
             ImageCircleRenderer.Init();
+
+            AndroidAppLinks.Init(this);
 
             LoadApplication(new App());
 

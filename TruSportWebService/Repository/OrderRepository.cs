@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Data;
@@ -121,15 +122,20 @@ namespace OnTrackWebService.Repository
             return matchDayOrders;
         }
 
-        public async Task<IEnumerable<Order>> TodayByTeam(string teamID)
+        public async Task<IEnumerable<Order>> TodayByTeam(ClaimsPrincipal claimsUser)
         {
             try
             {
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                      .Select(c => c.Value).SingleOrDefault();
+
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+
                 var orders = await _context.Orders.Include(e => e.Customer)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .Where(e => e.OrderDetails.Any(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date == DateTime.Now.Date))
+                    .Where(e => e.OrderDetails.Any(e => e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID && e.FixtureProduct.Fixture.Date == DateTime.Now.Date))
                     .ToListAsync();
 
                 orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
@@ -144,12 +150,18 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<IEnumerable<Order>> Team(string teamID)
+        public async Task<IEnumerable<Order>> Team(ClaimsPrincipal claimsUser)
         {
             try
             {
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                         .Select(c => c.Value).SingleOrDefault();
+
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+
+
 #if DEBUG
-            TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
+                TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic/Bermuda");
 #else
                 TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
 #endif
@@ -157,7 +169,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .Where(e => e.OrderDetails.Any(e => e.FixtureProduct.Product.TeamID == teamID))
+                    .Where(e => e.OrderDetails.Any(e => e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID))
                     .ToListAsync();
 
                 orders.ForEach(e => e.Fixture = (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));

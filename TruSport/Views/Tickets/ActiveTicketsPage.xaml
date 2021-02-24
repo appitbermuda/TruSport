@@ -215,10 +215,13 @@
     <ContentPage.Content>
         <StackLayout Background="{DynamicResource backgroundColor}">
             <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <ScrollView>
+            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+
                 <StackLayout IsVisible="{Binding TransferRequestCollection, Converter={StaticResource listCountConverter}}">
             <StackLayout x:Name="TransferRequestList" BindableLayout.ItemsSource="{Binding TransferRequestCollection}">
                             <BindableLayout.ItemTemplate>
@@ -298,7 +301,7 @@
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding MatchTicket.FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd - hh:mm tt}'}"/>
+                                            Text="{Binding MatchTicket.FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd - h:mm tt}'}"/>
                                 
                             </StackLayout>
                         <StackLayout Grid.Row="3" Grid.ColumnSpan="5">
@@ -436,8 +439,11 @@
                         <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
                     </StackLayout>-->
             <!--<model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>-->
-            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}" Grid.RowSpan="2"/>
+            
         </Grid>
+                </ScrollView>
+                <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+                </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

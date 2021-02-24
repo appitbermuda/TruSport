@@ -49,19 +49,19 @@ namespace TruSport.Views.Football
             //    }
         }
 
-        void Handle_SummarySelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
-        {
-            if (e.Index == 0)
-            {
-                MatchSummaryLabel.TextColor = Color.White;
-                MatchSummaryH2HLabel.TextColor = Color.Gray;
-            }
-            else if (e.Index == 1)
-            {
-                MatchSummaryH2HLabel.TextColor = Color.Gray;
-                MatchSummaryLabel.TextColor = Color.Gray;
-            }
-        }
+        //void Handle_SummarySelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
+        //{
+        //    if (e.Index == 0)
+        //    {
+        //        MatchSummaryLabel.TextColor = Color.White;
+        //        MatchSummaryH2HLabel.TextColor = Color.Gray;
+        //    }
+        //    else if (e.Index == 1)
+        //    {
+        //        MatchSummaryH2HLabel.TextColor = Color.Gray;
+        //        MatchSummaryLabel.TextColor = Color.Gray;
+        //    }
+        //}
 
         void Handle_HeadToHeadSelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
         {
@@ -85,27 +85,27 @@ namespace TruSport.Views.Football
             //}
         }
 
-        void Handle_MatchSummaryHeadToHeadSelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
-        {
-            if (e.Index == 0)
-            {
-                MatchSummaryHomeTeamLabel.TextColor = Color.White;
-                MatchSummaryAwayTeamLabel.TextColor = Color.Gray;
-                MatchSummaryHeadToHeadLabel.TextColor = Color.Gray;
-            }
-            else if (e.Index == 1)
-            {
-                MatchSummaryHeadToHeadLabel.TextColor = Color.White;
-                MatchSummaryHomeTeamLabel.TextColor = Color.Gray;
-                MatchSummaryAwayTeamLabel.TextColor = Color.Gray;
-            }
-            else if (e.Index == 2)
-            {
-                MatchSummaryAwayTeamLabel.TextColor = Color.White;
-                MatchSummaryHomeTeamLabel.TextColor = Color.Gray;
-                MatchSummaryHeadToHeadLabel.TextColor = Color.Gray;
-            }
-        }
+        //void Handle_MatchSummaryHeadToHeadSelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
+        //{
+        //    if (e.Index == 0)
+        //    {
+        //        MatchSummaryHomeTeamLabel.TextColor = Color.White;
+        //        MatchSummaryAwayTeamLabel.TextColor = Color.Gray;
+        //        MatchSummaryHeadToHeadLabel.TextColor = Color.Gray;
+        //    }
+        //    else if (e.Index == 1)
+        //    {
+        //        MatchSummaryHeadToHeadLabel.TextColor = Color.White;
+        //        MatchSummaryHomeTeamLabel.TextColor = Color.Gray;
+        //        MatchSummaryAwayTeamLabel.TextColor = Color.Gray;
+        //    }
+        //    else if (e.Index == 2)
+        //    {
+        //        MatchSummaryAwayTeamLabel.TextColor = Color.White;
+        //        MatchSummaryHomeTeamLabel.TextColor = Color.Gray;
+        //        MatchSummaryHeadToHeadLabel.TextColor = Color.Gray;
+        //    }
+        //}
 
         void Handle_NoRosterSelectionChanged(object sender, Syncfusion.XForms.TabView.SelectionChangedEventArgs e)
         {

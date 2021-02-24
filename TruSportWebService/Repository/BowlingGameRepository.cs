@@ -256,20 +256,13 @@ namespace OnTrackWebService.Repository
                             if (bowlingRoster == null)
                             {
                                 if (record.Name.ToLower() == "bye")
-                                    bowlingPlayer = bowlingPlayerSeasons.FirstOrDefault(e => e.Player.FirstName.ToLower() == record.Name.ToLower() && e.Player.LastName == NumberToWords(record.Position));
+                                    bowlingRoster = rosters.FirstOrDefault(e => e.BowlingPlayerSeason.Player.FirstName.ToLower() == record.Name.ToLower() && e.BowlingPlayerSeason.Player.LastName == NumberToWords(record.Position));
                                 else
-                                    bowlingPlayer = bowlingPlayerSeasons.FirstOrDefault(e => (e.Player.FirstName + " " + e.Player.LastName).Trim() == record.Name.Trim());
-
-                                if(bowlingPlayer == null)
-                                {
-                                    if (record.Name.ToLower() == "bye")
-                                        bowlingPlayer = bowlingPlayers.FirstOrDefault(e => e.Player.FirstName.ToLower() == record.Name.ToLower() && e.Player.LastName == NumberToWords(record.Position));
-                                    else
-                                        bowlingPlayer = bowlingPlayers.FirstOrDefault(e => (e.Player.FirstName + " " + e.Player.LastName).Trim() == record.Name.Trim());
-                                }
+                                    bowlingRoster = rosters.FirstOrDefault(e => (e.BowlingPlayerSeason.Player.FirstName + " " + e.BowlingPlayerSeason.Player.LastName) == record.Name);
 
                                 bowlingRoster = new BowlingRoster
                                 {
+                                    BowlingPlayerSeason = bowlingPlayer,
                                     BowlingPlayerSeasonID = bowlingPlayer.ID,
                                     BowlingFixtureID = fixture.ID,
                                     TeamID = team.ID,
@@ -280,6 +273,22 @@ namespace OnTrackWebService.Repository
                                 _context.BowlingRosters.Add(bowlingRoster);
                                 await _context.SaveChangesAsync();
                             }
+
+                            //if (bowlingPlayer == null)
+                            //{
+                            //    if (record.Name.ToLower() == "bye")
+                            //        bowlingPlayer = bowlingPlayerSeasons.FirstOrDefault(e => e.Player.FirstName.ToLower() == record.Name.ToLower() && e.Player.LastName == NumberToWords(record.Position));
+                            //    else
+                            //        bowlingPlayer = bowlingPlayerSeasons.FirstOrDefault(e => (e.Player.FirstName + " " + e.Player.LastName).Trim() == record.Name.Trim());
+
+                            //    if(bowlingPlayer == null)
+                            //    {
+                            //        if (record.Name.ToLower() == "bye")
+                            //            bowlingPlayer = bowlingPlayers.FirstOrDefault(e => e.Player.FirstName.ToLower() == record.Name.ToLower() && e.Player.LastName == NumberToWords(record.Position));
+                            //        else
+                            //            bowlingPlayer = bowlingPlayers.FirstOrDefault(e => (e.Player.FirstName + " " + e.Player.LastName).Trim() == record.Name.Trim());
+                            //    }
+                            //}
 
                             var bowlingGame = bowlingGames.FirstOrDefault(e => e.BowlingRosterID == bowlingRoster.ID);
 

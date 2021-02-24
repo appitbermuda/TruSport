@@ -46,27 +46,6 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Roles.TicketOwner)]
-        [HttpGet]
-        [Route("TicketScanners")]
-        public async Task<IActionResult> TicketScanners()
-        {
-            try
-            {
-
-                IEnumerable<TicketScanner> users = await _authenticationRepository.GetScanners(User);
-
-                if (users != null)
-                    return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message, "Users");
-            }
-
-            return NoContent();
-        }
-
         [Authorize(Roles = Roles.AllUsers)]
         [HttpGet]
         [Route("Get")]
@@ -143,12 +122,30 @@ namespace OnTrackWebService.Controllers
 
         // POST api/values
         [HttpPost]
-        [Route("SignUp")]
-        public async Task<IActionResult> SignUp([FromBody] User user)
+        [Route("SignUpUser")]
+        public async Task<IActionResult> SignUp([FromBody] UserRequest user)
         {
             try
             {
                 var newUser = await _authenticationRepository.SignUp(user);
+                return Ok(newUser);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [HttpPost]
+        [Route("SignUp")]
+        public async Task<IActionResult> SignUpUser([FromBody] User user)
+        {
+            try
+            {
+                var newUser = await _authenticationRepository.SignUpUser(user);
                 return Ok(newUser);
             }
             catch (Exception ex)
@@ -177,24 +174,24 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Roles.TicketOwner)]
-        [HttpPost]
-        [Route("UpdateTicketScanners")]
-        public async Task<IActionResult> Update(List<TicketScanner> scanners)
-        {
-            try
-            {
-                await _authenticationRepository.Update(scanners,User);
+        //[Authorize(Roles = Roles.TicketOwner)]
+        //[HttpPost]
+        //[Route("UpdateTicketScanners")]
+        //public async Task<IActionResult> Update(List<TicketScanner> scanners)
+        //{
+        //    try
+        //    {
+        //        await _authenticationRepository.Update(scanners,User);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message, "User");
-            }
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message, "User");
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         //This resource is only For SuperAdmin role
         [Authorize(Roles = Roles.AllUsers)]

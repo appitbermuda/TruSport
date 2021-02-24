@@ -12,9 +12,6 @@ namespace TruSport.ViewModel.Shop
 {
     public class RegisterViewModel : BaseValidationViewModel
     {
-        private Command<Syncfusion.SfPicker.XForms.SelectionChangedEventArgs> selectedSportChangedCommand;
-        private Command<Syncfusion.SfPicker.XForms.SelectionChangedEventArgs> selectedRoleChangedCommand;
-        private Command<Syncfusion.SfPicker.XForms.SelectionChangedEventArgs> selectedTeamChangedCommand;
         public CustomerRequest _customerRequest;
         public string _firstName;
         public string _lastName;

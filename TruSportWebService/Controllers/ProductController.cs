@@ -73,8 +73,8 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _productRepository.Insert(product);
-                return Ok();
+                bool inserted = await _productRepository.Insert(product);
+                return Ok(inserted);
             }
             catch (Exception ex)
             {
@@ -91,9 +91,9 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _productRepository.Update(product);
+                bool updated = await _productRepository.Update(product);
 
-                return Ok();
+                return Ok(updated);
             }
             catch (Exception ex)
             {

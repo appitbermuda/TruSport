@@ -51,7 +51,9 @@ namespace OnTrackWebService.Repository
 
             }
             catch (Exception ex)
-            { }
+            {
+
+            }
 
             return matchTicket;
         }
@@ -99,7 +101,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Field)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .Where(e => DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) && ((e.Order.Customer.Email == email && e.TransferCustomerID == null) || (e.TransferCustomer != null && e.TransferCustomer.Email == email && e.IsTransfer.HasValue && e.IsTransfer.Value)))
+                    .Where(e => (DateTime.Now.Date <= e.FixtureProduct.Fixture.Date.AddDays(1) || e.FixtureProduct.Fixture.IsPostponed) && ((e.Order.Customer.Email == email && e.TransferCustomerID == null) || (e.TransferCustomer != null && e.TransferCustomer.Email == email && e.IsTransfer.HasValue && e.IsTransfer.Value)) && !e.Order.IsRefunded)
                     .ToListAsync();
 
                 matchTickets.ForEach(e => e.FixtureProduct.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.FixtureProduct.Fixture.HomeTeam.Alias) ? e.FixtureProduct.Fixture.HomeTeam.Alias : e.FixtureProduct.Fixture.HomeTeam.Name);
@@ -118,7 +120,7 @@ namespace OnTrackWebService.Repository
             return matchTickets;
         }
 
-        public async Task<IEnumerable<MatchTicket>> Team(string teamID, ClaimsPrincipal claimsUser)
+        public async Task<IEnumerable<MatchTicket>> Team(ClaimsPrincipal claimsUser)
         {
             List<MatchTicket> matchTickets = new List<MatchTicket>();
 
@@ -131,9 +133,9 @@ namespace OnTrackWebService.Repository
                 var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == email && e.Role.Name == role);
+                var companyUser = await _context.TicketCompanyUsers.Include(e => e.User).ThenInclude(e => e.Role).FirstOrDefaultAsync(e => e.User.Email == email && e.User.Role.Name == role);
 
-                if (user != null && user.IsActive)
+                if (companyUser != null && companyUser.User != null && companyUser.User.IsActive)
                 {
                     matchTickets = await _context.MatchTickets
                         .Include(e => e.Order).ThenInclude(e => e.Customer)
@@ -146,7 +148,7 @@ namespace OnTrackWebService.Repository
                         .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
                         .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
                         .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
-                        .Where(e => e.FixtureProduct.Product.TeamID == teamID).ToListAsync();
+                        .Where(e => e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID).ToListAsync();
 
                     matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
                 }
@@ -157,12 +159,17 @@ namespace OnTrackWebService.Repository
             return matchTickets;
         }
 
-        public async Task<IEnumerable<MatchTicket>> GetTodayMatchTickets(string teamID)
+        public async Task<IEnumerable<MatchTicket>> GetTodayMatchTickets(ClaimsPrincipal claimsUser)
         {
             List<MatchTicket> matchTickets = new List<MatchTicket>();
 
             try
             {
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+
                 matchTickets = await _context.MatchTickets
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails)
@@ -174,7 +181,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
-                    .Where(e => e.FixtureProduct.Product.TeamID == teamID && e.FixtureProduct.Fixture.Date == DateTime.Now.AddHours(-4).Date).ToListAsync();
+                    .Where(e => e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID && e.FixtureProduct.Fixture.Date == DateTime.Now.AddHours(-4).Date).ToListAsync();
 
                 matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
 
@@ -187,28 +194,31 @@ namespace OnTrackWebService.Repository
             return matchTickets;
         }
 
-        public async Task<bool> Download(string fixtureID, ClaimsPrincipal iUser)
+        public async Task<TicketBilling> FixtureBilling(string fixtureID, ClaimsPrincipal iUser)
         {
+            TicketBilling ticketBilling = new TicketBilling();
+
             try
             {
                 var email = iUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.Include(e => e.User).FirstOrDefaultAsync(e => e.User.Email == email);
 
-                var members = await _context.TicketMembers.Include(e => e.TicketTeam).Where(e => e.TicketTeam.TeamID == user.TeamID).ToListAsync();
+                var members = await _context.TicketMembers.Include(e => e.TicketCompany).Where(e => e.TicketCompanyID == companyUser.TicketCompanyID).ToListAsync();
 
                 var orderDetails = await _context.OrderDetails
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                    .Where(e => e.FixtureProduct.Fixture.ID == fixtureID && e.FixtureProduct.Product.TeamID == user.TeamID).ToListAsync();
+                    .Where(e => e.FixtureProduct.Fixture.ID == fixtureID && e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID && !e.Order.IsRefunded).ToListAsync();
 
-                List<TicketBilling> billing = orderDetails.Select(e => new TicketBilling
+                List<Bill> billing = orderDetails.Select(e => new Bill
                 {
                     CustomerID = e.Order.CustomerID,
                     Name = e.Order.Customer.Name,
                     Quantity = e.Qty,
+                    Product = e.FixtureProduct.Product.Age + " " + e.FixtureProduct.Product.Name,
                     Price = members.FirstOrDefault(m => m.CustomerID == e.Order.CustomerID) != null ? Convert.ToDouble(e.FixtureProduct.Product.MemberPrice) : Convert.ToDouble(e.FixtureProduct.Product.Price),
                     Subtotal = Convert.ToDouble(e.Subtotal),
                     Total = Convert.ToDouble(e.Subtotal) - ((e.Qty * .25))
@@ -220,9 +230,40 @@ namespace OnTrackWebService.Repository
                 double fee = billing.Sum(e => (.25 * e.Quantity));
                 double total = subtotal - fee;
 
+
+                ticketBilling = new TicketBilling
+                {
+                    Fixture = fixture,
+                    Quantity = qty,
+                    Subtotal = subtotal,
+                    Fee = fee,
+                    Total = total,
+                    Billing = billing
+                };
+
+                return ticketBilling;
+
+            }
+            catch (Exception ex)
+            { }
+
+            return ticketBilling;
+        }
+
+        public async Task<bool> Download(string fixtureID, ClaimsPrincipal iUser)
+        {
+            try
+            {
+                var email = iUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var companyUser = await _context.TicketCompanyUsers.Include(e => e.User).FirstOrDefaultAsync(e => e.User.Email == email);
+
+                TicketBilling ticketBilling = await FixtureBilling(fixtureID, iUser);
+
                 try
                 {
-                    await emailRepository.DownloadTicketBilling(user.FirstName, user.Email, fixture, billing.OrderBy(e => e.Name).ToList(), qty, subtotal, fee, total);
+                    await emailRepository.DownloadTicketBilling(companyUser.User.FirstName, companyUser.User.Email, ticketBilling);
                 }
                 catch (Exception ex)
                 {
@@ -248,14 +289,14 @@ namespace OnTrackWebService.Repository
                 var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var user = await _context.Users.FirstOrDefaultAsync(e => e.Email == email);
+                var user = await _context.TicketCompanyUsers.Include(e => e.User).FirstOrDefaultAsync(e => e.User.Email == email);
 
-                var matchTickets = await _context.MatchTickets.Include(e => e.FixtureProduct).ThenInclude(e => e.Product).Where(e => e.FixtureProduct.Product.TeamID == user.TeamID).ToListAsync();
-
+                var matchTickets = await _context.MatchTickets.Include(e => e.FixtureProduct).ThenInclude(e => e.Product).Where(e => e.FixtureProduct.Product.TicketCompanyID == user.TicketCompanyID).ToListAsync();
+                 //&& matchTickets.Any(d => d.FixtureProductID == e.ID)
                 ticketReports = await _context.FixtureProducts.Include(e => e.Product)
                     .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Where(e => e.Product.TeamID == user.TeamID && e.Fixture.Date <= DateTime.Now.Date && matchTickets.Any(d => d.FixtureProductID == e.ID))
+                    .Where(e => e.Product.TicketCompanyID == user.TicketCompanyID && e.Fixture.Date <= DateTime.Now.Date)
                     .Select(e => new TicketReport
                     {
                         FixtureID = e.FixtureID,
@@ -321,7 +362,7 @@ namespace OnTrackWebService.Repository
                 foreach (var matchTicket in matchTicketsList)
                 {
                     var fixtureProduct = fixtureProducts.FirstOrDefault(e => e.ID == matchTicket.FixtureProductID);
-                    var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TeamID == fixtureProduct.Product.TeamID);
+                    var ticketConfiguration = await _context.TicketConfigurations.FirstOrDefaultAsync(e => e.TicketCompanyID == fixtureProduct.Product.TicketCompanyID);
 
                     if (DateTime.Now.Date > matchTicket.FixtureProduct.Fixture.Date.AddDays(-(ticketConfiguration.ValidFrom)))
                         matchTickets.Add(matchTicket);
@@ -351,16 +392,16 @@ namespace OnTrackWebService.Repository
                 var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == email && e.Role.Name == role);
+                var companyUser = await _context.TicketCompanyUsers.Include(e => e.User).ThenInclude(e => e.Role).FirstOrDefaultAsync(e => e.User.Email == email && e.User.Role.Name == role);
 
-                if (user != null && user.IsActive)
+                if (companyUser != null && companyUser.User != null && companyUser.User.IsActive)
                 {
                     var fixtureProduct = await _context.FixtureProducts.Include(e => e.Product).FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.FixtureProductID);
 
                     var matchTicket = await _context.MatchTickets
                         .Include(e => e.Order)
                         .Include(e => e.FixtureProduct).ThenInclude(e => e.Product)
-                        .FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.ID && e.FixtureProduct.Product.TeamID == user.TeamID);
+                        .FirstOrDefaultAsync(e => e.ID == scannedMatchTicket.ID && e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID);
 
                     if (matchTicket != null)
                     {
@@ -458,10 +499,10 @@ namespace OnTrackWebService.Repository
                     .Where(e => e.FixtureProduct.FixtureID == paymentAuthorization.FixtureID)
                     .ToListAsync();
 
-                var teamID = fixtureProduct.Product.TeamID;
+                var ticketCompanyID = fixtureProduct.Product.TicketCompanyID;
 
                 var ticketConfiguration = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == teamID);
+                    .FirstOrDefaultAsync(e => e.TicketCompanyID == ticketCompanyID);
 
                 var ticketCount = matchTicketsList.Count();
 
@@ -686,6 +727,8 @@ namespace OnTrackWebService.Repository
 
                     foreach(var ticket in matchTickets)
                     {
+                        ticket.Order.Customer.Password = null;
+
                         transferRequests.Add(new Models.Shop.AcceptTransfer
                         {
                             CustomerID = ticket.Order.CustomerID,
@@ -830,10 +873,10 @@ namespace OnTrackWebService.Repository
                     .Where(e => e.FixtureProduct.FixtureID == paymentAuthorization.FixtureID)
                     .ToListAsync();
 
-                var teamID = fixtureProduct.Product.TeamID;
+                var ticketCompanyID = fixtureProduct.Product.TicketCompanyID;
 
                 var ticketConfiguration = await _context.TicketConfigurations
-                    .FirstOrDefaultAsync(e => e.TeamID == teamID);
+                    .FirstOrDefaultAsync(e => e.TicketCompanyID == ticketCompanyID);
 
                 var ticketCount = matchTicketsList.Count();
 

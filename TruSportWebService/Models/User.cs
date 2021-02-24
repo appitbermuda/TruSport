@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using OnTrackWebService.Models.Shop;
 
 namespace OnTrackWebService.Models
 {
@@ -14,10 +15,15 @@ namespace OnTrackWebService.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public string TemporaryPassword { get; set; }
-        public string TeamID { get; set; }
 
         [NotMapped]
         public string Token { get; set; }
+
+        //[NotMapped]
+        //public string TicketCompanyID { get; set; }
+
+        [NotMapped]
+        public string TeamID { get; set; }
 
         public bool IsValidated { get; set; }
 
@@ -26,12 +32,23 @@ namespace OnTrackWebService.Models
         [NotMapped]
         public string ErrorMessage { get; set; }
 
+        [NotMapped]
+        public string Name => FirstName + " " + LastName;
+
         [ForeignKey("RoleID")]
         public Role Role { get; set; }
 
         //[ForeignKey("TeamID")]
         [NotMapped]
         public Team Team { get; set; }
+
+        [NotMapped]
+        public League League { get; set; }
+
+        //[NotMapped]
+        public virtual List<UserRole> UserRoles { get; set; }
+        public virtual List<UserTeam> UserTeams { get; set; }
+        public virtual List<TicketCompanyUser> TicketCompanyUsers { get; set; }
     }
 
     public class AllUsers
@@ -56,24 +73,22 @@ namespace OnTrackWebService.Models
 
     public class UserResponse
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string RoleID { get; set; }
-        public string TeamID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-
-        [ForeignKey("RoleID")]
+        public string TeamID { get; set; }
         public Role Role { get; set; }
-
-        [ForeignKey("TeamID")]
         public Team Team { get; set; }
+        public List<UserTeam> UserTeams { get; set; }
+        public List<TicketCompanyUser> TicketCompanyUsers { get; set; }
     }
 
     public class UserAuthentication
     {
         public string email { get; set; }
         public string password { get; set; }
+        public string sport { get; set; }
     }
 }

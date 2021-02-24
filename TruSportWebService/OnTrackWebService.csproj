@@ -40,6 +40,7 @@
     <Folder Include="Models\CricHQ\" />
     <Folder Include="Models\Shop\" />
     <Folder Include="Models\Ad\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="3.1.8">
@@ -54,6 +55,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
+    <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="18.4.0.34" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />

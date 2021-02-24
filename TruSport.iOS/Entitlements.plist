@@ -8,5 +8,10 @@
 	<array>
 		<string>$(AppIdentifierPrefix)com.techreef.trusport</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:ontrackbda.com</string>
+		<string>applinks:www.ontrackbda.com</string>
+	</array>
 </dict>
 </plist>

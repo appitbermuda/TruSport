@@ -524,7 +524,7 @@ namespace OnTrackWebService.Controllers
 
         [HttpPost]
         [Route("UploadBowlingStandings")]
-        public async Task<IActionResult> UploadBowlingFixtures([FromForm(Name = "file")] IFormFile file)
+        public async Task<IActionResult> UploadBowlingStandings([FromForm(Name = "file")] IFormFile file)
         {
             try
             {

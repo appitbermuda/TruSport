@@ -18,9 +18,12 @@ namespace TruSport.Views.Bowling
             this.BindingContext = tablePageViewModel;
         }
 
-        async void BackButton_Clicked(System.Object sender, System.EventArgs e)
+        void MenuButton_Clicked(System.Object sender, System.EventArgs e)
         {
-            await Navigation.PopAsync();
+            if (Application.Current.MainPage is MasterDetailPage mdp)
+            {
+                mdp.IsPresented = true;
+            }
         }
     }
 }

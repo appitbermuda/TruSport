@@ -77,11 +77,14 @@ namespace OnTrackWebService.Data
         public DbSet<TeamSeason> TeamSeasons { get; set; }
         public DbSet<TicketConfiguration> TicketConfigurations { get; set; }
         public DbSet<TicketMember> TicketMembers { get; set; }
+        public DbSet<TicketCompany> TicketCompanys { get; set; }
+        public DbSet<TicketCompanyUser> TicketCompanyUsers { get; set; }
         public DbSet<TicketTeam> TicketTeams { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<vTransfers> vTransfers { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<AllUsers> AllUsers { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<UserTeam> UserTeams { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
 
@@ -109,6 +112,8 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<Field>().ToTable("Field");
             modelBuilder.Entity<TicketConfiguration>().ToTable("TicketConfiguration");
             modelBuilder.Entity<TicketMember>().ToTable("TicketMember");
+            modelBuilder.Entity<TicketCompany>().ToTable("TicketCompany");
+            modelBuilder.Entity<TicketCompanyUser>().ToTable("TicketCompanyUser");
             modelBuilder.Entity<TicketTeam>().ToTable("TicketTeam");
 
             modelBuilder.Entity<Order>()
@@ -180,6 +185,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<Transfer>().ToTable("Transfer");
             modelBuilder.Entity<TeamSeason>().ToTable("TeamSeason");
             modelBuilder.Entity<User>().ToTable("User");
+            modelBuilder.Entity<UserRole>().ToTable("UserRole");
             modelBuilder.Entity<UserTeam>().ToTable("UserTeam");
             modelBuilder.Entity<UserType>().ToTable("UserType");
 

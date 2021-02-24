@@ -148,10 +148,10 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                IEnumerable<Team> teams = await _teamRepository.GetTicketingTeams(SportID);
+                IEnumerable<TicketCompany> companys = await _teamRepository.GetTicketingTeams(SportID);
 
-                if (teams != null)
-                    return Ok(teams);
+                if (companys != null)
+                    return Ok(companys);
             }
             catch (Exception ex)
             {
@@ -218,6 +218,26 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        //// GET api/values/5
+        //[HttpGet]
+        //[Route("Get")]
+        //public async Task<IActionResult> Get(string id)
+        //{
+        //    try
+        //    {
+        //        TeamSeason team = await _teamRepository.GetTeam(id);
+
+        //        if (team != null)
+        //            return Ok(team);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message, "Team");
+        //    }
+
+        //    return NoContent();
+        //}
+
         // GET api/values/5
         [HttpGet]
         [Route("Get")]
@@ -225,7 +245,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                TeamSeason team = await _teamRepository.GetTeam(id);
+                Team team = await _teamRepository.Get(id);
 
                 if (team != null)
                     return Ok(team);
@@ -442,6 +462,26 @@ namespace OnTrackWebService.Controllers
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                await _teamRepository.Delete(id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // DELETE api/values/5
+        [Authorize(Roles = Roles.Admin)]
+        [HttpDelete]
+        [Route("DeleteBowling")]
+        public async Task<IActionResult> DeleteBowling(string id)
         {
             try
             {

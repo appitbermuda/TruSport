@@ -45,6 +45,26 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("Bowling")]
+        public async Task<IActionResult> BowlingSeasons()
+        {
+            try
+            {
+
+                IEnumerable<Season> Seasons = await _SeasonRepository.GetBowlingSeason();
+
+                if (Seasons != null)
+                    return Ok(Seasons);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Season");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("Cricket")]
         public async Task<IActionResult> CricketSeasons()
         {
@@ -132,9 +152,9 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _SeasonRepository.Insert(Season);
+                bool inserted = await _SeasonRepository.Insert(Season);
 
-                return Ok();
+                return Ok(inserted);
             }
             catch (Exception ex)
             {
@@ -151,9 +171,9 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _SeasonRepository.Update(Season);
+                bool updated = await _SeasonRepository.Update(Season);
 
-                return Ok();
+                return Ok(updated);
             }
             catch (Exception ex)
             {
@@ -171,9 +191,9 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                await _SeasonRepository.Delete(id);
+                bool deleted = await _SeasonRepository.Delete(id);
 
-                return Ok();
+                return Ok(deleted);
             }
             catch (Exception ex)
             {

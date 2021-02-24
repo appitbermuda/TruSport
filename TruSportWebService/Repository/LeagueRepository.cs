@@ -68,9 +68,9 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Cricket");
+                //var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Cricket");
 
-                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.SportID == sport.ID).ToListAsync();
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Cricket").ToListAsync();
 
                 return leagues;
             }
@@ -86,9 +86,9 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Football");
+                //var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Football");
 
-                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.SportID == sport.ID).ToListAsync();
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Football").ToListAsync();
 
                 return leagues;
             }

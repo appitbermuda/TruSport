@@ -15,6 +15,7 @@ namespace OnTrackWebService.Models
         public int? GoalTime { get; set; }
         public int? YellowCardTime { get; set; }
         public int? RedCardTime { get; set; }
+        public bool IsOwnGoal { get; set; }
 
         [ForeignKey("MatchRosterID")]
         public MatchRoster MatchRoster { get; set; }

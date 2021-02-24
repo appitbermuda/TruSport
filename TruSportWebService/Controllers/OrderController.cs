@@ -71,12 +71,12 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [HttpGet]
         [Route("TodayByTeam")]
-        public async Task<IActionResult> TodayByTeam(string teamID)
+        public async Task<IActionResult> TodayByTeam()
         {
             try
             {
 
-                IEnumerable<Order> orders = await _orderRepository.TodayByTeam(teamID);
+                IEnumerable<Order> orders = await _orderRepository.TodayByTeam(User);
 
                 if (orders != null)
                     return Ok(orders);
@@ -92,12 +92,11 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [HttpGet]
         [Route("Team")]
-        public async Task<IActionResult> Team(string teamID)
+        public async Task<IActionResult> Team()
         {
             try
             {
-
-                IEnumerable<Order> orders = await _orderRepository.Team(teamID);
+                IEnumerable<Order> orders = await _orderRepository.Team(User);
 
                 if (orders != null)
                     return Ok(orders);
@@ -130,25 +129,6 @@ namespace OnTrackWebService.Controllers
 
             return NoContent();
         }
-
-        //// GET api/values/5
-        //[HttpGet]
-        //[Route("Validate")]
-        //public async Task<IActionResult> ValidateCustomer(string orderID)
-        //{
-        //    try
-        //    {
-        //        bool validated = await _orderRepository.ValidateCustomer(orderID);
-
-        //       return Ok(validated);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message, "Order");
-        //    }
-
-        //    return NoContent();
-        //}
 
         // GET api/values/5
         [HttpGet]

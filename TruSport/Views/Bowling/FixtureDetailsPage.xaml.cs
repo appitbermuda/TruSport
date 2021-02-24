@@ -29,11 +29,11 @@ namespace TruSport.Views.Bowling
                 }
             });
 
-            //BowlingResultListView.DataSource.SortDescriptors.Add(new SortDescriptor()
-            //{
-            //    PropertyName = "Game",
-            //    Direction = ListSortDirection.Ascending
-            //});
+            BowlingResultListView.DataSource.SortDescriptors.Add(new SortDescriptor()
+            {
+                PropertyName = "Game",
+                Direction = ListSortDirection.Ascending
+            });
         }
 
         void SfTabView_TabItemTapped(System.Object sender, Syncfusion.XForms.TabView.TabItemTappedEventArgs e)

@@ -14,6 +14,7 @@ using Microsoft.AppCenter.Crashes;
 using Xamarin.Essentials;
 using TruSport.Views.Cricket;
 using TruSport.Views.Bowling;
+using TruSport.Views.Tickets;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace TruSport
@@ -107,6 +108,22 @@ namespace TruSport
             //});
         }
 
+        protected override void OnAppLinkRequestReceived(Uri uri)
+        {
+            base.OnAppLinkRequestReceived(uri);
+
+            var query = uri.PathAndQuery.Trim(new[] { '/' });
+
+            if (query.EndsWith("ticket", StringComparison.OrdinalIgnoreCase))
+            {
+                ((MasterDetailPage)MainPage).Detail = new NavigationPage(new TicketTabbedPage()
+                {
+                    BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                    BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                });
+            }
+        }
+
         void NotificationActionTriggered(object sender, Model.PushAction e)
     => ShowActionAlert(e);
 
@@ -172,16 +189,15 @@ namespace TruSport
 
             AppCenter.LogLevel = LogLevel.Verbose;
             AppCenter.Start("ios=7e262408-f3ac-48de-90ea-44ae3d91643b;android=7396cb46-271a-4f33-88d5-b97ed582f5c9",
-                  typeof(Analytics), typeof(Crashes), typeof(Push));
+                  typeof(Analytics), typeof(Crashes));
 
-            var deviceID = await AppCenter.GetInstallIdAsync();
+            //var deviceID = await AppCenter.GetInstallIdAsync();
 
             //await Push.SetEnabledAsync(true);
 
-            bool isEnabled = await Push.IsEnabledAsync();
+            //bool isEnabled = await Push.IsEnabledAsync();
 
             VersionTracking.Track();
-
 
             // Handle when your app starts
             if (App.Database != null)

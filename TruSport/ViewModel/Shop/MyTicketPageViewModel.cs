@@ -21,8 +21,6 @@ namespace TruSport.ViewModel.Shop
         private ObservableCollection<AcceptTransfer> _transferRequestCollection;
         private ObservableCollection<MatchTicket> _matchTicketCollection;
         private ObservableCollection<CustomerOrder> _orderCollection;
-        private FixtureProduct _fixtureProduct;
-        private PaymentAuthorize _paymentAuthorize;
         private Customer _customer;
         private bool _noTickets;
         private bool _isActivityIndicatorVisible;
@@ -150,11 +148,11 @@ namespace TruSport.ViewModel.Shop
                     var email = await SecureStorage.GetAsync("Email");
                     Customer = await App.Database.GetCustomerByIDAsync(email);
                     var matchTickets = await matchTicketService.GetMatchTickets();
-                    var transferRequests = await matchTicketService.GetTransferRequests();
 
+                    var transferRequests = await matchTicketService.GetTransferRequests();
                     if(transferRequests != null)
                     {
-                        TransferRequestCollection = new ObservableCollection<AcceptTransfer>(transferRequests);
+                        TransferRequestCollection = new ObservableCollection<AcceptTransfer>(transferRequests.Where(e => e.TransferCustomer.Email == email));
                     }
 
                     if (matchTickets != null)

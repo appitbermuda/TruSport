@@ -13,7 +13,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
+        <Grid RowSpacing="0" VerticalOptions="FillAndExpand" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -26,20 +26,17 @@
                                        HorizontalOptions="CenterAndExpand"
                                        VerticalOptions="CenterAndExpand"/>
             </StackLayout>-->
-            <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand">
+            <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand" Spacing="0">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding BowlingTappedCommand}" />
                 </StackLayout.GestureRecognizers>
-                <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                        <Image Source="bowlingfeature.jpg"
-                                       Aspect="AspectFill"
-                                       
+                <Grid RowSpacing="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Spacing="0">
+                        <!--<Image Source="bowlingfeature"
+                                       Aspect="AspectFill"                                       
                                        HorizontalOptions="FillAndExpand"
-                                       VerticalOptions="FillAndExpand"/>
+                                       VerticalOptions="FillAndExpand"/>-->
+                            <forms:CachedImage Source="bowlingfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="Fill" HorizontalOptions="Fill" DownsampleToViewSize="True" />
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
                         <!--<forms:CachedImage Source="bowlingfeature.jpg" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />-->
@@ -57,11 +54,11 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
                         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                        <Image Source="cricketfeature.jpg"
-                                       Aspect="AspectFill"
-                                       
+                        <!--<Image Source="cricketfeature"
+                                       Aspect="AspectFill"                                       
                                        HorizontalOptions="FillAndExpand"
-                                       VerticalOptions="FillAndExpand"/>
+                                       VerticalOptions="FillAndExpand"/>-->
+                            <forms:CachedImage Source="cricketfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="Fill" HorizontalOptions="Fill" DownsampleToViewSize="True" />
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
                         <!--<forms:CachedImage Source="cricketfeature.jpg" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
@@ -78,11 +75,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
                         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                        <Image Source="footballfeature.jpg"
+                        <!--<Image Source="footballfeature"
                                        Aspect="AspectFill"
                                        
                                        HorizontalOptions="FillAndExpand"
-                                       VerticalOptions="FillAndExpand"/>
+                                       VerticalOptions="FillAndExpand"/>-->
+                            <forms:CachedImage Source="footballfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="Fill" HorizontalOptions="Fill" DownsampleToViewSize="True" />
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
                         <!--<forms:CachedImage Source="footballfeature.jpg" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />

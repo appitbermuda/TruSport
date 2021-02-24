@@ -181,7 +181,7 @@
                             <Label x:Name="SubTitleLabel" Text="{Binding WeekUpdated}" FontSize="10" HorizontalTextAlignment="Center" TextColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand"/>
                         </StackLayout>
                     </StackLayout>
-                <Button x:Name="BackButton" Text="" TextColor="{DynamicResource navTextColor}" FontSize="25" BackgroundColor="Transparent" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="BackButton_Clicked"/>
+                <Button x:Name="MenuButton" ImageSource="menu.png" TextColor="{DynamicResource navTextColor}" FontSize="25" BackgroundColor="Transparent" Clicked="MenuButton_Clicked"/>
             </Grid>
         </StackLayout>
 
@@ -202,7 +202,7 @@
                               VerticalOptions="FillAndExpand"
                               RowSpacing="0" BackgroundColor="{DynamicResource backgroundColor}">
                                 <Grid.RowDefinitions>
-                                        <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
                                     <RowDefinition Height="2" />
                                         <RowDefinition Height="*" />
                             </Grid.RowDefinitions>

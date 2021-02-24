@@ -64,12 +64,13 @@
                             <Label x:Name="TimeLabel"
                                    FontSize="Small"
                                    TextColor="{DynamicResource TextPrimaryColor}"
-                                   IsVisible="{Binding IsPostponedOrCancelled, Converter={StaticResource inverseBooleanConverter}}"
+                                   IsVisible="{Binding IsPostponed, Converter={StaticResource inverseBooleanConverter}}"
                                    VerticalTextAlignment="End"
                                         Text="{Binding Time, Converter={StaticResource timeConverter}}"/>
                             <Label x:Name="PostponedLabel"
-                                   IsVisible="{Binding IsPostponedOrCancelled}"
-                                   FontSize="Small"
+                                   IsVisible="{Binding IsPostponed}"
+                                   FontSize="Micro"
+                                   FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    VerticalTextAlignment="End"
                                         Text="{Binding PostOrCanc}"/>

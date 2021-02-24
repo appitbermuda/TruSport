@@ -312,7 +312,7 @@ namespace OnTrackWebService.Repository
                 var orders = await _context.OrderDetails
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.Team)
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.TicketCompanyID)
                     .Where(e => e.Order.Date == date).ToListAsync();
 
                 orders.ForEach(e => e.Order.Customer.Password = null);
@@ -333,15 +333,15 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<List<Customer>> GetCustomersByTeam(string TeamID)
+        public async Task<List<Customer>> GetCustomersByTeam(string TicketCompanyID)
         {
             try
             {
                 var orders = await _context.OrderDetails
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.FixtureProduct.Product.TeamID == TeamID).ToListAsync();
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.TicketCompanyID)
+                    .Where(e => e.FixtureProduct.Product.TicketCompanyID == TicketCompanyID).ToListAsync();
 
                 orders.ForEach(e => e.Order.Customer.Password = null);
                 orders.ForEach(e => e.Order.Customer.TemporaryPassword = null);
@@ -361,15 +361,15 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
-        public async Task<List<Customer>> GetCustomersByDateByTeam(DateTime date, string TeamID)
+        public async Task<List<Customer>> GetCustomersByDateByTeam(DateTime date, string TicketCompanyID)
         {
             try
             {
                 var orders = await _context.OrderDetails
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
-                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.Team)
-                    .Where(e => e.Order.Date == date && e.FixtureProduct.Product.TeamID == TeamID).ToListAsync();
+                    .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.TicketCompanyID)
+                    .Where(e => e.Order.Date == date && e.FixtureProduct.Product.TicketCompanyID == TicketCompanyID).ToListAsync();
 
                 orders.ForEach(e => e.Order.Customer.Password = null);
                 orders.ForEach(e => e.Order.Customer.TemporaryPassword = null);
