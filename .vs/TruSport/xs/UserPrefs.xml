@@ -1,22 +1,17 @@
-﻿<Properties StartupConfiguration="{2B8BBBC2-64F1-4CA8-93A4-CE0C0FCA282F}|Default" HasHotReloadOverlayBeenDismissed="True">
-  <MonoDevelop.Ide.ItemProperties.TruSport.Android AndroidDesignerPreferredDevice="Nexus 4" TriggeredFromHotReload="False" PreferredExecutionTarget="Android.5203a581f43ea40d" />
+﻿<Properties StartupConfiguration="Multiple Projects iOS" HasHotReloadOverlayBeenDismissed="True">
   <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" TriggeredFromHotReload="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.6DC8049A-B50D-4C6E-B5EC-2283114CFBE0" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSport.iOS/Info.plist">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Controllers/PushNotificationController.cs">
     <Files>
-      <File FileName="TruSport/Constants/Constants.cs" Line="38" Column="95" />
-      <File FileName="TruSport.iOS/Info.plist" />
+      <File FileName="TruSportWebService/Repository/EmailRepository.cs" Line="539" Column="33" />
+      <File FileName="TruSportWebService/Repository/AuthenticationRepository.cs" />
+      <File FileName="TruSportWebService/Controllers/AdController.cs" />
+      <File FileName="TruSportWebService/Controllers/UserController.cs" />
+      <File FileName="TruSportWebService/Controllers/PushNotificationController.cs" Line="9" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="TruSport" expanded="True">
-            <Node name="TruSport" expanded="True">
-              <Node name="Constants" expanded="True" />
-            </Node>
-            <Node name="TruSport.iOS" expanded="True">
-              <Node name="Info.plist" selected="True" />
-            </Node>
-          </Node>
+          <Node name="TruSport" expanded="True" selected="True" />
         </State>
       </Pad>
     </Pads>
@@ -37,7 +32,7 @@
     </MultiItemSolutionRunConfiguration>
     <MultiItemSolutionRunConfiguration Id="Multiple Projects Android" Name="Multiple Projects Android">
       <Items>
-        <StartupItem ItemId="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}" ItemName="OnTrackWebService" />
+        <StartupItem ItemId="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}" ItemName="OnTrackWebService" ConfigurationId="Default" />
         <StartupItem ItemId="{27E69D44-8F2E-4872-A445-BF4C3E3836A1}" ItemName="TruSport.Android" ConfigurationId="Default" />
       </Items>
     </MultiItemSolutionRunConfiguration>
