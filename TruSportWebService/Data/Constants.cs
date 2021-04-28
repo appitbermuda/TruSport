@@ -51,8 +51,8 @@ namespace OnTrackWebService.Data
         public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=UA17J5DQ+x/8zKbnOjhrQWdjEaXWPuZg1ijAmcj3gHs=";
 
 #else
-        public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
-        //public static string OnTrackEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
+        //public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
+        public static string OnTrackEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
         public static string[] SubscriptionTags { get; set; } = { "default", "cricket", "football" };
         public static string NotificationHubName { get; set; } = "ontrackpushhub";
         public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=UA17J5DQ+x/8zKbnOjhrQWdjEaXWPuZg1ijAmcj3gHs=";

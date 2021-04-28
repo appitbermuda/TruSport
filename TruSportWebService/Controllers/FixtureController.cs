@@ -130,6 +130,27 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [HttpPost]
+        [Route("UploadTennis")]
+        public async Task<IActionResult> UploadTennisFixtures([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportTennisFixtures fileUploadResponse = await _fixtureRepository.UploadTennisFixtures(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Bowling");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values
         [HttpGet]
         [Route("AllCricket")]
@@ -252,6 +273,46 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("AllTennis")]
+        public async Task<IActionResult> GetTennisFixtures()
+        {
+            try
+            {
+                TennisFixtureListView fixtures = await _fixtureRepository.GetTennisFixtures();
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("Tennis")]
+        public async Task<IActionResult> GetTennisFixture(string id)
+        {
+            try
+            {
+                TennisFixture fixture = await _fixtureRepository.GetTennisFixture(id);
+
+                if (fixture != null)
+                    return Ok(fixture);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("Sport")]
         public async Task<IActionResult> GetSportFixtures(string Sport)
         {
@@ -321,6 +382,27 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetBowlingHeadToHead(FixtureID);
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("TennisHeadToHead")]
+        public async Task<IActionResult> GetTennisHeadToHeadFixtures(string FixtureID)
+        {
+            try
+            {
+
+                IEnumerable<TennisFixture> fixtures = await _fixtureRepository.GetTennisHeadToHead(FixtureID);
 
                 if (fixtures != null)
                     return Ok(fixtures);
@@ -499,6 +581,46 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("TennisPlayer")]
+        public async Task<IActionResult> GetTennisFixturesByPlayer(string playerID)
+        {
+            try
+            {
+
+                IEnumerable<TennisFixture> fixtures = await _fixtureRepository.GetTennisPlayerFixtures(playerID);
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("TennisPlayerForm")]
+        public async Task<IActionResult> GetTennisFormByPlayer(string playerID)
+        {
+            try
+            {
+
+                IEnumerable<TennisFixture> fixtures = await _fixtureRepository.GetTennisPlayerForm(playerID);
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("CricketTeam")]
         public async Task<IActionResult> GetCricketFixturesByTeam(string teamID)
         {
@@ -586,6 +708,26 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<BowlingFixture> fixtures = await _fixtureRepository.GetBowlingFixturesByLeague(leagueID);
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("TennisTournament")]
+        public async Task<IActionResult> FixturesByTennisTournament(string tournamentID)
+        {
+            try
+            {
+
+                IEnumerable<TennisFixture> fixtures = await _fixtureRepository.GetTennisFixturesByTournament(tournamentID);
 
                 if (fixtures != null)
                     return Ok(fixtures);
@@ -838,6 +980,66 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("TennisResults")]
+        public async Task<IActionResult> TennisResults()
+        {
+            try
+            {
+
+                IEnumerable<TennisFixture> fixtures = await _fixtureRepository.GetTennisResults();
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("PastTennis")]
+        public async Task<IActionResult> PastTennisFixtures()
+        {
+            try
+            {
+
+                IEnumerable<TennisFixture> fixtures = await _fixtureRepository.GetPastTennisFixtures();
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("UpcomingTennis")]
+        public async Task<IActionResult> UpcomingTennisFixtures()
+        {
+            try
+            {
+
+                IEnumerable<TennisFixture> fixtures = await _fixtureRepository.GetUpcomingTennisFixtures();
+
+                if (fixtures != null)
+                    return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
         // GET api/values/5
         [HttpGet]
         [Route("Get")]
@@ -959,6 +1161,44 @@ namespace OnTrackWebService.Controllers
         [HttpPost]
         [Route("UpdateCricketList")]
         public async Task<IActionResult> UpdateFixtures([FromBody] List<CricketFixture> fixtures)
+        {
+            try
+            {
+                await _fixtureRepository.UpdateFixtures(fixtures);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpPost]
+        [Route("UpdateTennis")]
+        public async Task<IActionResult> Update([FromBody] TennisFixture fixture)
+        {
+            try
+            {
+                await _fixtureRepository.Update(fixture);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.AllUsers)]
+        [HttpPost]
+        [Route("UpdateTennisList")]
+        public async Task<IActionResult> UpdateFixtures([FromBody] List<TennisFixture> fixtures)
         {
             try
             {

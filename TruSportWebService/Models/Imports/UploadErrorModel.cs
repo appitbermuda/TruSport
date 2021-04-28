@@ -28,6 +28,22 @@ namespace OnTrackWebService.Models.Imports
         public byte[] ErrorFile { get; set; }
     }
 
+    public class ImportTennisFixtures
+    {
+        public string Message { get; set; }
+        public string Exception { get; set; }
+        public List<TennisFixtures> ErrorRows { get; set; }
+        public byte[] ErrorFile { get; set; }
+    }
+
+    public class ImportTennisTournaments
+    {
+        public string Message { get; set; }
+        public string Exception { get; set; }
+        public List<TennisTournaments> ErrorRows { get; set; }
+        public byte[] ErrorFile { get; set; }
+    }
+
     public class ImportTransfers
     {
         public string Message { get; set; }
@@ -41,6 +57,14 @@ namespace OnTrackWebService.Models.Imports
         public string Message { get; set; }
         public string Exception { get; set; }
         public List<GoalStats> ErrorRows { get; set; }
+        public byte[] ErrorFile { get; set; }
+    }
+
+    public class ImportTennisRankings
+    {
+        public string Message { get; set; }
+        public string Exception { get; set; }
+        public List<TennisRankings> ErrorRows { get; set; }
         public byte[] ErrorFile { get; set; }
     }
 
@@ -65,6 +89,14 @@ namespace OnTrackWebService.Models.Imports
         public string Message { get; set; }
         public string Exception { get; set; }
         public List<BowlingTeams> ErrorRows { get; set; }
+        public byte[] ErrorFile { get; set; }
+    }
+
+    public class ImportTennisPlayers
+    {
+        public string Message { get; set; }
+        public string Exception { get; set; }
+        public List<TennisPlayerSeasons> ErrorRows { get; set; }
         public byte[] ErrorFile { get; set; }
     }
 

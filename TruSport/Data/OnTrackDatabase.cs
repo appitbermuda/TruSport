@@ -381,9 +381,34 @@ namespace TruSport.Data
 
         public async Task<bool> IsCricketFixtureFavourite(string FixtureID)
         {
-            var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.CricketFixtureID == FixtureID && e.Sport == "Cricket");
+            try
+            {
+                var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.CricketFixtureID == FixtureID && e.Sport == "Cricket");
 
-            return favourite != null;
+                return favourite != null;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return false;
+        }
+
+        public async Task<bool> IsTennisFixtureFavourite(string FixtureID)
+        {
+            try
+            {
+                var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TennisFixtureID == FixtureID && e.Sport == "Tennis");
+
+                return favourite != null;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return false;
         }
 
         public async Task<bool> IsFootballFixtureFavourite(string FixtureID)
@@ -594,6 +619,49 @@ namespace TruSport.Data
             return null;
         }
 
+        public async Task<List<Favourite>> GetTennisFixtureFavourites()
+        {
+            try
+            {
+                FixtureService fixtureService = new FixtureService();
+                var favourites = await database.Table<Favourite>().Where(e => e.Type == "Fixture" && e.Sport == "Tennis").ToListAsync();
+
+                if (favourites.Count > 0)
+                {
+                    var fixtures = await fixtureService.GetUpcomingTennisFixtures();
+
+                    var fixtureFavourites = (from favourite in favourites
+                                             join fixture in fixtures on favourite.TennisFixtureID equals fixture.ID
+                                             select new Favourite
+                                             {
+                                                 TennisFixture = fixture,
+                                                 Type = favourite.Type,
+                                                 TennisFixtureID = favourite.TennisFixtureID,
+                                                 Sport = "Tennis"
+                                             }).ToList();
+
+                    foreach (var fixture in fixtureFavourites)
+                    {
+                        if (fixture.TennisFixture.Date < DateTime.Now.AddDays(1))
+                        {
+                            fixtureFavourites.Remove(fixture);
+                            await DeleteTennisFixtureFavourite(fixture.FixtureID);
+                        }
+                    }
+
+                    return fixtureFavourites;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public async Task<List<Favourite>> GetFootballFixtureFavourites()
         {
             try
@@ -695,6 +763,20 @@ namespace TruSport.Data
             try
             {
                 var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.CricketFixtureID == FixtureID);
+
+                return favourite;
+            }
+            catch (Exception ex)
+            { }
+
+            return null;
+        }
+
+        public async Task<Favourite> GetFavouriteByTennisFixtureID(string FixtureID)
+        {
+            try
+            {
+                var favourite = await database.Table<Favourite>().FirstOrDefaultAsync(e => e.TennisFixtureID == FixtureID);
                 
                 return favourite;
             }
@@ -758,9 +840,23 @@ namespace TruSport.Data
                 item.Sport = "Cricket";
                 return await database.InsertAsync(item);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Save Cricket Favourite");
+            }
+            return -1;
+        }
+
+        public async Task<int> SaveTennisFavourite(Favourite item)
+        {
+            try
+            {
+                item.Sport = "Tennis";
+                return await database.InsertAsync(item);
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Save Tennis Favourite");
             }
             return -1;
         }
@@ -810,7 +906,7 @@ namespace TruSport.Data
 
         public async Task<int> DeleteCricketFixtureFavourite(string FixtureID)
         {
-            
+
             try
             {
                 var favourite = await GetFavouriteByCricketFixtureID(FixtureID);
@@ -819,6 +915,21 @@ namespace TruSport.Data
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Delete Cricket Favourite");
+            }
+            return -1;
+        }
+
+        public async Task<int> DeleteTennisFixtureFavourite(string FixtureID)
+        {
+            
+            try
+            {
+                var favourite = await GetFavouriteByTennisFixtureID(FixtureID);
+                return await database.DeleteAsync(favourite);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Delete Tennis Favourite");
             }
             return -1;
         }

@@ -19,6 +19,7 @@ namespace TruSport.ViewModels
         private bool _footballAlert;
         private bool _cricketAlert;
         private bool _bowlingAlert;
+        private bool _tennisAlert;
         private bool _favouriteAlert;
         private bool _isActivityIndicatorVisible;
         INavigation Navigation;
@@ -86,6 +87,16 @@ namespace TruSport.ViewModels
             }
         }
 
+        public bool TennisAlert
+        {
+            get { return _tennisAlert; }
+            set
+            {
+                Set(ref _tennisAlert, value);
+                UpdateTennisAlert();
+            }
+        }
+
         public bool FavouriteAlert
         {
             get { return _favouriteAlert; }
@@ -132,6 +143,7 @@ namespace TruSport.ViewModels
                     CricketAlert = true;
                     FootballAlert = true;
                     BowlingAlert = true;
+                    TennisAlert = true;
                     FavouriteAlert = true;
                 }
                 else
@@ -147,6 +159,10 @@ namespace TruSport.ViewModels
                     var bowlingAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "bowling").IsAlert;
 
                     BowlingAlert = bowlingAlert;
+
+                    var tennisAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "tennis").IsAlert;
+
+                    TennisAlert = tennisAlert;
 
                     //var favouriteAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "favourite").IsAlert;
 
@@ -235,6 +251,29 @@ namespace TruSport.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Bowling Alert");
+            }
+        }
+
+        public async Task UpdateTennisAlert()
+        {
+            try
+            {
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = "Tennis",
+                    IsAlert = TennisAlert
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                await notificationRegistrationService.RegisterDeviceAsync(tags);
+
+                await SecureStorage.SetAsync("TennisAlert", TennisAlert.ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Tennis Alert");
             }
         }
 

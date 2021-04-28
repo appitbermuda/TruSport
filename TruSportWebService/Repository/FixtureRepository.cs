@@ -612,6 +612,611 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<TennisFixtureListView> GetTennisFixtures()
+        {
+            try
+            {
+                var pastFixtures = await GetPastTennisFixtures();
+                var upcomingFixtures = await GetUpcomingTennisFixtures();
+
+                return new TennisFixtureListView
+                {
+                    PastFixtures = pastFixtures.ToList(),
+                    UpcomingFixtures = upcomingFixtures.ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetTennisFixtures");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<TennisFixture>> GetTennisResults()
+        {
+            try
+            {
+                List<TennisFixture> fixtures = new List<TennisFixture>();
+                fixtures = await _context.TennisFixtures                
+                .Include(e => e.MatchType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.CourtType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.Field)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.MatchType)
+                .Include(e => e.Season)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player1).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player2).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisGames)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisTiebreak)
+                .Where(e => e.Date.Date < DateTime.Now.Date).ToListAsync();
+
+                fixtures.ForEach(e => e.MatchResult =
+                    (e.TennisMatch != null && e.TennisMatch.Count > 0) && e.IsCancelled && !e.IsPostponed ? "Match abandoned" : ""
+                );
+
+                foreach (var fixture in fixtures.Where(e => e.TennisMatch != null && e.TennisMatch.Count > 0))
+                {
+                    for (var i = 0; i < fixture.NoOfSets; i++)
+                    {
+                        int? player1Score = 0;
+                        int? player2Score = 0;
+                        int? player1Tiebreak = 0;
+                        int? player2Tiebreak = 0;
+
+                        player1Score = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1).Score;
+                        player2Score = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1).Score;
+                        player1Tiebreak = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1).TennisTiebreak.Score;
+                        player2Tiebreak = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1).TennisTiebreak.Score;
+
+
+                        fixture.Player1Score = ((player1Score > player2Score) || (player1Score == player2Score && player1Tiebreak > player2Tiebreak)) ? fixture.Player1Score++ : 0;
+                        fixture.Player2Score = ((player2Score > player1Score) || (player2Score == player1Score && player2Tiebreak > player1Tiebreak)) ? fixture.Player2Score++ : 0;
+                    }
+
+                    fixture.SelectedPlayerID = fixture.Player1Score > fixture.Player2Score ? fixture.TennisMatch[0].ID : fixture.TennisMatch[1].ID;
+                }
+
+                return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Past Tennis Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<TennisFixture>> GetUpcomingTennisFixtures()
+        {
+            try
+            {
+                List<TennisFixture> fixtures = new List<TennisFixture>();
+                fixtures = await _context.TennisFixtures
+                .Include(e => e.MatchType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.CourtType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.Field)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.MatchType)
+                .Include(e => e.Season)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player1).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player2).ThenInclude(e => e.Player)
+                .Where(e => e.Date.Date >= DateTime.Now.Date).ToListAsync();
+
+                return fixtures.ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upcoming Tennis Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<TennisFixture> GetTennisFixture(string id)
+        {
+            try
+            {
+                TennisFixture fixture = new TennisFixture();
+                fixture = await _context.TennisFixtures
+                .Include(e => e.MatchType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.CourtType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.Field)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.MatchType)
+                .Include(e => e.Season)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player1).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player2).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisGames)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisTiebreak)
+                .FirstOrDefaultAsync(e => e.ID == id);
+
+                fixture.HeadToHead = await GetTennisHeadToHead(fixture.ID);
+
+                //List<BowlingGameResult> bowlingGameResults = new List<BowlingGameResult>();
+
+                //foreach (var player in fixture.TennisMatch)
+                //{
+                //    var awayFixtureRoster = fixture.BowlingRosters.FirstOrDefault(e => e.Position == homeFixtureRoster.Position && e.TeamID == fixture.AwayTeamID);
+
+                //    bowlingRosterLists.Add(new BowlingRosterListView
+                //    {
+                //        FixtureID = homeFixtureRoster.BowlingFixtureID,
+                //        HomeTeamID = homeFixtureRoster.TeamID,
+                //        AwayTeamID = awayFixtureRoster.TeamID,
+                //        HomePlayerName = homeFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
+                //        AwayPlayerName = awayFixtureRoster?.BowlingPlayerSeason?.Player?.Name,
+                //        Position = homeFixtureRoster.Position.Value
+                //    });
+
+                //    if (homeFixtureRoster.BowlingGames != null && homeFixtureRoster.BowlingGames.Count > 0 && awayFixtureRoster.BowlingGames != null && awayFixtureRoster.BowlingGames.Count > 0)
+                //    {
+                //        foreach (var homeGame in homeFixtureRoster.BowlingGames)
+                //        {
+                //            var awayGame = awayFixtureRoster.BowlingGames.FirstOrDefault(e => e.Game == homeGame.Game);
+                //            bowlingGameResults.Add(new BowlingGameResult
+                //            {
+                //                BowlingRosterID1 = homeGame.BowlingRosterID,
+                //                BowlingRoster1 = homeGame.BowlingRoster,
+                //                BowlingRosterID2 = awayGame.BowlingRosterID,
+                //                BowlingRoster2 = awayGame.BowlingRoster,
+                //                Game = homeGame.Game,
+                //                Position = homeFixtureRoster.Position,
+                //                Score1 = homeGame.Score,
+                //                Score2 = awayGame.Score,
+                //                Winner = homeGame.Score > awayGame.Score ? homeGame.BowlingRosterID : awayGame.Score > homeGame.Score ? awayGame.BowlingRosterID : null
+                //            });
+
+                //            homeGame.Win = homeGame.Score > awayGame.Score;
+                //            awayGame.Win = awayGame.Score > homeGame.Score;
+                //        }
+
+                //        fixture.BowlingRosters.ForEach(e => e.BowlingGameResults = bowlingGameResults.Where(d => d.BowlingRosterID1 == e.ID || d.BowlingRosterID2 == e.ID).ToList());
+
+                //    }
+                //}
+
+                //fixture.BowlingGameResults = bowlingGameResults;
+
+                return fixture;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<TennisFixture>> GetPastTennisFixtures()
+        {
+            try
+            {
+                List<TennisFixture> fixtures = new List<TennisFixture>();
+                fixtures = await _context.TennisFixtures
+                .Include(e => e.MatchType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.CourtType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.Field)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.MatchType)
+                .Include(e => e.Season)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player1).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player2).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisGames)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisTiebreak)
+                .Where(e => e.Date.Date < DateTime.Now.Date).ToListAsync();
+
+                foreach(var fixture in fixtures)
+                {
+                    if(fixture.TennisMatch.Any(e => e.TennisSets.Count > 0))
+                    {
+                        foreach(var match in fixture.TennisMatch)
+                        {
+                            if (fixture.NoOfSets > 0)
+                            {
+                                match.Set1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.Score;
+                                match.TiebreakSet1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 1)
+                            {
+                                match.Set2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.Score;
+                                match.TiebreakSet2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 2)
+                            {
+                                match.Set3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.Score;
+                                match.TiebreakSet3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 3)
+                            {
+                                match.Set4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.Score;
+                                match.TiebreakSet4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 4)
+                            {
+                                match.Set5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.Score;
+                                match.TiebreakSet5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.TennisTiebreak?.Score;
+                            }
+                        }
+
+                        for (var i = 0; i < fixture.NoOfSets; i++)
+                        {
+                            int? player1Score = 0;
+                            int? player2Score = 0;
+                            int? player1Tiebreak = 0;
+                            int? player2Tiebreak = 0;
+
+                            player1Score = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player2Score = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player1Tiebreak = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+                            player2Tiebreak = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+
+
+                            fixture.Player1Score = ((player1Score > player2Score) || (player1Score == player2Score && player1Tiebreak > player2Tiebreak)) ? fixture.Player1Score + 1 : 0;
+                            fixture.Player2Score = ((player2Score > player1Score) || (player2Score == player1Score && player2Tiebreak > player1Tiebreak)) ? fixture.Player2Score + 1 : 0;
+                        }
+
+                        fixture.SelectedPlayerID = fixture.Player1Score > fixture.Player2Score ? fixture.TennisMatch[0].ID : fixture.TennisMatch[1].ID;
+                    }
+                }
+
+                return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Past Tennis Fixture");
+            }
+
+            return null;
+        }
+
+        public async Task<List<TennisFixture>> GetTennisHeadToHead(string fixtureID)
+        {
+            try
+            {
+                List<TennisFixture> fixtures = new List<TennisFixture>();
+                TennisFixture tennisFixture = await _context.TennisFixtures.FirstOrDefaultAsync(e => e.ID == fixtureID);
+
+                fixtures = _context.TennisFixtures
+                .Include(e => e.MatchType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.CourtType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.Field)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.MatchType)
+                .Include(e => e.Season)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player1).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player2).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisGames)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisTiebreak).AsEnumerable()
+                .Where(e => ((e.TennisMatch[0].Player1ID == tennisFixture.TennisMatch[0].Player1ID && e.TennisMatch[1].Player1ID == tennisFixture.TennisMatch[1].Player1ID) || (e.TennisMatch[0].Player1ID == tennisFixture.TennisMatch[1].Player1ID && e.TennisMatch[1].Player1ID == tennisFixture.TennisMatch[0].Player1ID)) && e.ID != tennisFixture.ID && e.Date.Date < DateTime.Now.Date && !e.IsPostponed).ToList();
+
+                foreach (var fixture in fixtures)
+                {
+                    if (fixture.TennisMatch.Any(e => e.TennisSets.Count > 0))
+                    {
+                        foreach (var match in fixture.TennisMatch)
+                        {
+                            if (fixture.NoOfSets > 0)
+                            {
+                                match.Set1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.Score;
+                                match.TiebreakSet1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 1)
+                            {
+                                match.Set2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.Score;
+                                match.TiebreakSet2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 2)
+                            {
+                                match.Set3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.Score;
+                                match.TiebreakSet3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 3)
+                            {
+                                match.Set4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.Score;
+                                match.TiebreakSet4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 4)
+                            {
+                                match.Set5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.Score;
+                                match.TiebreakSet5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.TennisTiebreak?.Score;
+                            }
+                        }
+
+                        for (var i = 0; i < fixture.NoOfSets; i++)
+                        {
+                            int? player1Score = 0;
+                            int? player2Score = 0;
+                            int? player1Tiebreak = 0;
+                            int? player2Tiebreak = 0;
+
+                            player1Score = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player2Score = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player1Tiebreak = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+                            player2Tiebreak = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+
+
+                            fixture.Player1Score = ((player1Score > player2Score) || (player1Score == player2Score && player1Tiebreak > player2Tiebreak)) ? fixture.Player1Score + 1 : 0;
+                            fixture.Player2Score = ((player2Score > player1Score) || (player2Score == player1Score && player2Tiebreak > player1Tiebreak)) ? fixture.Player2Score + 1 : 0;
+                        }
+
+                        fixture.SelectedPlayerID = fixture.Player1Score > fixture.Player2Score ? fixture.TennisMatch[0].ID : fixture.TennisMatch[1].ID;
+                    }
+                }
+                //(e.HomeTeamID == fixture.HomeTeamID && e.AwayTeamID == fixture.AwayTeamID) || (e.HomeTeamID == fixture.AwayTeamID && e.AwayTeamID == fixture.HomeTeamID)
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<TennisFixture>> GetTennisPlayerFixtures(string playerID)
+        {
+            try
+            {
+                List<TennisFixture> fixtures = new List<TennisFixture>();
+
+                fixtures = await _context.TennisFixtures
+                .Include(e => e.MatchType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.CourtType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.Field)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.MatchType)
+                .Include(e => e.Season)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player1).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player2).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisGames)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisTiebreak)
+                .Where(e => e.TennisMatch[0].Player1ID == playerID || e.TennisMatch[1].Player2ID == playerID).ToListAsync();
+
+                foreach (var fixture in fixtures)
+                {
+                    if (fixture.TennisMatch.Any(e => e.TennisSets.Count > 0))
+                    {
+                        foreach (var match in fixture.TennisMatch)
+                        {
+                            if (fixture.NoOfSets > 0)
+                            {
+                                match.Set1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.Score;
+                                match.TiebreakSet1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 1)
+                            {
+                                match.Set2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.Score;
+                                match.TiebreakSet2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 2)
+                            {
+                                match.Set3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.Score;
+                                match.TiebreakSet3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 3)
+                            {
+                                match.Set4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.Score;
+                                match.TiebreakSet4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 4)
+                            {
+                                match.Set5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.Score;
+                                match.TiebreakSet5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.TennisTiebreak?.Score;
+                            }
+                        }
+
+                        for (var i = 0; i < fixture.NoOfSets; i++)
+                        {
+                            int? player1Score = 0;
+                            int? player2Score = 0;
+                            int? player1Tiebreak = 0;
+                            int? player2Tiebreak = 0;
+
+                            player1Score = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player2Score = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player1Tiebreak = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+                            player2Tiebreak = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+
+
+                            fixture.Player1Score = ((player1Score > player2Score) || (player1Score == player2Score && player1Tiebreak > player2Tiebreak)) ? fixture.Player1Score + 1 : 0;
+                            fixture.Player2Score = ((player2Score > player1Score) || (player2Score == player1Score && player2Tiebreak > player1Tiebreak)) ? fixture.Player2Score + 1 : 0;
+                        }
+
+                        fixture.SelectedPlayerID = fixture.Player1Score > fixture.Player2Score ? fixture.TennisMatch[0].ID : fixture.TennisMatch[1].ID;
+                    }
+                }
+                //fixtures.ForEach(e => e.SelectedPlayerID = e.TennisMatch.FirstOrDefault(d => d.Player1ID == playerID || d.Player2ID == playerID).ID);
+                //fixtures.ForEach(e => e.SelectedPlayerResult = (e.TennisMatch[0].Player1ID == playerID && e.BowlingScore?.HomeTeamTotalPoints > e.BowlingScore?.AwayTeamTotalPoints) || (e.AwayTeamID == teamID && e.BowlingScore?.AwayTeamTotalPoints > e.BowlingScore?.HomeTeamTotalPoints) ? "W" : (e.AwayTeamID == teamID && e.BowlingScore?.AwayTeamTotalPoints < e.BowlingScore?.HomeTeamTotalPoints) || (e.HomeTeamID == teamID && e.BowlingScore?.HomeTeamTotalPoints < e.BowlingScore?.AwayTeamTotalPoints) ? "L" : (e.BowlingScore != null && (!e.BowlingScore.HomeTeamTotalPoints.HasValue || !e.BowlingScore.AwayTeamTotalPoints.HasValue)) ? "" : "D");
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<TennisFixture>> GetTennisPlayerForm(string playerID)
+        {
+            try
+            {
+                List<TennisFixture> fixtures = new List<TennisFixture>();
+
+                fixtures = _context.TennisFixtures
+                .Include(e => e.MatchType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.CourtType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.Field)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.MatchType)
+                .Include(e => e.Season)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player1).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player2).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisGames)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisTiebreak).AsEnumerable()
+                .Where(e => (e.TennisMatch[0].Player1ID == playerID || e.TennisMatch[1].Player2ID == playerID) && e.Date.Date < DateTime.Now.Date && e.Season.IsCurrent && e.TennisMatch.Any(e => e.TennisSets != null)).OrderByDescending(e => e.Date).Take(6).ToList();
+
+                foreach (var fixture in fixtures)
+                {
+                    if (fixture.TennisMatch.Any(e => e.TennisSets.Count > 0))
+                    {
+                        foreach (var match in fixture.TennisMatch)
+                        {
+                            if (fixture.NoOfSets > 0)
+                            {
+                                match.Set1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.Score;
+                                match.TiebreakSet1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 1)
+                            {
+                                match.Set2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.Score;
+                                match.TiebreakSet2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 2)
+                            {
+                                match.Set3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.Score;
+                                match.TiebreakSet3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 3)
+                            {
+                                match.Set4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.Score;
+                                match.TiebreakSet4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 4)
+                            {
+                                match.Set5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.Score;
+                                match.TiebreakSet5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.TennisTiebreak?.Score;
+                            }
+                        }
+
+                        for (var i = 0; i < fixture.NoOfSets; i++)
+                        {
+                            int? player1Score = 0;
+                            int? player2Score = 0;
+                            int? player1Tiebreak = 0;
+                            int? player2Tiebreak = 0;
+
+                            player1Score = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player2Score = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player1Tiebreak = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+                            player2Tiebreak = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+
+
+                            fixture.Player1Score = ((player1Score > player2Score) || (player1Score == player2Score && player1Tiebreak > player2Tiebreak)) ? fixture.Player1Score + 1 : 0;
+                            fixture.Player2Score = ((player2Score > player1Score) || (player2Score == player1Score && player2Tiebreak > player1Tiebreak)) ? fixture.Player2Score + 1 : 0;
+                        }
+
+                        fixture.SelectedPlayerID = fixture.Player1Score > fixture.Player2Score ? fixture.TennisMatch[0].ID : fixture.TennisMatch[1].ID;
+                    }
+                }
+                //fixtures.ForEach(e => e.SelectedPlayerID = e.TennisMatch.FirstOrDefault(d => d.Player1ID == playerID || d.Player2ID == playerID).ID);
+                //fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.BowlingScore?.HomeTeamTotalPoints > e.BowlingScore?.AwayTeamTotalPoints) || (e.AwayTeamID == teamID && e.BowlingScore?.AwayTeamTotalPoints > e.BowlingScore?.HomeTeamTotalPoints) ? "W" : (e.AwayTeamID == teamID && e.BowlingScore?.AwayTeamTotalPoints < e.BowlingScore?.HomeTeamTotalPoints) || (e.HomeTeamID == teamID && e.BowlingScore?.HomeTeamTotalPoints < e.BowlingScore?.AwayTeamTotalPoints) ? "L" : (e.BowlingScore != null && (!e.BowlingScore.HomeTeamTotalPoints.HasValue || !e.BowlingScore.AwayTeamTotalPoints.HasValue)) ? "" : "D");
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<TennisFixture>> GetTennisFixturesByTournament(string tournamentID)
+        {
+            try
+            {
+                var fixtures = await _context.TennisFixtures
+                .Include(e => e.MatchType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.CourtType)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.Tournament).ThenInclude(e => e.Field)
+                .Include(e => e.TournamentMatchType).ThenInclude(e => e.MatchType)
+                .Include(e => e.Season)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player1).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.Player2).ThenInclude(e => e.Player)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisGames)
+                .Include(e => e.TennisMatch).ThenInclude(e => e.TennisSets).ThenInclude(e => e.TennisTiebreak)
+                .Where(e => e.TournamentMatchType.TennisTournamentID == tournamentID).ToListAsync();
+
+                foreach (var fixture in fixtures)
+                {
+                    if (fixture.TennisMatch.Any(e => e.TennisSets.Count > 0))
+                    {
+                        foreach (var match in fixture.TennisMatch)
+                        {
+                            if (fixture.NoOfSets > 0)
+                            {
+                                match.Set1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.Score;
+                                match.TiebreakSet1 = match.TennisSets.FirstOrDefault(e => e.Set == 1)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 1)
+                            {
+                                match.Set2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.Score;
+                                match.TiebreakSet2 = match.TennisSets.FirstOrDefault(e => e.Set == 2)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 2)
+                            {
+                                match.Set3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.Score;
+                                match.TiebreakSet3 = match.TennisSets.FirstOrDefault(e => e.Set == 3)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 3)
+                            {
+                                match.Set4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.Score;
+                                match.TiebreakSet4 = match.TennisSets.FirstOrDefault(e => e.Set == 4)?.TennisTiebreak?.Score;
+                            }
+
+                            if (fixture.NoOfSets > 4)
+                            {
+                                match.Set5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.Score;
+                                match.TiebreakSet5 = match.TennisSets.FirstOrDefault(e => e.Set == 5)?.TennisTiebreak?.Score;
+                            }
+                        }
+
+                        for (var i = 0; i < fixture.NoOfSets; i++)
+                        {
+                            int? player1Score = 0;
+                            int? player2Score = 0;
+                            int? player1Tiebreak = 0;
+                            int? player2Tiebreak = 0;
+
+                            player1Score = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player2Score = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.Score;
+                            player1Tiebreak = fixture.TennisMatch[0].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+                            player2Tiebreak = fixture.TennisMatch[1].TennisSets?.FirstOrDefault(e => e.Set == i + 1)?.TennisTiebreak?.Score;
+
+
+                            fixture.Player1Score = ((player1Score > player2Score) || (player1Score == player2Score && player1Tiebreak > player2Tiebreak)) ? fixture.Player1Score + 1 : 0;
+                            fixture.Player2Score = ((player2Score > player1Score) || (player2Score == player1Score && player2Tiebreak > player1Tiebreak)) ? fixture.Player2Score + 1 : 0;
+                        }
+
+                        fixture.SelectedPlayerID = fixture.Player1Score > fixture.Player2Score ? fixture.TennisMatch[0].ID : fixture.TennisMatch[1].ID;
+                    }
+                }
+
+                return fixtures;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Tennis Tournament Fixtures");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<CricketFixture>> GetCricketFixtures()
         {
             try
@@ -1087,38 +1692,6 @@ namespace OnTrackWebService.Repository
                         }
                     }
                 }
-
-                //fixtures.ForEach(e => e.CricketMatch = new List<CricketMatch>
-                //{
-                //    new CricketMatch
-                //    {
-                //        TeamID = e.HomeTeamID,
-                //        FixtureID = e.ID,
-                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Runs),
-                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wickets),
-                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Overs),
-                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Bye),
-                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Extras),
-                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.LegBye),
-                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.NoBall),
-                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.HomeTeamID).Sum(x => x.Wide)
-
-                //    },
-                //    new CricketMatch
-                //    {
-                //        TeamID = e.AwayTeamID,
-                //        FixtureID = e.ID,
-                //        Runs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Runs),
-                //        Wickets = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wickets),
-                //        Overs = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Overs),
-                //        Bye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Bye),
-                //        Extras = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Extras),
-                //        LegBye = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.LegBye),
-                //        NoBall = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.NoBall),
-                //        Wide = e.CricketScores.Where(x => x.BattingTeamID == e.AwayTeamID).Sum(x => x.Wide)
-                //    }
-                //});
-
 
                 return fixtures.OrderByDescending(e => e.FixtureTime).ToList();
             }
@@ -3170,6 +3743,146 @@ namespace OnTrackWebService.Repository
 
         }
 
+        public async Task<ImportTennisFixtures> UploadTennisFixtures(IFormFile file)
+        {
+            try
+            {
+                Sport sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Tennis");
+                List<TennisFixtures> errorFixtures = new List<TennisFixtures>();
+                List<TennisMatch> tennisMatch = new List<TennisMatch>();
+                TennisFixture tennisFixture = new TennisFixture();
+                //TennisMatch tennisMatch = new TennisMatch();
+                List<TennisPlayerSeason> players = await _context.TennisPlayerSeasons.Include(e => e.Season).Where(e => e.Season.IsCurrent).ToListAsync();
+                List<MatchType> matchTypes = await _context.MatchTypes.ToListAsync();
+                List<TournamentMatchType> tournamentMatchTypes = await _context.TournamentMatchTypes.ToListAsync();
+                List<TennisTournament> tournaments = await _context.TennisTournaments.ToListAsync();
+                List<Season> seasons = await _context.Seasons.Where(e => e.SportID == sport.ID).ToListAsync();
+                MatchType matchType = null;
+                TournamentMatchType tournamentMatchType = null;
+                TennisPlayerSeason player1 = null;
+                TennisPlayerSeason player2 = null;
+                TennisPlayerSeason player3 = null;
+                TennisPlayerSeason player4 = null;
+                TennisTournament tournament = null;
+                Season season = null;
+
+                //Stream reader = file.OpenReadStream();
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
+                    var records = csv.GetRecords<TennisFixtures>();
+
+                    foreach (var record in records)
+                    {
+                        try
+                        {
+                            player1 = players.FirstOrDefault(e => e.Player.Name == record.Player1.Trim());
+                            player2 = players.FirstOrDefault(e => e.Player.Name == record.Player2.Trim());
+
+                            if (!String.IsNullOrEmpty(record.Player3) && !String.IsNullOrEmpty(record.Player4))
+                            {
+                                player3 = players.FirstOrDefault(e => e.Player.Name == record.Player3.Trim());
+                                player4 = players.FirstOrDefault(e => e.Player.Name == record.Player4.Trim());
+                            }
+
+                            matchType = matchTypes.FirstOrDefault(e => e.Name == record.MatchType.Trim());
+                            season = seasons.FirstOrDefault(e => e.Key == record.Season);
+                            tournament = tournaments.FirstOrDefault(e => e.Name == record.Tournament.Trim());
+                            tournamentMatchType = tournamentMatchTypes.FirstOrDefault(e => e.TennisTournamentID == tournament.ID && e.MatchTypeID == matchType.ID);
+
+                            tennisFixture = new TennisFixture
+                            {
+                                Date = record.Date,
+                                Time = record.Time.AddHours(4).ToString("HH:mm:ss"),
+                                TournamentMatchTypeID = tournamentMatchType.ID,
+                                NoOfSets = record.Sets,
+                                SeasonID = season.ID
+                                //SportID = season.SportID
+                            };
+
+                            _context.TennisFixtures.Add(tennisFixture);
+                            _context.SaveChanges();
+
+                            tennisMatch.Add(new TennisMatch
+                            {
+                                TennisFixtureID = tennisFixture.ID,
+                                Player1ID = player1.ID,
+                                Player2ID = player3 != null ? player2.ID : null,
+                                Seed = record.Player1Seed
+                            });
+
+                            tennisMatch.Add(new TennisMatch
+                            {
+                                TennisFixtureID = tennisFixture.ID,
+                                Player1ID = player3 != null ? player3.ID : player2.ID,
+                                Player2ID = player4 != null ? player4.ID : null,
+                                Seed = record.Player2Seed
+                            });
+
+                            _context.TennisMatches.AddRange(tennisMatch);
+                            _context.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorFixtures.Add(record);
+
+                        }
+                    }
+
+                    //try
+                    //{
+                    //    await AddFixtures(fixtures);
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    return new ImportTennisFixtures
+                    //    {
+                    //        Message = "Error importing schedule to database.",
+                    //        Exception = ex.Message
+                    //    };
+                    //}
+                }
+
+                if (errorFixtures != null && errorFixtures.Count > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorFixtures);
+                        streamWriter.Flush();
+
+                        return new ImportTennisFixtures
+                        {
+                            Message = "Successfully imported schedule with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorFixtures,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportTennisFixtures
+                {
+                    Message = "Successfully imported schedule!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportTennisFixtures
+                {
+                    Message = "Error importing schedule!",
+                    Exception = ex.Message
+                };
+            }
+        }
+
         public async Task Update(Fixture item)
         {
             try
@@ -3178,6 +3891,19 @@ namespace OnTrackWebService.Repository
 
                 _context.Matches.Update(item.Match);
 
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Fixture");
+            }
+        }
+
+        public async Task Update(TennisFixture item)
+        {
+            try
+            {
+                _context.TennisFixtures.Update(item);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -3473,7 +4199,21 @@ namespace OnTrackWebService.Repository
             }
         }
 
-        
+        public async Task UpdateFixtures(List<TennisFixture> items)
+        {
+            try
+            {
+                _context.TennisFixtures.UpdateRange(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Fixtures");
+            }
+        }
+
+
     }
 
     public class InningScore

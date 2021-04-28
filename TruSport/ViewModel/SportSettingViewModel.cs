@@ -16,9 +16,6 @@ namespace TruSport.ViewModels
     {
         private ObservableCollection<string> _sportCollection;
         private string _defaultSport;
-        private bool _footballAlert;
-        private bool _cricketAlert;
-        private bool _favouriteAlert;
         private bool _isActivityIndicatorVisible;
         INavigation Navigation;
 

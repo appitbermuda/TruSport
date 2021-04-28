@@ -594,6 +594,28 @@ namespace TruSport.Converters
         }
     }
 
+    public class SelectedPlayerResultConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string result = (string)value;
+
+            if (result == "")
+                return Color.Transparent;
+            else if (result == "W")
+                return Color.LimeGreen;
+            else if (result == "D")
+                return Color.FromHex("ffbf00");
+            else
+                return Color.Red;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return int.Parse((string)value);
+        }
+    }
+
     public class SelectedTeamPenaltyConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1441,6 +1463,46 @@ namespace TruSport.Converters
         }
     }
 
+    public class GroupingSelectionTennisConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<TennisFixture>(groupResult.Items.ToList<TennisFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    return data.TournamentMatchType.Tournament.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Season.Date;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class GroupingSelectionGameBowlingConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1845,6 +1907,26 @@ namespace TruSport.Converters
     }
 
     public class BowlingImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((string)value != null && (string)value != "")
+            {
+                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+
+                return image;
+            }
+            else
+                return "ontracklogo.png";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class TennisImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

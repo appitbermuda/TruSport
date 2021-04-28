@@ -199,5 +199,50 @@ namespace OnTrackWebService.Repository
 
             return null;
         }
+
+        public async Task<List<RssFeedItem>> TennisFeed()
+        {
+            const string BernewsFeedUri = "http://bernews.com/tag/tennis/feed/";
+            const string IStatsFeedUri = "http://www.islandstats.com/islandstats_rss.asp";
+            const string RGFeedUri = "http://www.royalgazette.com/section/?template=RSS";
+
+            List<RssFeedItem> RSSFeed = new List<RssFeedItem>();
+
+            try
+            {
+                var BerNewsFeed = await RssClient.LoadBernews(new Uri(BernewsFeedUri));
+                var IStatsFeed = await RssClient.LoadTennisIStats(new Uri(IStatsFeedUri));
+                var RGFeed = await RssClient.LoadTennisRG(new Uri(RGFeedUri));
+
+                foreach (var feed in BerNewsFeed)
+                {
+                    if (feed != null)
+                        if (feed.Date > DateTime.Now.AddDays(-7))
+                            RSSFeed.Add(feed);
+                }
+
+                foreach (var feed in IStatsFeed)
+                {
+                    if (feed != null)
+                        if (feed.Date > DateTime.Now.AddDays(-7))
+                            RSSFeed.Add(feed);
+                }
+
+                foreach (var feed in RGFeed)
+                {
+                    if (feed != null)
+                        if (feed.Date > DateTime.Now.AddDays(-7))
+                            RSSFeed.Add(feed);
+                }
+
+                return RSSFeed.OrderByDescending(e => e.Date).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "News");
+            }
+
+            return null;
+        }
     }
 }

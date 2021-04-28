@@ -7,6 +7,7 @@ using TruSport.ViewModels;
 using TruSport.Views;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
+using TruSport.Views.Tennis;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -42,7 +43,7 @@ namespace TruSport.ViewModel
             BowlingTappedCommand = new Command(() => BowlingTapped());
             FootballTappedCommand = new Command(() => FootballTapped());
             CricketTappedCommand = new Command(() => CricketTapped());
-            //TennisTappedCommand = new Command(() => TennisTapped());
+            TennisTappedCommand = new Command(() => TennisTapped());
             //TrackTappedCommand = new Command(() => TrackTapped());
             //SwimmingTappedCommand = new Command(() => SwimmingTapped());
             //RugbyTappedCommand = new Command(() => RugbyTapped());
@@ -222,17 +223,31 @@ namespace TruSport.ViewModel
             }
         }
 
-        //private async void TennisTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Tennis"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+        private async void TennisTapped()
+        {
+            try
+            {
+                Sport sport = new Sport();
 
-        //    }
-        //}
+                if (Sports == null)
+                {
+                    var sports = await sportService.GetSports();
+                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "tennis");
+                }
+                else
+                {
+                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "tennis");
+                }
+
+
+                await App.Database.SetDefaultSport(sport);
+                Application.Current.MainPage = new TennisMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         //private async void TrackTapped()
         //{

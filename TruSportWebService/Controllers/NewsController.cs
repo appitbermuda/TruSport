@@ -77,5 +77,43 @@ namespace OnTrackWebService.Controllers
 
             return NoContent();
         }
+
+        // GET api/values
+        [HttpGet]
+        [Route("BowlingFeed")]
+        public async Task<IActionResult> BowlingFeed()
+        {
+            try
+            {
+                List<RssFeedItem> feed = await _newsRepository.BowlingFeed();
+
+                return Ok(feed);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "News");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("TennisFeed")]
+        public async Task<IActionResult> TennisFeed()
+        {
+            try
+            {
+                List<RssFeedItem> feed = await _newsRepository.TennisFeed();
+
+                return Ok(feed);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "News");
+            }
+
+            return NoContent();
+        }
     }
 }

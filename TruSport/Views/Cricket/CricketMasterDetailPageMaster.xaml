@@ -39,7 +39,7 @@
             <BoxView Grid.Row="1" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
                 <Grid Grid.Row="2" VerticalOptions="FillAndExpand" Padding="0,0,0,0" BackgroundColor="{DynamicResource backgroundColor}">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <listView:SfListView Grid.Row="0" Margin="0,0,0,30" IsScrollBarVisible="False" HeightRequest="{Binding OnTrackHeight}" x:Name="OnTrackMenuItemsListView" ItemSize="50" ItemsSource="{Binding OnTrackMenuItems}" SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
                   BackgroundColor="Transparent">

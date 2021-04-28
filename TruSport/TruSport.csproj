@@ -66,6 +66,8 @@
     <Folder Include="ViewModel\Shop\" />
     <Folder Include="ViewModel\Bowling\" />
     <Folder Include="Views\Bowling\" />
+    <Folder Include="ViewModel\Tennis\" />
+    <Folder Include="Views\Tennis\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Views\Football\MatchStatsPopUpPage %28another copy%29.cs" />
