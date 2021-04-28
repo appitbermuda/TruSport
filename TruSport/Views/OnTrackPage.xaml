@@ -12,9 +12,10 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <!--<Grid RowSpacing="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <forms:CachedImage Source="bowlingfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="Fill" HorizontalOptions="Fill" DownsampleToViewSize="True" />
+                <forms:CachedImage Source="bowlingfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
                         <Image Source="bowlingfeature"
                                        Aspect="AspectFill"/>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
@@ -27,7 +28,7 @@
                     <Grid RowSpacing="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                         <!--<Image Source="bowlingfeature"
                                        Aspect="AspectFill"/>-->
-                        <forms:CachedImage Source="bowlingfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="Fill" HorizontalOptions="Fill" DownsampleToViewSize="True" />
+                        <forms:CachedImage Source="bowlingfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
                     <Label Text="BOWLING" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                         </Grid>
@@ -44,7 +45,7 @@
                                        
                                        HorizontalOptions="FillAndExpand"
                                        VerticalOptions="FillAndExpand"/>-->
-                            <forms:CachedImage Source="cricketfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="Fill" HorizontalOptions="Fill" DownsampleToViewSize="True" />
+                            <forms:CachedImage Source="cricketfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
                         <!--<forms:CachedImage Source="{Binding FeatureImages.HomeCricketImage, Converter={StaticResource cricketImageConverter}}" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
@@ -64,12 +65,31 @@
                                        
                                        HorizontalOptions="FillAndExpand"
                                        VerticalOptions="FillAndExpand"/>-->
-                            <forms:CachedImage Source="footballfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="Fill" HorizontalOptions="Fill" DownsampleToViewSize="True" />
+                            <forms:CachedImage Source="footballfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
                         <!--<forms:CachedImage Source="{Binding FeatureImages.HomeFootballImage, Converter={StaticResource imageConverter}}" ErrorPlaceholder="OnTrack_512.png" LoadingPlaceholder="OnTrack_512.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
                         <ContentView BackgroundColor="Black" Opacity=".6"/>-->
                     <Label Text="FOOTBALL" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+            </StackLayout>
+            <StackLayout Grid.Row="3" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"  Spacing="0">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding TennisTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                    <Grid RowSpacing="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <!--<Image Source="footballfeature"
+                                       Aspect="AspectFill"
+                                       
+                                       HorizontalOptions="FillAndExpand"
+                                       VerticalOptions="FillAndExpand"/>-->
+                            <forms:CachedImage Source="tennisfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <!--<forms:CachedImage Source="{Binding FeatureImages.HomeFootballImage, Converter={StaticResource imageConverter}}" ErrorPlaceholder="OnTrack_512.png" LoadingPlaceholder="OnTrack_512.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>-->
+                    <Label Text="TENNIS" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                         </Grid>
             </StackLayout>
         </Grid>

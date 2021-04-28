@@ -222,7 +222,7 @@ namespace OnTrackWebService.Repository
 
                     <p>[Name] has just signed up for tickets.</p>
 
-                    <p>If you have any issues with thier account, please reply to them at [Email].</p>
+                    <p>If you have any issues with their account, please reply to them at [Email].</p>
 
                     <br>
                     <br>

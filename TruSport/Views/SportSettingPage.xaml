@@ -65,6 +65,24 @@
                                 </StackLayout>
                             </ViewCell.View>
                         </ViewCell>
+                        <ViewCell x:Name="TennisCell" Tapped="TennisCell_Tapped">
+                            <ViewCell.View>
+                                <StackLayout Padding="20,0" VerticalOptions="CenterAndExpand">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackLayout>
+                                            <Label Text="Tennis" FontAttributes="Bold" FontSize="Medium"/>
+                                         </StackLayout>
+                                        <StackLayout Grid.Column="1">
+                                            <Label Text="{Binding DefaultSport, Converter={StaticResource sportSelectedConverter}, ConverterParameter='Tennis'}" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{StaticResource primaryDarkBlueTwo}"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
                             <!--<Grid HorizontalOptions="FillAndExpand" BackgroundColor="White">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />

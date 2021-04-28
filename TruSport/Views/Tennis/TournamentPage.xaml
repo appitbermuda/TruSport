@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:converter="clr-namespace:TruSport.Converters" x:Class="TruSport.Views.Tennis.TournamentPage"
+             Title="Tournaments">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Name="TournamentItemTemplate"  x:Key="TournamentItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             Padding="0">
+                <Grid x:Name="grid"
+                      RowSpacing="0"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                        <!--<Image Aspect="AspectFill"
+                               Source="{Binding BackgroundImage}"
+                               />-->
+                        <!--<ContentView BackgroundColor="Black" Opacity=".5"/>-->
+                    <!--<ContentView BackgroundColor="WhiteSmoke" />-->
+                        <StackLayout VerticalOptions="Center" Padding="10,10,10,0" Spacing="0">
+                        <Label x:Name="TournamentName" VerticalOptions="CenterAndExpand" Text="{Binding Name}" LineBreakMode="WordWrap" HorizontalTextAlignment="Start" FontSize="Medium" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="1" VerticalOptions="Center" Padding="10,5" Spacing="0" >
+                        <Label x:Name="TournamentDate" VerticalOptions="CenterAndExpand"
+                                   LineBreakMode="WordWrap"
+                                  HorizontalTextAlignment="Start"
+                               FontSize="Medium">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Start, StringFormat='{0:dddd, MMM d yyyy}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Micro"/>
+                                    <Span Text=" - " TextColor="{DynamicResource TextPrimaryColor}" FontSize="Micro" />
+                                    <Span Text="{Binding End, StringFormat='{0:dddd, MMM d yyyy}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Micro" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        </StackLayout>
+                    <BoxView Grid.Row="2" HeightRequest="1" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" HorizontalOptions="FillAndExpand"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid BackgroundColor="{DynamicResource backgroundColor}"
+                                  Padding="0,0,0,0" RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <!--<BoxView HeightRequest="3" BackgroundColor="{StaticResource primaryPink}" HorizontalOptions="FillAndExpand"/>-->
+                                <listView:SfListView Grid.Row="0" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}"  x:Name="TournamentList"
+                                ItemsSource="{Binding TournamentCollection}"
+                                    ItemTemplate="{StaticResource TournamentItemTemplate}"
+                                   SelectionMode="Single"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    TapCommand="{Binding OnTournamentSelectedCommand}"
+                                   ItemSpacing="1"
+                                    SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                                 AutoFitMode="DynamicHeight"
+                                >
+                <!--<listView:SfListView.LayoutManager>
+                <listView:GridLayout>
+                    <listView:GridLayout.SpanCount>
+                    <OnPlatform x:TypeArguments="x:Int32">
+                      <OnPlatform.Android>
+                        <OnIdiom x:TypeArguments="x:Int32" Phone="2" Tablet="4" />
+                      </OnPlatform.Android>
+                      <OnPlatform.iOS>
+                        <OnIdiom x:TypeArguments="x:Int32" Phone="2" Tablet="4" />
+                      </OnPlatform.iOS>
+                    </OnPlatform>
+                  </listView:GridLayout.SpanCount>
+                </listView:GridLayout>
+              </listView:SfListView.LayoutManager>-->
+            </listView:SfListView>
+            <StackLayout Padding="10"  IsVisible="{Binding NoConnectivity}">
+                <Label Text="There are no competitions available" FontSize="Caption" TextColor="{DynamicResource TextPrimaryColor}" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>
+            </StackLayout>
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="50" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AdTappedCommand}"/>
+                </StackLayout.GestureRecognizers>
+                <Image Source="{Binding Ad.Image}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Aspect="AspectFill"/>
+            </StackLayout>
+            <!--<model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>-->
+                            </Grid>
+    </ContentPage.Content>
+</ContentPage>

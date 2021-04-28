@@ -1442,6 +1442,7 @@ namespace TruSport.Model
         public string FixtureID { get; set; }
         public string CricketFixtureID { get; set; }
         public string BowlingFixtureID { get; set; }
+        public string TennisFixtureID { get; set; }
         public string Sport { get; set; }
 
         [Ignore]
@@ -1455,6 +1456,9 @@ namespace TruSport.Model
 
         [Ignore]
         public CricketFixture CricketFixture { get; set; }
+
+        [Ignore]
+        public TennisFixture TennisFixture { get; set; }
 
         [Ignore]
         public Fixture Fixture { get; set; }

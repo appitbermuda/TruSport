@@ -162,11 +162,11 @@ namespace TruSport.Services
                 {
                     var client = new RestClient(Constants.APIEndpoint);
 
-//#if DEBUG
-                    //var request = new RestRequest("MatchTicket/PurchaseTest", Method.POST);
-                    //#else
-                    var request = new RestRequest("MatchTicket/Purchase", Method.POST);
-                    //#endif
+//#if RELEASE
+//                    var request = new RestRequest("MatchTicket/Purchase", Method.POST);
+//#else
+                    var request = new RestRequest("MatchTicket/PurchaseTest", Method.POST);
+//#endif
 
                     request.AddJsonBody(payment);
                     request.AddHeader("authorization", "Bearer " + accessToken);

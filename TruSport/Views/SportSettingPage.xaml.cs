@@ -83,5 +83,26 @@ namespace TruSport.Views
 
             }
         }
+
+        async void TennisCell_Tapped(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                string sport = "Tennis";
+                sportSettingViewModel.DefaultSport = sport;
+                //await SecureStorage.SetAsync("DefaultSport", sport);
+
+                Sport tennis = await App.Database.GetSport(sport);
+                await App.Database.SetDefaultSport(tennis);
+
+                MessagingCenter.Send<string>(sport, "SelectedSport");
+                await Navigation.PopAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

@@ -87,6 +87,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<BowlingRoster>, BowlingRosterRepository>();
             services.AddScoped<IOnTrackRepository<ContactTrace>, ContactTraceRepository>();
             services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
+            services.AddScoped<IOnTrackRepository<CourtType>, CourtTypeRepository>();
             services.AddScoped<IEmailRepository<string>, EmailRepository>();
             services.AddScoped<INewsRepository<RssFeedItem>, NewsRepository>();
             services.AddScoped<IOnTrackRepository<Field>, FieldRepository>();
@@ -112,6 +113,8 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<Award>, AwardRepository>();
             services.AddScoped<IOnTrackRepository<PlayerSeason>, PlayerSeasonRepository>();
             services.AddScoped<IOnTrackRepository<Team>, TeamRepository>();
+            services.AddScoped<IOnTrackRepository<TennisTournament>, TournamentRepository>();
+            services.AddScoped<IOnTrackRepository<TennisRanking>, RankingRepository>();
             services.AddScoped<IOnTrackRepository<TicketTeam>, TicketTeamRepository>();
             services.AddScoped<IOnTrackRepository<TicketCompany>, TicketCompanyRepository>();
             services.AddScoped<IOnTrackRepository<TicketMember>, TicketMemberRepository>();

@@ -1,0 +1,421 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:model="clr-namespace:TruSport.Model" xmlns:extensions="clr-namespace:TruSport.Extensions" xmlns:converter="clr-namespace:TruSport.Converters" xmlns:tabview="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:templates="clr-namespace:TruSport.Templates" x:Class="TruSport.Views.Tennis.FixtureDetailsPage"
+             BackgroundColor="{DynamicResource backgroundColor}"
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <converter:IsNullConverter x:Key="isNullConverter" />
+        <converter:MatchSummaryConverter x:Key="matchSummaryConverter"/>
+        <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+        <converter:SeasonFixtureDateConverter x:Key="seasonFixtureDateConverter"/>
+        <converter:SelectedTeamConverter x:Key="selectedPlayerConverter"/>
+            <converter:SelectedTeamBackgroundConverter x:Key="selectedTeamBackgroundConverter"/>
+        <converter:SelectedTableBackgroundConverter x:Key="selectedTableBackgroundConverter"/>
+            <converter:SelectedTeamTextConverter x:Key="selectedTeamTextConverter"/>
+        <converter:GameTimeConverter x:Key="gameTimeConverter"/>
+        <converter:MatchTimeConverter x:Key="matchTimeConverter"/>
+            <converter:TimeConverter x:Key="timeConverter"/>
+        <converter:SelectedTeamResultConverter x:Key="selectedTeamResultConverter"/>
+            <converter:SelectedTeamProfileConverter x:Key="selectedTeamProfileConverter"/>
+            <converter:TeamNameConverter x:Key="teamNameConverter" />
+        <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
+            <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
+            <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
+            <converter:GroupingSelectionTennisConverter x:Key="groupingSelectionConverter"/>
+            <converter:FavouriteFontConverter x:Key="favouriteFontConverter"/>
+            <converter:FavouriteConverter x:Key="favouriteConverter"/>
+        <converter:SummaryMinuteConverter x:Key="summaryMinuteConverter"/>
+        <converter:TennisImageConverter x:Key="imageConverter"/>
+        <converter:ListCountConverter x:Key="listCountConverter"/>
+        <DataTemplate x:Name="HeadToHeadItemTemplate"  x:Key="HeadToHeadItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                <Grid x:Name="grid"
+                      Padding="0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                        <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                    <Label x:Name="SelectedTeamIDLabel" IsVisible="false"
+                                        Text="{Binding SelectedTeamID}"/>
+                        <StackLayout Grid.Column="0" Grid.Row="0"
+                                 VerticalOptions="End"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2">
+                            <Label x:Name="SeasonLabel" Text="{Binding Season.Key}" IsVisible="false"/>
+                            <Label x:Name="DateLabel"
+                                   FontSize="10"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Date, Converter={StaticResource seasonFixtureDateConverter}, ConverterParameter={x:Reference Name=SeasonLabel}}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Column="0" Grid.Row="1"
+                                 VerticalOptions="Start"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2">
+                            <Label x:Name="TTLabel"
+                                   FontSize="10"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="FT"/>
+                        </StackLayout>
+                            
+                            <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="FillAndExpand"
+                                     HorizontalOptions="Start"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                <Label x:Name="HomeTeamAlias" Text="{Binding HomeTeam.Alias}" IsVisible="false"/>
+                            <Label x:Name="HomeTeamNameLabel"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding HomeTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference HomeTeamAlias}}"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="1"
+                                 VerticalOptions="FillAndExpand"
+                                     HorizontalOptions="Start"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                <Label x:Name="AwayTeamAlias" Text="{Binding AwayTeam.Alias}" IsVisible="false"/>
+                            <Label x:Name="AwayTeamNameLabel"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   Text="{Binding AwayTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference AwayTeamAlias}}"/>
+                        </StackLayout>
+                    
+                            <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="HomeTeamScoreLabel"
+                                   FontSize="15"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Match.HomeTeamScore}"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                 Padding="5,2"
+                                 Spacing="0">
+                            <Label x:Name="AwayTeamScoreLabel"
+                                   FontSize="15"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Match.AwayTeamScore}"/>
+                                
+                        </StackLayout>
+                    <!--<StackLayout Grid.RowSpan="2" Grid.Column="3" Padding="5"  VerticalOptions="Center" HorizontalOptions="Center">
+                        <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                            <BoxView BackgroundColor="{Binding SelectedTeamResult, Converter={StaticResource selectedTeamResultConverter}}" HeightRequest="40" WidthRequest="40" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="20"/>
+                            <Label Text="{Binding SelectedTeamResult}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" FontSize="Micro" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Grid>
+                    </StackLayout>-->
+                    <BoxView Grid.Row="2" Grid.ColumnSpan="3" Opacity=".3"
+                                         BackgroundColor="White"
+                                         HeightRequest="1"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid HorizontalOptions="FillAndExpand" RowSpacing="0"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="0,0,0,0" BackgroundColor="{DynamicResource navBackgroundColor}">
+            <StackLayout.Padding>
+               <OnPlatform x:TypeArguments="Thickness">
+                 <On Platform="Android" Value="0, 0, 0, 0"/>
+                 <On Platform="iOS" Value="0, 50, 0, 0"/>
+                </OnPlatform>
+              </StackLayout.Padding>
+            <Grid HorizontalOptions="FillAndExpand" HeightRequest="41">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Column="1" Padding="0,0,0,0" HeightRequest="30" WidthRequest="100" VerticalOptions="CenterAndExpand">
+                        <StackLayout.HorizontalOptions>
+                            <OnPlatform x:TypeArguments="LayoutOptions">
+                                <On Platform="Android" Value="StartAndExpand"/>
+                                <On Platform="iOS" Value="CenterAndExpand"/>
+                            </OnPlatform>
+                        </StackLayout.HorizontalOptions>
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+                <StackLayout Grid.Column="2"  Padding="0,0,0,0" HorizontalOptions="End">
+                    <Button x:Name="FavouriteButton" HorizontalOptions="End" TextColor="White"
+                        Text="{Binding IsFavourite, Converter={StaticResource favouriteConverter}}"
+                        Command="{Binding FavouriteCommand}"
+                        FontFamily="{Binding IsFavourite, Converter={StaticResource favouriteFontConverter}}"
+                        VerticalOptions="Center" FontSize="Medium" BackgroundColor="Transparent" IsVisible="{Binding IsFavouriteVisible}" />
+                </StackLayout>
+                <Button x:Name="BackButton" Text="" TextColor="{DynamicResource navTextColor}" FontSize="25" BackgroundColor="Transparent" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="BackButton_Clicked"/>
+            </Grid>
+        </StackLayout>
+
+        <Grid Grid.Row="1" HorizontalOptions="FillAndExpand" RowSpacing="0" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackLayout Grid.Row="0" Grid.Column="0" Padding="0,10,0,0" BackgroundColor="{DynamicResource tabHeaderColor}">
+                <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10,20" ColumnSpacing="50">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackLayout Grid.Row="1" Grid.Column="0" Padding="0,0,0,0">
+                        <Label x:Name="HomeTeamAlias" Text="{Binding FixtureItem.HomeTeam.Alias}" IsVisible="false"/>
+                        <Label Text="{Binding FixtureItem.TennisMatch[0].Player1.Player.Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" LineBreakMode="WordWrap" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small"  />
+                        <Label Text="{Binding FixtureItem.TennisMatch[0].Player2.Player.Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" LineBreakMode="WordWrap" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small" />
+                    </StackLayout>
+
+                    <StackLayout Grid.Row="1" Grid.Column="2" Padding="0,0,5,0">
+                        <Label Text="{Binding FixtureItem.TennisMatch[1].Player1.Player.Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand" LineBreakMode="WordWrap" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small" />
+                        <Label Text="{Binding FixtureItem.TennisMatch[1].Player2.Player.Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand" LineBreakMode="WordWrap" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small" />
+                    </StackLayout>
+
+                   <StackLayout Grid.Row="2" Grid.Column="0" Orientation="Vertical" VerticalOptions="CenterAndExpand" Margin="20,20" IsVisible="{Binding FixtureItem.HomeTeamScore, Converter={StaticResource isNullConverter}}">
+                        <StackLayout>
+                            <Label Text="{Binding FixtureItem.Player1Score}" VerticalOptions="End" HorizontalOptions="End" TextColor="{DynamicResource TextPrimaryColor}" FontSize="20" FontAttributes="Bold"/>
+                        </StackLayout>
+                    </StackLayout>
+
+                    <StackLayout Grid.Row="2" Grid.Column="2" Orientation="Vertical" VerticalOptions="CenterAndExpand" Margin="20,20" IsVisible="{Binding FixtureItem.AwayTeamScore, Converter={StaticResource isNullConverter}}">
+                        <StackLayout>
+                            <Label Text="{Binding FixtureItem.Player2Score}" VerticalOptions="End" HorizontalOptions="Start" TextColor="{DynamicResource TextPrimaryColor}" FontSize="20" FontAttributes="Bold"/>
+                        </StackLayout>
+                    </StackLayout>
+
+                    <StackLayout Grid.Row="3" Grid.ColumnSpan="3" Padding="10,10,10,0" IsVisible="{Binding FixtureItem.MatchResult, Converter={StaticResource isNullConverter}}">
+                        <Label Text="{Binding FixtureItem.MatchResult}" HorizontalOptions="CenterAndExpand" FontSize="Micro" TextColor="Gray"/>
+                    </StackLayout>
+                </Grid>
+            </StackLayout>
+           <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand" Padding="0,0,0,0">
+                <tabview:SfTabView TabHeaderBackgroundColor="{StaticResource tabHeaderColor}" VisibleHeaderCount="2" DisplayMode="Text" TabHeight="50" EnableSwiping="False" TabItemTapped="SfTabView_TabItemTapped">
+                    <tabview:SfTabView.SelectionIndicatorSettings>
+                        <tabview:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}"
+                                                              Position="Bottom" 
+                                                          StrokeThickness="2"/>
+                        </tabview:SfTabView.SelectionIndicatorSettings>
+                    <tabview:SfTabItem Title="Match Summary" SelectionColor="{DynamicResource TextPrimaryColor}"
+                                       TitleFontColor="Gray">
+                        <tabview:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="Start" BackgroundColor="{DynamicResource backgroundColor}" >
+                               <Grid.RowDefinitions>
+                                   <RowDefinition Height="Auto" />
+                                   <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackLayout>
+                                    <Label x:Name="SelectedPlayerIDLabel" IsVisible="false" Text="{Binding FixtureItem.SelectedPlayerID}"/>
+                                    <Grid Padding="30,10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="1"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="1"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackLayout VerticalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="1" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Column="1" VerticalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="2" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Column="2" VerticalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="3" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Column="3" VerticalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="4" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Column="4" VerticalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="5" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>                                            
+                                        </StackLayout>
+                                        <StackLayout Grid.Column="5" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Spacing="0">
+                                            <Label FontSize="Small" Text="Sets" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+
+                                        <StackLayout Grid.Row="1" Grid.ColumnSpan="6">
+                                            <BoxView HeightRequest="1" BackgroundColor="{DynamicResource TextPrimaryColor}" Opacity="0.05"/>
+                                        </StackLayout>
+
+                                        <StackLayout Grid.Row="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[0].Set1}" FontAttributes="{Binding TennisMatch[0].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[0].TiebreakSet1}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="2" Grid.Column="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[0].Set2}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[0].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[0].TiebreakSet2}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="2" Grid.Column="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[0].Set3}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[0].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[0].TiebreakSet3}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="2" Grid.Column="3" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[0].Set4}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[0].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[0].TiebreakSet4}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="2" Grid.Column="4" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[0].Set5}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[0].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[0].TiebreakSet5}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="2" Grid.Column="5" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.Player1Score}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[0].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        
+                                        <StackLayout Grid.Row="3" Grid.ColumnSpan="6">
+                                            <BoxView HeightRequest="1" BackgroundColor="{DynamicResource TextPrimaryColor}" Opacity="0.05"/>
+                                        </StackLayout>
+
+                                        <StackLayout Grid.Row="4" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[1].Set1}" FontAttributes="{Binding TennisMatch[1].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[1].TiebreakSet1}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="4" Grid.Column="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[1].Set2}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[1].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[1].TiebreakSet2}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="4" Grid.Column="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[1].Set3}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[1].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[1].TiebreakSet3}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="4" Grid.Column="3" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[1].Set4}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[1].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[1].TiebreakSet4}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="4" Grid.Column="4" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Orientation="Horizontal" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.TennisMatch[1].Set5}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[1].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                            <Label FontSize="8" Text="{Binding FixtureItem.TennisMatch[1].TiebreakSet5}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="4" Grid.Column="5" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Spacing="0">
+                                            <Label FontSize="Small" Text="{Binding FixtureItem.Player2Score}" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="{Binding TennisMatch[1].ID, Converter={StaticResource selectedPlayerConverter}, ConverterParameter={x:Reference Name=SelectedPlayerIDLabel}}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+
+                                    </Grid>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand" Padding="10,15">
+                                    <StackLayout>
+                            <Frame Padding="10,0" HeightRequest="30" CornerRadius="15" HasShadow="False" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="Start">
+                                <Label Text="Match Info" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small" VerticalOptions="CenterAndExpand"/>
+                            </Frame>
+                        </StackLayout>
+                                 <Grid RowSpacing="15" VerticalOptions="Start">
+                    <Grid.RowDefinitions>
+                                   <RowDefinition Height="Auto" />
+                                   <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Padding="10,0" Grid.Column="0">
+                <Label Text="Match" TextColor="Gray" FontSize="Micro"/>
+            </StackLayout>
+             <StackLayout Padding="10,0" Grid.Column="1" Orientation="Horizontal">
+                <Label Text="{Binding FixtureItem.TournamentMatchType.MatchType.Name}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small"/>
+                 <Label Text="{Binding FixtureItem.MatchType.Name, StringFormat='- {0}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small"/>
+            </StackLayout>
+                    <StackLayout Padding="10,0" Grid.Row="1" Grid.Column="0">
+                <Label Text="Date" TextColor="Gray"  FontSize="Micro" />
+            </StackLayout>
+            <StackLayout Padding="10,0" Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" Spacing="0">
+                <Label Text="{Binding FixtureItem.Date, StringFormat='{0:dd MMM yyyy}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small" />
+               </StackLayout>
+            <StackLayout Padding="10,0" Grid.Row="2" Grid.Column="0">
+                <Label Text="Time" TextColor="Gray"  FontSize="Micro" />
+            </StackLayout>
+            <StackLayout Padding="10,0" Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" Spacing="0">
+                <Label Text="{Binding FixtureItem.FixtureTime, StringFormat='{0:h:mm tt}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small" />
+            </StackLayout>
+            <StackLayout Padding="10,0" Grid.Row="3" Grid.Column="0">
+                <Label Text="Venue" TextColor="Gray"  FontSize="Micro"/>
+            </StackLayout>
+            <StackLayout Padding="10,0" Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" Spacing="0">
+                <Label Text="{Binding FixtureItem.TournamentMatchType.Tournament.Field.Name}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small"/>
+                </StackLayout>
+                    </Grid>
+            </StackLayout>
+                              </Grid>
+                        </tabview:SfTabItem.Content>
+                    </tabview:SfTabItem>
+                    <tabview:SfTabItem Title="Head to Head" SelectionColor="{DynamicResource TextPrimaryColor}"
+                                       TitleFontColor="Gray">
+                        <tabview:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+                               <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <listView:SfListView Grid.Row="0" x:Name="HeadToHeadFixtureListView"
+                                                ItemsSource="{Binding HeadToHeadFixtureCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                   SelectionMode="None"
+                                                   ItemSpacing="0"
+                                                 AutoFitMode="DynamicHeight">
+                                    <listView:SfListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <templates:HeadToHeadList />
+                                    </DataTemplate>
+                                </listView:SfListView.ItemTemplate>
+                                </listView:SfListView>
+                                <extensions:CustomBusyIndicator IsVisible="{Binding IsHeadToHeadActivityIndicatorVisible}"/>
+                            </Grid>
+                        </tabview:SfTabItem.Content>
+                    </tabview:SfTabItem>
+                </tabview:SfTabView>
+            </StackLayout>
+        </Grid>
+
+            <StackLayout Grid.Row="2" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+            </StackLayout>
+            <StackLayout Grid.Row="2" Padding="0,0,0,0" HeightRequest="50" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AdTappedCommand}"/>
+                </StackLayout.GestureRecognizers>
+                <Image Source="{Binding Ad.Image}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Aspect="AspectFill"/>
+            </StackLayout>
+            <!--<StackLayout Grid.Row="1" VerticalOptions="EndAndExpand" HorizontalOptions="FillAndExpand" >
+                <Image Source="bcblogo" Aspect="AspectFit" Opacity=".1"/>
+            </StackLayout>-->
+            <model:AdMobView Size="Standardbanner" Grid.Row="2" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>
+            </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -15,6 +15,7 @@ using Xamarin.Essentials;
 using TruSport.Views.Cricket;
 using TruSport.Views.Bowling;
 using TruSport.Views.Tickets;
+using TruSport.Views.Tennis;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace TruSport
@@ -212,6 +213,8 @@ namespace TruSport
                         MainPage = new CricketMasterDetailPage();
                     else if (sport.Sport.ToLower() == "bowling")
                         MainPage = new BowlingMasterDetailPage();
+                    else if (sport.Sport.ToLower() == "tennis")
+                        MainPage = new TennisMasterDetailPage();
                     else
                         MainPage = new FootballMasterDetailPage();
                 }

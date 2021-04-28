@@ -28,6 +28,7 @@ namespace OnTrackWebService.Data
         public DbSet<BowlingTeam> BowlingTeams { get; set; }
         public DbSet<BowlingTeamSeason> BowlingTeamSeasons { get; set; }
         public DbSet<Coach> Coaches { get; set; }
+        public DbSet<CourtType> CourtTypes { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Field> Fields { get; set; }
         public DbSet<Fielding> Fieldings { get; set; }
@@ -75,6 +76,15 @@ namespace OnTrackWebService.Data
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamSeason> TeamSeasons { get; set; }
+        public DbSet<TennisFixture> TennisFixtures { get; set; }
+        public DbSet<TennisGame> TennisGames { get; set; }
+        public DbSet<TennisMatch> TennisMatches { get; set; }
+        public DbSet<TennisPlayerSeason> TennisPlayerSeasons { get; set; }
+        public DbSet<TennisRanking> TennisRankings { get; set; }
+        public DbSet<TennisSet> TennisSets { get; set; }
+        public DbSet<TennisTiebreak> TennisTiebreaks { get; set; }
+        public DbSet<TennisTournament> TennisTournaments { get; set; }
+        public DbSet<TournamentMatchType> TournamentMatchTypes { get; set; }
         public DbSet<TicketConfiguration> TicketConfigurations { get; set; }
         public DbSet<TicketMember> TicketMembers { get; set; }
         public DbSet<TicketCompany> TicketCompanys { get; set; }
@@ -99,6 +109,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<BowlingPlayerSeason>().ToTable("BowlingPlayerSeason");
             modelBuilder.Entity<BowlingLeagueStanding>().ToTable("BowlingLeagueStanding");
             modelBuilder.Entity<Coach>().ToTable("Coach");
+            modelBuilder.Entity<CourtType>().ToTable("CourtType");
             modelBuilder.Entity<Customer>().ToTable("Customer");
             modelBuilder.Entity<ContactTrace>().ToTable("ContactTrace");
             modelBuilder.Entity<Inventory>().ToTable("Inventory");
@@ -110,6 +121,15 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<Product>().ToTable("Product");
             modelBuilder.Entity<MatchTicket>().ToTable("MatchTicket");
             modelBuilder.Entity<Field>().ToTable("Field");
+            modelBuilder.Entity<TennisFixture>().ToTable("TennisFixture");
+            modelBuilder.Entity<TennisGame>().ToTable("TennisGame");
+            modelBuilder.Entity<TennisMatch>().ToTable("TennisMatch");
+            modelBuilder.Entity<TennisPlayerSeason>().ToTable("TennisPlayerSeason");
+            modelBuilder.Entity<TennisRanking>().ToTable("TennisRanking");
+            modelBuilder.Entity<TennisSet>().ToTable("TennisSet");
+            modelBuilder.Entity<TennisTiebreak>().ToTable("TennisTiebreak");
+            modelBuilder.Entity<TennisTournament>().ToTable("TennisTournament");
+            modelBuilder.Entity<TournamentMatchType>().ToTable("TournamentMatchType");
             modelBuilder.Entity<TicketConfiguration>().ToTable("TicketConfiguration");
             modelBuilder.Entity<TicketMember>().ToTable("TicketMember");
             modelBuilder.Entity<TicketCompany>().ToTable("TicketCompany");
