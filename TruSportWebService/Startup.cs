@@ -47,12 +47,12 @@ namespace OnTrackWebService
             });
 
             //#if DEBUG
-            services.AddDbContext<OnTrackContext>
-                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
+            //services.AddDbContext<OnTrackContext>
+            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
 
             //#else
-            //services.AddDbContext<OnTrackContext>
-            //  (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
+            services.AddDbContext<OnTrackContext>
+              (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
 
             //#endif
 
@@ -101,6 +101,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<FixtureProduct>, FixtureProductRepository>();
             services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
             services.AddScoped<IOnTrackRepository<Match>, MatchRepository>();
+            services.AddScoped<IOnTrackRepository<CustomerTicket>, CustomerTicketRepository>();
             services.AddScoped<IOnTrackRepository<MatchTicket>, MatchTicketRepository>();
             services.AddScoped<IOnTrackRepository<MatchInning>, MatchInningRepository>();
             services.AddScoped<IOnTrackRepository<MatchRoster>, MatchRosterRepository>();
@@ -121,6 +122,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<TicketConfiguration>, TicketConfigurationRepository>();
             services.AddScoped<IOnTrackRepository<Role>, RoleRepository>();
             services.AddScoped<ISettingRepository<Setting>, SettingRepository>();
+            services.AddScoped<IOnTrackRepository<SportEvent>, SportEventRepository>();
             services.AddScoped<IOnTrackRepository<Season>, SeasonRepository>();
             services.AddScoped<IOnTrackRepository<Sport>, SportRepository>();
             //services.AddScoped<IDisposable, UserRepository>();

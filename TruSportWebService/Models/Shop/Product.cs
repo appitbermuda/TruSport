@@ -15,6 +15,7 @@ namespace OnTrackWebService.Models.Shop
         public string Image { get; set; }
         public decimal Price { get; set; }
         public decimal? MemberPrice { get; set; }
+        public decimal Fee { get; set; }
 
         [ForeignKey("ProductTypeID")]
         public ProductType ProductType { get; set; }

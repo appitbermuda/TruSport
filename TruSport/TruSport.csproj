@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Test;Debug;Release</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
@@ -11,7 +12,7 @@
     <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1534" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="Microsoft.Azure.Mobile.Client" Version="4.0.2" />
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
     <PackageReference Include="Syncfusion.Xamarin.SfListView" Version="18.1.0.42" />
@@ -68,6 +69,7 @@
     <Folder Include="Views\Bowling\" />
     <Folder Include="ViewModel\Tennis\" />
     <Folder Include="Views\Tennis\" />
+    <Folder Include="Model\Ticket\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Views\Football\MatchStatsPopUpPage %28another copy%29.cs" />

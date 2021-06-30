@@ -8,6 +8,7 @@ using TruSport.Views;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
 using TruSport.Views.Tennis;
+using TruSport.Views.Tickets;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -17,12 +18,11 @@ namespace TruSport.ViewModel
     {
         #region Fields
         private ObservableCollection<Sport> _sports;
-        private SportFeature _featureImages;
+        private LandingFeature _featureImages;
         private bool _isActivityIndicatorVisible;
         private bool _noConnectivity;
         INavigation Navigation;
         SettingService settingService;
-        SportService sportService;
 
         #endregion
 
@@ -34,16 +34,13 @@ namespace TruSport.ViewModel
 
             //databaseManager = new DatabaseManager();
             settingService = new SettingService();
-            sportService = new SportService();
 
             GenerateSource();
 
             RefreshCommand = new Command(() => GenerateSource());
 
-            BowlingTappedCommand = new Command(() => BowlingTapped());
-            FootballTappedCommand = new Command(() => FootballTapped());
-            CricketTappedCommand = new Command(() => CricketTapped());
-            TennisTappedCommand = new Command(() => TennisTapped());
+            SportTappedCommand = new Command(() => SportTapped());
+            TicketTappedCommand = new Command(() => TicketTapped());
             //TrackTappedCommand = new Command(() => TrackTapped());
             //SwimmingTappedCommand = new Command(() => SwimmingTapped());
             //RugbyTappedCommand = new Command(() => RugbyTapped());
@@ -58,25 +55,10 @@ namespace TruSport.ViewModel
         #region Properties
 
         public Command RefreshCommand { get; }
-        public Command FootballTappedCommand { get; }
-        public Command BowlingTappedCommand { get; }
-        public Command CricketTappedCommand { get; }
-        public Command TennisTappedCommand { get; }
-        public Command TrackTappedCommand { get; }
-        public Command SwimmingTappedCommand { get; }
-        public Command RugbyTappedCommand { get; }
-        public Command BasketballTappedCommand { get; }
-        public Command HockeyTappedCommand { get; }
-        public Command GolfTappedCommand { get; }
-        public Command CyclingTappedCommand { get; }
+        public Command SportTappedCommand { get; }
+        public Command TicketTappedCommand { get; }
 
-        public ObservableCollection<Sport> Sports
-        {
-            get { return _sports; }
-            set { Set(ref _sports, value); }
-        }
-
-        public SportFeature FeatureImages
+        public LandingFeature FeatureImages
         {
             get { return _featureImages; }
             set { Set(ref _featureImages, value); }
@@ -107,13 +89,7 @@ namespace TruSport.ViewModel
                 var current = Connectivity.NetworkAccess;
                 if (current == NetworkAccess.Internet)
                 {
-                    var sports = await sportService.GetSports();
-
-                    FeatureImages = await settingService.GetHomeMobileFeatureImages();
-
-                    Sports = new ObservableCollection<Sport>(sports);
-
-                    await App.Database.ImportIfNotExistsSports(sports);
+                    FeatureImages = await settingService.GetLandingMobileFeatureImages();
                 }
                 else
                 {
@@ -130,30 +106,11 @@ namespace TruSport.ViewModel
             IsActivityIndicatorVisible = false;
         }
 
-        private async void FootballTapped()
+        private async void SportTapped()
         {
             try
             {
-                //await SecureStorage.SetAsync("DefaultSport","Football");
-                //await SecureStorage.SetAsync("Sport", "Football");
-
-                Sport sport = new Sport();
-
-                if (Sports == null)
-                {
-                    var sports = await sportService.GetSports();
-                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "football");
-                }
-                else
-                {
-                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "football");
-                }
-
-                await App.Database.SetDefaultSport(sport);
-
-                //Navigation.InsertPageBefore(new FootballMasterDetailPage(), Navigation.NavigationStack.First());
-                //await Navigation.PopToRootAsync();
-                Application.Current.MainPage = new FootballMasterDetailPage();
+                Application.Current.MainPage = new NavigationPage(new SportsPage());
             }
             catch (Exception ex)
             {
@@ -161,177 +118,17 @@ namespace TruSport.ViewModel
             }
         }
 
-        private async void CricketTapped()
+        private async void TicketTapped()
         {
             try
             {
-                //await SecureStorage.SetAsync("DefaultSport", "Cricket");
-                //await SecureStorage.SetAsync("Sport", "Cricket");
-                Sport sport = new Sport();
-
-                if (Sports == null)
-                {
-                    var sports = await sportService.GetSports();
-                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "cricket");
-                }
-                else
-                {
-                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "cricket");
-                }
-
-
-                await App.Database.SetDefaultSport(sport);
-                Application.Current.MainPage = new CricketMasterDetailPage();
-                
-                //Navigation.InsertPageBefore(new CricketMasterDetailPage(), Navigation.NavigationStack.First());
-                //await Navigation.PopToRootAsync();
+                Application.Current.MainPage = (new TicketFlyoutPage());                
             }
             catch (Exception ex)
             {
 
             }
         }
-
-        private async void BowlingTapped()
-        {
-            try
-            {
-                //await SecureStorage.SetAsync("DefaultSport", "Cricket");
-                //await SecureStorage.SetAsync("Sport", "Cricket");
-                Sport sport = new Sport();
-
-                if (Sports == null)
-                {
-                    var sports = await sportService.GetSports();
-                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "bowling");
-                }
-                else
-                {
-                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "bowling");
-                }
-
-
-                await App.Database.SetDefaultSport(sport);
-                Application.Current.MainPage = new BowlingMasterDetailPage();
-
-                //Navigation.InsertPageBefore(new CricketMasterDetailPage(), Navigation.NavigationStack.First());
-                //await Navigation.PopToRootAsync();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-
-        private async void TennisTapped()
-        {
-            try
-            {
-                Sport sport = new Sport();
-
-                if (Sports == null)
-                {
-                    var sports = await sportService.GetSports();
-                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "tennis");
-                }
-                else
-                {
-                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "tennis");
-                }
-
-
-                await App.Database.SetDefaultSport(sport);
-                Application.Current.MainPage = new TennisMasterDetailPage();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-
-        //private async void TrackTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Track & Field"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //}
-
-        //private async void SwimmingTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Swimming"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //}
-
-        //private async void RugbyTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Rugby"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //}
-
-        //private async void BasketballTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Basketball"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //}
-
-        //private async void HockeyTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Field Hockey"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //}
-
-        //private async void GolfTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Golf"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //}
-
-        //private async void CyclingTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Cycling"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //}
 
         #endregion
     }

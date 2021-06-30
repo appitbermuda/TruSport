@@ -59,6 +59,7 @@ namespace OnTrackWebService.Data
         public DbSet<Match> Matches { get; set; }
         public DbSet<MatchInning> MatchInnings { get; set; }
         public DbSet<MatchTicket> MatchTickets { get; set; }
+        public DbSet<CustomerTicket> CustomerTickets { get; set; }
         public DbSet<MatchRoster>  MatchRosters { get; set; }
         public DbSet<MatchStat> MatchStats { get; set; }
         public DbSet<MatchType> MatchTypes { get; set; }
@@ -92,6 +93,8 @@ namespace OnTrackWebService.Data
         public DbSet<TicketTeam> TicketTeams { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<vTransfers> vTransfers { get; set; }
+        public DbSet<SportEvent> SportEvents { get; set; }
+        public DbSet<EventTicket> EventTickets { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<AllUsers> AllUsers { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
@@ -120,6 +123,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<FixtureProduct>().ToTable("FixtureProduct");
             modelBuilder.Entity<Product>().ToTable("Product");
             modelBuilder.Entity<MatchTicket>().ToTable("MatchTicket");
+            modelBuilder.Entity<CustomerTicket>().ToTable("CustomerTicket");
             modelBuilder.Entity<Field>().ToTable("Field");
             modelBuilder.Entity<TennisFixture>().ToTable("TennisFixture");
             modelBuilder.Entity<TennisGame>().ToTable("TennisGame");
@@ -135,6 +139,8 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<TicketCompany>().ToTable("TicketCompany");
             modelBuilder.Entity<TicketCompanyUser>().ToTable("TicketCompanyUser");
             modelBuilder.Entity<TicketTeam>().ToTable("TicketTeam");
+            modelBuilder.Entity<SportEvent>().ToTable("SportEvent");
+            modelBuilder.Entity<EventTicket>().ToTable("EventTicket");
 
             modelBuilder.Entity<Order>()
             .HasMany(c => c.OrderDetails)

@@ -8,21 +8,29 @@ namespace OnTrackWebService.Models.Shop
     public class TransferRequest
     {
         public string MatchTicketID { get; set; }
+        public string CustomerTicketID { get; set; }
         public string Email { get; set; }
 
         [NotMapped]
         public MatchTicket MatchTicket { get; set; }
+
+        [NotMapped]
+        public CustomerTicket CustomerTicket { get; set; }
     }
 
     public class AcceptTransfer
     {
         public string CustomerID { get; set; }
         public string MatchTicketID { get; set; }
+        public string CustomerTicketID { get; set; }
         public string TransferCustomerID { get; set; }
         public bool Accept { get; set; }
 
         [NotMapped]
         public MatchTicket MatchTicket { get; set; }
+
+        [NotMapped]
+        public CustomerTicket CustomerTicket { get; set; }
 
         [NotMapped]
         public Customer Customer { get; set; }

@@ -122,6 +122,7 @@ namespace OnTrackWebService.Repository
                                    .Select(c => c.Value).SingleOrDefault();
 
                 var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                DateTime currentDate = DateTime.Now.AddHours(-4).Date;
 
                 ContactTraces = await _context.ContactTraces
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
@@ -129,7 +130,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
                     .Include(e => e.Order).ThenInclude(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
-                    .Where(e => e.Order.OrderDetails.Any(x => x.FixtureProduct.Product.TicketCompanyID == companyUser.User.TeamID && x.FixtureProduct.Fixture.Date == DateTime.Now.AddHours(-4).Date)).ToListAsync();
+                    .Where(e => e.Order.OrderDetails.Any(x => x.FixtureProduct.Product.TicketCompanyID == companyUser.User.TeamID && x.FixtureProduct.Fixture.Date == currentDate)).ToListAsync();
 
                 ContactTraces.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
                 ContactTraces.ForEach(e => e.Order.FixtureDate = e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.Date);

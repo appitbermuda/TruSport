@@ -2,6 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Configurations>Debug;Release;Test</Configurations>
+    <Platforms>AnyCPU;iPhoneSimulator;iPhone</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
@@ -42,6 +44,7 @@
     <Folder Include="Models\Ad\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="Models\Tennis\" />
+    <Folder Include="Models\Ticket\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="3.1.8">

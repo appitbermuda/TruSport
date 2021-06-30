@@ -56,6 +56,7 @@ namespace TruSport.Views.Cricket
                 new CricketMasterDetailPageMenuItem { Id = 3, Title = "Leaderboard", IconSource="" , TargetType = typeof(Cricket.LeagueStatsPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 4, Title = "Competitions", IconSource="" , TargetType = typeof(Cricket.CompetitionsPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 5, Title = "Favourites", IconSource="" , TargetType = typeof(Cricket.FavouritePage), Group = "OnTrack" },
+                new CricketMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(Tickets.TicketFlyoutPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 9, Title = "Shop Merchandise", IconSource="" , TargetType = typeof(ShopPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 6, Title = "What's Happening?", IconSource="" , TargetType = typeof(FlyersPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 7, Title = "News", IconSource="" , TargetType = typeof(NewsPage), Group = "OnTrack" },

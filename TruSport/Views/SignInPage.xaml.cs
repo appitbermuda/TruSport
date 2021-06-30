@@ -89,5 +89,17 @@ namespace TruSport.Views
                 mdp.IsPresented = true;
             }
         }
+
+        async void BackButton_Clicked(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                await Navigation.PopAsync();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
     }
 }

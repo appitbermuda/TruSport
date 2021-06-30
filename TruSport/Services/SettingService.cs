@@ -41,6 +41,34 @@ namespace TruSport.Services
             }
         }
 
+        public async Task<LandingFeature> GetLandingMobileFeatureImages()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Setting/LandingMobileFeatureImages", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    LandingFeature landingMenu = JsonConvert.DeserializeObject<LandingFeature>(response.Content);
+
+                    return landingMenu;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+
+                return null;
+            }
+        }
+
         public async Task<Setting> Get(string ID)
         {
             try

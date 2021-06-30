@@ -103,6 +103,25 @@ namespace OnTrackWebService.Controllers
         }
 
         // GET api/values/5
+        [HttpGet]
+        [Route("CheckEventTickets")]
+        public async Task<IActionResult> CheckEventTicketInventory(string EventID)
+        {
+            try
+            {
+                bool hasInventory = await _inventoryRepository.CheckEventTicketInventory(EventID);
+
+                return Ok(hasInventory);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Inventory");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
         //[Deprecated]
         [HttpGet]
         [Route("Check")]

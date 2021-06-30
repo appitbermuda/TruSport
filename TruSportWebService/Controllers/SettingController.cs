@@ -66,6 +66,27 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("LandingMobileFeatureImages")]
+        public async Task<IActionResult> LandingMenuImages()
+        {
+            try
+            {
+
+                LandingFeature landingFeature = await _settingRepository.LandingMobileFeatureImages();
+
+                if (landingFeature != null)
+                    return Ok(landingFeature);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("ProcessingFee")]
         public async Task<IActionResult> ProcessingFee()
         {

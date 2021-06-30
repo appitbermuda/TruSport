@@ -98,7 +98,8 @@ namespace OnTrackWebService.Repository
                 var bowlingLeagueStandings = await _context.BowlingLeagueStandings
                     .Include(e => e.Team)
                     .Include(e => e.Season)
-                    .Include(e => e.League).ToListAsync();
+                    .Include(e => e.League)
+                    .ToListAsync();
 
                 //List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
 
