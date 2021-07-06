@@ -22,6 +22,29 @@
             <ContentView Grid.RowSpan="2" BackgroundColor="Black" Opacity=".5"/>
             <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand">
                 <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BowlingTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Frame BackgroundColor="Transparent" VerticalOptions="FillAndExpand" CornerRadius="10" Padding="0" HasShadow="False"> 
+                    <Grid RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <Image Source="bowlingfeature.jpg"
+                                       Aspect="AspectFill"
+                                       
+                                       HorizontalOptions="FillAndExpand"
+                                       VerticalOptions="FillAndExpand"/>
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <!--<forms:CachedImage Source="{Binding FeatureImages.HomeCricketImage, Converter={StaticResource cricketImageConverter}}" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>-->
+                    <Label Text="BOWLING" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+                    </Frame>
+            </StackLayout>
+            <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding CricketTappedCommand}" />
                 </StackLayout.GestureRecognizers>
                 <Frame BackgroundColor="Transparent" VerticalOptions="FillAndExpand" CornerRadius="10" Padding="0" HasShadow="False"> 
@@ -30,20 +53,20 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
                         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                        <Image Source="bcblogo.png"
+                        <Image Source="cricketfeature.jpg"
                                        Aspect="AspectFill"
                                        
                                        HorizontalOptions="FillAndExpand"
                                        VerticalOptions="FillAndExpand"/>
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
-                        <forms:CachedImage Source="{Binding FeatureImages.HomeCricketImage, Converter={StaticResource cricketImageConverter}}" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
-                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <!--<forms:CachedImage Source="{Binding FeatureImages.HomeCricketImage, Converter={StaticResource cricketImageConverter}}" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>-->
                     <Label Text="CRICKET" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                         </Grid>
                     </Frame>
             </StackLayout>
-            <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand">
+            <StackLayout Grid.Row="2" VerticalOptions="FillAndExpand">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding FootballTappedCommand}" />
                 </StackLayout.GestureRecognizers>
@@ -53,15 +76,15 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
                         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                        <Image Source="OnTrack_512.png"
+                        <Image Source="footballfeature.jpg"
                                        Aspect="AspectFill"
                                        
                                        HorizontalOptions="FillAndExpand"
                                        VerticalOptions="FillAndExpand"/>
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
-                        <forms:CachedImage Source="{Binding FeatureImages.HomeFootballImage, Converter={StaticResource imageConverter}}" ErrorPlaceholder="OnTrack_512.png" LoadingPlaceholder="OnTrack_512.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
-                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <!--<forms:CachedImage Source="{Binding FeatureImages.HomeFootballImage, Converter={StaticResource imageConverter}}" ErrorPlaceholder="OnTrack_512.png" LoadingPlaceholder="OnTrack_512.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>-->
                     <Label Text="FOOTBALL" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                         </Grid>
                     </Frame>

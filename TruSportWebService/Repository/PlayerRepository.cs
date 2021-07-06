@@ -42,7 +42,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var players = await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
+                var players = await _context.PlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
 
                 return players;
             }
@@ -58,7 +58,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var players = await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
+                var players = await _context.PlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
 
                 return players;
             }
@@ -74,7 +74,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var players = await _context.PlayerSeasons.Include("Team").Include("Player").Include("Season").FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
+                var players = await _context.PlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
 
                 return players;
             }
@@ -90,7 +90,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var players = await _context.CricketPlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
+                var players = await _context.CricketPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
 
                 return players;
             }
@@ -106,7 +106,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var players = await _context.CricketPlayerSeasons.Include("Team").Include("Player").Include("Season").Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
+                var players = await _context.CricketPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
 
                 return players;
             }
@@ -122,13 +122,61 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var players = await _context.CricketPlayerSeasons.Include("Team").Include("Player").Include("Season").FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
+                var players = await _context.CricketPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
 
                 return players;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "GetCricketPlayer");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingPlayerSeason>> GetBowlingPlayers()
+        {
+            try
+            {
+                var players = await _context.BowlingPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBowlingPlayers");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingPlayerSeason>> GetBowlingPlayersByTeam(string teamID)
+        {
+            try
+            {
+                var players = await _context.BowlingPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBowlingPlayersByTeam");
+            }
+
+            return null;
+        }
+
+        public async Task<BowlingPlayerSeason> GetBowlingPlayer(string playerID)
+        {
+            try
+            {
+                var players = await _context.BowlingPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBowlingPlayer");
             }
 
             return null;
@@ -187,6 +235,48 @@ namespace OnTrackWebService.Repository
                 await _context.SaveChangesAsync();
 
                 _context.CricketPlayerSeasons.Update(player);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async Task Update(BowlingPlayerSeason player)
+        {
+            try
+            {
+                var _player = player.Player;
+
+
+
+                _context.Players.Update(_player);
+                await _context.SaveChangesAsync();
+
+                _context.BowlingPlayerSeasons.Update(player);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async Task UpdateAll(List<BowlingPlayerSeason> players)
+        {
+            try
+            {
+                var _players = players.Select(e=> e.Player);
+
+
+
+                _context.Players.UpdateRange(_players);
+                await _context.SaveChangesAsync();
+
+                _context.BowlingPlayerSeasons.UpdateRange(players);
                 await _context.SaveChangesAsync();
 
             }

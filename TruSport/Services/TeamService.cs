@@ -119,6 +119,31 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<Team>> GetBowlingTeams()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Team/AllBowling", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Team> teams = JsonConvert.DeserializeObject<List<Team>>(response.Content);
+
+                    return teams;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+            return null;
+        }
+
         public async Task<List<Team>> GetCricketTeams()
         {
             try
@@ -295,6 +320,69 @@ namespace TruSport.Services
                     return team;
                 }
                 //}
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+
+                return null;
+            }
+        }
+
+        public async Task<TeamSeason> GetBowlingTeam(string ID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Team/Bowling", Method.GET);
+                request.AddParameter("id", ID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    TeamSeason team = JsonConvert.DeserializeObject<TeamSeason>(response.Content);
+
+                    return team;
+                }
+                //}
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+
+                return null;
+            }
+        }
+
+        public async Task<Team> GetBowlingProfile(string ID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Team/BowlingProfile", Method.GET);
+                request.AddParameter("id", ID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    Team team = JsonConvert.DeserializeObject<Team>(response.Content);
+
+                    return team;
+                }
 
                 return null;
             }

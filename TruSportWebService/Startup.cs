@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Ad;
 using OnTrackWebService.Models.Shop;
 using OnTrackWebService.Repository;
 //using Owin;
@@ -50,10 +51,10 @@ namespace OnTrackWebService
             //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"])
             //    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
-            ////#else
+            //#else
             services.AddDbContext<OnTrackContext>
-                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"])
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+              (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"])
+              .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
             //#endif
 
@@ -83,6 +84,9 @@ namespace OnTrackWebService
                 };
             });
 
+            services.AddScoped<IOnTrackRepository<Ad>, AdRepository>();
+            services.AddScoped<IOnTrackRepository<BowlingGame>, BowlingGameRepository>();
+            services.AddScoped<IOnTrackRepository<BowlingRoster>, BowlingRosterRepository>();
             services.AddScoped<IOnTrackRepository<ContactTrace>, ContactTraceRepository>();
             services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
             services.AddScoped<IEmailRepository<string>, EmailRepository>();
@@ -118,6 +122,9 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<UserType>, UserTypeRepository>();
             //services.AddSingleton<BackgroundWorker>();
 
+            services.AddOptions<NotificationHubOptions>()
+            .Configure(Configuration.GetSection("NotificationHub").Bind)
+            .ValidateDataAnnotations();
             //string domain = $"https://{Configuration["Auth0:Domain"]}/";
             //services.AddAuthentication(options =>
             //{

@@ -9,11 +9,13 @@
         <ResourceDictionary>
             <converters:ImageConverter x:Key="imageConverter" />
             <converters:CricketImageConverter x:Key="cricketImageConverter" />
+            <converters:BowlingImageConverter x:Key="bowlingImageConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid RowSpacing="1" BackgroundColor="White" VerticalOptions="FillAndExpand">
+        <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -24,8 +26,29 @@
                                        HorizontalOptions="CenterAndExpand"
                                        VerticalOptions="CenterAndExpand"/>
             </StackLayout>-->
-            
             <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BowlingTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <Image Source="bowlingfeature.jpg"
+                                       Aspect="AspectFill"
+                                       
+                                       HorizontalOptions="FillAndExpand"
+                                       VerticalOptions="FillAndExpand"/>
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <!--<forms:CachedImage Source="bowlingfeature.jpg" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />-->
+
+                    <!--<ContentView BackgroundColor="Black" Opacity=".6"/>-->
+                    <Label Text="BOWLING" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+            </StackLayout>
+            <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding CricketTappedCommand}" />
                 </StackLayout.GestureRecognizers>
@@ -34,19 +57,19 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
                         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                        <Image Source="bcblogo.png"
-                                       Aspect="AspectFit"
+                        <Image Source="cricketfeature.jpg"
+                                       Aspect="AspectFill"
                                        
                                        HorizontalOptions="FillAndExpand"
                                        VerticalOptions="FillAndExpand"/>
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
-                        <forms:CachedImage Source="{Binding FeatureImages.HomeCricketImage, Converter={StaticResource cricketImageConverter}}" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
-                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <!--<forms:CachedImage Source="cricketfeature.jpg" ErrorPlaceholder="bcblogo.png" LoadingPlaceholder="bcblogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>-->
                     <Label Text="CRICKET" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                         </Grid>
             </StackLayout>
-            <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand">
+            <StackLayout Grid.Row="2" VerticalOptions="FillAndExpand">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding FootballTappedCommand}" />
                 </StackLayout.GestureRecognizers>
@@ -55,25 +78,25 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
                         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                        <Image Source="ontracklogo.png"
-                                       Aspect="AspectFit"
+                        <Image Source="footballfeature.jpg"
+                                       Aspect="AspectFill"
                                        
                                        HorizontalOptions="FillAndExpand"
                                        VerticalOptions="FillAndExpand"/>
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
-                        <forms:CachedImage Source="{Binding FeatureImages.HomeFootballImage, Converter={StaticResource imageConverter}}" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
-                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <!--<forms:CachedImage Source="footballfeature.jpg" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>-->
                     <Label Text="FOOTBALL" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                         </Grid>
             </StackLayout>
-            <ContentView BackgroundColor="{DynamicResource backgroundColor}" IsVisible="{Binding NoConnectivity}" Grid.RowSpan="2"/>
-            <StackLayout VerticalOptions="FillAndExpand"  IsVisible="{Binding NoConnectivity}" Grid.RowSpan="2">
+            <!--<ContentView BackgroundColor="{DynamicResource backgroundColor}" IsVisible="{Binding NoConnectivity}" Grid.RowSpan="3"/>
+            <StackLayout VerticalOptions="FillAndExpand"  IsVisible="{Binding NoConnectivity}" Grid.RowSpan="3">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding RefreshCommand}"/>
                 </StackLayout.GestureRecognizers>
             </StackLayout>
-            <extension:NotContentView ActionText="Please connect to wifi or data." IsVisible="{Binding NoConnectivity}" Grid.RowSpan="2" InputTransparent="True"/>
+            <extension:NotContentView ActionText="Please connect to wifi or data." IsVisible="{Binding NoConnectivity}" Grid.RowSpan="2" InputTransparent="True"/>-->
         </Grid>
     </ContentPage.Content>
 </ContentPage>

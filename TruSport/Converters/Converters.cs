@@ -245,6 +245,24 @@ namespace TruSport.Converters
         }
     }
 
+    public class ShowResultConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var score = (int?)value;
+
+            if (score == null)
+                return false;
+
+            return true;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return int.Parse((string)value);
+        }
+    }
+
     public class IsUpcomingFixtureConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1344,6 +1362,111 @@ namespace TruSport.Converters
         }
     }
 
+    public class GroupingSelectionBowlingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<BowlingFixture>(groupResult.Items.ToList<BowlingFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    if (!data.MatchType.IsTable)
+                        return data.League.Name + " " + data.MatchType.Name;
+                    else
+                        return data.League.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Season.Date;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingSelectionGameBowlingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<BowlingGameResult>(groupResult.Items.ToList<BowlingGameResult>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    return "Game " + data.Game.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BowlingGameWinnerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return FontAttributes.None;
+
+                var winnerID = parameter as Label;
+
+                if ((string)value == winnerID.Text)
+                    return FontAttributes.Bold;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Bowling Winner Converter");
+            }
+
+            return FontAttributes.None;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class GroupingCompetitionCricketConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1624,7 +1747,7 @@ namespace TruSport.Converters
                 return image;
             }
             else
-                return "ontrack.png";
+                return "ontracklogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1645,6 +1768,26 @@ namespace TruSport.Converters
             }
             else
                 return "bcblogo.png";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BowlingImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((string)value != null && (string)value != "")
+            {
+                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+
+                return image;
+            }
+            else
+                return "ontracklogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1779,6 +1922,9 @@ namespace TruSport.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (((IList)value) == null)
+                return false;
+
             return !(((IList)value).Count == 0);
         }
 

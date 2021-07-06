@@ -9,12 +9,14 @@ using TruSport.ViewModel;
 using TruSport.Views;
 using TruSport.Views.Cricket;
 using TruSport.Views.Football;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace TruSport
 {
     public partial class MainPage : ContentPage
     {
+        readonly INotificationRegistrationService _notificationRegistrationService;
         FixtureService fixtureService;
 
         MainPageViewModel mainPageViewModel;
@@ -28,6 +30,8 @@ namespace TruSport
             InitializeComponent();
 
             this.BindingContext = mainPageViewModel;
+            _notificationRegistrationService =
+        PushServiceContainer.Resolve<INotificationRegistrationService>();
             //loader.Easing = Easing.Linear;
         }
 
@@ -234,5 +238,10 @@ namespace TruSport
             ////App.Current.MainPage = new FootballMainPage();
             //App.Current.MainPage = new FootballMasterDetailPage();
         }
+
+        void ShowAlert(string message)
+        => MainThread.BeginInvokeOnMainThread(()
+        => DisplayAlert("Notification", message, "OK").ContinueWith((task)
+            => { if (task.IsFaulted) throw task.Exception; }));
     }
 }

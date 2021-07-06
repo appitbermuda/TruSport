@@ -8,7 +8,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout Background="{DynamicResource backgroundColor}">
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}">
             <Grid VerticalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="70"/>

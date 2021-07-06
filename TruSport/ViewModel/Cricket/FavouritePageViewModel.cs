@@ -177,7 +177,10 @@ namespace TruSport.ViewModels.Cricket
                     FavouriteTeamCollection = new ObservableCollection<Team>(teams.Where(e => favouriteTeams.Select(x => x.TeamID).Contains(e.TeamID) && e.Season.IsCurrent).Select(e => e.Team).ToList());
                 }
                 else
+                {
                     NoTeamFavourites = true;
+                    FavouriteTeamCollection = new ObservableCollection<Team>();
+                }
             }
             catch (Exception ex)
             {
@@ -198,7 +201,10 @@ namespace TruSport.ViewModels.Cricket
                     FavouriteFixturesCollection = new ObservableCollection<CricketFixture>(favouriteFixtures.Select(e => e.CricketFixture));
                 }
                 else
+                {
                     NoFixtureFavourites = true;
+                    FavouriteFixturesCollection = new ObservableCollection<CricketFixture>();
+                }
             }
             catch (Exception ex)
             {

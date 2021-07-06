@@ -5,6 +5,7 @@ using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
 using TruSport.Views;
+using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
 using Xamarin.Forms;
 
@@ -34,6 +35,7 @@ namespace TruSport.ViewModel.Football
 
             GenerateSource();
 
+            BowlingTappedCommand = new Command(() => BowlingTapped());
             FootballTappedCommand = new Command(() => FootballTapped());
             CricketTappedCommand = new Command(() => CricketTapped());
             //TennisTappedCommand = new Command(() => TennisTapped());
@@ -50,6 +52,7 @@ namespace TruSport.ViewModel.Football
 
         #region Properties
 
+        public Command BowlingTappedCommand { get; }
         public Command FootballTappedCommand { get; }
         public Command CricketTappedCommand { get; }
         public Command TennisTappedCommand { get; }
@@ -89,7 +92,7 @@ namespace TruSport.ViewModel.Football
 
             try
             {
-                FeatureImages = await settingService.GetHomeMobileFeatureImages();
+                //FeatureImages = await settingService.GetHomeMobileFeatureImages();
 
                 var sports = await sportService.GetSports();
                 await App.Database.ImportIfNotExistsSports(sports);
@@ -119,6 +122,27 @@ namespace TruSport.ViewModel.Football
                 //Navigation.InsertPageBefore(new FootballMasterDetailPage(), Navigation.NavigationStack.First());
                 //await Navigation.PopToRootAsync();
                 Application.Current.MainPage = new FootballMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void BowlingTapped()
+        {
+            try
+            {
+                //await SecureStorage.SetAsync("DefaultSport", "Cricket");
+                //await SecureStorage.SetAsync("Sport", "Cricket");
+
+                var sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "bowling");
+
+                await App.Database.SetDefaultSport(sport);
+
+                Application.Current.MainPage = new BowlingMasterDetailPage();
+                //Navigation.InsertPageBefore(new CricketMasterDetailPage(), Navigation.NavigationStack.First());
+                //await Navigation.PopToRootAsync();
             }
             catch (Exception ex)
             {

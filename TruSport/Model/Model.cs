@@ -382,10 +382,10 @@ namespace TruSport.Model
         public virtual CricketLeagueTable CricketTable { get; set; }
 
         [Ignore]
-        public virtual List<TeamSeason> TeamSeasons { get; set; }
+        public virtual BowlingLeagueStanding BowlingLeagueStanding { get; set; }
 
-        //[Ignore]
-        //public virtual List<Transfer> Transfers { get; set; }
+        [Ignore]
+        public virtual List<TeamSeason> TeamSeasons { get; set; }
 
         [Ignore]
         public virtual List<CricketFixture> CricketFixtures { get; set; }
@@ -394,22 +394,25 @@ namespace TruSport.Model
         public virtual List<Fixture> Fixtures { get; set; }
 
         [Ignore]
+        public virtual List<BowlingFixture> BowlingFixtures { get; set; }
+
+        [Ignore]
         public virtual List<CricketFixture> CricketForm { get; set; }
+
+        [Ignore]
+        public virtual List<BowlingFixture> BowlingForm { get; set; }
 
         [Ignore]
         public virtual List<Fixture> Form { get; set; }
 
         [Ignore]
+        public virtual List<PlayerSeason> Players { get; set; }
+
+        [Ignore]
+        public virtual List<BowlingPlayerSeason> BowlingPlayers { get; set; }
+
+        [Ignore]
         public virtual bool IsFavourite { get; set; }
-
-        //[Ignore]
-        //public virtual List<PlayerSeason> Players { get; set; }
-
-        //[Ignore]
-        //public virtual List<LeagueTable> FootballTable { get; set; }
-
-        //[Ignore]
-        //public virtual List<CricketLeagueTable> CricketTable { get; set; }
     }
 
     public class TeamProfile
@@ -1009,6 +1012,16 @@ namespace TruSport.Model
         public ObservableCollection<Fielding> Fielders { get; set; }
     }
 
+    public class BowlingRosterListView
+    {
+        public string ID { get; set; }
+        public string FixtureID { get; set; }
+        public string HomeTeamID { get; set; }
+        public string HomePlayerName { get; set; }
+        public string AwayTeamID { get; set; }
+        public string AwayPlayerName { get; set; }
+    }
+
     public class RosterListView
     {
         public string ID { get; set; }
@@ -1414,54 +1427,6 @@ namespace TruSport.Model
         public string UserID { get; set; }
     }
 
-    //public class Favourite
-    //{
-    //    string id;
-    //    string type;
-    //    string favValue;
-    //    string logo;
-    //    string userID;
-
-    //    [PrimaryKey]
-    //    [JsonProperty(PropertyName = "id")]
-    //    public string ID
-    //    {
-    //        get { return id; }
-    //        set { id = value; }
-    //    }
-
-    //    [JsonProperty(PropertyName = "type")]
-    //    public string Type
-    //    {
-    //        get { return type; }
-    //        set { type = value; }
-    //    }
-
-    //    [JsonProperty(PropertyName = "value")]
-    //    public string Value
-    //    {
-    //        get { return favValue; }
-    //        set { favValue = value; }
-    //    }
-
-    //    [JsonProperty(PropertyName = "logo")]
-    //    public string Logo
-    //    {
-    //        get { return logo; }
-    //        set { logo = value; }
-    //    }
-
-    //    [JsonProperty(PropertyName = "userID")]
-    //    public string UserID
-    //    {
-    //        get { return userID; }
-    //        set { userID = value; }
-    //    }
-
-    //    [Version]
-    //    public string Version { get; set; }
-    //}
-
     public class Favourite
     {
         [PrimaryKey,AutoIncrement]
@@ -1470,6 +1435,7 @@ namespace TruSport.Model
         public string TeamID { get; set; }
         public string FixtureID { get; set; }
         public string CricketFixtureID { get; set; }
+        public string BowlingFixtureID { get; set; }
         public string Sport { get; set; }
 
         [Ignore]
@@ -1477,6 +1443,9 @@ namespace TruSport.Model
 
         [Ignore]
         public Team Team { get; set; }
+
+        [Ignore]
+        public BowlingFixture BowlingFixture { get; set; }
 
         [Ignore]
         public CricketFixture CricketFixture { get; set; }

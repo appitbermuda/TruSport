@@ -18,15 +18,29 @@ using TruSport.Styles;
 using Android.Content.Res;
 using Android.Support.V7.App;
 using Plugin.Permissions;
+using TruSport.Data;
+using TruSport.Droid.Data;
 
 namespace TruSport.Droid
 {
-    [Activity(Label = "OnTrack", Icon = "@mipmap/ontrack_launcher", Theme = "@style/SplashScreen", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait, LaunchMode = LaunchMode.SingleTask)]
+    [Activity(Label = "OnTrack", Icon = "@mipmap/ontrack_launcher", Theme = "@style/SplashScreen", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait, LaunchMode = LaunchMode.SingleTop)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         static readonly string TAG = "MainActivity";
         internal static readonly string CHANNEL_ID = "my_notification_channel";
         internal static readonly int NOTIFICATION_ID = 100;
+        IPushNotificationActionService _notificationActionService;
+        IDeviceInstallationService _deviceInstallationService;
+
+        IPushNotificationActionService NotificationActionService
+        => _notificationActionService ??
+        (_notificationActionService =
+        PushServiceContainer.Resolve<IPushNotificationActionService>());
+
+        IDeviceInstallationService DeviceInstallationService
+            => _deviceInstallationService ??
+                (_deviceInstallationService =
+                PushServiceContainer.Resolve<IDeviceInstallationService>());
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -40,6 +54,14 @@ namespace TruSport.Droid
             base.SetTheme(Resource.Style.MainTheme);
 
             base.OnCreate(bundle);
+
+            Bootstrap.Begin(() => new DeviceInstallationService());
+            if (DeviceInstallationService.NotificationsSupported)
+            {
+                FirebaseInstanceId.GetInstance(Firebase.FirebaseApp.Instance)
+                    .GetInstanceId()
+                    .AddOnSuccessListener((Android.Gms.Tasks.IOnSuccessListener)this);
+            }
 
             //SetContentView(Resource.Layout.Main);
             Forms.SetFlags("CarouselView_Experimental");
@@ -55,9 +77,15 @@ namespace TruSport.Droid
             LoadApplication(new App());
 
             SetAppTheme();
-            IsPlayServicesAvailable(); //You can use this method to check if play services are available.
-            CreateNotificationChannel();
+            
+            ProcessNotificationActions(Intent);
+            //IsPlayServicesAvailable(); //You can use this method to check if play services are available.
+            //CreateNotificationChannel();
         }
+
+        public void OnSuccess(Java.Lang.Object result)
+        => DeviceInstallationService.Token =
+            result.Class.GetMethod("getToken").Invoke(result).ToString();
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
@@ -72,30 +100,49 @@ namespace TruSport.Droid
 
         protected override void OnNewIntent(Intent intent)
         {
-            if (intent.Extras != null)
-            {
-                var message = intent.GetStringExtra("message");
-                //(App.Current.MainPage as MainPage)?.AddMessage(message);
-            }
+            //if (intent.Extras != null)
+            //{
+            //    var message = intent.GetStringExtra("message");
+            //    //(App.Current.MainPage as MainPage)?.AddMessage(message);
+            //}
 
             base.OnNewIntent(intent);
+            ProcessNotificationActions(intent);
         }
 
-        public bool IsPlayServicesAvailable()
+        void ProcessNotificationActions(Intent intent)
         {
-            int resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
-            if (resultCode != ConnectionResult.Success)
+            try
             {
-                if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
-                    Log.Debug(Constants.DebugTag, GoogleApiAvailability.Instance.GetErrorString(resultCode));
-                else
+                if (intent?.HasExtra("action") == true)
                 {
-                    Log.Debug(Constants.DebugTag, "This device is not supported");
+                    var action = intent.GetStringExtra("action");
+
+                    if (!string.IsNullOrEmpty(action))
+                        NotificationActionService.TriggerAction(action);
                 }
-                return false;
             }
-            return true;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
         }
+
+        //public bool IsPlayServicesAvailable()
+        //{
+        //    int resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
+        //    if (resultCode != ConnectionResult.Success)
+        //    {
+        //        if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
+        //            Log.Debug(Constants.DebugTag, GoogleApiAvailability.Instance.GetErrorString(resultCode));
+        //        else
+        //        {
+        //            Log.Debug(Constants.DebugTag, "This device is not supported");
+        //        }
+        //        return false;
+        //    }
+        //    return true;
+        //}
 
         private void OnModeChanged(Page arg1, string theme)
         {
@@ -110,23 +157,23 @@ namespace TruSport.Droid
             SetTheme(theme);
         }
 
-        void CreateNotificationChannel()
-        {
-            // Notification channels are new as of "Oreo".
-            // There is no need to create a notification channel on older versions of Android.
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                var channelName = Constants.NotificationChannelName;
-                var channelDescription = String.Empty;
-                var channel = new NotificationChannel(channelName, channelName, NotificationImportance.Default)
-                {
-                    Description = channelDescription
-                };
+        //void CreateNotificationChannel()
+        //{
+        //    // Notification channels are new as of "Oreo".
+        //    // There is no need to create a notification channel on older versions of Android.
+        //    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+        //    {
+        //        var channelName = Constants.NotificationChannelName;
+        //        var channelDescription = String.Empty;
+        //        var channel = new NotificationChannel(channelName, channelName, NotificationImportance.Default)
+        //        {
+        //            Description = channelDescription
+        //        };
 
-                var notificationManager = (NotificationManager)GetSystemService(NotificationService);
-                notificationManager.CreateNotificationChannel(channel);
-            }
-        }
+        //        var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+        //        notificationManager.CreateNotificationChannel(channel);
+        //    }
+        //}
 
         void SetAppTheme()
         {

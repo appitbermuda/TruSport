@@ -1,10 +1,17 @@
 ﻿<Properties StartupConfiguration="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}|Default" HasHotReloadOverlayBeenDismissed="True">
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Models/MatchInning.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Repository/OrderRepository.cs">
     <Files>
       <File FileName="TruSportWebService/Repository/UserRepository.cs" Line="336" Column="14" />
-      <File FileName="TruSportWebService/Startup.cs" Line="51" Column="78" />
-      <File FileName="TruSportWebService/Repository/MatchInningRepository.cs" Line="184" Column="49" />
-      <File FileName="TruSportWebService/Models/MatchInning.cs" Line="24" Column="18" />
+      <File FileName="TruSportWebService/Startup.cs" />
+      <File FileName="TruSportWebService/Repository/MatchInningRepository.cs" />
+      <File FileName="TruSportWebService/Models/MatchInning.cs" />
+      <File FileName="TruSportWebService/Data/OnTrackContext.cs" />
+      <File FileName="TruSport/ViewModel/AssignMatchViewModel.cs" />
+      <File FileName="TruSportWebService/Repository/BowlingGameRepository.cs" />
+      <File FileName="TruSportWebService/Repository/BowlingRosterRepository.cs" />
+      <File FileName="TruSportWebService/Data/Constants.cs" />
+      <File FileName="TruSportWebService/Repository/EmailRepository.cs" />
+      <File FileName="TruSportWebService/Repository/OrderRepository.cs" Line="149" Column="16" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -12,10 +19,14 @@
           <Node name="TruSport" expanded="True">
             <Node name="OnTrackWebService" expanded="True">
               <Node name="Dependencies" expanded="True" />
-              <Node name="Models" expanded="True">
-                <Node name="MatchInning.cs" selected="True" />
+              <Node name="Data" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Repository" expanded="True">
+                <Node name="OrderRepository.cs" selected="True" />
               </Node>
-              <Node name="Repository" expanded="True" />
+            </Node>
+            <Node name="TruSport" expanded="True">
+              <Node name="ViewModel" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -29,7 +40,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.OnTrackWebService PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <Debugger.DebugSourceFolders />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>

@@ -66,6 +66,24 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<TopScoresByTeam>> GetTopScoresByTeam()
+        {
+            try
+            {
+                //return await _context.LeagueStat.FromSql("select * from leaguetable").ToListAsync();
+                var season = await _context.Seasons.FirstOrDefaultAsync(e => e.IsCurrent && e.Sport.Name == "Bowling");
+
+                //var topScores = await _context.TopScoresByTeam.Where(e => e.SeasonDate == season.Date).OrderByDescending(e => e.Goals).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<GoalsScoredByTeam>> GetGoalsScoredByTeam()
         {
             try
@@ -128,6 +146,96 @@ namespace OnTrackWebService.Repository
             {
                 var wicketsStats = await _context.WicketsByPlayer.ToListAsync();
                 return wicketsStats.OrderByDescending(e => e.Stat).ThenBy(e => e.Rate).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingSeasonHG>> GetBowlingSeasonHG()
+        {
+            try
+            {
+                var bowlingHGs = await _context.BowlingSeasonHG.ToListAsync();
+                return bowlingHGs.OrderByDescending(e => e.Stat).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingSeasonHS>> GetBowlingSeasonHS()
+        {
+            try
+            {
+                var bowlingHSs = await _context.BowlingSeasonHS.ToListAsync();
+                return bowlingHSs.OrderByDescending(e => e.Stat).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingSeasonHG>> GetBowlingSeasonHGByTeam(string TeamID)
+        {
+            try
+            {
+                var bowlingHGs = await _context.BowlingSeasonHG.Where(e => e.TeamID == TeamID).ToListAsync();
+                return bowlingHGs.OrderByDescending(e => e.Stat).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingSeasonHS>> GetBowlingSeasonHSByTeam(string TeamID)
+        {
+            try
+            {
+                var bowlingHSs = await _context.BowlingSeasonHS.Where(e => e.TeamID == TeamID).ToListAsync();
+                return bowlingHSs.OrderByDescending(e => e.Stat).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingSeasonTeamHG>> GetBowlingSeasonTeamHG()
+        {
+            try
+            {
+                var bowlingHGs = await _context.BowlingSeasonTeamHG.ToListAsync();
+                return bowlingHGs.OrderByDescending(e => e.Stat).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BowlingSeasonTeamHS>> GetBowlingSeasonTeamHS()
+        {
+            try
+            {
+                var bowlingHSs = await _context.BowlingSeasonTeamHS.ToListAsync();
+                return bowlingHSs.OrderByDescending(e => e.Stat).ToList();
             }
             catch (Exception ex)
             {

@@ -49,7 +49,7 @@ namespace TruSport.ViewModel
         private bool _isActivityIndicatorVisible;
 
         FixtureService fixtureService;
-        MatchRosterService matchRosterService;
+        RosterService rosterService;
         MatchStatService matchStatService;
         MatchService matchService;
 
@@ -72,7 +72,7 @@ namespace TruSport.ViewModel
         {
             Navigation = navigation;
             fixtureService = new FixtureService();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             matchStatService = new MatchStatService();
             matchService = new MatchService();
 
@@ -304,7 +304,7 @@ namespace TruSport.ViewModel
 
             //fixture = await fixtureService.Get(fixture.ID);
 
-            var matchRostersList = await matchRosterService.GetFixtureMatchRosters(fixture.ID);
+            var matchRostersList = await rosterService.GetFixtureMatchRosters(fixture.ID);
 
             FixtureItem = fixture;
 
@@ -440,7 +440,7 @@ namespace TruSport.ViewModel
             fixture = await fixtureService.Get(fixture.ID);
             FixtureItem = fixture;
 
-            var matchRostersList = await matchRosterService.GetFixtureMatchRosters(fixture.ID);
+            var matchRostersList = await rosterService.GetFixtureMatchRosters(fixture.ID);
 
             //if (fixture.MatchRosters == null)
             //{
@@ -599,7 +599,7 @@ namespace TruSport.ViewModel
 
                 IsActivityIndicatorVisible = true;
 
-                var matchRostersList = await matchRosterService.GetFixtureMatchRosters(FixtureItem.ID);
+                var matchRostersList = await rosterService.GetFixtureMatchRosters(FixtureItem.ID);
                 if (matchRostersList == null)
                 {
                     HomeTeamSelected = false;
@@ -631,7 +631,7 @@ namespace TruSport.ViewModel
 
                 IsActivityIndicatorVisible = true;
 
-                var matchRostersList = await matchRosterService.GetFixtureMatchRosters(FixtureItem.ID);
+                var matchRostersList = await rosterService.GetFixtureMatchRosters(FixtureItem.ID);
                 if (matchRostersList == null)
                 {
                     AwayTeamSelected = false;
@@ -682,7 +682,7 @@ namespace TruSport.ViewModel
 
                 IsActivityIndicatorVisible = true;
 
-                var matchRostersList = await matchRosterService.GetFixtureMatchRosters(FixtureItem.ID);
+                var matchRostersList = await rosterService.GetFixtureMatchRosters(FixtureItem.ID);
                 if (matchRostersList == null)
                 {
                     HomeTeamSelected = false;
@@ -714,7 +714,7 @@ namespace TruSport.ViewModel
 
                 IsActivityIndicatorVisible = true;
 
-                var matchRostersList = await matchRosterService.GetFixtureMatchRosters(FixtureItem.ID);
+                var matchRostersList = await rosterService.GetFixtureMatchRosters(FixtureItem.ID);
                 if (matchRostersList == null)
                 {
                     AwayTeamSelected = false;

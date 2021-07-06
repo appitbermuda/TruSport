@@ -32,7 +32,7 @@ namespace TruSport.ViewModel
         private int playerCount;
 
         PlayerService playerService;
-        MatchRosterService matchRosterService;
+        RosterService rosterService;
         MatchStatService matchStatService;
         INavigation Navigation;
 
@@ -45,7 +45,7 @@ namespace TruSport.ViewModel
             PlayerCollection = new ObservableCollection<Player>();
             RosterCollection = new ObservableCollection<Player>();
             InitialRosterCollection = new ObservableCollection<MatchRoster>();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             matchStatService = new MatchStatService();
             playerService = new PlayerService();
 
@@ -62,7 +62,7 @@ namespace TruSport.ViewModel
             PlayerCollection = new ObservableCollection<Player>();
             RosterCollection = new ObservableCollection<Player>();
             InitialRosterCollection = new ObservableCollection<MatchRoster>();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             matchStatService = new MatchStatService();
             playerService = new PlayerService();
 
@@ -85,7 +85,7 @@ namespace TruSport.ViewModel
             PlayerCollection = new ObservableCollection<Player>();
             RosterCollection = new ObservableCollection<Player>();
             InitialRosterCollection = new ObservableCollection<MatchRoster>();
-            matchRosterService = new MatchRosterService();
+            rosterService = new RosterService();
             matchStatService = new MatchStatService();
             playerService = new PlayerService();
 
@@ -211,7 +211,7 @@ namespace TruSport.ViewModel
             {
                 PlayerCount = 0;
                 List<PlayerSeason> teamPlayers = await playerService.GetTeamPlayers(teamID);
-                List<MatchRoster> matchRosterPlayers = await matchRosterService.GetTeamMatchRosters(fixtureID, teamID);
+                List<MatchRoster> matchRosterPlayers = await rosterService.GetTeamMatchRosters(fixtureID, teamID);
 
                 List<Player> playersList = teamPlayers.Where(e => e.Season.IsCurrent).Select(e => e.Player).OrderBy(e => e.LastName).ThenBy(e => e.FirstName).ToList();
                 List<Player> rosterPlayers = matchRosterPlayers.Select(e => e.Player).OrderBy(e => e.LastName).ThenBy(e => e.FirstName).ToList();
@@ -244,7 +244,7 @@ namespace TruSport.ViewModel
             {
                 PlayerCount = 0;
                 List<PlayerSeason> teamPlayers = await playerService.GetTeamPlayers(teamID);
-                List<MatchRoster> matchRosterPlayers = await matchRosterService.GetTeamMatchRosters(fixture.ID, teamID);
+                List<MatchRoster> matchRosterPlayers = await rosterService.GetTeamMatchRosters(fixture.ID, teamID);
 
                 List<Player> playersList = teamPlayers.Where(e => e.Season.IsCurrent).Select(e => e.Player).OrderBy(e => e.LastName).ThenBy(e => e.FirstName).ToList();
                 
@@ -372,7 +372,7 @@ namespace TruSport.ViewModel
                                 JerseyNumber = player.JerseyNumber
                             });
                         }
-                        await matchRosterService.InsertAll(matchRosterInsert);
+                        await rosterService.InsertAll(matchRosterInsert);
 
                         bool update = false;
                         List<MatchRoster> matchRosterUpdate = new List<MatchRoster>();
@@ -397,7 +397,7 @@ namespace TruSport.ViewModel
 
                         if (update)
                         {
-                            await matchRosterService.UpdateAll(matchRosterUpdate);
+                            await rosterService.UpdateAll(matchRosterUpdate);
                         }
                     }
                     else
@@ -414,7 +414,7 @@ namespace TruSport.ViewModel
                                 JerseyNumber = player.JerseyNumber
                             });
                         }
-                        await matchRosterService.InsertAll(matchRoster);
+                        await rosterService.InsertAll(matchRoster);
                     }
 
                     MessagingCenter.Send<string>("RosterList", "Refresh");

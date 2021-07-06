@@ -184,6 +184,212 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<LeagueStat>> GetBowlingSeasonHG()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/BowlingSeasonHG", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueStat>> GetBowlingSeasonHS()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/BowlingSeasonHS", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueStat>> GetBowlingSeasonTeamHG()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/BowlingSeasonTeamHG", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueStat>> GetBowlingSeasonTeamHS()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/BowlingSeasonTeamHS", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueStat>> GetBowlingSeasonHGByTeam(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/TeamBowlingSeasonHG", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueStat>> GetBowlingSeasonHSByTeam(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/TeamBowlingSeasonHS", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
         public async Task<List<LeagueStat>> GetGoalsScoredByPlayerByTeam(string teamID)
         {
             try
@@ -277,6 +483,40 @@ namespace TruSport.Services
 
                         return stats;
                     }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<LeagueStat>> GetMostPinsByPlayer()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/PinsByPlayer", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LeagueStat> stats = JsonConvert.DeserializeObject<List<LeagueStat>>(response.Content);
+
+                    return stats;
+                }
                 //}
 
                 //return null;

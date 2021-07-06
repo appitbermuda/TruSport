@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Syncfusion.ListView.XForms;
+using TruSport.Data;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
@@ -24,12 +25,14 @@ namespace TruSport.ViewModel.Shop
 
         INavigation Navigation;
         OrderService orderService;
+        NotificationRegistrationService notificationRegistrationService;
 
 
         public AccountPageViewModel(INavigation navigation)
         {
             Navigation = navigation;
             orderService = new OrderService();
+            notificationRegistrationService = new NotificationRegistrationService();
             CreditCardCollection = new ObservableCollection<CreditCard>();
             OrderCollection = new ObservableCollection<Order>();
 
@@ -164,6 +167,7 @@ namespace TruSport.ViewModel.Shop
             {
                 SecureStorage.RemoveAll();
                 await App.Database.SignOut();
+                await notificationRegistrationService.DeregisterDeviceAsync();
 
                 if (Application.Current.MainPage is MasterDetailPage mdp)
                 {

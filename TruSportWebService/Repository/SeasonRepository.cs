@@ -37,6 +37,11 @@ namespace OnTrackWebService.Repository
             return await _context.Seasons.Where(e => e.Sport.Name == "Football").ToListAsync();
         }
 
+        public async Task<List<Season>> GetBowlingSeason()
+        {
+            return await _context.Seasons.Where(e => e.Sport.Name == "Bowling").ToListAsync();
+        }
+
         public async Task<IEnumerable<Season>> GetAll()
         {
             return await _context.Seasons.ToListAsync();

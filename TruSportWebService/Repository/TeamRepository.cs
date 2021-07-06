@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Imports;
 
 namespace OnTrackWebService.Repository
 {
@@ -14,11 +20,13 @@ namespace OnTrackWebService.Repository
     {
         OnTrackContext _context;
         LeagueTableRepository leagueTableRepository;
+        LeagueRepository leagueRepository;
 
         public TeamRepository(OnTrackContext context)
         {
             _context = context;
             leagueTableRepository = new LeagueTableRepository(context);
+            leagueRepository = new LeagueRepository(context);
         }
         public Task Delete(string id)
         {
@@ -69,6 +77,28 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team).ThenInclude(e => e.Coaches)
                     .Include(e => e.Team).ThenInclude(e => e.Field)
                     .FirstOrDefaultAsync(e => e.TeamID == id && e.Season.IsCurrent);
+
+                return teamSeason;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<BowlingTeamSeason> GetBowlingTeam(string id)
+        {
+            try
+            {
+                BowlingTeamSeason teamSeason = new BowlingTeamSeason();
+
+                teamSeason = await _context.BowlingTeamSeasons
+                    .Include(e => e.League)
+                    .Include(e => e.Season)
+                    .Include(e => e.BowlingTeam)
+                    .FirstOrDefaultAsync(e => e.BowlingTeamID == id && e.Season.IsCurrent);
 
                 return teamSeason;
             }
@@ -278,6 +308,32 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<BowlingTeam>> GetBowlingTeams()
+        {
+            try
+            {
+                List<BowlingTeam> teams = new List<BowlingTeam>();
+
+                var teamSeason = await _context.BowlingTeamSeasons
+                    .Include(e => e.BowlingTeam)
+                    .Include(e => e.Season).ThenInclude(e => e.Sport)
+                    .Include(e => e.League)
+                    .Where(e => e.BowlingTeam.Name != "TBD" && e.Season.IsCurrent)
+                    .ToListAsync();
+
+                teamSeason.ForEach(e => e.BowlingTeam.League = e.League);
+                teamSeason.ForEach(e => e.BowlingTeam.LeagueID = e.LeagueID);
+
+                return teamSeason.Select(e => e.BowlingTeam).OrderBy(e => e.Name).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return null;
+        }
+
         public async Task<List<Team>> GetTicketingTeams(string SportID)
         {
             try
@@ -428,6 +484,140 @@ namespace OnTrackWebService.Repository
             return team;
         }
 
+        public async Task<BowlingTeam> GetBowlingProfile(string teamID)
+        {
+            BowlingTeam team = new BowlingTeam();
+            List<BowlingFixture> fixtures = new List<BowlingFixture>();
+            List<BowlingLeagueStanding> bowlingLeagueTables = new List<BowlingLeagueStanding>();
+
+            try
+            {
+                if (!String.IsNullOrEmpty(teamID))
+                {
+                    var teamSeason = await _context.BowlingTeamSeasons
+                    .Include(e => e.BowlingTeam).ThenInclude(e => e.League)
+                    .Include(e => e.Season).ThenInclude(e => e.Sport)
+                    .Include(e => e.League)
+                    .Where(e => e.BowlingTeamID == teamID && e.Season.IsCurrent)
+                    .ToListAsync();
+
+                    teamSeason.ForEach(e => e.BowlingTeam.League = e.League);
+                    teamSeason.ForEach(e => e.BowlingTeam.LeagueID = e.LeagueID);
+
+                    team = teamSeason.FirstOrDefault(e => e.Season.IsCurrent).BowlingTeam;
+
+                    bowlingLeagueTables = await _context.BowlingLeagueStandings
+                            .Include(e => e.Team)
+                            .Include(e => e.Season)
+                            .Include(e => e.League).ToListAsync();
+
+                    bowlingLeagueTables.ForEach(e => e.IsSelectedTeam = (e.TeamID == teamID));
+
+                    team.BowlingLeagueStanding = bowlingLeagueTables.FirstOrDefault(e => e.Season.IsCurrent && e.LeagueID == team.League.ID && e.TeamID == teamID);
+
+                    teamSeason.ForEach(e => e.BowlingLeagueStandings = bowlingLeagueTables.Where(f => f.LeagueID == e.LeagueID).ToList());
+
+                    team.TeamSeasons = teamSeason;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return team;
+        }
+
+        public async Task<ImportBowlingTeam> UploadBowlingTeams(IFormFile file)
+        {
+            try
+            {
+                List<BowlingTeams> errorTeams = new List<BowlingTeams>();
+                List<BowlingTeam> teams = new List<BowlingTeam>();
+                List<League> leagues = await leagueRepository.GetBowlingLeagues();
+                League league = null;
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
+                    var records = csv.GetRecords<BowlingTeams>();
+
+                    foreach (var record in records)
+                    {
+                        try
+                        {
+                            league = leagues.FirstOrDefault(e => e.Name == record.League.Trim());
+
+                            teams.Add(new BowlingTeam
+                            {
+                                TeamID = record.TeamID,
+                                Name = record.Name,
+                                Alias = null,                                
+                                LeagueID = league.ID                                
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorTeams.Add(record);
+
+                        }
+                    }
+
+                    try
+                    {
+                        await AddBowlingTeams(teams);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ImportBowlingTeam
+                        {
+                            Message = "Error importing teams to database.",
+                            Exception = ex.Message
+                        };
+                    }
+                }
+
+                if (errorTeams != null && errorTeams.Count > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorTeams);
+                        streamWriter.Flush();
+
+                        return new ImportBowlingTeam
+                        {
+                            Message = "Successfully imported teams with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorTeams,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportBowlingTeam
+                {
+                    Message = "Successfully imported teams!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportBowlingTeam
+                {
+                    Message = "Error importing teams!",
+                    Exception = ex.Message
+                };
+            }
+
+
+        }
+
         //Deprecated
         //[Obsolete]
         public async Task<IEnumerable<TeamSeason>> GetTeams()
@@ -476,6 +666,28 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<BowlingTeamSeason>> GetTeamsByBowlingLeague(string leagueID)
+        {
+            try
+            {
+                List<BowlingTeamSeason> teamSeasons = new List<BowlingTeamSeason>();
+
+                teamSeasons = await _context.BowlingTeamSeasons
+                    .Include(e => e.League)
+                    .Include(e => e.Season).ThenInclude(e => e.Sport)
+                    .Include(e => e.BowlingTeam)
+                    .Where(e => e.LeagueID == leagueID && e.BowlingTeam.Name != "TBD").ToListAsync();
+
+                return teamSeasons;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<TeamSeason>> GetTeamsBySeason(int season)
         {
             return await _context.TeamSeasons.Include("League").Include("Season").Include(e => e.Team.Coaches).Include(e => e.Team.Field).Include(e => e.Team).Where(e => e.Season.Key == season && e.Team.Name != "TBD").ToListAsync();
@@ -506,6 +718,43 @@ namespace OnTrackWebService.Repository
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Team");
+            }
+        }
+
+        public async Task UpdateBowling(BowlingTeam item)
+        {
+            try
+            {
+                var teamSeason = await _context.BowlingTeamSeasons.FirstOrDefaultAsync(e => e.BowlingTeamID == item.ID && e.Season.IsCurrent);
+
+                if (teamSeason.LeagueID != item.LeagueID)
+                {
+                    teamSeason.LeagueID = item.LeagueID;
+
+                    _context.BowlingTeamSeasons.Update(teamSeason);
+                }
+
+                _context.BowlingTeams.Update(item);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+        }
+
+        public async Task AddBowlingTeams(List<BowlingTeam> items)
+        {
+            try
+            {
+                await _context.BowlingTeams.AddRangeAsync(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Bowling Teams");
             }
         }
     }

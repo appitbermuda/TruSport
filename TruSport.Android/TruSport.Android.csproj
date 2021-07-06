@@ -240,6 +240,8 @@
     <Compile Include="ExtendedFrameRenderer.cs" />
     <Compile Include="ExtendedPageRenderer.cs" />
     <Compile Include="ExtendedTabbedPageRenderer.cs" />
+    <Compile Include="Data\DeviceInstallationService.cs" />
+    <Compile Include="Data\PushNotificationFirebaseMessagingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -265,11 +267,6 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
     <AndroidResource Include="Resources\values\strings.xml" />
     <AndroidResource Include="Resources\drawable\OnTrack2mdpi.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\ontrack.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\ontrack.png" />
-    <AndroidResource Include="Resources\mipmap-xhdpi\ontrack.png" />
-    <AndroidResource Include="Resources\mipmap-mdpi\ontrack.png" />
-    <AndroidResource Include="Resources\mipmap-hdpi\ontrack.png" />
     <AndroidResource Include="Resources\drawable\irangers.png">
       <SubType></SubType>
       <Generator></Generator>
@@ -902,46 +899,6 @@
       <SubType></SubType>
       <Generator></Generator>
     </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-hdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xhdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xxhdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-mdpi\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\ontracklogo.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
     <AndroidResource Include="Resources\values-night\colors.xml" />
     <AndroidResource Include="Resources\drawable\bcblogo.png">
       <SubType></SubType>
@@ -1056,6 +1013,26 @@
       <Generator></Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\mipmap-mdpi\ontrack_wordmark_reversed.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\mipmap-hdpi\ontracklogo.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\mipmap-mdpi\ontracklogo.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\mipmap-xhdpi\ontracklogo.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\mipmap-xxhdpi\ontracklogo.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\ontracklogo.png">
       <SubType></SubType>
       <Generator></Generator>
     </AndroidResource>

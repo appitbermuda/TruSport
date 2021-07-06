@@ -48,6 +48,24 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<League>> GetBowlingLeagues()
+        {
+            try
+            {
+                var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Bowling");
+
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.SportID == sport.ID).ToListAsync();
+
+                return leagues;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public async Task<List<League>> GetCricketLeagues()
         {
             try

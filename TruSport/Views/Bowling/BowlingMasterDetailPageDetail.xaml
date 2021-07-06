@@ -1,0 +1,402 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:converter="clr-namespace:TruSport.Converters" xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:pullToRefresh="clr-namespace:Syncfusion.SfPullToRefresh.XForms;assembly=Syncfusion.SfPullToRefresh.XForms" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable" xmlns:syncfusion1="clr-namespace:Syncfusion.SfCalendar.XForms;assembly=Syncfusion.SfCalendar.XForms" xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms" xmlns:templates="clr-namespace:TruSport.Templates" x:Class="TruSport.Views.Bowling.BowlingMasterDetailPageDetail" Title="Detail">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:SportConverter x:Key="sportConverter"/>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converter:BowlingImageConverter x:Key="imageConverter"/>
+            <converter:TableIndexToColorConverter x:Key="tableIndexConverter"/>
+            <converter:GameTimeConverter x:Key="gameTimeConverter"/>
+            <converter:BowlingImageConverter x:Key="bowlingImageConverter"/>
+            <converter:TimeConverter x:Key="timeConverter"/>
+            <converter:TeamNameConverter x:Key="teamNameConverter"/>
+            <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
+            <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
+            <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
+            <converter:GroupingSelectionBowlingConverter x:Key="groupingSelectionConverter"/>
+            <converter:ShowScoreConverter x:Key="showScoreConverter"/>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Key="bowlingFixtureTemplate">
+                <templates:BowlingFixtureList />
+            </DataTemplate>
+            <DataTemplate x:Key="bowlingScoreFixtureTemplate">
+                <templates:BowlingScoreFixtureList />
+            </DataTemplate>
+            <templates:BowlingFixtureDataTemplateSelector x:Key="bowlingFixtureDataTemplateSelector"
+                                                        BowlingFixtureTemplate="{StaticResource bowlingFixtureTemplate}"
+                                                        BowlingScoreFixtureTemplate="{StaticResource bowlingScoreFixtureTemplate}" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout Spacing="0"
+                     Padding="0"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+        <Grid x:Name="PageGrid"
+              RowSpacing="0"
+              BackgroundColor="{DynamicResource backgroundColor}"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <Grid BackgroundColor="{DynamicResource navBackgroundColor}">
+                <Grid.Padding>
+                    <OnPlatform x:TypeArguments="Thickness">
+                       <On Platform="iOS" Value="10,40,10,0" />
+                       <On Platform="Android" Value="10,10,10,0" />
+                       </OnPlatform>
+                    </Grid.Padding>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="1" RowSpacing="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <StackLayout VerticalOptions="EndAndExpand">
+                            <Image Source="ontrack_wordmark_reversed" HeightRequest="35" Aspect="AspectFit" />
+                            <Label Text="BOWLING" TextColor="White" FontSize="Micro" VerticalOptions="EndAndExpand" HorizontalOptions="CenterAndExpand"  />
+                        </StackLayout>
+                        <!--<Button Grid.Column="2" FontSize="Large" VerticalOptions="CenterAndExpand" HorizontalOptions="Start" x:Name="SelectSport" Text="{Binding SelectedSport, Converter={StaticResource sportConverter}}" TextColor="White" FontFamily="{StaticResource fontAwesomeSolidFamily}" Command="{Binding SelectSportCommand}"/>-->
+                    </Grid>
+                <Button VerticalOptions="CenterAndExpand" x:Name="MenuButton" ImageSource="menu.png" Clicked="Button_Clicked" BackgroundColor="Transparent"/>
+                <Button Grid.Column="2" VerticalOptions="CenterAndExpand" x:Name="ShowHidePOW" Text="" TextColor="White" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="ShowHidePOW_Clicked" IsEnabled="{Binding HasAwards}"  BackgroundColor="Transparent"/>
+                <StackLayout  x:Name="POWContainer" Grid.Row="2" Grid.ColumnSpan="3" Padding="5"  IsVisible="{Binding ShowPOW}">
+                    <CarouselView ItemsSource="{Binding AwardCollection}" HeightRequest="400">
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate>
+                            <Frame CornerRadius="20" Padding="0" BackgroundColor="{DynamicResource backgroundColor}">
+                            <Frame CornerRadius="20" BackgroundColor="{DynamicResource backgroundColor}">
+                            <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackLayout Grid.Row="0" HorizontalOptions="CenterAndExpand">
+                                <Label Text="{Binding AwardType.Name, StringFormat='Player of the {0}'}"
+                                       HorizontalTextAlignment="Center"
+                                       FontSize="Medium"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       FontAttributes="Bold"/>
+                                <Label Text="{Binding StartDate, StringFormat='{0:MMM dd yyyy}'}"
+                                       HorizontalTextAlignment="Center"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       />
+                            </StackLayout>
+                            <StackLayout Grid.Row="1" HorizontalOptions="CenterAndExpand">
+                                <Image Source="{Binding Image, Converter={StaticResource bowlingImageConverter}}"  HeightRequest="300" WidthRequest="300" Aspect="AspectFit" />
+                            </StackLayout>
+                            <StackLayout Grid.Row="2" HorizontalOptions="CenterAndExpand" Padding="0,20,0,0" >
+                                <Label Text="{Binding Player.Name}"
+                                       HorizontalTextAlignment="Center"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       FontAttributes="Bold"/>
+                            </StackLayout>
+                        </Grid>
+                        </Frame>
+                        </Frame>
+                            </DataTemplate>
+        </CarouselView.ItemTemplate>
+                    </CarouselView>
+                </StackLayout>
+            </Grid>
+            <tabView:SfTabView Grid.Row="1" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}"  VisibleHeaderCount="2" VerticalOptions="FillAndExpand"
+                                 TabHeaderBackgroundColor="{StaticResource tabHeaderColor}"
+                               BackgroundColor="Transparent"
+                                 DisplayMode="Text"
+                               SelectedIndex="1"
+                               ContentTransitionDuration="200"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                <tabView:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}" 
+                                                              Position="Bottom" 
+                                                              StrokeThickness="2"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                    <tabView:SfTabItem Title="Previous" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}" >
+                        <tabView:SfTabItem.Content>
+                        <Grid BackgroundColor="Transparent" Padding="0,0,0,0" RowSpacing="0"
+                              HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <StackLayout Grid.Row="0" BackgroundColor="{DynamicResource tabHeaderColor}">
+                                    <Grid HorizontalOptions="FillAndExpand">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackLayout VerticalOptions="CenterAndExpand">
+                                            <SearchBar BackgroundColor="{DynamicResource tabHeaderColor}"
+                                                    CancelButtonColor="{DynamicResource TextPrimaryColor}"
+                                                       Placeholder="Search"
+                                                       PlaceholderColor="LightGray"
+                                                       TextColor="{DynamicResource TextPrimaryColor}"
+                               TextChanged="PreviousSearchTextChanged" VerticalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </StackLayout>
+                                <pullToRefresh:SfPullToRefresh Grid.Row="1" x:Name="pullToRefreshPast" Refreshing="PullToRefreshPastFixtures_Refreshing"
+                               ProgressBackgroundColor="White" ProgressStrokeColor="{StaticResource primaryDarkBlueTwo}" RefreshContentHeight="50" 
+                               RefreshContentWidth="50" TransitionMode="Push" IsRefreshing="False">
+  <pullToRefresh:SfPullToRefresh.PullableContent>
+                            <listView:SfListView x:Name="PastFixtureList"
+                                                ItemsSource="{Binding PastCollection}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    ItemTemplate="{StaticResource bowlingFixtureDataTemplateSelector}"
+                                                   SelectionMode="SingleDeselect"
+                                                   ItemSpacing="0"
+                                                    SelectionBackgroundColor="Transparent"
+                                                 AutoFitMode="DynamicHeight"
+                                            TapCommand="{Binding OnFixtureSelectedCommand}">
+                                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="FixtureTime" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                                    <listView:SfListView.GroupHeaderTemplate>
+                                  <DataTemplate>
+                                      <ViewCell>
+                                        <ViewCell.View>
+                                            <StackLayout Padding="8,25,8,0">
+<Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+<Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                                            <Grid>
+                                                <Grid.GestureRecognizers>
+                                                  <TapGestureRecognizer Command="{Binding Path=BindingContext.LeagueSelectedCommand, Source={x:Reference PastFixtureList}}" CommandParameter="{Binding .}"/>
+                                              </Grid.GestureRecognizers>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView  Grid.ColumnSpan="2"/>
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference PastFixtureList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                    </StackLayout>
+                                          </Grid>
+    </Frame>
+</Frame>
+                                            </StackLayout>
+                                        </ViewCell.View>
+                                      </ViewCell>
+                                  </DataTemplate>
+                                </listView:SfListView.GroupHeaderTemplate>
+                                </listView:SfListView>
+                            </pullToRefresh:SfPullToRefresh.PullableContent>
+ </pullToRefresh:SfPullToRefresh>
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                     <tabView:SfTabItem Title="Fixtures" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                            <Grid Padding="0,0,0,0" RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <StackLayout Grid.Row="0">
+                                    <Grid HorizontalOptions="FillAndExpand">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="50"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackLayout VerticalOptions="CenterAndExpand">
+                                            <SearchBar BackgroundColor="Transparent"
+                                                       CancelButtonColor="{DynamicResource TextPrimaryColor}"
+                                                       Placeholder="Search"
+                                                       PlaceholderColor="LightGray"
+                                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                                        TextChanged="SearchTextChanged"
+                                                       VerticalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout VerticalOptions="FillAndExpand" Grid.Column="1">
+                                            <Button VerticalOptions="CenterAndExpand" Command="{Binding CalendarVisibilityClickedCommand}" Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource iconColor}" FontSize="Medium" BackgroundColor="Transparent"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </StackLayout>
+                                <syncfusion1:SfCalendar Grid.Row="1" x:Name="upcomingCalendar"
+                                                        IsVisible="{Binding IsUpcomingCalendarVisible}"
+                                                        SelectionMode="SingleSelection"
+                                                        OnCalendarTapped="CalendarCellTapped"
+                                                        HeightRequest="400"
+                                                        EnableDatesInPast="False"
+                                                        ViewMode="MonthView"
+                                                        ShowInlineEvents="False"
+                                                        InlineViewMode="Inline"
+                                                        MaximumEventIndicatorCount="1"
+                                                        DataSource="{Binding CalendarInlineEvents}"
+                                                        ShowYearView="false"
+                                                        MinDate="{Binding MinDate}">
+                                    <syncfusion1:SfCalendar.MonthViewSettings>
+                                        <syncfusion1:MonthViewSettings TodaySelectionTextColor="White"
+		                                                               TodaySelectionBackgroundColor="{StaticResource primaryBarBlue}"
+                                                                       TodayBorderColor="{StaticResource primaryBarBlue}"
+                                                                       TodayTextColor="{StaticResource primaryBarBlue}"
+                                                                       SelectedDayTextColor="White"
+                                                                       DateSelectionColor="{StaticResource primaryBarBlue}">
+                                            <syncfusion1:MonthViewSettings.InlineItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Padding="5">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="70"/>
+                                                            <ColumnDefinition Width="5"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackLayout HorizontalOptions="CenterAndExpand">
+                                                            <Label FontSize="Small" Text="{Binding StartTime, StringFormat='{0:h:mm tt}'}" TextColor="Black" VerticalOptions="CenterAndExpand"/>
+                                                        </StackLayout>
+                                                        <BoxView Grid.Column="1" BackgroundColor="{StaticResource primaryDarkBlueTwo}" WidthRequest="5"/>
+                                                        <StackLayout Grid.Column="2">
+                                                            <Label FontSize="Small" Text="{Binding Subject}" TextColor="Black" VerticalOptions="CenterAndExpand"/>
+                                                        </StackLayout>
+                                                        
+                                                    </Grid>
+                                                    
+                                                </DataTemplate>
+                                            </syncfusion1:MonthViewSettings.InlineItemTemplate>
+                                        </syncfusion1:MonthViewSettings>
+        </syncfusion1:SfCalendar.MonthViewSettings>
+                                </syncfusion1:SfCalendar>	
+                                <pullToRefresh:SfPullToRefresh Grid.Row="2" x:Name="pullToRefreshUpcoming" Refreshing="PullToRefreshUpcomingFixtures_Refreshing"
+                               ProgressBackgroundColor="{StaticResource primaryDarkBlue}" ProgressStrokeColor="White" RefreshContentHeight="50" 
+                               RefreshContentWidth="50" TransitionMode="Push" IsRefreshing="False">
+  <pullToRefresh:SfPullToRefresh.PullableContent>
+                                <listView:SfListView  x:Name="UpcomingFixtureList" Padding="0,0,0,0"
+                                ItemsSource="{Binding UpcomingCollection}"
+                                   SelectionMode="SingleDeselect"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                                      ItemTemplate="{StaticResource bowlingFixtureDataTemplateSelector}"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                 AutoFitMode="DynamicHeight"
+                                                      TapCommand="{Binding OnFixtureSelectedCommand}"
+                                >
+                                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="FixtureTime" Direction="Ascending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                                <!--<listView:SfListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <templates:FixtureList/>
+                                    </DataTemplate>
+                                </listView:SfListView.ItemTemplate>-->
+                                    <listView:SfListView.GroupHeaderTemplate>
+                                  <DataTemplate>
+                                      <ViewCell>
+                                        <ViewCell.View>
+                                            <StackLayout Padding="8,25,8,0">
+<Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+<Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                                            <Grid>
+                                                <Grid.GestureRecognizers>
+                                                  <TapGestureRecognizer Command="{Binding Path=BindingContext.LeagueSelectedCommand, Source={x:Reference UpcomingFixtureList}}" CommandParameter="{Binding .}"/>
+                                              </Grid.GestureRecognizers>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView Grid.ColumnSpan="2"/>
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference UpcomingFixtureList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                    </StackLayout>
+                                          </Grid>
+    </Frame>
+</Frame>
+                                            </StackLayout>
+                                        </ViewCell.View>
+                                      </ViewCell>
+                                  </DataTemplate>
+                                </listView:SfListView.GroupHeaderTemplate>
+                                </listView:SfListView>
+                            </pullToRefresh:SfPullToRefresh.PullableContent>
+ </pullToRefresh:SfPullToRefresh>
+                                <ContentView Grid.Row="0" Grid.RowSpan="3" BackgroundColor="{DynamicResource backgroundColor}" IsVisible="{Binding NoUpcomingFixtures}"/>
+                <Grid Grid.Row="0" Grid.RowSpan="3" IsVisible="{Binding NoUpcomingFixtures}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Image Grid.Row="0"
+                       Source="bcblogo.png"
+                       Aspect="AspectFit"
+                           HeightRequest="100"
+                           WidthRequest="100"
+                       VerticalOptions="End"
+                       HorizontalOptions="Center"
+                       >
+                    </Image>
+                    <StackLayout Grid.Row="1"
+                                 Padding="20,0">
+                        <Label Text="Please stay tuned for the new schedule release."
+                               TextColor="{DynamicResource TextPrimaryColor}"
+                               FontAttributes="Bold"
+                               FontSize="Small"
+                               HorizontalTextAlignment="Center"
+                               />
+                    </StackLayout>
+                    
+                </Grid>
+                            </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+            </tabView:SfTabView>
+            <StackLayout Grid.Row="1" Padding="10"  IsVisible="{Binding NoConnectivity}">
+                <Label Text="There are no fixtures available" FontSize="Caption" TextColor="{DynamicResource TextPrimaryColor}" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>
+            </StackLayout>
+             <StackLayout Grid.Row="2" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+            <StackLayout Grid.Row="2" Padding="0,0,0,0" HeightRequest="50" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AdTappedCommand}"/>
+                </StackLayout.GestureRecognizers>
+                        <Image Source="{Binding Ad.Image}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Aspect="AspectFill"/>
+                    </StackLayout>
+                <!--<model:AdMobView Size="Standardbanner" Grid.Row="2" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>-->
+            
+                <ContentView Grid.Row="1" BackgroundColor="{DynamicResource backgroundColor}" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+                <extension:CustomBusyIndicator  Grid.Row="1" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
