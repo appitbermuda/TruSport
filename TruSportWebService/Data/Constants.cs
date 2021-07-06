@@ -48,10 +48,10 @@ namespace OnTrackWebService.Data
 #else
         public static string OnTrackEndpoint = "https://ontrackservice.azurewebsites.net/api/";
         public static string[] SubscriptionTags { get; set; } = { "default", "cricket", "football" };
-        //public static string NotificationHubName { get; set; } = "OnTrackPushHub";
-        //public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=UA17J5DQ+x/8zKbnOjhrQWdjEaXWPuZg1ijAmcj3gHs=";
-        public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";
-        public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=uusrAVZy6JrvlTLtYZHUEoVR7EKbtqRGTJ3t0A6q0yE=";
+        public static string NotificationHubName { get; set; } = "OnTrackPushHub";
+        public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=UA17J5DQ+x/8zKbnOjhrQWdjEaXWPuZg1ijAmcj3gHs=";
+        //public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";
+        //public static string FullAccessConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=uusrAVZy6JrvlTLtYZHUEoVR7EKbtqRGTJ3t0A6q0yE=";
 #endif
     }
 }

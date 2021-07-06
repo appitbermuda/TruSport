@@ -1,87 +1,59 @@
-﻿<Properties StartupConfiguration="{2B8BBBC2-64F1-4CA8-93A4-CE0C0FCA282F}|Default">
-  <MonoDevelop.Ide.ItemProperties.TruSport.Android AndroidDesignerPreferredTheme="Theme.AppCompat.Light.NoActionBar" AndroidDesignerPreferredDevice="Nexus 4" PreferredExecutionTarget="Android.Android_Accelerated_x86" />
-  <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" TriggeredFromHotReload="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
-  <MonoDevelop.Ide.Workbench>
+﻿<Properties StartupConfiguration="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}|Default" HasHotReloadOverlayBeenDismissed="True">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Repository/OrderRepository.cs">
     <Files>
-      <File FileName="TruSport/Views/Bowling/TablePage.xaml" Line="444" Column="27" />
-      <File FileName="TruSport/Views/Bowling/BowlingMasterDetailPageDetail.xaml" Line="377" Column="18" />
-      <File FileName="TruSport/ViewModel/Bowling/BowlingPageViewModel.cs" Line="319" Column="38" />
-      <File FileName="TruSport/Services/AdService.cs" Line="31" Column="1" />
-      <File FileName="TruSport/ViewModel/Bowling/FixtureDetailPageViewModel.cs" Line="256" Column="19" />
-      <File FileName="TruSport/ViewModel/Bowling/FixturePageViewModel.cs" Line="105" Column="48" />
-      <File FileName="TruSport/ViewModel/Bowling/LeagueStatPageViewModel.cs" Line="57" Column="48" />
-      <File FileName="TruSport/ViewModel/Bowling/TablePageViewModel.cs" Line="53" Column="48" />
-      <File FileName="TruSport/ViewModel/Bowling/TeamPageViewModel.cs" Line="47" Column="48" />
-      <File FileName="TruSport/ViewModel/Bowling/TeamProfilePageViewModel.cs" Line="88" Column="48" />
-      <File FileName="TruSportWebService/Models/Batting.cs" Line="22" Column="9" />
-      <File FileName="TruSportWebService/Controllers/AdController.cs" Line="35" Column="62" />
-      <File FileName="TruSportWebService/Models/Ad/Ad.cs" Line="16" Column="33" />
-      <File FileName="TruSport/Model/Ad.cs" Line="9" Column="34" />
-      <File FileName="TruSportWebService/Data/Constants.cs" Line="39" Column="42" />
-      <File FileName="TruSport/Constants/Constants.cs" Line="38" Column="57" />
-      <File FileName="TruSport/Converters/Converters.cs" Line="1785" Column="84" />
-      <File FileName="TruSportWebService/Repository/AdRepository.cs" Line="64" Column="21" />
-      <File FileName="TruSportWebService/Repository/FixtureRepository.cs" Line="186" Column="1" />
-      <File FileName="TruSport/Views/Bowling/FixtureDetailsPage.xaml" Line="1000" Column="27" />
-      <File FileName="TruSport/Views/Bowling/BowlingMasterDetailPageMaster.xaml" Line="1" Column="1" />
-      <File FileName="TruSport/Views/Bowling/FixturePage.xaml" Line="341" Column="27" />
-      <File FileName="TruSport/Views/Bowling/LeagueStatsPage.xaml" Line="304" Column="27" />
-      <File FileName="TruSport/Views/Bowling/TeamPage.xaml" Line="127" Column="23" />
-      <File FileName="TruSport/Views/Bowling/TeamProfilePage.xaml" Line="1346" Column="27" />
-      <File FileName="TruSport/Views/Bowling/TableDetailPage.xaml" Line="1" Column="1" />
-      <File FileName="TruSport.iOS/Info.plist" />
+      <File FileName="TruSportWebService/Repository/UserRepository.cs" Line="336" Column="14" />
+      <File FileName="TruSportWebService/Startup.cs" />
+      <File FileName="TruSportWebService/Repository/MatchInningRepository.cs" />
+      <File FileName="TruSportWebService/Models/MatchInning.cs" />
+      <File FileName="TruSportWebService/Data/OnTrackContext.cs" />
+      <File FileName="TruSport/ViewModel/AssignMatchViewModel.cs" />
+      <File FileName="TruSportWebService/Repository/BowlingGameRepository.cs" />
+      <File FileName="TruSportWebService/Repository/BowlingRosterRepository.cs" />
+      <File FileName="TruSportWebService/Data/Constants.cs" />
+      <File FileName="TruSportWebService/Repository/EmailRepository.cs" />
+      <File FileName="TruSportWebService/Repository/OrderRepository.cs" Line="149" Column="16" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="TruSport" expanded="True">
-            <Node name="TruSport" expanded="True">
-              <Node name="ViewModel" expanded="True">
-                <Node name="Bowling" expanded="True" />
-              </Node>
-              <Node name="Views" expanded="True">
-                <Node name="Bowling" expanded="True">
-                  <Node name="BowlingMasterDetailPageDetail.xaml" selected="True" />
-                </Node>
+            <Node name="OnTrackWebService" expanded="True">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Data" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Repository" expanded="True">
+                <Node name="OrderRepository.cs" selected="True" />
               </Node>
             </Node>
-            <Node name="TruSport.iOS" expanded="True" />
+            <Node name="TruSport" expanded="True">
+              <Node name="ViewModel" expanded="True" />
+            </Node>
           </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>ex</Value>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.OnTrackWebService PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <Debugger.DebugSourceFolders />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/TeamRepository.cs" relfile="TruSportWebService/Repository/TeamRepository.cs" line="293" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/ContractTraceRepository.cs" relfile="TruSportWebService/Repository/ContractTraceRepository.cs" line="104" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/ContractTraceRepository.cs" relfile="TruSportWebService/Repository/ContractTraceRepository.cs" line="202" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/ContractTraceRepository.cs" relfile="TruSportWebService/Repository/ContractTraceRepository.cs" line="195" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Football/FootballPageViewModel.cs" relfile="TruSport/ViewModel/Football/FootballPageViewModel.cs" line="413" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Controllers/EmailController.cs" relfile="TruSportWebService/Controllers/EmailController.cs" line="58" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/MatchTicketRepository.cs" relfile="TruSportWebService/Repository/MatchTicketRepository.cs" line="367" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/TeamRepository.cs" relfile="TruSportWebService/Repository/TeamRepository.cs" line="564" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/PlayerSeasonRepository.cs" relfile="TruSportWebService/Repository/PlayerSeasonRepository.cs" line="119" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/PlayerSeasonRepository.cs" relfile="TruSportWebService/Repository/PlayerSeasonRepository.cs" line="128" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/PlayerSeasonRepository.cs" relfile="TruSportWebService/Repository/PlayerSeasonRepository.cs" line="165" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/PlayerSeasonRepository.cs" relfile="TruSportWebService/Repository/PlayerSeasonRepository.cs" line="140" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/PlayerSeasonRepository.cs" relfile="TruSportWebService/Repository/PlayerSeasonRepository.cs" line="131" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/OnTrackPageViewModel.cs" relfile="TruSport/ViewModel/OnTrackPageViewModel.cs" line="148" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Data/OnTrackDatabase.cs" relfile="TruSport/Data/OnTrackDatabase.cs" line="299" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Bowling/BowlingPageViewModel.cs" relfile="TruSport/ViewModel/Bowling/BowlingPageViewModel.cs" line="420" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Services/LeagueTableService.cs" relfile="TruSport/Services/LeagueTableService.cs" line="113" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/LeagueTableRepository.cs" relfile="TruSportWebService/Repository/LeagueTableRepository.cs" line="133" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Bowling/TableDetailPageViewModel.cs" relfile="TruSport/ViewModel/Bowling/TableDetailPageViewModel.cs" line="19" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/BowlingRosterRepository.cs" relfile="TruSportWebService/Repository/BowlingRosterRepository.cs" line="116" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/BowlingRosterRepository.cs" relfile="TruSportWebService/Repository/BowlingRosterRepository.cs" line="86" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Converters/Converters.cs" relfile="TruSport/Converters/Converters.cs" line="1457" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Data/OnTrackDatabase.cs" relfile="TruSport/Data/OnTrackDatabase.cs" line="694" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Data/OnTrackDatabase.cs" relfile="TruSport/Data/OnTrackDatabase.cs" line="652" column="1" />
-      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Data/OnTrackDatabase.cs" relfile="TruSport/Data/OnTrackDatabase.cs" line="495" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/MainPageViewModel.cs" relfile="TruSport/ViewModel/MainPageViewModel.cs" line="128" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/TicketListPageViewModel.cs" relfile="TruSport/ViewModel/Shop/TicketListPageViewModel.cs" line="111" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Services/SportEventService.cs" relfile="TruSport/Services/SportEventService.cs" line="82" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/SportEventRepository.cs" relfile="TruSportWebService/Repository/SportEventRepository.cs" line="188" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/SportEventRepository.cs" relfile="TruSportWebService/Repository/SportEventRepository.cs" line="98" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/TicketPurchasePageViewModel.cs" relfile="TruSport/ViewModel/Shop/TicketPurchasePageViewModel.cs" line="169" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/TicketPurchasePageViewModel.cs" relfile="TruSport/ViewModel/Shop/TicketPurchasePageViewModel.cs" line="171" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/OrderHistoryPageViewModel.cs" relfile="TruSport/ViewModel/OrderHistoryPageViewModel.cs" line="61" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/MatchInningRepository.cs" relfile="TruSportWebService/Repository/MatchInningRepository.cs" line="199" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/UserRepository.cs" relfile="TruSportWebService/Repository/UserRepository.cs" line="76" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations>
@@ -93,7 +65,7 @@
     </MultiItemSolutionRunConfiguration>
     <MultiItemSolutionRunConfiguration Id="Multiple Projects Android" Name="Multiple Projects Android">
       <Items>
-        <StartupItem ItemId="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}" ItemName="OnTrackWebService" />
+        <StartupItem ItemId="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}" ItemName="OnTrackWebService" ConfigurationId="Default" />
         <StartupItem ItemId="{27E69D44-8F2E-4872-A445-BF4C3E3836A1}" ItemName="TruSport.Android" ConfigurationId="Default" />
       </Items>
     </MultiItemSolutionRunConfiguration>

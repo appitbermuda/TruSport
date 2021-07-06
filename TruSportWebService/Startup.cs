@@ -47,12 +47,14 @@ namespace OnTrackWebService
             });
 
             //#if DEBUG
-            services.AddDbContext<OnTrackContext>
-                (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"]));
-
-            //////#else
             //services.AddDbContext<OnTrackContext>
-            //  (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"]));
+            //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"])
+            //    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+
+            //#else
+            services.AddDbContext<OnTrackContext>
+              (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDB"])
+              .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
             //#endif
 

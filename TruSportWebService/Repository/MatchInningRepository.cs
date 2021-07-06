@@ -165,6 +165,10 @@ namespace OnTrackWebService.Repository
         {
             foreach (var item in items)
             {
+                item.BattingTeam = null;
+                item.FieldingTeam = null;
+                item.Fixture = null;
+
                 _context.MatchInnings.Add(item);
                 await _context.SaveChangesAsync();
             }
@@ -183,6 +187,10 @@ namespace OnTrackWebService.Repository
             {
                 foreach (var item in items)
                 {
+                    item.BattingTeam = null;
+                    item.FieldingTeam = null;
+                    item.Fixture = null;
+
                     _context.MatchInnings.Update(item);
                     await _context.SaveChangesAsync();
                 }
