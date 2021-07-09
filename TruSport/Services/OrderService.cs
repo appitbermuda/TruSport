@@ -59,9 +59,9 @@ namespace TruSport.Services
                 if (accessToken != null)
                 {
                     var client = new RestClient(Constants.APIEndpoint);
-                    var request = new RestRequest("Order/History", Method.GET);
+                    var request = new RestRequest("Order/GetHistory", Method.GET);
                     request.AddParameter("Email", Email);
-                    //request.AddHeader("authorization", "Bearer " + accessToken);
+                    request.AddHeader("authorization", "Bearer " + accessToken);
 
                     // We execute the request and capture the response
                     // in a variable called `response`

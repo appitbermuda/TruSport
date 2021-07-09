@@ -7,7 +7,7 @@ namespace TruSport.Model
     {
         public string ID { get; set; }
         public string OrderID { get; set; }
-        public string FixtureProductID { get; set; }
+        public string EventTicketID { get; set; }
         public bool Validated { get; set; }
         public DateTime? ValidatedTime { get; set; }
 
@@ -15,7 +15,7 @@ namespace TruSport.Model
         public virtual Order Order { get; set; }
 
         [Ignore]
-        public virtual FixtureProduct FixtureProduct { get; set; }
+        public virtual EventTicket EventTicket { get; set; }
 
         [Ignore]
         public string CustomerTicketObject { get; set; }

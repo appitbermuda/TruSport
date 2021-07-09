@@ -85,6 +85,25 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values/5
         [HttpGet]
+        [Route("EventTicket")]
+        public async Task<IActionResult> EventTicket(string eventID)
+        {
+            try
+            {
+                int inventoryLevel = await _inventoryRepository.EventTicketInventoryLevel(eventID);
+
+                return Ok(inventoryLevel);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Inventory");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
         [Route("CheckTickets")]
         public async Task<IActionResult> CheckTicketInventory(string fixtureID)
         {

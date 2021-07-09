@@ -8,6 +8,9 @@ using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
 using TruSport.Views;
+using TruSport.Views.Bowling;
+using TruSport.Views.Cricket;
+using TruSport.Views.Tennis;
 using TruSport.Views.Tickets;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -145,17 +148,42 @@ namespace TruSport.ViewModel.Shop
                 await App.Database.SignOut();
                 await notificationRegistrationService.DeregisterDeviceAsync();
 
-                if (Application.Current.MainPage is MasterDetailPage mdp)
-                {
-                    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
-                    page.Title = "Tickets";
+                App.Current.MainPage = new NavigationPage(new MainPage());
 
-                    mdp.Detail = new NavigationPage(page)
+                // Handle when your app starts
+                if (App.Database != null)
+                {
+                    var sport = await App.Database.GetDefaultSport();
+
+                    if (sport == null || String.IsNullOrEmpty(sport.Sport))
+                        App.Current.MainPage = new NavigationPage(new MainPage());
+                    else
                     {
-                        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                        BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                    };
+                        if (sport.Sport.ToLower() == "cricket")
+                            App.Current.MainPage = new CricketMasterDetailPage();
+                        else if (sport.Sport.ToLower() == "bowling")
+                            App.Current.MainPage = new BowlingMasterDetailPage();
+                        else if (sport.Sport.ToLower() == "tennis")
+                            App.Current.MainPage = new TennisMasterDetailPage();
+                        else
+                            App.Current.MainPage = new FootballMasterDetailPage();
+                    }
                 }
+                else
+                {
+                    App.Current.MainPage = new NavigationPage(new MainPage());
+                }
+                //if (Application.Current.MainPage is MasterDetailPage mdp)
+                //{
+                //    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
+                //    page.Title = "Tickets";
+
+                //    mdp.Detail = new NavigationPage(page)
+                //    {
+                //        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                //        BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                //    };
+                //}
             }
             catch(Exception ex)
             {

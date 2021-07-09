@@ -8,6 +8,7 @@ namespace TruSport.Model
     {
         public string CustomerID { get; set; }
         public string FixtureID { get; set; }
+        public string SportEventID { get; set; }
         public string NameOnCard { get; set; }
         public string CardNumber { get; set; }
         public string CVV { get; set; }

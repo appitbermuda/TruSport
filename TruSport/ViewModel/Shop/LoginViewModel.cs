@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TruSport.Data;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
@@ -18,6 +20,7 @@ namespace TruSport.ViewModel.Shop
         public string _email;
         public string _password;
         private bool _isActivityIndicatorVisible;
+        NotificationRegistrationService notificationRegistrationService;
 
         public CustomerAuthentication Customer
         {
@@ -67,6 +70,7 @@ namespace TruSport.ViewModel.Shop
             authenticationService = new AuthenticationService();
 
             Customer = new CustomerAuthentication();
+            notificationRegistrationService = new NotificationRegistrationService();
 
             GenerateSource();
 
@@ -143,17 +147,27 @@ namespace TruSport.ViewModel.Shop
                                                                 
                                 await Navigation.PopAsync();
 
-                                if (Application.Current.MainPage is MasterDetailPage mdp)
-                                {
-                                    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
-                                    page.Title = "Tickets";
+                                var tags = await App.Database.GetTags();
+                                var tagsList = tags.ToList();
+                                tagsList.Add(thisCustomer.Email);
 
-                                    mdp.Detail = new NavigationPage(page)
-                                    {
-                                        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                                        BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                                    };
-                                }
+                                tags = tagsList.ToArray();
+
+                                await notificationRegistrationService.RegisterDeviceAsync(tags);
+
+                                Application.Current.MainPage = (new TicketFlyoutPage());
+
+                                //if (Application.Current.MainPage is MasterDetailPage mdp)
+                                //{
+                                //    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
+                                //    page.Title = "Tickets";
+
+                                //    mdp.Detail = new NavigationPage(page)
+                                //    {
+                                //        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                                //        BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                                //    };
+                                //}
                             }
                             else
                             {

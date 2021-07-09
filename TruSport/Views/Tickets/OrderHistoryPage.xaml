@@ -52,7 +52,7 @@
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End"/>
-                                <Label Text="{Binding OrderDetails[0].FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd, yy h:mm tt}'}"
+                                <Label Text="{Binding OrderDetails[0].EventTicket.SportEvent.EventTime, StringFormat='{0:MMM dd, yyyy - h:mm tt}'}"
                                        FontSize="Micro"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
@@ -88,7 +88,7 @@
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End"/>
-                                <Label Text="{Binding Date, StringFormat='{0:MMM dd, yy HH:mm tt}'}"
+                                <Label Text="{Binding Date, StringFormat='{0:MMM dd, yyyy - HH:mm tt}'}"
                                        FontSize="Micro"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"

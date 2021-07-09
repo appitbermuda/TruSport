@@ -46,7 +46,7 @@
 		<true/>
 	</dict>
 	<key>CFBundleVersion</key>
-	<string>1.44</string>
+	<string>1.48</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-1338169805120312~6077936967</string>
 	<key>UIRequiresFullScreen</key>
@@ -56,6 +56,6 @@
 		<string>remote-notification</string>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0.0</string>
+	<string>3.1.0</string>
 </dict>
 </plist>

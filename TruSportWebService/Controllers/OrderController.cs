@@ -70,6 +70,28 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("GetHistory")]
+        public async Task<IActionResult> GetHistory(string Email)
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.GetOrdersHistory(Email);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+
+        // GET api/values
+        [HttpGet]
         [Route("TodayByTeam")]
         public async Task<IActionResult> TodayByTeam()
         {

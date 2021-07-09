@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TruSport.Data;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
@@ -17,6 +18,8 @@ namespace TruSport.ViewModel
     public class MainPageViewModel : BaseViewModel
     {
         #region Fields
+
+        NotificationRegistrationService notificationRegistrationService;
         private ObservableCollection<Sport> _sports;
         private LandingFeature _featureImages;
         private bool _isActivityIndicatorVisible;
@@ -34,6 +37,7 @@ namespace TruSport.ViewModel
 
             //databaseManager = new DatabaseManager();
             settingService = new SettingService();
+            notificationRegistrationService = new NotificationRegistrationService();
 
             GenerateSource();
 
@@ -122,7 +126,25 @@ namespace TruSport.ViewModel
         {
             try
             {
-                Application.Current.MainPage = (new TicketFlyoutPage());                
+                string Token = await SecureStorage.GetAsync("Token");
+                string email = await SecureStorage.GetAsync("Email");
+
+                if (String.IsNullOrEmpty(Token) || String.IsNullOrEmpty(email))
+                {
+                    await Navigation.PushAsync(new SignInPage(), true);
+                }
+                else
+                {
+                    var tags = await App.Database.GetTags();
+                    var tagsList = tags.ToList();
+                    tagsList.Add(email);
+
+                    tags = tagsList.ToArray();
+
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+
+                    Application.Current.MainPage = (new TicketFlyoutPage());
+                }                
             }
             catch (Exception ex)
             {

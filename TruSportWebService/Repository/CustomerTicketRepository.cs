@@ -453,7 +453,7 @@ namespace OnTrackWebService.Repository
         //    return customerTicket;
         //}
 
-        public async Task<PaymentResponse> Purchase(PaymentAuthorize paymentAuthorization)
+        public async Task<PaymentResponse> Purchase(ClaimsPrincipal claimsUser, PaymentAuthorize paymentAuthorization)
         {
             Request request = new Request();
             PaymentResponse paymentResponse = new PaymentResponse();
@@ -463,7 +463,14 @@ namespace OnTrackWebService.Repository
 
             try
             {
-                var fixtureProduct = await _context.EventTickets
+                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                     .Select(c => c.Value).SingleOrDefault();
+
+                var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email);
+
+                paymentAuthorization.CustomerID = customer.ID;
+
+                var eventTicket = await _context.EventTickets
                     .Include(e => e.Product)
                     .FirstOrDefaultAsync(e => e.SportEventID == paymentAuthorization.SportEventID);
 
@@ -472,7 +479,7 @@ namespace OnTrackWebService.Repository
                     .Where(e => e.EventTicket.SportEventID == paymentAuthorization.SportEventID)
                     .ToListAsync();
 
-                var ticketCompanyID = fixtureProduct.Product.TicketCompanyID;
+                var ticketCompanyID = eventTicket.Product.TicketCompanyID;
 
                 var ticketConfiguration = await _context.TicketConfigurations
                     .FirstOrDefaultAsync(e => e.TicketCompanyID == ticketCompanyID);
@@ -483,7 +490,9 @@ namespace OnTrackWebService.Repository
                 {
                     var processingFee = await _context.Settings.FirstOrDefaultAsync(e => e.ID == Constants.SETTING_PROCESSING_FEE_ID);
 
-                    Decimal ProcessingFeeAmount = Convert.ToDecimal(processingFee.Value);
+
+
+                    Decimal ProcessingFeeAmount = eventTicket.Product.Fee  ?? Convert.ToDecimal(processingFee.Value);
                     Decimal PaymentAmount = 0.0m;
 
                     //string payment = String.Format("{0,0:N2}", Decimal.Parse(paymentAuthorization.Amount) / 100.0m);
@@ -580,7 +589,6 @@ namespace OnTrackWebService.Repository
                             var sportEvent = await _context.SportEvents
                                 .FirstOrDefaultAsync(e => e.ID == paymentAuthorization.SportEventID);
 
-                            var customer = await _context.Customers.FirstOrDefaultAsync(e => e.ID == paymentAuthorization.CustomerID);
                             await emailRepository.SendPaymentConfirmation(customer, response.CreditCardTransactionResults.AuthCode, order, paymentAuthorization.OrderDetails.Sum(e => e.Qty), sportEvent);
 
                         }
@@ -622,14 +630,11 @@ namespace OnTrackWebService.Repository
 
                     var customerTicket = await _context.CustomerTickets
                         .Include(e => e.Order)
-                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.HomeTeam)
-                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent)
+                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent)
                         .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.Field)
                         .Include(e => e.EventTicket).ThenInclude(e => e.Product)
                         .FirstOrDefaultAsync(e => e.ID == transferRequest.CustomerTicketID);
-
-                    customerTicket.EventTicket.SportEvent.HomeTeam = customerTicket.EventTicket.SportEvent.HomeTeam;
-                    customerTicket.EventTicket.SportEvent.AwayTeam = customerTicket.EventTicket.SportEvent.AwayTeam;
 
                     if (customerTicket != null && customer != null)
                     {
@@ -686,16 +691,13 @@ namespace OnTrackWebService.Repository
 
                     var customerTickets = await _context.CustomerTickets
                         .Include(e => e.Order).ThenInclude(e => e.Customer)
-                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.HomeTeam)
-                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent)
+                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent)
                         .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.Field)
                         .Include(e => e.EventTicket).ThenInclude(e => e.Product)
                         .Include(e => e.TransferCustomer)
                         .Where(e => currentDate <= e.EventTicket.SportEvent.Date.AddDays(1) && (e.TransferCustomer.Email == email && ((e.IsTransfer.HasValue && !e.IsTransfer.Value) || (!e.IsTransfer.HasValue))))
                         .ToListAsync();
-
-                    customerTickets.ForEach(e => e.EventTicket.SportEvent.HomeTeam = e.EventTicket.SportEvent.HomeTeam);
-                    customerTickets.ForEach(e => e.EventTicket.SportEvent.AwayTeam = e.EventTicket.SportEvent.AwayTeam);
 
                     foreach(var ticket in customerTickets)
                     {
@@ -735,8 +737,8 @@ namespace OnTrackWebService.Repository
 
                     var customerTicket = await _context.CustomerTickets
                         .Include(e => e.Order).ThenInclude(e => e.Customer)
-                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.HomeTeam)
-                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent)
+                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent)
                         .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.Field)
                         .Include(e => e.EventTicket).ThenInclude(e => e.Product)
                         .Include(e => e.TransferCustomer)
@@ -780,8 +782,8 @@ namespace OnTrackWebService.Repository
 
                     var customerTicket = await _context.CustomerTickets
                         .Include(e => e.Order).ThenInclude(e => e.Customer)
-                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.HomeTeam)
-                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.AwayTeam)
+                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent)
+                        .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent)
                         .Include(e => e.EventTicket).ThenInclude(e => e.SportEvent).ThenInclude(e => e.Field)
                         .Include(e => e.EventTicket).ThenInclude(e => e.Product)
                         .Include(e => e.TransferCustomer)
@@ -974,7 +976,7 @@ namespace OnTrackWebService.Repository
             catch (Exception ex)
             {
                 _context.Database.RollbackTransaction();
-                Debug.WriteLine(ex.Message, "Payment");
+                Debug.WriteLine(ex.Message, "Payment Test");
             }
 
             paymentResponse.Description = "There was an issue with your payment, please try again.";

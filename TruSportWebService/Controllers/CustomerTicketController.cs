@@ -290,7 +290,7 @@ namespace OnTrackWebService.Controllers
             {
                 if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
                 {
-                    PaymentResponse authorized = await _customerTicketRepository.Purchase(paymentAuthorize); 
+                    PaymentResponse authorized = await _customerTicketRepository.Purchase(User, paymentAuthorize); 
 
                     return Ok(authorized);
                 }
