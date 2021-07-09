@@ -71,7 +71,7 @@
                                     <Label x:Name="FieldName"
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding MatchTicket.FixtureProduct.Fixture.Field.Name}"/>
+                                        Text="{Binding CustomerTicket.EventTicket.SportEvent.Field.Name}"/>
                                     </StackLayout>
                             </StackLayout>
                             <StackLayout Grid.Row="2" Grid.ColumnSpan="5"
@@ -88,12 +88,12 @@
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding MatchTicket.FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd - h:mm tt}'}"/>
+                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.EventTime, StringFormat='{0:MMM dd - h:mm tt}'}"/>
                                 
                             </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
-                            <ff:CachedImage Source="{Binding MatchTicket.FixtureProduct.Fixture.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                            <ff:CachedImage Source="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeamLogo, Converter={StaticResource imageConverter}}"
                                                             ErrorPlaceholder="ontracklogo.png"
                                             LoadingPlaceholder="ontracklogo.png"
                                                             CacheDuration="50"
@@ -109,7 +109,7 @@
                         </StackLayout>
                         <StackLayout Grid.Row="0" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                                  <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
-                            <ff:CachedImage Source="{Binding MatchTicket.FixtureProduct.Fixture.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                            <ff:CachedImage Source="{Binding CustomerTicket.EventTicket.SportEvent.AwayTeamLogo, Converter={StaticResource imageConverter}}"
                                                             ErrorPlaceholder="ontracklogo.png"
                                             LoadingPlaceholder="ontracklogo.png"
                                                             CacheDuration="50"
@@ -148,7 +148,7 @@
                                        FontSize="Micro"
                                        FontAttributes="Bold"
                                        TextColor="{DynamicResource TextPrimaryColor}"
-                                            Text="{Binding MatchTicket.FixtureProduct.Fixture.HomeTeam.Name}">
+                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
                             <OnPlatform.Android> 
@@ -172,7 +172,7 @@
                                        FontSize="Micro"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        FontAttributes="Bold"
-                                            Text="{Binding MatchTicket.FixtureProduct.Fixture.AwayTeam.Name}">
+                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.AwayTeam}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
                             <OnPlatform.Android> 
@@ -191,7 +191,7 @@
                         </StackLayout>
                 </Grid>                    
                     <StackLayout Padding="10,20">
-                        <Label Text="{Binding MatchTicket.FixtureProduct.Product.Age, StringFormat='1 {0} Ticket'}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding CustomerTicket.EventTicket.Product.Age, StringFormat='1 {0} Ticket'}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center" />
                     </StackLayout>
                     <StackLayout Padding="10,20">
                         <Label Text="Please provide the email of the account you wish to transfer this ticket to. The user must already be registered in order to receive this ticket." FontSize="10" HorizontalTextAlignment="Center" />

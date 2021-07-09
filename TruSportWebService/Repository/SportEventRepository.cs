@@ -157,7 +157,7 @@ namespace OnTrackWebService.Repository
                 foreach (var sportEvent in sportsEventList)
                 {
                     var eventTicket = eventTickets.FirstOrDefault(e => e.SportEventID == sportEvent.ID);
-                    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TicketCompanyID == eventTicket.Product.TicketCompanyID);
+                    var ticketConfiguration = ticketConfigurations.FirstOrDefault(e => e.TicketCompanyID == eventTicket?.Product?.TicketCompanyID);
 
                     if (ticketConfiguration != null)
                     {

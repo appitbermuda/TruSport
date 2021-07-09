@@ -189,5 +189,40 @@ namespace TruSport.Services
 
             return 0;
         }
+
+        public async Task<int> EventTicketInventory(string EventID)
+        {
+            try
+            {
+                string accessToken = await SecureStorage.GetAsync("Token");
+
+                if (accessToken != null)
+                {
+                    var client = new RestClient(Constants.APIEndpoint);
+                    var request = new RestRequest("Inventory/EventTicket", Method.GET);
+                    //request.AddHeader("authorization", "Bearer " + accessToken);
+                    request.AddParameter("EventID", EventID);
+
+                    // We execute the request and capture the response
+                    // in a variable called `response`
+                    IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        int stock = JsonConvert.DeserializeObject<int>(response.Content);
+
+                        return stock;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+
+            }
+
+
+            return 0;
+        }
     }
 }

@@ -41,7 +41,7 @@ namespace TruSport.ViewModel.Shop
         INavigation Navigation;
 
         SportEventService sportEventService;
-        MatchTicketService matchTicketService;
+        CustomerTicketService customerTicketService;
         SettingService settingService;
         InventoryService inventoryService;
 
@@ -49,7 +49,7 @@ namespace TruSport.ViewModel.Shop
         {
             Navigation = navigation;
             sportEventService = new SportEventService();
-            matchTicketService = new MatchTicketService();
+            customerTicketService = new CustomerTicketService();
             settingService = new SettingService();
             inventoryService = new InventoryService();
             ContactTraces = new ObservableCollection<ContactTrace>();
@@ -331,7 +331,7 @@ namespace TruSport.ViewModel.Shop
             try
             {
                 await UpdateQuantity();
-                var inventoryLevel = await inventoryService.TicketInventory(SportEvent.ID);
+                var inventoryLevel = await inventoryService.EventTicketInventory(SportEvent.ID);
 
                 if (EventTicketCollection.Sum(e => e.Quantity) <= inventoryLevel)
                 {
@@ -362,13 +362,14 @@ namespace TruSport.ViewModel.Shop
                                 CVV = CreditCard.CVV,
                                 Quantity = EventTicketCollection.Sum(e => e.Quantity),
                                 Amount = Convert.ToString(Total),
-                                FixtureID = SportEvent.ID,
-                                CustomerID = Customer.ID,
+                                FixtureID = null,
+                                //CustomerID = Customer.ID,
                                 ContactTraces = ContactTraces.ToList(),
-                                OrderDetails = orderDetails.ToList()
+                                OrderDetails = orderDetails.ToList(),
+                                SportEventID = SportEvent.ID
                             };
 
-                            var hasStock = await inventoryService.CheckTicketInventory(SportEvent.ID);
+                            var hasStock = await inventoryService.CheckEventTicketInventory(SportEvent.ID);
 
                             if (hasStock)
                             {
@@ -376,7 +377,7 @@ namespace TruSport.ViewModel.Shop
 
                                 if (confirmPayment)
                                 {
-                                    PaymentResponse paymentResponse = await matchTicketService.Purchase(paymentAuthorize);
+                                    PaymentResponse paymentResponse = await customerTicketService.Purchase(paymentAuthorize);
 
                                     if (paymentResponse != null)
                                     {
