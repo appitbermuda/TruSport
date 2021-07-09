@@ -1,27 +1,60 @@
-﻿<Properties StartupConfiguration="Multiple Projects iOS" HasHotReloadOverlayBeenDismissed="True">
-  <MonoDevelop.Ide.ItemProperties.TruSport.iOS automaticSigning="False" TriggeredFromHotReload="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.6DC8049A-B50D-4C6E-B5EC-2283114CFBE0" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Controllers/PushNotificationController.cs">
+﻿<Properties StartupConfiguration="{157A1D60-0CA4-4533-ACD6-0EA0F6DD69F5}|Default" HasHotReloadOverlayBeenDismissed="True">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TruSportWebService/Repository/OrderRepository.cs">
     <Files>
-      <File FileName="TruSportWebService/Repository/EmailRepository.cs" Line="539" Column="33" />
-      <File FileName="TruSportWebService/Repository/AuthenticationRepository.cs" />
-      <File FileName="TruSportWebService/Controllers/AdController.cs" />
-      <File FileName="TruSportWebService/Controllers/UserController.cs" />
-      <File FileName="TruSportWebService/Controllers/PushNotificationController.cs" Line="9" Column="26" />
+      <File FileName="TruSportWebService/Repository/UserRepository.cs" Line="336" Column="14" />
+      <File FileName="TruSportWebService/Startup.cs" />
+      <File FileName="TruSportWebService/Repository/MatchInningRepository.cs" />
+      <File FileName="TruSportWebService/Models/MatchInning.cs" />
+      <File FileName="TruSportWebService/Data/OnTrackContext.cs" />
+      <File FileName="TruSport/ViewModel/AssignMatchViewModel.cs" />
+      <File FileName="TruSportWebService/Repository/BowlingGameRepository.cs" />
+      <File FileName="TruSportWebService/Repository/BowlingRosterRepository.cs" />
+      <File FileName="TruSportWebService/Data/Constants.cs" />
+      <File FileName="TruSportWebService/Repository/EmailRepository.cs" />
+      <File FileName="TruSportWebService/Repository/OrderRepository.cs" Line="149" Column="16" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="TruSport" expanded="True" selected="True" />
+          <Node name="TruSport" expanded="True">
+            <Node name="OnTrackWebService" expanded="True">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Data" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Repository" expanded="True">
+                <Node name="OrderRepository.cs" selected="True" />
+              </Node>
+            </Node>
+            <Node name="TruSport" expanded="True">
+              <Node name="ViewModel" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>ex</Value>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.OnTrackWebService PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <Debugger.DebugSourceFolders />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/MainPageViewModel.cs" relfile="TruSport/ViewModel/MainPageViewModel.cs" line="128" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/TicketListPageViewModel.cs" relfile="TruSport/ViewModel/Shop/TicketListPageViewModel.cs" line="111" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/Services/SportEventService.cs" relfile="TruSport/Services/SportEventService.cs" line="82" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/SportEventRepository.cs" relfile="TruSportWebService/Repository/SportEventRepository.cs" line="188" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/SportEventRepository.cs" relfile="TruSportWebService/Repository/SportEventRepository.cs" line="98" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/TicketPurchasePageViewModel.cs" relfile="TruSport/ViewModel/Shop/TicketPurchasePageViewModel.cs" line="169" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/Shop/TicketPurchasePageViewModel.cs" relfile="TruSport/ViewModel/Shop/TicketPurchasePageViewModel.cs" line="171" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSport/ViewModel/OrderHistoryPageViewModel.cs" relfile="TruSport/ViewModel/OrderHistoryPageViewModel.cs" line="61" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/MatchInningRepository.cs" relfile="TruSportWebService/Repository/MatchInningRepository.cs" line="199" column="1" />
+      <Breakpoint file="/Users/delshon/Projects/TruSport/TruSportWebService/Repository/UserRepository.cs" relfile="TruSportWebService/Repository/UserRepository.cs" line="76" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations>
     <MultiItemSolutionRunConfiguration Id="Multiple Projects iOS" Name="Multiple Projects iOS">

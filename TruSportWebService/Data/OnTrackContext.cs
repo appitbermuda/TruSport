@@ -11,6 +11,7 @@ namespace OnTrackWebService.Data
         public OnTrackContext(DbContextOptions<OnTrackContext> options)
             : base(options)
         {
+            //this.Configuration.LazyLoadingEnabled = false;
         }
 
         public DbSet<Ad> Ads { get; set; }
