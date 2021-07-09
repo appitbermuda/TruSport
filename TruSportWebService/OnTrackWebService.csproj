@@ -44,6 +44,7 @@
     <Folder Include="Models\Ad\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="Models\Tennis\" />
+    <Folder Include="Models\Ticket\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="3.1.8">

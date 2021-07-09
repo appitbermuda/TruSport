@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable"
+    x:Class="TruSport.Views.Tickets.OrderHistoryPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Name="OrderItemTemplate" x:Key="OrderItemTemplate">
+                <StackLayout Padding="0"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="5">
+                        <Frame Padding="0" CornerRadius="10" BackgroundColor="{DynamicResource frameBackgroundColor}"  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" >
+                            <Frame Padding="0" CornerRadius="10" BackgroundColor="{DynamicResource frameBackgroundColor}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsClippedToBounds="True" HasShadow="False">
+                        <Grid VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand"
+                              RowSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackLayout Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Event Ticket"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start"/>
+                                <StackLayout>
+                                <Label Text="{Binding Fixture}"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                                </StackLayout>
+                            </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="1"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Date"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                <Label Text="{Binding OrderDetails[0].FixtureProduct.Fixture.FixtureTime, StringFormat='{0:MMM dd, yy h:mm tt}'}"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End">
+                                </Label>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="0"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Order #"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start"/>
+                                <Label Text="{Binding OrderNumber}"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.Column="1"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Trx Date"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                <Label Text="{Binding Date, StringFormat='{0:MMM dd, yy HH:mm tt}'}"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Row="2"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Authorisation"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start"/>
+                                <Label Text="{Binding Authorisation}"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                                
+                            </StackLayout>
+                            <StackLayout Grid.Row="2" Grid.Column="1"
+                                         Padding="15,10"
+                                         VerticalOptions="Center">
+                                <Label Text="Total"
+                                       FontSize="8"
+                                       TextColor="LightGray"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                <Label Text="{Binding Total, StringFormat='{0:C}'}"
+                                       FontSize="Micro"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End"/>
+                                
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                        </Frame>
+                </Grid>
+                    </StackLayout>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}" Spacing="20">
+            <StackLayout>
+                <Grid x:Name="OrderGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                    <StackLayout BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0" Orientation="Horizontal">
+                        <Label Text="Order History" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1">
+                <listView:SfListView x:Name="OrderHistoryList"
+                                        ItemsSource="{Binding OrderCollection}"
+                                        ItemTemplate="{StaticResource OrderItemTemplate}"
+                                        SelectionMode="None"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="FillAndExpand"
+                                        ItemSpacing="5"
+                                        Padding="1"
+                                        SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                                        AutoFitMode="DynamicHeight"
+                                    >
+                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="Date" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                </listView:SfListView>
+                        </StackLayout>
+                <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsOrderActivityIndicatorVisible}" IsRunning="{Binding IsOrderActivityIndicatorVisible}"/>
+            </Grid>
+                </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -12,22 +12,22 @@ namespace TruSport.ViewModel.Shop
 {
     public class TransferTicketPageViewModel : BaseViewModel
     {
-        public MatchTicket _matchTicket;
+        public CustomerTicket _customerTicket;
         public TransferRequest _transferRequest;
         public Customer _customer;
         INavigation Navigation;
         private bool _isActivityIndicatorVisible;
 
-        MatchTicketService matchTicketService;
+        CustomerTicketService customerTicketService;
         PushNotificationService pushNotificationService;
 
-        public TransferTicketPageViewModel(INavigation navigation, MatchTicket matchTicket)
+        public TransferTicketPageViewModel(INavigation navigation, CustomerTicket customerTicket)
         {
             Navigation = navigation;
-            matchTicketService = new MatchTicketService();
+            customerTicketService = new CustomerTicketService();
             pushNotificationService = new PushNotificationService();
 
-            GenerateSource(matchTicket);
+            GenerateSource(customerTicket);
 
             BackCommand = new Command(async () => await Back());
             TransferCommand = new Command(async () => await Transfer());
@@ -42,10 +42,10 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _transferRequest, value); }
         }
 
-        public MatchTicket MatchTicket
+        public CustomerTicket CustomerTicket
         {
-            get { return _matchTicket; }
-            set { Set(ref _matchTicket, value); }
+            get { return _customerTicket; }
+            set { Set(ref _customerTicket, value); }
         }
 
         public Customer Customer
@@ -60,17 +60,17 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _isActivityIndicatorVisible, value); }
         }
 
-        internal async void GenerateSource(MatchTicket matchTicket)
+        internal async void GenerateSource(CustomerTicket customerTicket)
         {
             try
             {
                 string Email = await SecureStorage.GetAsync("Email");
                 Customer = await App.Database.GetCustomerByIDAsync(Email);
 
-                MatchTicket = matchTicket;
+                CustomerTicket = customerTicket;
 
                 TransferRequest = new TransferRequest();
-                TransferRequest.MatchTicketID = matchTicket.ID;
+                TransferRequest.CustomerTicketID = customerTicket.ID;
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace TruSport.ViewModel.Shop
             {
                 if (TransferRequest != null && !String.IsNullOrEmpty(TransferRequest.Email))
                 {
-                    string transferred = await matchTicketService.Transfer(TransferRequest);
+                    string transferred = await customerTicketService.Transfer(TransferRequest);
 
                     if (transferred.Contains("success"))
                     {

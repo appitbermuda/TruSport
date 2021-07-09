@@ -5,6 +5,7 @@ namespace OnTrackWebService.Models
     {
         public string FixtureID { get; set; }
         public string Fixture { get; set; }
+        public SportEvent SportEvent { get; set; }
         public string Date { get; set; }
     }
 }

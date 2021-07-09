@@ -12,6 +12,7 @@ namespace TruSport.Model
         public string Age { get; set; }
         public string Image { get; set; }
         public decimal Price { get; set; }
+        public decimal Fee { get; set; }
 
         //[Ignore]
         //public ProductType ProductType { get; set; }

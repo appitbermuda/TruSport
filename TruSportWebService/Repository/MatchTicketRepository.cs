@@ -169,6 +169,7 @@ namespace OnTrackWebService.Repository
                                    .Select(c => c.Value).SingleOrDefault();
 
                 var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                DateTime currentDate = DateTime.Now.AddHours(-4).Date;
 
                 matchTickets = await _context.MatchTickets
                     .Include(e => e.Order).ThenInclude(e => e.Customer)
@@ -181,7 +182,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Season)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.Sport)
                     .Include(e => e.FixtureProduct).ThenInclude(e => e.Product).ThenInclude(e => e.ProductType)
-                    .Where(e => e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID && e.FixtureProduct.Fixture.Date == DateTime.Now.AddHours(-4).Date).ToListAsync();
+                    .Where(e => e.FixtureProduct.Product.TicketCompanyID == companyUser.TicketCompanyID && e.FixtureProduct.Fixture.Date == currentDate).ToListAsync();
 
                 matchTickets.ForEach(e => e.Order.Fixture = (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.HomeTeam.Name) + " v " + (!String.IsNullOrEmpty(e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias) ? e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Alias : e.Order.OrderDetails.FirstOrDefault().FixtureProduct.Fixture.AwayTeam.Name));
 

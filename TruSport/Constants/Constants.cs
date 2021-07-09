@@ -9,6 +9,7 @@ namespace TruSport
         public static string Football = "Football";
         public static string CryptoPW = "Ontr@ckTick3tingPlatf0rm2020!";
         public static string OnTrackEmail = "sports@ontrackbda.com";
+        public static string OnTrackTicketingEmail = "tickets@ontrackbda.com";
         //public static string OnTrackEmail = "ontrackbda@gmail.com";
         public const string ApplicationTicketURL = "https://www.ontrackbda.com/Ticket/";
         public const string ApplicationURL = "www.ontrackbda.com";

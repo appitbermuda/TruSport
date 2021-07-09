@@ -195,8 +195,13 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout BackgroundColor="{DynamicResource backgroundColor}" Spacing="20">
-            <StackLayout>
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                 <Grid x:Name="ProfileGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0" ColumnSpacing="0" Padding="10,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -229,75 +234,10 @@
                     <BoxView Grid.Row="4" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
             </Grid>
                 </StackLayout>
-            <!--<StackLayout>
-                <Grid x:Name="WalletGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                    <StackLayout BackgroundColor="WhiteSmoke" Padding="10,0" Orientation="Horizontal">
-                        <Label Text="Wallet" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
-                        <Button Text="" FontSize="20" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource iconColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Command="{Binding AddCreditCardCommand}"/>
-                    </StackLayout>
-                    <StackLayout Grid.Row="1">
-                    <listView:SfListView x:Name="CreditCardList"
-                                        ItemsSource="{Binding CreditCardCollection}"
-                                        ItemTemplate="{StaticResource CardItemTemplate}"
-                                        SelectionChangedCommand="{Binding CreditCardSelectedCommand}"
-                                        SelectionChangedCommandParameter="{x:Reference CreditCardList}"
-                                         SelectionMode="Single"
-                                        HorizontalOptions="FillAndExpand"
-                                        VerticalOptions="FillAndExpand"
-                                        ItemSpacing="5"
-                                        Padding="1"
-                                        SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
-                                        ItemSize="60"
-                                     HeightRequest="{Binding WalletHeight}"
-                                    />
-                        </StackLayout>
-                    <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsWalletActivityIndicatorVisible}" IsRunning="{Binding IsWalletActivityIndicatorVisible}"/>
-            </Grid>
-                </StackLayout>-->
-            <StackLayout>
-                <Grid x:Name="OrderGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                    <StackLayout BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0" Orientation="Horizontal">
-                        <Label Text="Order History" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
-                    </StackLayout>
-                    <StackLayout Grid.Row="1">
-                <listView:SfListView x:Name="OrderHistoryList"
-                                        ItemsSource="{Binding OrderCollection}"
-                                        ItemTemplate="{StaticResource OrderItemTemplate}"
-                                        SelectionMode="None"
-                                        HorizontalOptions="FillAndExpand"
-                                        VerticalOptions="FillAndExpand"
-                                        ItemSpacing="5"
-                                        Padding="1"
-                                        SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
-                                        AutoFitMode="DynamicHeight"
-                                    >
-                    <listView:SfListView.DataSource>
-                                  <data:DataSource>
-                                    <data:DataSource.SortDescriptors>
-                                      <data:SortDescriptor PropertyName="Date" Direction="Descending"/>
-                                    </data:DataSource.SortDescriptors>
-                                  </data:DataSource>
-                                </listView:SfListView.DataSource>
-                </listView:SfListView>
-                        </StackLayout>
-                <ActivityIndicator Grid.Row="1" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsOrderActivityIndicatorVisible}" IsRunning="{Binding IsOrderActivityIndicatorVisible}"/>
-            </Grid>
-                </StackLayout>
-            <StackLayout Padding="50,20" VerticalOptions="EndAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <StackLayout Grid.Row="1" Padding="50,20" VerticalOptions="EndAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
                 <Button Text="Sign Out" BackgroundColor="{DynamicResource buttonBackgroundColor}" TextColor="{DynamicResource buttonTextColor}" Padding="50,0" HeightRequest="50" CornerRadius="25" Command="{Binding SignOutCommand}"></Button>
-            </StackLayout>
-            <!--<StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                            <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
-                        </StackLayout>-->
-                <!--<model:AdMobView Size="Standardbanner" Grid.Row="1" VerticalOptions="EndAndExpand" MinimumHeightRequest="50"/>-->
+            </StackLayout>                
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

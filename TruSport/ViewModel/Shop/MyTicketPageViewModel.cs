@@ -19,14 +19,14 @@ namespace TruSport.ViewModel.Shop
     public class MyTicketPageViewModel : BaseViewModel
     {
         private ObservableCollection<AcceptTransfer> _transferRequestCollection;
-        private ObservableCollection<MatchTicket> _matchTicketCollection;
+        private ObservableCollection<CustomerTicket> _customerTicketCollection;
         private ObservableCollection<CustomerOrder> _orderCollection;
         private Customer _customer;
         private bool _noTickets;
         private bool _isActivityIndicatorVisible;
 
         OrderService orderService;
-        MatchTicketService matchTicketService;
+        CustomerTicketService customerTicketService;
         PushNotificationService pushNotificationService;
         AdService adService;
 
@@ -35,12 +35,12 @@ namespace TruSport.ViewModel.Shop
         public MyTicketPageViewModel(INavigation navigation)
         {
             Navigation = navigation;
-            matchTicketService = new MatchTicketService();
+            customerTicketService = new CustomerTicketService();
             orderService = new OrderService();
             adService = new AdService();
             pushNotificationService = new PushNotificationService();
             OrderCollection = new ObservableCollection<CustomerOrder>();
-            MatchTicketCollection = new ObservableCollection<MatchTicket>();
+            CustomerTicketCollection = new ObservableCollection<CustomerTicket>();
             TransferRequestCollection = new ObservableCollection<AcceptTransfer>();
 
             GenerateSource();
@@ -50,8 +50,8 @@ namespace TruSport.ViewModel.Shop
             AcceptTransferCommand = new Command<AcceptTransfer>(async (transfer) => await AcceptTransfer(transfer));
             RejectTransferCommand = new Command<AcceptTransfer>(async (transfer) => await RejectTransfer(transfer));
 
-            MessagingCenter.Unsubscribe<ActiveTicketsPage, string>(this, "Refresh");
-            MessagingCenter.Subscribe<ActiveTicketsPage>(this, "Refresh", async (obj) =>
+            MessagingCenter.Unsubscribe<MyTicketsPage, string>(this, "Refresh");
+            MessagingCenter.Subscribe<MyTicketsPage>(this, "Refresh", async (obj) =>
             {
                 GenerateSource();
             });
@@ -79,10 +79,10 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref acceptTransferCommand, value); }
         }
 
-        public ObservableCollection<MatchTicket> MatchTicketCollection
+        public ObservableCollection<CustomerTicket> CustomerTicketCollection
         {
-            get { return _matchTicketCollection; }
-            set { Set(ref _matchTicketCollection, value); }
+            get { return _customerTicketCollection; }
+            set { Set(ref _customerTicketCollection, value); }
         }
 
         public ObservableCollection<CustomerOrder> OrderCollection
@@ -147,22 +147,22 @@ namespace TruSport.ViewModel.Shop
 
                     var email = await SecureStorage.GetAsync("Email");
                     Customer = await App.Database.GetCustomerByIDAsync(email);
-                    var matchTickets = await matchTicketService.GetMatchTickets();
+                    var customerTickets = await customerTicketService.GetCustomerTickets();
 
-                    var transferRequests = await matchTicketService.GetTransferRequests();
+                    var transferRequests = await customerTicketService.GetTransferRequests();
                     if(transferRequests != null)
                     {
                         TransferRequestCollection = new ObservableCollection<AcceptTransfer>(transferRequests.Where(e => e.TransferCustomer.Email == email));
                     }
 
-                    if (matchTickets != null)
+                    if (customerTickets != null)
                     {
-                        matchTickets.ForEach(e => e.CustomerTicket = JsonConvert.SerializeObject(e.CustomerMatchTicket));
+                        customerTickets.ForEach(e => e.CustomerTicketObject = JsonConvert.SerializeObject(e.CustomerMatchTicket));
                         
-                        MatchTicketCollection = new ObservableCollection<MatchTicket>(matchTickets);
+                        CustomerTicketCollection = new ObservableCollection<CustomerTicket>(customerTickets);
                     }
 
-                    if (MatchTicketCollection.Count == 0 && TransferRequestCollection.Count == 0)
+                    if (CustomerTicketCollection.Count == 0 && TransferRequestCollection.Count == 0)
                         NoTickets = true;
                 }
                 else
@@ -184,7 +184,7 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                var acceptTransfer = e.ItemData as MatchTicket;
+                var acceptTransfer = e.ItemData as CustomerTicket;
 
                 if (!acceptTransfer.Validated)
                 {
@@ -241,7 +241,7 @@ namespace TruSport.ViewModel.Shop
             if (transferTicket)
             {
                 acceptTransfer.Accept = true;
-                string accept = await matchTicketService.AcceptTransfer(acceptTransfer);
+                string accept = await customerTicketService.AcceptTransfer(acceptTransfer);
 
                 try
                 {
@@ -274,7 +274,7 @@ namespace TruSport.ViewModel.Shop
             if (transferTicket)
             {
                 acceptTransfer.Accept = false;
-                string accept = await matchTicketService.AcceptTransfer(acceptTransfer);
+                string accept = await customerTicketService.AcceptTransfer(acceptTransfer);
 
                 try
                 {

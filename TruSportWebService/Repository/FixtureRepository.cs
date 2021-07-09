@@ -2065,6 +2065,8 @@ namespace OnTrackWebService.Repository
         {
             try
             {
+                DateTime currentDate = DateTime.Now.AddHours(-4).Date;
+
                 List<Fixture> fixtures = new List<Fixture>();
                 fixtures = await _context.Fixtures
                 .Include(e => e.HomeTeam)
@@ -2072,9 +2074,9 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.Field)
                 .Include(e => e.League)
                 .Include(e => e.Match)
-                .Include(e => e.MatchType)
-                
-                .Include(e => e.Season).Where(e => e.Date.Date < DateTime.Now.AddHours(-4).Date && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).ToListAsync();
+                .Include(e => e.MatchType)                
+                .Include(e => e.Season)
+                .Where(e => e.Date.Date < currentDate && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).ToListAsync();
 
                 List<Coach> coaches = await _context.Coaches
                     .ToListAsync();
@@ -2099,6 +2101,8 @@ namespace OnTrackWebService.Repository
         {
             try
             {
+                DateTime currentDate = DateTime.Now.AddHours(-4).Date;
+
                 List<Fixture> fixtures = new List<Fixture>();
                 fixtures = await _context.Fixtures
                 .Include(e => e.HomeTeam)
@@ -2108,7 +2112,7 @@ namespace OnTrackWebService.Repository
                 .Include(e => e.Match)
                 .Include(e => e.MatchType)
                 .Include(e => e.Season)
-                .Where(e => e.Date.Date >= DateTime.Now.AddHours(-4).Date).ToListAsync();
+                .Where(e => e.Date.Date >= currentDate).ToListAsync();
 
                 List<Coach> coaches = await _context.Coaches
                     .ToListAsync();

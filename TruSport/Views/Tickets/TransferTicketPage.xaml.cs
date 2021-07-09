@@ -10,9 +10,9 @@ namespace TruSport.Views.Tickets
     {
         TransferTicketPageViewModel transferTicketPageViewModel;
 
-        public TransferTicketPage(MatchTicket matchTicket)
+        public TransferTicketPage(CustomerTicket customerTicket)
         {
-            transferTicketPageViewModel = new TransferTicketPageViewModel(Navigation, matchTicket);
+            transferTicketPageViewModel = new TransferTicketPageViewModel(Navigation, customerTicket);
 
             InitializeComponent();
 

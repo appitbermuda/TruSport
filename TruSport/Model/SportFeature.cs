@@ -6,6 +6,7 @@ namespace TruSport.Model
         public string HomeFootballImage { get; set; }
         public string HomeCricketImage { get; set; }
         public string HomeTennisImage { get; set; }
+        public string HomeBowlingImage { get; set; }
         public string HomeTrackFieldImage { get; set; }
         public string HomeSwimmingImage { get; set; }
         public string HomeRugbyImage { get; set; }

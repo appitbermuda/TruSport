@@ -17,24 +17,20 @@ namespace TruSport.ViewModel.Shop
     public class AccountPageViewModel : BaseViewModel
     {
         private ObservableCollection<CreditCard> _creditCardCollection;
-        private ObservableCollection<Order> _orderCollection;
         private Customer _customer;
         private bool _isWalletActivityIndicatorVisible;
         private bool _isOrderActivityIndicatorVisible;
         private bool _isActivityIndicatorVisible;
 
         INavigation Navigation;
-        OrderService orderService;
         NotificationRegistrationService notificationRegistrationService;
 
 
         public AccountPageViewModel(INavigation navigation)
         {
             Navigation = navigation;
-            orderService = new OrderService();
             notificationRegistrationService = new NotificationRegistrationService();
             CreditCardCollection = new ObservableCollection<CreditCard>();
-            OrderCollection = new ObservableCollection<Order>();
 
             GenerateSource();
 
@@ -71,22 +67,10 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _creditCardCollection, value); }
         }
 
-        public ObservableCollection<Order> OrderCollection
-        {
-            get { return _orderCollection; }
-            set { Set(ref _orderCollection, value); }
-        }
-
         public bool IsWalletActivityIndicatorVisible
         {
             get { return _isWalletActivityIndicatorVisible; }
             set { Set(ref _isWalletActivityIndicatorVisible, value); }
-        }
-
-        public bool IsOrderActivityIndicatorVisible
-        {
-            get { return _isOrderActivityIndicatorVisible; }
-            set { Set(ref _isOrderActivityIndicatorVisible, value); }
         }
 
         public bool IsActivityIndicatorVisible
@@ -99,7 +83,6 @@ namespace TruSport.ViewModel.Shop
         {
             IsActivityIndicatorVisible = true;
             IsWalletActivityIndicatorVisible = true;
-            IsOrderActivityIndicatorVisible = true;
 
             var current = Connectivity.NetworkAccess;
             if (current == NetworkAccess.Internet)
@@ -112,13 +95,6 @@ namespace TruSport.ViewModel.Shop
                 if(creditCards != null)
                     CreditCardCollection = new ObservableCollection<CreditCard>(creditCards);
                 IsWalletActivityIndicatorVisible = false;
-
-
-                var orderHistory = await orderService.GetOrderHistory(email);
-                if (orderHistory != null)
-                    OrderCollection = new ObservableCollection<Order>(orderHistory);
-                IsOrderActivityIndicatorVisible = false;
-
             }
 
             IsActivityIndicatorVisible = false;

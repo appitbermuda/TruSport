@@ -100,6 +100,7 @@ namespace OnTrackWebService.Repository
             try
             {
                 var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
+                DateTime currentDate = DateTime.Now.AddHours(-4).Date;
 
                 var fixtureProductsList = await _context.FixtureProducts
                     .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
@@ -112,7 +113,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.TicketCompany)
-                    .Where(e => DateTime.Now.AddHours(-4).Date <= e.Fixture.Date && e.IsActive)
+                    .Where(e => currentDate <= e.Fixture.Date && e.IsActive)
                     .ToListAsync();
 
                 fixtureProductsList.ForEach(e => e.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.Fixture.HomeTeam.Alias) ? e.Fixture.HomeTeam.Alias : e.Fixture.HomeTeam.Name);
@@ -174,6 +175,7 @@ namespace OnTrackWebService.Repository
             try
             {
                 var ticketConfigurations = await _context.TicketConfigurations.ToListAsync();
+                DateTime currentDate = DateTime.Now.AddHours(-4).Date;
 
                 var fixtureProductsList = await _context.FixtureProducts
                     .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
@@ -186,7 +188,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.TicketCompany)
-                    .Where(e => DateTime.Now.AddHours(-4).Date <= e.Fixture.Date && e.IsActive)
+                    .Where(e => currentDate <= e.Fixture.Date && e.IsActive)
                     .ToListAsync();
 
                 fixtureProductsList.ForEach(e => e.Fixture.HomeTeam.Name = !String.IsNullOrEmpty(e.Fixture.HomeTeam.Alias) ? e.Fixture.HomeTeam.Alias : e.Fixture.HomeTeam.Name);
@@ -275,6 +277,7 @@ namespace OnTrackWebService.Repository
                                    .Select(c => c.Value).SingleOrDefault();
 
                 var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                DateTime currentDate = DateTime.Now.AddHours(-4).Date;
 
                 var fixtureProduct = await _context.FixtureProducts
                     .Include(e => e.Fixture).ThenInclude(e => e.HomeTeam)
@@ -287,7 +290,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.Sport)
                     .Include(e => e.Product).ThenInclude(e => e.ProductType).ThenInclude(e => e.MatchType)
                     .Include(e => e.Product).ThenInclude(e => e.TicketCompanyID)
-                    .FirstOrDefaultAsync(e => e.Product.TicketCompanyID == companyUser.TicketCompanyID && e.Fixture.Date == DateTime.Now.AddHours(-4).Date);
+                    .FirstOrDefaultAsync(e => e.Product.TicketCompanyID == companyUser.TicketCompanyID && e.Fixture.Date == currentDate);
 
                 return fixtureProduct.Fixture;
             }

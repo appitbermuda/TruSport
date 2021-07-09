@@ -192,7 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
-      <Version>4.8.0.1534</Version>
+      <Version>5.0.0.2012</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Azure.Mobile.Client">
       <Version>4.0.2</Version>
@@ -368,6 +368,8 @@
     <BundleResource Include="Resources\ontracklogo%403x.png" />
     <BundleResource Include="Resources\OnTrack_512.png" />
     <BundleResource Include="Resources\tennisfeature.jpg" />
+    <BundleResource Include="Resources\ticketfeature.jpg" />
+    <BundleResource Include="Resources\sportfeature.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

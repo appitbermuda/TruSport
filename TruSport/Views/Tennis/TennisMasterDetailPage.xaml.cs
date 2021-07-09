@@ -51,6 +51,11 @@ namespace TruSport.Views.Tennis
                     await DisplayAlert("Error", "There was an issue email, please try again.", "Okay");
                 }
             }
+            else if (item.Title == "Tickets")
+            {
+                var page = (Page)Activator.CreateInstance(item.TargetType);
+                App.Current.MainPage = page;
+            }
             else
             {
                 var page = (Page)Activator.CreateInstance(item.TargetType);

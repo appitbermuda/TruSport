@@ -34,7 +34,8 @@ namespace OnTrackWebService.Repository
                 {
                     HomeFootballImage = settings.FirstOrDefault(e => e.Key.Contains("Football")).Value,
                     HomeCricketImage = settings.FirstOrDefault(e => e.Key.Contains("Cricket")).Value,
-                    //HomeTennisImage = settings.FirstOrDefault(e => e.Key.Contains("Tennis")).Value,
+                    HomeTennisImage = settings.FirstOrDefault(e => e.Key.Contains("Tennis")).Value,
+                    HomeBowlingImage = settings.FirstOrDefault(e => e.Key.Contains("Bowling")).Value,
                     //HomeTrackFieldImage = settings.FirstOrDefault(e => e.Key.Contains("TrackField")).Value,
                     //HomeSwimmingImage = settings.FirstOrDefault(e => e.Key.Contains("Swimming")).Value,
                     //HomeRugbyImage = settings.FirstOrDefault(e => e.Key.Contains("Rugby")).Value,
@@ -42,6 +43,28 @@ namespace OnTrackWebService.Repository
                     //HomeFieldHockeyImage = settings.FirstOrDefault(e => e.Key.Contains("FieldHockey")).Value,
                     //HomeGolfImage = settings.FirstOrDefault(e => e.Key.Contains("Golf")).Value,
                     //HomeCyclingImage = settings.FirstOrDefault(e => e.Key.Contains("Cycling")).Value,
+                };
+
+                return sportFeature;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+            }
+
+            return null;
+        }
+
+        public async Task<LandingFeature> LandingMobileFeatureImages()
+        {
+            try
+            {
+                var settings = await _context.Settings.Where(e => e.Key.Contains("LandingMobileFeature")).ToListAsync();
+
+                LandingFeature sportFeature = new LandingFeature
+                {
+                    SportImage = settings.FirstOrDefault(e => e.Key.Contains("Sport")).Value,
+                    TicketImage = settings.FirstOrDefault(e => e.Key.Contains("Ticket")).Value,
                 };
 
                 return sportFeature;

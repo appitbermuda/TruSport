@@ -21,9 +21,9 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackLayout Grid.ColumnSpan="3" Spacing="0">   
-                        <Label Text="Sign In" TextColor="{DynamicResource navTextColor}" FontSize="Small" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>                        
+                        <Label Text="ONTRACK TICKETS" TextColor="{DynamicResource navTextColor}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>                        
                     </StackLayout>
-                    <Button Text="" TextColor="{DynamicResource navTextColor}" BackgroundColor="Transparent" FontSize="25" Clicked="Menu_Clicked" FontFamily="{StaticResource fontAwesomeRegularFamily}"/>
+                    <Button x:Name="BackButton" Text="" TextColor="{DynamicResource navTextColor}" BackgroundColor="Transparent" FontSize="25" Clicked="BackButton_Clicked" FontFamily="{StaticResource fontAwesomeRegularFamily}"/>
                 </Grid>
             </StackLayout>
         <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">

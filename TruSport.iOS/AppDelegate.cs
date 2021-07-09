@@ -101,7 +101,7 @@ namespace TruSport.iOS
             SfCalendarRenderer.Init();
             SfPickerRenderer.Init();
             new SfBusyIndicatorRenderer();
-            new SfNumericUpDownRenderer();
+            SfNumericUpDownRenderer.Init();
             SfMaskedEditRenderer.Init();
             SfTextInputLayoutRenderer.Init();
             SfSegmentedControlRenderer.Init();
