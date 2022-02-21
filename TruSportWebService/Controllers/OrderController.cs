@@ -98,7 +98,29 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<Order> orders = await _orderRepository.TodayByTeam(User);
+                IEnumerable<Order> orders = await _orderRepository.CompanyOrdersByToday(User);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+
+        // GET api/values
+        [HttpGet]
+        [Route("CompanyToday")]
+        public async Task<IActionResult> CompanyTodayByTeam()
+        {
+            try
+            {
+
+                IEnumerable<Order> orders = await _orderRepository.CompanyOrdersByToday(User);
 
                 if (orders != null)
                     return Ok(orders);
@@ -133,13 +155,33 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("Company")]
+        public async Task<IActionResult> Company()
+        {
+            try
+            {
+                IEnumerable<Order> orders = await _orderRepository.TeamOrders(User);
+
+                if (orders != null)
+                    return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Order");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("AllOrders")]
         public async Task<IActionResult> Orders()
         {
             try
             {
 
-                IEnumerable<Order> orders = await _orderRepository.GetAll();
+                IEnumerable<Order> orders = await _orderRepository.GetOrders();
 
                 if (orders != null)
                     return Ok(orders);
@@ -159,7 +201,7 @@ namespace OnTrackWebService.Controllers
         {
             try
             {
-                Order order = await _orderRepository.Get(id);
+                Order order = await _orderRepository.GetOrder(id);
 
                 if (order != null)
                     return Ok(order);

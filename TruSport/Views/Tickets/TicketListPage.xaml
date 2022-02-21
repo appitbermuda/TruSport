@@ -1,14 +1,24 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:forms="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms" xmlns:zxcm="clr-namespace:ZXing.Common;assembly=zxing.portable"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:forms="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms" xmlns:zxcm="clr-namespace:ZXing.Common;assembly=zxing.portable" xmlns:templates="clr-namespace:TruSport.Templates"
     x:Class="TruSport.Views.Tickets.TicketListPage"
     Title="ONTRACK Tickets" IconImageSource="menu"
     NavigationPage.HasNavigationBar="False">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:TicketsAvailableConverter x:Name="ticketsAvailableConverter" x:Key="ticketsAvailableConverter"/>
-            <DataTemplate x:Name="MatchTicketItemTemplate" x:Key="MatchTicketItemTemplate">
+            <DataTemplate x:Key="ticketFixtureTemplate">
+                <templates:TicketFixture />
+            </DataTemplate>
+            <DataTemplate x:Key="ticketEventTemplate">
+                <templates:TicketEvent />
+            </DataTemplate>
+            <templates:TicketDataTemplateSelector x:Key="ticketDataTemplateSelector"
+                                                        TicketFixtureTemplate="{StaticResource ticketFixtureTemplate}"
+                                                        TicketEventTemplate="{StaticResource ticketEventTemplate}"
+                                                        />
+            <!--<DataTemplate x:Name="MatchTicketItemTemplate" x:Key="MatchTicketItemTemplate">
                 <StackLayout>
                 <StackLayout HorizontalOptions="FillAndExpand"
                              VerticalOptions="FillAndExpand" Padding="8,8,8,8">
@@ -197,54 +207,6 @@
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="V" />
                     </StackLayout>
-                            <!--<StackLayout Grid.Row="1" Grid.Column="1"
-                                 VerticalOptions="Center"
-                                     HorizontalOptions="FillAndExpand"
-                                 Padding="5,2"
-                                 Spacing="0">
-                            <Label x:Name="HomeTeamNameLabel"
-                                   HorizontalOptions="EndAndExpand"
-                                   HorizontalTextAlignment="End"
-                                   FontSize="Micro"
-                                   FontAttributes="Bold"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding HomeTeam}">
-                                <Label.FontSize>
-                                    <OnPlatform x:TypeArguments="x:Double">  
-                        <OnPlatform.Android> 
-                            <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" /> 
-                        </OnPlatform.Android> 
-                        <OnPlatform.iOS> 
-                            <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" /> 
-                        </OnPlatform.iOS> 
-                    </OnPlatform> 
-                                </Label.FontSize>
-                            </Label>
-                        </StackLayout>-->
-                            <!--<StackLayout Grid.Row="1" Grid.Column="3"
-                                 VerticalOptions="Center"
-                                     HorizontalOptions="FillAndExpand"
-                                 Padding="5,2"
-                                 Spacing="0">
-                            <Label x:Name="AwayTeamNameLabel"
-                                   HorizontalOptions="StartAndExpand"
-                                   HorizontalTextAlignment="Start"
-                                   FontSize="Micro"
-                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                   FontAttributes="Bold"
-                                        Text="{Binding AwayTeam}">
-                                <Label.FontSize>
-                                    <OnPlatform x:TypeArguments="x:Double">  
-                        <OnPlatform.Android> 
-                            <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" /> 
-                        </OnPlatform.Android> 
-                        <OnPlatform.iOS> 
-                            <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" /> 
-                        </OnPlatform.iOS> 
-                    </OnPlatform> 
-                                </Label.FontSize>
-                            </Label>
-                        </StackLayout>-->
                     <BoxView HeightRequest="1" BackgroundColor="{DynamicResource frameBackgroundColor}" Grid.ColumnSpan="5" Grid.Row="3" Opacity="0.3"/>
                     <StackLayout Grid.Row="4" Grid.ColumnSpan="5" HorizontalOptions="FillAndExpand" Padding="5" BackgroundColor="{DynamicResource navBackgroundColor}">
                         <StackLayout HorizontalOptions="CenterAndExpand" Orientation="Horizontal">
@@ -267,7 +229,7 @@
                         </Frame>
                     </StackLayout>
             </StackLayout>
-            </DataTemplate>
+            </DataTemplate>-->
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
@@ -515,8 +477,8 @@
             <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
             <listView:SfListView x:Name="MatchTicketsList"
                                     ItemsSource="{Binding SportEventCollection}"
-                                    ItemTemplate="{StaticResource MatchTicketItemTemplate}"
-                                    SelectionMode="Single"
+                                    ItemTemplate="{StaticResource ticketDataTemplateSelector}"
+                                    SelectionMode="SingleDeselect"
                                     SelectionChangedCommand="{Binding TicketSelectedCommand}"
                                     SelectionChangedCommandParameter="{x:Reference MatchTicketsList}"
                                     HorizontalOptions="FillAndExpand"

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TruSport.Data;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
 using TruSport.Views;
+using TruSport.Views.Basketball;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
 using TruSport.Views.Tennis;
+using TruSport.Views.Triathlon;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace TruSport.ViewModel.Football
@@ -21,6 +25,7 @@ namespace TruSport.ViewModel.Football
         INavigation Navigation;
         SettingService settingService;
         SportService sportService;
+        NotificationRegistrationService notificationRegistrationService;
 
         #endregion
 
@@ -33,6 +38,7 @@ namespace TruSport.ViewModel.Football
             //databaseManager = new DatabaseManager();
             settingService = new SettingService();
             sportService = new SportService();
+            notificationRegistrationService = new NotificationRegistrationService();
 
             GenerateSource();
 
@@ -40,13 +46,14 @@ namespace TruSport.ViewModel.Football
             FootballTappedCommand = new Command(() => FootballTapped());
             CricketTappedCommand = new Command(() => CricketTapped());
             TennisTappedCommand = new Command(() => TennisTapped());
-            //TrackTappedCommand = new Command(() => TrackTapped());
-            //SwimmingTappedCommand = new Command(() => SwimmingTapped());
-            //RugbyTappedCommand = new Command(() => RugbyTapped());
-            //BasketballTappedCommand = new Command(() => BasketballTapped());
-            //HockeyTappedCommand = new Command(() => HockeyTapped());
-            //GolfTappedCommand = new Command(() => GolfTapped());
-            //CyclingTappedCommand = new Command(() => CyclingTapped());
+            TrackTappedCommand = new Command(() => TrackTapped());
+            SwimmingTappedCommand = new Command(() => SwimmingTapped());
+            RugbyTappedCommand = new Command(() => RugbyTapped());
+            BasketballTappedCommand = new Command(() => BasketballTapped());
+            TriathlonTappedCommand = new Command(() => TriathlonTapped());
+            HockeyTappedCommand = new Command(() => HockeyTapped());
+            GolfTappedCommand = new Command(() => GolfTapped());
+            CyclingTappedCommand = new Command(() => CyclingTapped());
         }
 
         #endregion
@@ -64,6 +71,7 @@ namespace TruSport.ViewModel.Football
         public Command HockeyTappedCommand { get; }
         public Command GolfTappedCommand { get; }
         public Command CyclingTappedCommand { get; }
+        public Command TriathlonTappedCommand { get; }
 
         public ObservableCollection<Sport> Sports
         {
@@ -116,9 +124,27 @@ namespace TruSport.ViewModel.Football
                 //await SecureStorage.SetAsync("DefaultSport","Football");
                 //await SecureStorage.SetAsync("Sport", "Football");
 
-                var sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "football");
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Football);
 
                 await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Football,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("FootballAlert", alert.IsAlert.ToString());
 
                 //Navigation.InsertPageBefore(new FootballMasterDetailPage(), Navigation.NavigationStack.First());
                 //await Navigation.PopToRootAsync();
@@ -137,9 +163,27 @@ namespace TruSport.ViewModel.Football
                 //await SecureStorage.SetAsync("DefaultSport", "Cricket");
                 //await SecureStorage.SetAsync("Sport", "Cricket");
 
-                var sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "bowling");
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Bowling);
 
                 await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Bowling,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("BowlingAlert", alert.IsAlert.ToString());
 
                 Application.Current.MainPage = new BowlingMasterDetailPage();
                 //Navigation.InsertPageBefore(new CricketMasterDetailPage(), Navigation.NavigationStack.First());
@@ -158,9 +202,27 @@ namespace TruSport.ViewModel.Football
                 //await SecureStorage.SetAsync("DefaultSport", "Cricket");
                 //await SecureStorage.SetAsync("Sport", "Cricket");
 
-                var sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "cricket");
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Cricket);
 
                 await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Cricket,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("CricketAlert", alert.IsAlert.ToString());
 
                 Application.Current.MainPage = new CricketMasterDetailPage();
                 //Navigation.InsertPageBefore(new CricketMasterDetailPage(), Navigation.NavigationStack.First());
@@ -176,9 +238,27 @@ namespace TruSport.ViewModel.Football
         {
             try
             {
-                var sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "tennis");
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Tennis);
 
                 await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Tennis,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("TennisAlert", alert.IsAlert.ToString());
 
                 Application.Current.MainPage = new TennisMasterDetailPage();
             }
@@ -188,89 +268,277 @@ namespace TruSport.ViewModel.Football
             }
         }
 
-        //private async void TrackTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Track & Field"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+        private async void TrackTapped()
+        {
+            try
+            {
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.TrackAndField);
 
-        //    }
-        //}
+                await App.Database.SetDefaultSport(sport);
 
-        //private async void SwimmingTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Swimming"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.TrackAndField,
+                    IsAlert = true
+                };
 
-        //    }
-        //}
+                await App.Database.SaveAlertSetting(alert);
 
-        //private async void RugbyTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Rugby"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
 
-        //    }
-        //}
+                await SecureStorage.SetAsync("TrackAndFieldAlert", alert.IsAlert.ToString());
 
-        //private async void BasketballTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Basketball"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+                //Application.Current.MainPage = new TrackMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
 
-        //    }
-        //}
+            }
+        }
 
-        //private async void HockeyTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Field Hockey"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+        private async void SwimmingTapped()
+        {
+            try
+            {
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Swimming);
 
-        //    }
-        //}
+                await App.Database.SetDefaultSport(sport);
 
-        //private async void GolfTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Golf"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Swimming,
+                    IsAlert = true
+                };
 
-        //    }
-        //}
+                await App.Database.SaveAlertSetting(alert);
 
-        //private async void CyclingTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Cycling"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
 
-        //    }
-        //}
+                await SecureStorage.SetAsync("SwimmingAlert", alert.IsAlert.ToString());
+
+                //Application.Current.MainPage = new SwimmingMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void RugbyTapped()
+        {
+            try
+            {
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Rugby);
+
+                await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Rugby,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("RugbyAlert", alert.IsAlert.ToString());
+
+                //Application.Current.MainPage = new RugbyMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void BasketballTapped()
+        {
+            try
+            {
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Basketball);
+
+                await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Basketball,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("BasketballAlert", alert.IsAlert.ToString());
+
+                Application.Current.MainPage = new BasketballMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void HockeyTapped()
+        {
+            try
+            {
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Hockey);
+
+                await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Hockey,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("HockeyAlert", alert.IsAlert.ToString());
+
+                //Application.Current.MainPage = new HockeyMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void GolfTapped()
+        {
+            try
+            {
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Golf);
+
+                await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Golf,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("GolfAlert", alert.IsAlert.ToString());
+
+                //Application.Current.MainPage = new GolfMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void CyclingTapped()
+        {
+            try
+            {
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Cycling);
+
+                await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Cycling,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("CyclingAlert", alert.IsAlert.ToString());
+
+                //Application.Current.MainPage = new CyclingMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void TriathlonTapped()
+        {
+            try
+            {
+                var sport = Sports.FirstOrDefault(e => e.Name == Constants.Triathlon);
+
+                await App.Database.SetDefaultSport(sport);
+
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = Constants.Triathlon,
+                    IsAlert = true
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("TriathlonAlert", alert.IsAlert.ToString());
+
+                Application.Current.MainPage = new TriathlonFlyoutPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         #endregion
     }

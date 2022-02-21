@@ -12,7 +12,6 @@ using Syncfusion.ListView.XForms.Control.Helpers;
 using Syncfusion.SfCalendar.XForms;
 using TruSport.Model;
 using TruSport.ViewModels;
-using TruSport.Views.Admin;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 

@@ -55,7 +55,7 @@ namespace TruSport.Views.Bowling
                     new BowlingMasterDetailPageMenuItem { Id = 3, Title = "Standings", IconSource="" , TargetType = typeof(Bowling.TablePage) },
                     new BowlingMasterDetailPageMenuItem { Id = 4, Title = "Leaderboard", IconSource="" , TargetType = typeof(Bowling.LeagueStatsPage) },
                     new BowlingMasterDetailPageMenuItem { Id = 5, Title = "Favourites", IconSource="" , TargetType = typeof(Bowling.FavouritePage) },
-                    new BowlingMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(Tickets.TicketFlyoutPage) },
+                    new BowlingMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(MainPage) },
                     new BowlingMasterDetailPageMenuItem { Id = 4, Title = "Shop Merchandise", IconSource="" , TargetType = typeof(ShopPage) },
                     new BowlingMasterDetailPageMenuItem { Id = 4, Title = "What's Happening?", IconSource="" , TargetType = typeof(FlyersPage) },
                     new BowlingMasterDetailPageMenuItem { Id = 4, Title = "News", IconSource="" , TargetType = typeof(NewsPage) },

@@ -52,7 +52,25 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Bowling).ToListAsync();
+
+                return leagues;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<List<League>> GetBasketballLeagues()
+        {
+            try
+            {
+                //var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Cricket");
+
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Basketball).ToListAsync();
 
                 return leagues;
             }
@@ -70,7 +88,7 @@ namespace OnTrackWebService.Repository
             {
                 //var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Cricket");
 
-                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Cricket").ToListAsync();
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Cricket).ToListAsync();
 
                 return leagues;
             }
@@ -88,7 +106,25 @@ namespace OnTrackWebService.Repository
             {
                 //var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Football");
 
-                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Football").ToListAsync();
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Football).ToListAsync();
+
+                return leagues;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
+        public async Task<List<League>> GetTennisLeagues()
+        {
+            try
+            {
+                //var sport = await _context.Sports.FirstOrDefaultAsync(e => e.Name == "Football");
+
+                var leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Tennis).ToListAsync();
 
                 return leagues;
             }

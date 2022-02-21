@@ -90,7 +90,7 @@ namespace OnTrackWebService.Repository
                 }
                 else
                 {
-                    if(fixture.MatchType.Name == "T20")
+                    if(fixture.MatchType.Name == "T20" || fixture.MatchType.Name == "County Cup")
                     {
                         var firstInning = matchInning.FirstOrDefault();
 
@@ -139,6 +139,20 @@ namespace OnTrackWebService.Repository
                 }
 
                 if (matchInning == null || (matchInning != null && matchInning.Count <= 2 && fixture.MatchType.Name == "T20"))
+                {
+                    _context.Database.BeginTransaction();
+
+                    fixture.Start = DateTime.Now;
+
+                    _context.CricketFixtures.Update(fixture);
+                    _context.SaveChanges();
+
+                    _context.MatchInnings.Add(item);
+                    _context.SaveChanges();
+
+                    _context.Database.CommitTransaction();
+                }
+                else if (matchInning == null || (matchInning != null && matchInning.Count <= 2))
                 {
                     _context.Database.BeginTransaction();
 

@@ -64,6 +64,26 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = Roles.TicketScanner)]
+        [HttpGet]
+        [Route("ActiveScanner")]
+        public async Task<IActionResult> ActiveScanner()
+        {
+            try
+            {
+
+                bool scannerActive = await _ticketCompanyRepository.ActiveScanner(User);
+
+                return Ok(scannerActive);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Users");
+            }
+
+            return NoContent();
+        }
+
         [Authorize(Roles = Roles.TicketOwner)]
         [HttpGet]
         [Route("TicketScanners")]
@@ -99,6 +119,25 @@ namespace OnTrackWebService.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.Admin)]
+        [HttpPost]
+        [Route("Setup")]
+        public async Task<IActionResult> Setup([FromBody] RegisterTicketCompany ticketCompany)
+        {
+            try
+            {
+                await _ticketCompanyRepository.Setup(ticketCompany);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "TicketCompany");
             }
 
             return NoContent();

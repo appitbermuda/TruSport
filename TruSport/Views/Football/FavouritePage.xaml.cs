@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TruSport.Data;
 using TruSport.Model;
 using TruSport.ViewModels;
-using TruSport.Views.Admin;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 

@@ -42,11 +42,12 @@ namespace OnTrackWebService
             {
                 options.EnableEndpointRouting = false;
             });
+
             services.AddMvc().AddNewtonsoftJson(options => {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
-            //#if DEBUG
+            ////#if DEBUG
             //services.AddDbContext<OnTrackContext>
             //    (op => op.UseSqlServer(Configuration["ConnectionString:OnTrackDBTest"])
             //    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
@@ -88,6 +89,8 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<BowlingGame>, BowlingGameRepository>();
             services.AddScoped<IOnTrackRepository<BowlingRoster>, BowlingRosterRepository>();
             services.AddScoped<IOnTrackRepository<ContactTrace>, ContactTraceRepository>();
+            services.AddScoped<IOnTrackRepository<CourtType>, CourtTypeRepository>();
+            //services.AddScoped<IOnTrackRepository<Customer>, CustomerRepository>();
             services.AddScoped<IOnTrackRepository<Coach>, CoachRepository>();
             services.AddScoped<IEmailRepository<string>, EmailRepository>();
             services.AddScoped<INewsRepository<RssFeedItem>, NewsRepository>();
@@ -101,6 +104,7 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<FixtureProduct>, FixtureProductRepository>();
             services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
             services.AddScoped<IOnTrackRepository<Match>, MatchRepository>();
+            services.AddScoped<IOnTrackRepository<CustomerTicket>, CustomerTicketRepository>();
             services.AddScoped<IOnTrackRepository<MatchTicket>, MatchTicketRepository>();
             services.AddScoped<IOnTrackRepository<MatchInning>, MatchInningRepository>();
             services.AddScoped<IOnTrackRepository<MatchRoster>, MatchRosterRepository>();
@@ -111,11 +115,21 @@ namespace OnTrackWebService
             services.AddScoped<IOnTrackRepository<Award>, AwardRepository>();
             services.AddScoped<IOnTrackRepository<PlayerSeason>, PlayerSeasonRepository>();
             services.AddScoped<IOnTrackRepository<Team>, TeamRepository>();
+            services.AddScoped<IOnTrackRepository<TennisTournament>, TournamentRepository>();
+            services.AddScoped<IOnTrackRepository<Transfer>, TransferRepository>();
+            services.AddScoped<IOnTrackRepository<TicketCompany>, TicketCompanyRepository>();
+            services.AddScoped<IOnTrackRepository<TicketMember>, TicketMemberRepository>();
             services.AddScoped<IOnTrackRepository<TicketConfiguration>, TicketConfigurationRepository>();
+            services.AddScoped<IOnTrackRepository<TennisRanking>, RankingRepository>();
             services.AddScoped<IOnTrackRepository<Role>, RoleRepository>();
             services.AddScoped<ISettingRepository<Setting>, SettingRepository>();
             services.AddScoped<IOnTrackRepository<Season>, SeasonRepository>();
             services.AddScoped<IOnTrackRepository<Sport>, SportRepository>();
+            services.AddScoped<IOnTrackRepository<Product>, ProductRepository>();
+            services.AddScoped<IPaymentRepository<PaymentAuthorize>, PaymentRepository>();
+            services.AddScoped<IOnTrackRepository<ProductType>, ProductTypeRepository>();
+            services.AddScoped<IOnTrackRepository<SportEvent>, SportEventRepository>();
+            services.AddScoped<ITicketRepository<Wallet>, WalletRepository>();
             //services.AddScoped<IDisposable, UserRepository>();
             services.AddScoped<IDisposable, AuthenticationRepository>();
             services.AddScoped<IPushNotificationRepository<Push>, PushNotificationRepository>();
@@ -148,6 +162,9 @@ namespace OnTrackWebService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            //Register Syncfusion license
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDc1MDExQDMxMzkyZTMyMmUzMFBmL3BZOThGSmxlWnZham4zZW4raVFXUFF6dTZCUDhOTjIvMDJjT2lNNkk9"); 
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -84,6 +84,40 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<BasketballPlayerSeason>> GetBasketballPlayers()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("Token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Player/BasketballPlayers", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballPlayerSeason> players = JsonConvert.DeserializeObject<List<BasketballPlayerSeason>>(response.Content);
+
+                    return players;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+            return null;
+        }
+
         public async Task<List<BowlingPlayerSeason>> GetBowlingPlayers()
         {
             try
@@ -171,6 +205,41 @@ namespace TruSport.Services
                 if (response.IsSuccessful)
                 {
                     List<TennisPlayerSeason> players = JsonConvert.DeserializeObject<List<TennisPlayerSeason>>(response.Content);
+
+                    return players;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+            return null;
+        }
+
+        public async Task<List<BasketballPlayerSeason>> GetBasketballTeamPlayers(string TeamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("Token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Player/BasketballTeamPlayers", Method.GET);
+                request.AddParameter("teamID", TeamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballPlayerSeason> players = JsonConvert.DeserializeObject<List<BasketballPlayerSeason>>(response.Content);
 
                     return players;
                 }

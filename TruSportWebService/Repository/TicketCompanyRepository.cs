@@ -70,7 +70,8 @@ namespace OnTrackWebService.Repository
             try
             {
                 ticketCompanys = await _context.TicketCompanys
-                    .Include(e => e.Sport).ToListAsync();
+                    .Include(e => e.Sport)
+                    .ToListAsync();
             }
             catch(Exception ex)
             { }
@@ -78,12 +79,41 @@ namespace OnTrackWebService.Repository
             return ticketCompanys;
         }
 
+        public async Task<bool> ActiveScanner(ClaimsPrincipal claimsUser)
+        {
+            try
+            {
+                // Get the claims values
+                var username = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                   .Select(c => c.Value).SingleOrDefault();
+
+                if (UserInRole.Role(role, Roles.TicketScanner))
+                {
+                    var ticketadmin = await _context.TicketCompanyUsers
+                        .Include(e => e.User).ThenInclude(e => e.Role)
+                        .Include(e => e.TicketCompany)
+                        .FirstOrDefaultAsync(e => e.User.UserName == username && e.User.Role.Name == role);
+
+                    return ticketadmin.IsActive;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Active Scanner");
+            }
+
+            return false;
+        }
+
         public async Task<IEnumerable<TicketScanner>> GetScanners(ClaimsPrincipal claimsUser)
         {
             try
             {
                 // Get the claims values
-                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                var username = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
                 var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
@@ -94,9 +124,9 @@ namespace OnTrackWebService.Repository
                     var ticketOwner = await _context.TicketCompanyUsers
                         .Include(e => e.User).ThenInclude(e => e.Role)
                         .Include(e => e.TicketCompany)
-                        .FirstOrDefaultAsync(e => e.User.Email == email && e.User.Role.Name == role);
+                        .FirstOrDefaultAsync(e => e.User.UserName == username && e.User.Role.Name == role);
 
-                    var text = Roles.TicketScanner.Split(',');
+                    var text = Roles.TicketScanner.Split(',').Where(e => !e.Contains("Owner")).ToArray();
 
                     List<TicketScanner> scanners = await _context.TicketCompanyUsers
                         .Include(e => e.User).ThenInclude(e => e.Role)
@@ -126,7 +156,7 @@ namespace OnTrackWebService.Repository
             try
             {
                 // Get the claims values
-                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                var username = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
                 var role = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Role)
@@ -135,7 +165,7 @@ namespace OnTrackWebService.Repository
                 var ticketOwner = await _context.TicketCompanyUsers
                     .Include(e => e.User).ThenInclude(e => e.Role)
                     .Include(e => e.TicketCompany)
-                    .Where(e => e.User.Email == email && e.User.Role.Name == role).ToListAsync();
+                    .Where(e => e.User.UserName == username && e.User.Role.Name == role).ToListAsync();
 
                 if (ticketOwner != null && ticketOwner.Count > 0)
                 {
@@ -172,6 +202,38 @@ namespace OnTrackWebService.Repository
             }
 
             return false;
+        }
+
+        public async Task Setup(RegisterTicketCompany item)
+        {
+            try
+            {
+                _context.Database.BeginTransaction();
+
+                TicketCompany ticketCompany = new TicketCompany
+                {
+                    Name = item.Name,
+                    Alias = item.Alias,
+                    Logo = item.Logo,
+                    SportID = item.SportID
+                };
+
+                _context.TicketCompanys.Add(ticketCompany);
+                await _context.SaveChangesAsync();
+
+
+                item.Products.ForEach(e => e.TicketCompanyID = ticketCompany.ID);
+
+                await _context.Products.AddRangeAsync(item.Products);
+                await _context.SaveChangesAsync();
+
+                _context.Database.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                _context.Database.RollbackTransaction();
+                Debug.WriteLine(ex.Message, "Insert Ticket Team");
+            }
         }
 
         public async Task Insert(TicketCompany item)

@@ -64,6 +64,24 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Transfer>> Basketball()
+        {
+            try
+            {
+                var transfers = await _context.Transfers.Include(e => e.Sport).Include(e => e.NewTeam).Include(e => e.Season).ToListAsync();
+
+                transfers.Where(e => e.Sport.Name.ToLower() == Constants.Basketball.ToLower());
+
+                return transfers;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Basketball Transfer");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<Transfer>> Cricket()
         {
             try

@@ -9,6 +9,7 @@ namespace OnTrackWebService.Models.Shop
         public string ID { get; set; }
         public string CustomerID { get; set; }
         public string TicketCompanyID { get; set; }
+        public int NoOfTickets { get; set; }
 
         [ForeignKey("CustomerID")]
         public Customer Customer { get; set; }

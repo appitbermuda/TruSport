@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using OnTrackWebService.Data;
 using OnTrackWebService.Models.Shop;
+using OnTrackWebService.Models.Ticket;
 
 namespace OnTrackWebService.Controllers
 {
@@ -34,6 +35,28 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<CustomerTicket> customerTickets = await _customerTicketRepository.GetAll();
+
+                if (customerTickets != null)
+                    return Ok(customerTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "CustomerTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet]
+        [Route("Search")]
+        public async Task<IActionResult> CustomerTicketsForSearch()
+        {
+            try
+            {
+
+                IEnumerable<CustomerTicket> customerTickets = await _customerTicketRepository.Search();
 
                 if (customerTickets != null)
                     return Ok(customerTickets);
@@ -157,7 +180,7 @@ namespace OnTrackWebService.Controllers
         [Authorize(Roles = Roles.TicketAdmin)]
         [HttpGet]
         [Route("EventBilling")]
-        public async Task<IActionResult> FixtureContactTraces(string eventID)
+        public async Task<IActionResult> EventBilling(string eventID)
         {
             try
             {
@@ -220,13 +243,79 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [Authorize(Roles = Roles.TicketAdmin)]
         [HttpGet]
-        [Route("Download")]
-        public async Task<IActionResult> Download(string fixtureID)
+        [Route("TeamSearch")]
+        public async Task<IActionResult> TeamCustomerTicketsForSearch()
         {
             try
             {
 
-                bool downloaded = await _customerTicketRepository.Download(fixtureID, User);
+                IEnumerable<CustomerTicket> customerTickets = await _customerTicketRepository.TeamSearch(User);
+
+                if (customerTickets != null)
+                    return Ok(customerTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "CustomerTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Stats")]
+        public async Task<IActionResult> Stats()
+        {
+            try
+            {
+
+                ScanStatistic customerTickets = await _customerTicketRepository.Stats(User);
+
+                if (customerTickets != null)
+                    return Ok(customerTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "CustomerTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("StatsByEvent")]
+        public async Task<IActionResult> Stats(string sportEventID)
+        {
+            try
+            {
+
+                ScanStatistic customerTickets = await _customerTicketRepository.Stats(User, sportEventID);
+
+                if (customerTickets != null)
+                    return Ok(customerTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "CustomerTicket");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Download")]
+        public async Task<IActionResult> Download(string eventID)
+        {
+            try
+            {
+
+                bool downloaded = await _customerTicketRepository.Download(eventID, User);
 
                 return Ok(downloaded);
             }
@@ -250,6 +339,28 @@ namespace OnTrackWebService.Controllers
                 List<TicketReport> reports = await _customerTicketRepository.Reports(User);
 
                 return Ok(reports);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Billing")]
+        public async Task<IActionResult> Billing(string eventID)
+        {
+            try
+            {
+
+                TicketBilling ticketBilling = await _customerTicketRepository.Billing(eventID, User);
+
+                if (ticketBilling != null)
+                    return Ok(ticketBilling);
             }
             catch (Exception ex)
             {
@@ -303,6 +414,75 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        // POST api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("PurchaseTicket")]
+        public async Task<IActionResult> PurchaseTicket([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
+                {
+                    PaymentResponse authorized = await _customerTicketRepository.PurchaseTicket(User, paymentAuthorize);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("ZeroPurchase")]
+        public async Task<IActionResult> ZeroPurchase([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null)
+                {
+                    PaymentResponse authorized = await _customerTicketRepository.ZeroPurchase(User, paymentAuthorize);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("AdhocZeroPurchase")]
+        public async Task<IActionResult> AdhocZeroPurchase([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null)
+                {
+                    PaymentResponse authorized = await _customerTicketRepository.ZeroPurchase(User, paymentAuthorize, true);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
         [Authorize(Roles = Roles.Customer)]
         [HttpPost]
         [Route("PurchaseTest")]
@@ -312,7 +492,96 @@ namespace OnTrackWebService.Controllers
             {
                 if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
                 {
-                    PaymentResponse authorized = await _customerTicketRepository.PurchaseTest(paymentAuthorize);
+                    PaymentResponse authorized = await _customerTicketRepository.PurchaseTicketTest(User, paymentAuthorize);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("ZeroPurchaseTest")]
+        public async Task<IActionResult> ZeroPurchaseTest([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null)
+                {
+                    PaymentResponse authorized = await _customerTicketRepository.ZeroPurchaseTest(User, paymentAuthorize);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("AdhocZeroPurchaseTest")]
+        public async Task<IActionResult> AdhocZeroPurchaseTest([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null)
+                {
+                    PaymentResponse authorized = await _customerTicketRepository.ZeroPurchaseTest(User, paymentAuthorize, true);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("AdhocPurchase")]
+        public async Task<IActionResult> AdhocPurchase([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
+                {
+                    PaymentResponse authorized = await _customerTicketRepository.PurchaseTicket(User, paymentAuthorize, true);
+
+                    return Ok(authorized);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Purchase Match Ticket");
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = Roles.Customer)]
+        [HttpPost]
+        [Route("AdhocPurchaseTest")]
+        public async Task<IActionResult> AdhocPurchaseTest([FromBody] PaymentAuthorize paymentAuthorize)
+        {
+            try
+            {
+                if (paymentAuthorize != null && paymentAuthorize.CardNumber != null && paymentAuthorize.CVV != null && paymentAuthorize.Expiry != null && paymentAuthorize.Amount != null)
+                {
+                    PaymentResponse authorized = await _customerTicketRepository.PurchaseTicketTest(User, paymentAuthorize, true);
 
                     return Ok(authorized);
                 }

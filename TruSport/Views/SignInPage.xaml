@@ -14,7 +14,13 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
          <StackLayout>
-                <Grid Padding="10,50,10,10" BackgroundColor="{DynamicResource navBackgroundColor}">
+                <Grid BackgroundColor="{DynamicResource navBackgroundColor}">
+                    <Grid.Padding>
+               <OnPlatform x:TypeArguments="Thickness">
+                 <On Platform="Android" Value="0, 10, 10, 10"/>
+                 <On Platform="iOS" Value="10, 50, 10, 10"/>
+                </OnPlatform>
+              </Grid.Padding>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -23,7 +29,7 @@
                     <StackLayout Grid.ColumnSpan="3" Spacing="0">   
                         <Label Text="ONTRACK TICKETS" TextColor="{DynamicResource navTextColor}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>                        
                     </StackLayout>
-                    <Button x:Name="BackButton" Text="" TextColor="{DynamicResource navTextColor}" BackgroundColor="Transparent" FontSize="25" Clicked="BackButton_Clicked" FontFamily="{StaticResource fontAwesomeRegularFamily}"/>
+                    <Button x:Name="BackButton" Text="" TextColor="{DynamicResource navTextColor}" BackgroundColor="Transparent" FontSize="25" Clicked="BackButton_Clicked" FontFamily="{StaticResource fontAwesomeRegularFamily}"/>
                 </Grid>
             </StackLayout>
         <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">

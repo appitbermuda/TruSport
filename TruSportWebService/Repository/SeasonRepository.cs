@@ -44,17 +44,22 @@ namespace OnTrackWebService.Repository
 
         public async Task<List<Season>> GetCricketSeason()
         {
-            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == "Cricket").ToListAsync();
+            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Cricket).ToListAsync();
         }
 
         public async Task<List<Season>> GetFootballSeason()
         {
-            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == "Football").ToListAsync();
+            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Football).ToListAsync();
+        }
+
+        public async Task<List<Season>> GetBasketballSeason()
+        {
+            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Basketball).ToListAsync();
         }
 
         public async Task<List<Season>> GetBowlingSeason()
         {
-            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
+            return await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Bowling).ToListAsync();
         }
 
         public async Task<IEnumerable<Season>> GetAll()

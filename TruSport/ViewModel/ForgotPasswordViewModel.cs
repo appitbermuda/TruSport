@@ -190,19 +190,20 @@ namespace TruSport.ViewModel
                                             IsActivityIndicatorVisible = false;
                                             App.IsLoggedIn = true;
 
-                                            await Navigation.PopModalAsync();
+                                            //await Navigation.PopModalAsync();
 
-                                            if (Application.Current.MainPage is MasterDetailPage mdp)
-                                            {
-                                                var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
-                                                page.Title = "Tickets";
+                                            Application.Current.MainPage = (new TicketFlyoutPage());
+                                            //if (Application.Current.MainPage is MasterDetailPage mdp)
+                                            //{
+                                            //    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
+                                            //    page.Title = "Tickets";
 
-                                                mdp.Detail = new NavigationPage(page)
-                                                {
-                                                    BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                                                    BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                                                };
-                                            }
+                                            //    mdp.Detail = new NavigationPage(page)
+                                            //    {
+                                            //        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                                            //        BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                                            //    };
+                                            //}
                                         }
                                         else
                                         {

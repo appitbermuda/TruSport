@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using TruSport.Model;
+using TruSport.Model.Ticket;
+using TruSport.Services;
 using TruSport.ViewModels;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -13,14 +15,17 @@ namespace TruSport.ViewModel.Shop
     public class CreditCardPageViewModel : BaseViewModel
     {
         private CreditCard _creditCard;
+        private Wallet _card;
         private Customer _customer;
         private bool _isActivityIndicatorVisible;
 
         INavigation Navigation;
+        WalletService walletService;
 
         public CreditCardPageViewModel(INavigation navigation)
         {
             Navigation = navigation;
+            walletService = new WalletService();
 
             GenerateSource();
 
@@ -28,12 +33,12 @@ namespace TruSport.ViewModel.Shop
             CloseClickedCommand = new Command(async () => await Close());
         }
 
-        public CreditCardPageViewModel(INavigation navigation, int creditCardID)
+        public CreditCardPageViewModel(INavigation navigation, string cardID)
         {
             Navigation = navigation;
 
 
-            GenerateSource(creditCardID);
+            GenerateSource(cardID);
 
             SaveCommand = new Command(async () => await Save());
             CloseClickedCommand = new Command(async () => await Close());
@@ -52,6 +57,12 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _creditCard; }
             set { Set(ref _creditCard, value); }
+        }
+
+        public Wallet Card
+        {
+            get { return _card; }
+            set { Set(ref _card, value); }
         }
 
         public bool IsActivityIndicatorVisible
@@ -73,12 +84,12 @@ namespace TruSport.ViewModel.Shop
 
                 if (Customer != null)
                 {
-                    CreditCard = new CreditCard();
+                    Card = new Wallet();
 
-                    var creditCards = await App.Database.GetCreditCards(email);
+                    var wallet = await walletService.GetWallet();
 
-                    if (creditCards == null || creditCards.Count == 0)
-                        CreditCard.IsDefault = true;
+                    if (wallet == null || wallet.Count == 0)
+                        Card.IsDefault = true;
                 }
                 else
                     await Navigation.PopModalAsync();
@@ -88,7 +99,7 @@ namespace TruSport.ViewModel.Shop
             IsActivityIndicatorVisible = false;
         }
 
-        internal async void GenerateSource(int creditCardID)
+        internal async void GenerateSource(string cardID)
         {
             IsActivityIndicatorVisible = true;
 
@@ -101,7 +112,7 @@ namespace TruSport.ViewModel.Shop
 
                 
                 if (Customer != null)
-                    CreditCard = await App.Database.GetCreditCard(creditCardID);
+                    Card = await walletService.GetCard(cardID);
                 else
                     await Navigation.PopModalAsync();
 

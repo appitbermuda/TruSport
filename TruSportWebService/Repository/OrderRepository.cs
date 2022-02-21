@@ -220,10 +220,10 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                var username = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                       .Select(c => c.Value).SingleOrDefault();
 
-                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.UserName == username);
 
                 var orders = await _context.Orders.Include(e => e.Customer)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.EventTicket).ThenInclude(e => e.SportEvent)
@@ -292,10 +292,10 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                var username = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                          .Select(c => c.Value).SingleOrDefault();
 
-                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.UserName == username);
 
 
 #if DEBUG
@@ -408,10 +408,12 @@ namespace OnTrackWebService.Repository
                 var orders = await _context.Orders.Include(e => e.Customer)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.EventTicket).ThenInclude(e => e.SportEvent)
                     .Include(e => e.OrderDetails).ThenInclude(e => e.EventTicket).ThenInclude(e => e.SportEvent)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.HomeTeam)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.FixtureProduct).ThenInclude(e => e.Fixture).ThenInclude(e => e.AwayTeam)
                     .Where(e => e.Customer.Email == email)
                     .ToListAsync();
 
-                orders.ForEach(e => e.Fixture = e.OrderDetails.FirstOrDefault()?.EventTicket.SportEvent.HomeTeam + " v " + e.OrderDetails.FirstOrDefault()?.EventTicket.SportEvent.AwayTeam);
+                orders.ForEach(e => e.Fixture = (e.OrderDetails.FirstOrDefault()?.EventTicket != null ? e.OrderDetails.FirstOrDefault()?.EventTicket.SportEvent?.HomeTeam : e.OrderDetails.FirstOrDefault()?.FixtureProduct?.Fixture?.HomeTeam?.Name) + " v " + (e.OrderDetails.FirstOrDefault()?.EventTicket != null ? e.OrderDetails.FirstOrDefault()?.EventTicket.SportEvent?.AwayTeam : e.OrderDetails.FirstOrDefault()?.FixtureProduct?.Fixture?.AwayTeam?.Name));
 
                 try
                 {

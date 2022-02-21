@@ -10,6 +10,7 @@ namespace TruSport.Model
         public string EventTicketID { get; set; }
         public bool Validated { get; set; }
         public DateTime? ValidatedTime { get; set; }
+        public bool IsMemberTicket { get; set; }
 
         [Ignore]
         public virtual Order Order { get; set; }

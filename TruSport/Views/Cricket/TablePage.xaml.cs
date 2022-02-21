@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using TruSport.ViewModels.Cricket;
-using TruSport.Views.Admin;
 using Xamarin.Forms;
 
 namespace TruSport.Views.Cricket

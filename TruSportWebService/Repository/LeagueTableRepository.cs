@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Basketball;
 using OnTrackWebService.Models.Imports;
 using MatchType = OnTrackWebService.Models.MatchType;
 
@@ -47,6 +48,15 @@ namespace OnTrackWebService.Repository
         {
             //return await _context.LeagueTables.FromSql("select * from leaguetable").ToListAsync();
             return await _context.CricketLeagueTable.ToListAsync();
+        }
+
+        public async Task<IEnumerable<BasketballLeagueStanding>> GetAllBasketball()
+        {
+            //return await _context.LeagueTables.FromSql("select * from leaguetable").ToListAsync();
+            return await _context.BasketballLeagueStandings
+                .Include(e => e.League)
+                .Include(e => e.Season)
+                .Include(e => e.Team).ToListAsync();
         }
 
         public async Task<IEnumerable<PremierLeagueTable>> GetPremierLeagueTable()
@@ -91,6 +101,188 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<BasketballLeagueStanding>> GetBasketballStandings()
+        {
+            try
+            {
+                var basketballLeagueStandings = await _context.BasketballLeagueStandings
+                    .Include(e => e.Team)
+                    .Include(e => e.Season)
+                    .Include(e => e.League)
+                    .Where(e => e.Team.Name != "TBD").ToListAsync();
+
+                //List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
+
+                //foreach (var standing in bowlingLeagueStandings)
+                //{
+                //    BowlingLeagueStanding table = new BowlingLeagueStanding
+                //    {
+                //        TeamID = standing.TeamID,
+                //        Team = standing.Team,
+                //        LeagueID = standing.LeagueID,
+                //        League = standing.League,
+                //        SeasonID = standing.SeasonID,
+                //        Season = standing.Season,
+                //        PointsWon = standing.PointsWon,
+                //        PointsLost = standing.PointsLost,
+                //        TeamAvg = standing.TeamAvg,
+                //        ScratchPins = standing.ScratchPins,
+                //        HighGame = standing.HighGame,
+                //        HighSers = standing.HighSers,
+                //        Week = standing.Week
+                //    };
+
+                //    makeLeagueTable.Add(table);
+                //}
+
+                var fixtureDates = await _context.BasketballFixtures.Select(e => e.Date).ToListAsync();
+                int fixtureCount = fixtureDates.GroupBy(e => e.Date).Count();
+
+                List<BasketballLeagueStanding> leagueTable = new List<BasketballLeagueStanding>();
+                var tablePositions = basketballLeagueStandings.OrderByDescending(e => e.Percent).ThenByDescending(e => e.PointsDifference);
+                int position = 1;
+                foreach (var table in tablePositions)
+                {
+                    table.Position = position;
+                    leagueTable.Add(table);
+
+                    position++;
+                }
+
+                return leagueTable;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballStandings");
+            }
+
+            return null;
+        }
+
+        public async Task<bool> SyncBasketballStandings()
+        {
+            try
+            {
+                var seasons = await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Basketball).ToListAsync();
+
+                foreach (var season in seasons)
+                {
+                    var fixtures = await _context.BasketballFixtures
+                        .Include(e => e.HomeTeam)
+                        .Include(e => e.AwayTeam)
+                        .Include(e => e.League)
+                        .Include(e => e.Season)
+                        .Include(e => e.MatchType)
+                        .Where(e => e.SeasonID == season.ID && e.Date <= DateTime.Now.Date && e.MatchType.IsTable && !e.IsPostponed && !e.IsCancelled).ToListAsync();
+
+                    foreach (var fixture in fixtures)
+                    {
+                        var previousFixtures = await _context.BasketballFixtures.Where(e => (e.HomeTeamID == fixture.HomeTeamID || e.AwayTeamID == fixture.HomeTeamID || e.HomeTeamID == fixture.AwayTeamID || e.AwayTeamID == fixture.AwayTeamID) && e.Date <= DateTime.Now && !e.IsPostponed && !e.IsCancelled).ToListAsync();
+                        var teamStandings = await _context.BasketballLeagueStandings.Where(e => e.TeamID == fixture.HomeTeamID || e.TeamID == fixture.AwayTeamID).ToListAsync();
+                        var teamScores = await _context.BasketballScores
+                            .Include(e => e.BasketballFixture)
+                            .Where(e => previousFixtures.Any(d => d.ID == e.BasketballFixtureID) && (e.HomeTeamScore > 0 || e.AwayTeamScore > 0)).ToListAsync();
+
+                        int homeTeamPlayed = previousFixtures.Where(e => e.HomeTeamID == fixture.HomeTeamID || e.AwayTeamID == fixture.HomeTeamID).Count();
+                        int awayTeamPlayed = previousFixtures.Where(e => e.HomeTeamID == fixture.AwayTeamID || e.AwayTeamID == fixture.AwayTeamID).Count();
+
+                        var homeTeamStanding = teamStandings.FirstOrDefault(e => e.TeamID == fixture.HomeTeamID);
+                        var awayTeamStanding = teamStandings.FirstOrDefault(e => e.TeamID == fixture.AwayTeamID);
+
+                        homeTeamStanding.Played = homeTeamPlayed;
+                        awayTeamStanding.Played = awayTeamPlayed;
+
+                        homeTeamStanding.Win = teamScores.Where(e => (e.BasketballFixture.HomeTeamID == fixture.HomeTeamID && e.HomeTeamScore > e.AwayTeamScore) || (e.BasketballFixture.AwayTeamID == fixture.HomeTeamID && e.AwayTeamScore > e.HomeTeamScore)).Count();
+                        homeTeamStanding.Loss = teamScores.Where(e => (e.BasketballFixture.HomeTeamID == fixture.HomeTeamID && e.AwayTeamScore > e.HomeTeamScore) || (e.BasketballFixture.AwayTeamID == fixture.HomeTeamID && e.HomeTeamScore > e.AwayTeamScore)).Count();
+                        homeTeamStanding.Draw = teamScores.Where(e => (e.BasketballFixture.HomeTeamID == fixture.HomeTeamID && e.AwayTeamScore == e.HomeTeamScore) || (e.BasketballFixture.AwayTeamID == fixture.HomeTeamID && e.HomeTeamScore == e.AwayTeamScore)).Count();
+
+                        awayTeamStanding.Win = teamScores.Where(e => (e.BasketballFixture.AwayTeamID == fixture.AwayTeamID && e.AwayTeamScore > e.HomeTeamScore) || (e.BasketballFixture.HomeTeamID == fixture.AwayTeamID && e.HomeTeamScore > e.AwayTeamScore)).Count();
+                        awayTeamStanding.Loss = teamScores.Where(e => (e.BasketballFixture.AwayTeamID == fixture.AwayTeamID && e.HomeTeamScore > e.AwayTeamScore) || (e.BasketballFixture.HomeTeamID == fixture.AwayTeamID && e.AwayTeamScore > e.HomeTeamScore)).Count();
+                        awayTeamStanding.Draw = teamScores.Where(e => (e.BasketballFixture.AwayTeamID == fixture.AwayTeamID && e.HomeTeamScore == e.AwayTeamScore) || (e.BasketballFixture.HomeTeamID == fixture.AwayTeamID && e.AwayTeamScore == e.HomeTeamScore)).Count();
+
+                        homeTeamStanding.PointsFor = (teamScores.Where(e => e.BasketballFixture.HomeTeamID == fixture.HomeTeamID).Sum(e => e.HomeTeamScore) ?? 0) + (teamScores.Where(e => e.BasketballFixture.AwayTeamID == fixture.HomeTeamID).Sum(e => e.AwayTeamScore) ?? 0);
+                        homeTeamStanding.PointsAgainst = (teamScores.Where(e => e.BasketballFixture.HomeTeamID == fixture.HomeTeamID).Sum(e => e.AwayTeamScore) ?? 0) + (teamScores.Where(e => e.BasketballFixture.AwayTeamID == fixture.HomeTeamID).Sum(e => e.HomeTeamScore) ?? 0);
+
+                        awayTeamStanding.PointsFor = (teamScores.Where(e => e.BasketballFixture.AwayTeamID == fixture.AwayTeamID).Sum(e => e.AwayTeamScore) ?? 0) + (teamScores.Where(e => e.BasketballFixture.HomeTeamID == fixture.AwayTeamID).Sum(e => e.HomeTeamScore) ?? 0);
+                        awayTeamStanding.PointsAgainst = (teamScores.Where(e => e.BasketballFixture.AwayTeamID == fixture.AwayTeamID).Sum(e => e.HomeTeamScore) ?? 0) + (teamScores.Where(e => e.BasketballFixture.HomeTeamID == fixture.AwayTeamID).Sum(e => e.AwayTeamScore) ?? 0);
+
+                        _context.BasketballLeagueStandings.Update(homeTeamStanding);
+                        _context.BasketballLeagueStandings.Update(awayTeamStanding);
+
+                        await _context.SaveChangesAsync();
+
+                        _context.Database.BeginTransaction();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "SyncBasketballStandings");
+            }
+
+            return false;
+        }
+
+        public async Task<List<BasketballLeagueStanding>> GetIslandFallBasketballLeagueStanding()
+        {
+            try
+            {
+                var basketballLeagueStandings = await _context.BasketballLeagueStandings
+                    .Include(e => e.Team)
+                    .Include(e => e.Season)
+                    .Include(e => e.League)
+                    .Where(e => e.Team.Name != "TBD").ToListAsync();
+
+                //List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
+
+                //foreach (var standing in bowlingLeagueStandings)
+                //{
+                //    BowlingLeagueStanding table = new BowlingLeagueStanding
+                //    {
+                //        TeamID = standing.TeamID,
+                //        Team = standing.Team,
+                //        LeagueID = standing.LeagueID,
+                //        League = standing.League,
+                //        SeasonID = standing.SeasonID,
+                //        Season = standing.Season,
+                //        PointsWon = standing.PointsWon,
+                //        PointsLost = standing.PointsLost,
+                //        TeamAvg = standing.TeamAvg,
+                //        ScratchPins = standing.ScratchPins,
+                //        HighGame = standing.HighGame,
+                //        HighSers = standing.HighSers,
+                //        Week = standing.Week
+                //    };
+
+                //    makeLeagueTable.Add(table);
+                //}
+
+                var fixtureDates = await _context.BasketballFixtures.Select(e => e.Date).ToListAsync();
+                int fixtureCount = fixtureDates.GroupBy(e => e.Date).Count();
+
+                List<BasketballLeagueStanding> leagueTable = new List<BasketballLeagueStanding>();
+                var tablePositions = basketballLeagueStandings.OrderByDescending(e => e.Percent).ThenByDescending(e => e.PointsDifference);
+                int position = 1;
+                foreach (var table in tablePositions)
+                {
+                    table.Position = position;
+                    leagueTable.Add(table);
+
+                    position++;
+                }
+
+                return leagueTable;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "IslandFallBasketballLeague");
+            }
+
+            return null;
+        }
+
         public async Task<List<BowlingLeagueStanding>> GetBowlingStandings()
         {
             try
@@ -99,7 +291,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team)
                     .Include(e => e.Season)
                     .Include(e => e.League)
-                    .ToListAsync();
+                    .Where(e => e.Team.Name != "TBD").ToListAsync();
 
                 //List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
 
@@ -158,7 +350,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team)
                     .Include(e => e.Season)
                     .Include(e => e.League)
-                    .Where(e => e.League.ID == leagueID).ToListAsync();
+                    .Where(e => e.League.ID == leagueID && e.Team.Name != "TBD").ToListAsync();
 
                 List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
 
@@ -204,6 +396,60 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<BasketballLeagueStanding>> GetBasketballLeagueStandings(string leagueID)
+        {
+            try
+            {
+                var basketballLeagueStandings = await _context.BasketballLeagueStandings
+                    .Include(e => e.Team)
+                    .Include(e => e.Season)
+                    .Include(e => e.League)
+                    .Where(e => e.League.ID == leagueID && e.Team.Name != "TBD").ToListAsync();
+
+                //List<BasketballLeagueStanding> makeLeagueTable = new List<BasketballLeagueStanding>();
+
+                //foreach (var standing in basketballLeagueStandings)
+                //{
+                //    BasketballLeagueStanding table = new BasketballLeagueStanding
+                //    {
+                //        TeamID = standing.TeamID,
+                //        Team = standing.Team,
+                //        LeagueID = standing.LeagueID,
+                //        League = standing.League,
+                //        SeasonID = standing.SeasonID,
+                //        Season = standing.Season,
+                //        PointsFor = standing.PointsFor,
+                //        PointsAgainst = standing.PointsAgainst,
+                //        Win = standing.Win,
+                //        Loss = standing.Loss,
+                //        Draw = standing.Draw,
+                //        Played = standing.Played                    
+                //    };
+
+                //    makeLeagueTable.Add(table);
+                //}
+
+                List<BasketballLeagueStanding> leagueTable = new List<BasketballLeagueStanding>();
+                var tablePositions = basketballLeagueStandings.OrderByDescending(e => e.Percent).ThenByDescending(e => e.PointsDifference);
+                int position = 1;
+                foreach (var table in tablePositions)
+                {
+                    table.Position = position;
+                    leagueTable.Add(table);
+
+                    position++;
+                }
+
+                return leagueTable;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballLeagueStandings");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<CricketLeagueTable>> GetCricketPremierLeagueTable()
         {
             try
@@ -212,7 +458,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team)
                     .Include(e => e.Season)
                     .Include(e => e.League)
-                    .Where(e => e.League.Name == "Premier Division").ToListAsync();
+                    .Where(e => e.League.Name == "Premier Division" && e.Team.Name != "TBD").ToListAsync();
 
                 List<CricketLeagueTable> makeLeagueTable = new List<CricketLeagueTable>();
 
@@ -270,7 +516,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team)
                     .Include(e => e.Season)
                     .Include(e => e.League)
-                    .Where(e => e.League.Name == "First Division").ToListAsync();
+                    .Where(e => e.League.Name == "First Division" && e.Team.Name != "TBD").ToListAsync();
 
                 List<CricketLeagueTable> makeLeagueTable = new List<CricketLeagueTable>();
 
@@ -338,7 +584,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team)
                     .Include(e => e.Season)
                     .Include(e => e.League)
-                    .Where(e => e.League.Name == "Premier Division").ToListAsync();
+                    .Where(e => e.League.Name == "Premier Division" && e.Team.Name != "TBD").ToListAsync();
 
                 List<CricketLeagueTable> makeLeagueTable = new List<CricketLeagueTable>();
 
@@ -397,7 +643,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team)
                     .Include(e => e.Season)
                     .Include(e => e.League)
-                    .Where(e => e.League.Name == "First Division").ToListAsync();
+                    .Where(e => e.League.Name == "First Division" && e.Team.Name != "TBD").ToListAsync();
 
                 List<CricketLeagueTable> makeLeagueTable = new List<CricketLeagueTable>();
 
@@ -473,7 +719,7 @@ namespace OnTrackWebService.Repository
                     var leagueTables = await _context.LeagueTable
                         .Include(e => e.Team)
                         .Include(e => e.Season)
-                        .Include(e => e.League).Where(e => e.LeagueID == currentSeason.LeagueID).ToListAsync();
+                        .Include(e => e.League).Where(e => e.LeagueID == currentSeason.LeagueID && e.Team.Name != "TBD").ToListAsync();
 
                     leagueTables.ForEach(e => e.IsSelectedTeam = e.TeamID == teamID);
 
@@ -504,7 +750,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team)
                     .Include(e => e.Season)
                     .Include(e => e.League)
-                    .Where(e => e.LeagueID == currentSeason.LeagueID).ToListAsync();
+                    .Where(e => e.LeagueID == currentSeason.LeagueID && e.Team.Name != "TBD").ToListAsync();
 
                 List<CricketLeagueTable> makeLeagueTable = new List<CricketLeagueTable>();
 
@@ -555,6 +801,64 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<BasketballLeagueStanding>> GetBasketballTableByTeam(string teamID)
+        {
+            try
+            {
+                var currentSeason = await _context.TeamSeasons.FirstOrDefaultAsync(e => e.TeamID == teamID && e.Season.IsCurrent);
+                var basketballLeagueStanding = await _context.BasketballLeagueStandings
+                    .Include(e => e.Team)
+                    .Include(e => e.Season)
+                    .Include(e => e.League)
+                    .Where(e => e.LeagueID == currentSeason.LeagueID && e.Team.Name != "TBD").ToListAsync();
+
+                basketballLeagueStanding.ForEach(e => e.IsSelectedTeam = e.TeamID == teamID);
+
+                //List<BowlingLeagueStanding> makeLeagueTable = new List<BowlingLeagueStanding>();
+
+                //foreach (var standing in bowlingLeagueStanding)
+                //{
+                //    BowlingLeagueStanding table = new BowlingLeagueStanding
+                //    {
+                //        TeamID = standing.TeamID,
+                //        Team = standing.Team,
+                //        LeagueID = standing.LeagueID,
+                //        League = standing.League,
+                //        SeasonID = standing.SeasonID,
+                //        Season = standing.Season,
+                //        PointsWon = standing.PointsWon,
+                //        PointsLost = standing.Loss,
+                //        Draws = standing.Draws,
+                //        Played = standing.Played,
+                //        IsSelectedTeam = standing.TeamID == teamID,
+                //        Points = standing.Points,
+                //        NetRunRate = standing.NetRunRate
+                //    };
+
+                //    makeLeagueTable.Add(table);
+                //}
+
+                List<BasketballLeagueStanding> leagueTable = new List<BasketballLeagueStanding>();
+                var tablePositions = basketballLeagueStanding.OrderByDescending(e => e.Percent).ThenByDescending(e => e.PointsDifference);
+                int position = 1;
+                foreach (var table in tablePositions)
+                {
+                    table.Position = position;
+                    leagueTable.Add(table);
+
+                    position++;
+                }
+
+                return leagueTable.ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballLeagueTable");
+            }
+
+            return null;
+        }
+
         public async Task<List<BowlingLeagueStanding>> GetBowlingTableByTeam(string teamID)
         {
             try
@@ -564,7 +868,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.Team)
                     .Include(e => e.Season)
                     .Include(e => e.League)
-                    .Where(e => e.LeagueID == currentSeason.LeagueID).ToListAsync();
+                    .Where(e => e.LeagueID == currentSeason.LeagueID && e.Team.Name != "TBD").ToListAsync();
 
                 bowlingLeagueStanding.ForEach(e => e.IsSelectedTeam = e.TeamID == teamID);
 
@@ -624,7 +928,7 @@ namespace OnTrackWebService.Repository
                     var leagueTables = await _context.LeagueTable
                         .Include(e => e.Team)
                         .Include(e => e.Season)
-                        .Include(e => e.League).Where(e => e.LeagueID == currentSeason.LeagueID).ToListAsync();
+                        .Include(e => e.League).Where(e => e.LeagueID == currentSeason.LeagueID && e.Team.Name != "TBD").ToListAsync();
 
                 leagueTables.ForEach(e => e.IsSelectedTeam = e.TeamID == teamID);
 
@@ -648,7 +952,7 @@ namespace OnTrackWebService.Repository
                 var leagueTables = await _context.CricketLeagueTable
                         .Include(e => e.Team)
                         .Include(e => e.Season)
-                        .Include(e => e.League).Where(e => e.TeamID == teamID && e.LeagueID == leagueID).ToListAsync();
+                        .Include(e => e.League).Where(e => e.TeamID == teamID && e.LeagueID == leagueID && e.Team.Name != "TBD").ToListAsync();
 
                 return leagueTables;
             }
@@ -886,6 +1190,151 @@ namespace OnTrackWebService.Repository
 
         }
 
+        public async Task<ImportBasketballLeagueStandings> UploadBasketballLeagueStandings(IFormFile file)
+        {
+            try
+            {
+                List<BasketballLeagueStandings> errorStandings = new List<BasketballLeagueStandings>();
+                List<BasketballLeagueStanding> standings = new List<BasketballLeagueStanding>();
+                List<BasketballLeagueStanding> addStandings = new List<BasketballLeagueStanding>();
+                List<Team> teams = await _context.Teams.Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Basketball).ToListAsync();
+                List<League> leagues = await _context.Leagues.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
+                List<BasketballLeagueStanding> leagueStandings = await _context.BasketballLeagueStandings.AsNoTracking().ToListAsync();
+                List<Season> seasons = await _context.Seasons.Include(e => e.Sport).Where(e => e.Sport.Name == "Bowling").ToListAsync();
+                League league = null;
+                Team team = null;
+                Season season = null;
+                BasketballLeagueStanding leagueStanding = null;
+
+                //Stream reader = file.OpenReadStream();
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
+                    var records = csv.GetRecords<BasketballLeagueStandings>();
+
+                    foreach (var record in records)
+                    {
+                        try
+                        {
+                            league = leagues.FirstOrDefault(e => e.Name == record.League.Trim());
+                            team = teams.FirstOrDefault(e => (e.Name == record.Team));
+                            season = seasons.FirstOrDefault(e => e.IsCurrent);
+                            leagueStanding = leagueStandings.FirstOrDefault(e => e.TeamID == team.ID);
+
+                            if (leagueStanding != null)
+                            {
+                                standings.Add(new BasketballLeagueStanding
+                                {
+                                    ID = leagueStanding.ID,
+                                    TeamID = team.ID,
+                                    Win = record.Win,
+                                    Loss = record.Loss,
+                                    Draw = record.Draw,
+                                    //Points = record.Points,
+                                    PointsFor = record.PointsFor,
+                                    PointsAgainst = record.PointsAgainst,
+                                    LeagueID = league.ID,
+                                    SeasonID = season.ID,
+                                    //SportID = season.SportID
+                                });
+                            }
+                            else
+                            {
+                                addStandings.Add(new BasketballLeagueStanding
+                                {
+                                    TeamID = team.ID,
+                                    Win = record.Win,
+                                    Loss = record.Loss,
+                                    Draw = record.Draw,
+                                    //Points = record.Points,
+                                    PointsFor = record.PointsFor,
+                                    PointsAgainst = record.PointsAgainst,
+                                    LeagueID = league.ID,
+                                    SeasonID = season.ID,
+                                });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorStandings.Add(record);
+
+                        }
+                    }
+
+                    try
+                    {
+                        if (addStandings.Count > 0)
+                            await AddStandings(addStandings);
+
+                        if (standings.Count > 0)
+                            await UpdateStandings(standings);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ImportBasketballLeagueStandings
+                        {
+                            Message = "Error updating standings.",
+                            Exception = ex.Message
+                        };
+                    }
+                }
+
+                if (errorStandings != null && errorStandings.Count > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorStandings);
+                        streamWriter.Flush();
+
+                        return new ImportBasketballLeagueStandings
+                        {
+                            Message = "Successfully updated standings with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorStandings,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportBasketballLeagueStandings
+                {
+                    Message = "Successfully updated standings!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportBasketballLeagueStandings
+                {
+                    Message = "Error updating standings!",
+                    Exception = ex.Message
+                };
+            }
+
+
+        }
+
+        public async Task AddStandings(List<BasketballLeagueStanding> items)
+        {
+            try
+            {
+                _context.BasketballLeagueStandings.AddRange(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Basketball Standings");
+            }
+        }
+
         public async Task AddStandings(List<BowlingLeagueStanding> items)
         {
             try
@@ -897,6 +1346,20 @@ namespace OnTrackWebService.Repository
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Add Bowling Standings");
+            }
+        }
+
+        public async Task UpdateStandings(List<BasketballLeagueStanding> items)
+        {
+            try
+            {
+                _context.BasketballLeagueStandings.UpdateRange(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Update Basketball Standings");
             }
         }
 

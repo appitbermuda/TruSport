@@ -29,10 +29,10 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                var username = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                       .Select(c => c.Value).SingleOrDefault();
 
-                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.UserName == username);
 
                 var config = await _context.TicketConfigurations.Include(e => e.TicketCompany).FirstOrDefaultAsync(e => e.TicketCompanyID == companyUser.TicketCompanyID);
                 return config;

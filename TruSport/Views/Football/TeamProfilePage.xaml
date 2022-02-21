@@ -12,7 +12,8 @@
              xmlns:local="clr-namespace:TruSport.ViewModels"
              xmlns:model="clr-namespace:TruSport.Model"
              xmlns:converter="clr-namespace:TruSport.Converters"
-             xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:templates="clr-namespace:TruSport.Templates"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+             xmlns:templates="clr-namespace:TruSport.Templates"
              x:Class="TruSport.Views.Football.TeamProfilePage"
              NavigationPage.HasBackButton="False"
              NavigationPage.HasNavigationBar="False">

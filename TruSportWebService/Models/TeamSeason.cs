@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using OnTrackWebService.Models.Basketball;
 
 namespace OnTrackWebService.Models
 {
@@ -23,6 +24,15 @@ namespace OnTrackWebService.Models
 
         [NotMapped]
         public virtual List<Transfer> Transfers { get; set; }
+
+        [NotMapped]
+        public virtual List<BasketballFixture> BasketballFixtures { get; set; }
+
+        [NotMapped]
+        public virtual List<BasketballFixture> BasketballForm { get; set; }
+
+        [NotMapped]
+        public virtual List<BasketballLeagueStanding> BasketballTable { get; set; }
 
         [NotMapped]
         public virtual List<CricketFixture> CricketFixtures { get; set; }

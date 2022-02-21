@@ -87,6 +87,25 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("ImportantMessage")]
+        public async Task<IActionResult> ImportantMessage()
+        {
+            try
+            {
+
+                string importantMessage = await _settingRepository.ImportantMessage();
+                return Ok(importantMessage);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("ProcessingFee")]
         public async Task<IActionResult> ProcessingFee()
         {

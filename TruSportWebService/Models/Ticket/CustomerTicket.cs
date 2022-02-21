@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using OnTrackWebService.Models.Ticket;
 
 namespace OnTrackWebService.Models.Shop
 {
@@ -14,7 +15,7 @@ namespace OnTrackWebService.Models.Shop
         public bool Validated { get; set; }
         public DateTime? ValidatedTime { get; set; }
         public bool? IsTransfer { get; set; }
-        //public bool TransferRejected { get; set; }
+        public bool IsMemberTicket { get; set; }
         public DateTime? TransferTime { get; set; }
 
         [ForeignKey("OrderID")]
@@ -28,6 +29,9 @@ namespace OnTrackWebService.Models.Shop
 
         [NotMapped]
         public virtual CustomerMatchTicket CustomerMatchTicket { get; set; }
+
+        [NotMapped]
+        public ScanStatistic ScanStatistic { get; set; }
 
     }
 }

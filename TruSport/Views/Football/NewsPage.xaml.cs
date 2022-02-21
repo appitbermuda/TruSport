@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using TruSport.Model;
-using TruSport.Views.Admin;
 using Xamarin.Forms;
 
-namespace TruSport.Views.Football
+namespace TruSport.Views
 {
     public partial class NewsPage : ContentPage
     {

@@ -162,7 +162,45 @@ namespace TruSport.Services
                 {
                     var client = new RestClient(Constants.APIEndpoint);
 
-                    var request = new RestRequest("CustomerTicket/Purchase", Method.POST);
+                    var request = new RestRequest("CustomerTicket/PurchaseTicket", Method.POST);
+
+                    request.AddJsonBody(payment);
+                    request.AddHeader("authorization", "Bearer " + accessToken);
+
+                    // We execute the request and capture the response
+                    // in a variable called `response`
+                    IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        paymentResponse = JsonConvert.DeserializeObject<PaymentResponse>(response.Content);
+
+                        return paymentResponse;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            paymentResponse.Description = "There was an issue with your payment, please try again.";
+            paymentResponse.IsApproved = false;
+            return paymentResponse;
+        }
+
+        public async Task<PaymentResponse> ZeroPurchase(PaymentAuthorize payment)
+        {
+            PaymentResponse paymentResponse = new PaymentResponse();
+            try
+            {
+                string accessToken = await SecureStorage.GetAsync("Token");
+
+                if (accessToken != null)
+                {
+                    var client = new RestClient(Constants.APIEndpoint);
+
+                    var request = new RestRequest("CustomerTicket/ZeroPurchase", Method.POST);
 
                     request.AddJsonBody(payment);
                     request.AddHeader("authorization", "Bearer " + accessToken);
@@ -201,6 +239,44 @@ namespace TruSport.Services
                     var client = new RestClient(Constants.APIEndpoint);
 
                     var request = new RestRequest("CustomerTicket/PurchaseTest", Method.POST);
+
+                    request.AddJsonBody(payment);
+                    request.AddHeader("authorization", "Bearer " + accessToken);
+
+                    // We execute the request and capture the response
+                    // in a variable called `response`
+                    IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        paymentResponse = JsonConvert.DeserializeObject<PaymentResponse>(response.Content);
+
+                        return paymentResponse;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            paymentResponse.Description = "There was an issue with your payment, please try again.";
+            paymentResponse.IsApproved = false;
+            return paymentResponse;
+        }
+
+        public async Task<PaymentResponse> ZeroPurchaseTest(PaymentAuthorize payment)
+        {
+            PaymentResponse paymentResponse = new PaymentResponse();
+            try
+            {
+                string accessToken = await SecureStorage.GetAsync("Token");
+
+                if (accessToken != null)
+                {
+                    var client = new RestClient(Constants.APIEndpoint);
+
+                    var request = new RestRequest("CustomerTicket/ZeroPurchaseTest", Method.POST);
 
                     request.AddJsonBody(payment);
                     request.AddHeader("authorization", "Bearer " + accessToken);

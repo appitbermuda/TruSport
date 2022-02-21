@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using TruSport.Services;
 using TruSport.ViewModel;
+using TruSport.Views.Basketball;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
 using TruSport.Views.Tennis;
+using TruSport.Views.Triathlon;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -36,12 +38,16 @@ namespace TruSport.Views
 
                 if (sport != null && !String.IsNullOrEmpty(sport.Sport))
                 {
-                    if (sport.Sport.ToLower() == "cricket")
+                    if (sport.Sport == Constants.Cricket)
                         App.Current.MainPage = new CricketMasterDetailPage();
-                    else if(sport.Sport.ToLower() == "bowling")
+                    else if(sport.Sport == Constants.Bowling)
                         App.Current.MainPage = new BowlingMasterDetailPage();
-                    else if (sport.Sport.ToLower() == "tennis")
+                    else if (sport.Sport == Constants.Tennis)
                         App.Current.MainPage = new TennisMasterDetailPage();
+                    else if (sport.Sport == Constants.Basketball)
+                        App.Current.MainPage = new BasketballMasterDetailPage();
+                    else if (sport.Sport == Constants.Triathlon)
+                        App.Current.MainPage = new TriathlonFlyoutPage();
                     else
                         App.Current.MainPage = new FootballMasterDetailPage();
                 }

@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Models;
 using OnTrackWebService.Models.Ad;
+using OnTrackWebService.Models.Basketball;
 using OnTrackWebService.Models.Shop;
+using OnTrackWebService.Models.Ticket;
 
 namespace OnTrackWebService.Data
 {
@@ -16,6 +18,11 @@ namespace OnTrackWebService.Data
 
         public DbSet<Ad> Ads { get; set; }
         public DbSet<Batting> Battings { get; set; }
+        public DbSet<BasketballFixture> BasketballFixtures { get; set; }
+        public DbSet<BasketballRoster> BasketballRosters { get; set; }
+        public DbSet<BasketballPlayerSeason> BasketballPlayerSeasons { get; set; }
+        public DbSet<BasketballLeagueStanding> BasketballLeagueStandings { get; set; }
+        public DbSet<BasketballScore> BasketballScores { get; set; }
         public DbSet<BowlingSeasonHG> BowlingSeasonHG { get; set; }
         public DbSet<BowlingSeasonHS> BowlingSeasonHS { get; set; }
         public DbSet<BowlingSeasonTeamHG> BowlingSeasonTeamHG { get; set; }
@@ -64,6 +71,7 @@ namespace OnTrackWebService.Data
         public DbSet<MatchRoster>  MatchRosters { get; set; }
         public DbSet<MatchStat> MatchStats { get; set; }
         public DbSet<MatchType> MatchTypes { get; set; }
+        public DbSet<Member> Members { get; set; }
         public DbSet<OutType> OutTypes { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
@@ -88,6 +96,7 @@ namespace OnTrackWebService.Data
         public DbSet<TennisTournament> TennisTournaments { get; set; }
         public DbSet<TournamentMatchType> TournamentMatchTypes { get; set; }
         public DbSet<TicketConfiguration> TicketConfigurations { get; set; }
+        public DbSet<TicketFee> TicketFees { get; set; }
         public DbSet<TicketMember> TicketMembers { get; set; }
         public DbSet<TicketCompany> TicketCompanys { get; set; }
         public DbSet<TicketCompanyUser> TicketCompanyUsers { get; set; }
@@ -97,6 +106,7 @@ namespace OnTrackWebService.Data
         public DbSet<SportEvent> SportEvents { get; set; }
         public DbSet<EventTicket> EventTickets { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
         public DbSet<AllUsers> AllUsers { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<UserTeam> UserTeams { get; set; }
@@ -124,6 +134,7 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<FixtureProduct>().ToTable("FixtureProduct");
             modelBuilder.Entity<Product>().ToTable("Product");
             modelBuilder.Entity<MatchTicket>().ToTable("MatchTicket");
+            modelBuilder.Entity<Member>().ToTable("Member");
             modelBuilder.Entity<CustomerTicket>().ToTable("CustomerTicket");
             modelBuilder.Entity<Field>().ToTable("Field");
             modelBuilder.Entity<TennisFixture>().ToTable("TennisFixture");
@@ -136,16 +147,34 @@ namespace OnTrackWebService.Data
             modelBuilder.Entity<TennisTournament>().ToTable("TennisTournament");
             modelBuilder.Entity<TournamentMatchType>().ToTable("TournamentMatchType");
             modelBuilder.Entity<TicketConfiguration>().ToTable("TicketConfiguration");
+            modelBuilder.Entity<TicketFee>().ToTable("TicketFee");
             modelBuilder.Entity<TicketMember>().ToTable("TicketMember");
             modelBuilder.Entity<TicketCompany>().ToTable("TicketCompany");
             modelBuilder.Entity<TicketCompanyUser>().ToTable("TicketCompanyUser");
             modelBuilder.Entity<TicketTeam>().ToTable("TicketTeam");
             modelBuilder.Entity<SportEvent>().ToTable("SportEvent");
             modelBuilder.Entity<EventTicket>().ToTable("EventTicket");
+            modelBuilder.Entity<Wallet>().ToTable("Wallet");
 
             modelBuilder.Entity<Order>()
             .HasMany(c => c.OrderDetails)
             .WithOne(e => e.Order);
+
+            modelBuilder.Entity<Order>()
+            .HasMany(c => c.ContactTraces)
+            .WithOne(e => e.Order);
+
+            modelBuilder.Entity<BasketballFixture>().ToTable("BasketballFixture")
+                    .HasOne(x => x.HomeTeam)
+                    .WithMany();
+            modelBuilder.Entity<BasketballFixture>().ToTable("BasketballFixture")
+                    .HasOne(x => x.AwayTeam)
+                    .WithMany();
+
+            modelBuilder.Entity<BasketballPlayerSeason>().ToTable("BasketballPlayerSeason");
+            modelBuilder.Entity<BasketballLeagueStanding>().ToTable("BasketballLeagueStanding");
+            modelBuilder.Entity<BasketballScore>().ToTable("BasketballScore");
+            modelBuilder.Entity<BasketballRoster>().ToTable("BasketballRoster");
 
             modelBuilder.Entity<Fixture>().ToTable("Fixture")
                     .HasOne(x => x.HomeTeam)

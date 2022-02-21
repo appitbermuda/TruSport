@@ -65,6 +65,51 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<RssFeedItem>> BasketballFeed()
+        {
+            const string BernewsFeedUri = "http://bernews.com/tag/bermuda-basketball/feed/";
+            const string IStatsFeedUri = "http://www.islandstats.com/islandstats_rss.asp";
+            const string RGFeedUri = "http://www.royalgazette.com/section/?template=RSS";
+
+            List<RssFeedItem> RSSFeed = new List<RssFeedItem>();
+
+            try
+            {
+                var BerNewsFeed = await RssClient.LoadBernews(new Uri(BernewsFeedUri));
+                var IStatsFeed = await RssClient.LoadIStats(new Uri(IStatsFeedUri), Constants.Basketball);
+                var RGFeed = await RssClient.LoadRG(new Uri(RGFeedUri), Constants.Basketball);
+
+                foreach (var feed in BerNewsFeed)
+                {
+                    if (feed != null)
+                        if (feed.Date > DateTime.Now.AddDays(-7))
+                            RSSFeed.Add(feed);
+                }
+
+                foreach (var feed in IStatsFeed)
+                {
+                    if (feed != null)
+                        if (feed.Date > DateTime.Now.AddDays(-7))
+                            RSSFeed.Add(feed);
+                }
+
+                foreach (var feed in RGFeed)
+                {
+                    if (feed != null)
+                        if (feed.Date > DateTime.Now.AddDays(-7))
+                            RSSFeed.Add(feed);
+                }
+
+                return RSSFeed.OrderByDescending(e => e.Date).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "News");
+            }
+
+            return null;
+        }
+
         public async Task<List<RssFeedItem>> CricketFeed()
         {
             const string BernewsFeedUri = "http://bernews.com/tag/bermuda-cricket/feed/";
@@ -76,8 +121,8 @@ namespace OnTrackWebService.Repository
             try
             {
                 var BerNewsFeed = await RssClient.LoadBernews(new Uri(BernewsFeedUri));
-                var IStatsFeed = await RssClient.LoadCricketIStats(new Uri(IStatsFeedUri));
-                var RGFeed = await RssClient.LoadCricketRG(new Uri(RGFeedUri));
+                var IStatsFeed = await RssClient.LoadIStats(new Uri(IStatsFeedUri), Constants.Cricket);
+                var RGFeed = await RssClient.LoadRG(new Uri(RGFeedUri), Constants.Cricket);
 
                 foreach (var feed in BerNewsFeed)
                 {
@@ -121,8 +166,8 @@ namespace OnTrackWebService.Repository
             try
             {
                 var BerNewsFeed = await RssClient.LoadBernews(new Uri(BernewsFeedUri));
-                var IStatsFeed = await RssClient.LoadFootballIStats(new Uri(IStatsFeedUri));
-                var RGFeed = await RssClient.LoadFootballRG(new Uri(RGFeedUri));
+                var IStatsFeed = await RssClient.LoadIStats(new Uri(IStatsFeedUri), Constants.Football);
+                var RGFeed = await RssClient.LoadRG(new Uri(RGFeedUri), Constants.Football);
 
                 foreach (var feed in BerNewsFeed)
                 {
@@ -166,8 +211,8 @@ namespace OnTrackWebService.Repository
             try
             {
                 var BerNewsFeed = await RssClient.LoadBernews(new Uri(BernewsFeedUri));
-                var IStatsFeed = await RssClient.LoadBowlingIStats(new Uri(IStatsFeedUri));
-                var RGFeed = await RssClient.LoadBowlingRG(new Uri(RGFeedUri));
+                var IStatsFeed = await RssClient.LoadIStats(new Uri(IStatsFeedUri), Constants.Bowling);
+                var RGFeed = await RssClient.LoadRG(new Uri(RGFeedUri), Constants.Bowling);
 
                 foreach (var feed in BerNewsFeed)
                 {
@@ -211,8 +256,8 @@ namespace OnTrackWebService.Repository
             try
             {
                 var BerNewsFeed = await RssClient.LoadBernews(new Uri(BernewsFeedUri));
-                var IStatsFeed = await RssClient.LoadTennisIStats(new Uri(IStatsFeedUri));
-                var RGFeed = await RssClient.LoadTennisRG(new Uri(RGFeedUri));
+                var IStatsFeed = await RssClient.LoadIStats(new Uri(IStatsFeedUri), Constants.Tennis);
+                var RGFeed = await RssClient.LoadRG(new Uri(RGFeedUri), Constants.Tennis);
 
                 foreach (var feed in BerNewsFeed)
                 {

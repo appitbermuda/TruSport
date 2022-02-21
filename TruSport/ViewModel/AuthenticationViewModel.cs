@@ -357,7 +357,12 @@ namespace TruSport.ViewModels
 
                                 tags = tagsList.ToArray();
                                 
-                                await notificationRegistrationService.RegisterDeviceAsync(tags);
+                                try
+                                {
+                                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                                }
+                                catch(Exception ex)
+                                { }
 
                                 //Navigation.InsertPageBefore(new MapPage(), Navigation.NavigationStack.First());
                                 //Navigation.InsertPageBefore(new FootballMasterDetailPage(), Navigation.NavigationStack.First());

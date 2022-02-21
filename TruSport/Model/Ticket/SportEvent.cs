@@ -16,6 +16,7 @@ namespace TruSport.Model
         public string Season { get; set; }
         public string SportID { get; set; }
         public string FieldID { get; set; }
+        public string TicketCompanyID { get; set; }
         public DateTime Date { get; set; }
         public string Time { get; set; }
         public string HomeTeamLogo { get; set; }
@@ -23,6 +24,9 @@ namespace TruSport.Model
         public string EventLogo { get; set; }
         public bool IsPostponed { get; set; }
         public bool IsCancelled { get; set; }
+        public string Term { get; set; }
+        public string DefaultTicketTerm { get; set; }
+        public string DefaultContactTraceTerm { get; set; }
 
         [Ignore]
         public DateTime EventTime => !String.IsNullOrEmpty(Time) ? TimeSpan.Parse(Time) < TimeSpan.Parse("04:01") ? TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ?
@@ -40,5 +44,8 @@ namespace TruSport.Model
 
         [Ignore]
         public Field Field { get; set; }
+
+        [Ignore]
+        public TicketCompany TicketCompany { get; set; }
     }
 }

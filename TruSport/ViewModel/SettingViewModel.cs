@@ -16,6 +16,7 @@ namespace TruSport.ViewModels
     {
         private ObservableCollection<string> _sportCollection;
         private string _defaultSport;
+        private bool _basketballAlert;
         private bool _footballAlert;
         private bool _cricketAlert;
         private bool _bowlingAlert;
@@ -97,6 +98,16 @@ namespace TruSport.ViewModels
             }
         }
 
+        public bool BasketballAlert
+        {
+            get { return _basketballAlert; }
+            set
+            {
+                Set(ref _basketballAlert, value);
+                UpdateBasketballAlert();
+            }
+        }
+
         public bool FavouriteAlert
         {
             get { return _favouriteAlert; }
@@ -143,6 +154,7 @@ namespace TruSport.ViewModels
                     CricketAlert = true;
                     FootballAlert = true;
                     BowlingAlert = true;
+                    BasketballAlert = true;
                     TennisAlert = true;
                     FavouriteAlert = true;
                 }
@@ -163,6 +175,10 @@ namespace TruSport.ViewModels
                     var tennisAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "tennis").IsAlert;
 
                     TennisAlert = tennisAlert;
+
+                    var basketballAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "basketball").IsAlert;
+
+                    BasketballAlert = basketballAlert;
 
                     //var favouriteAlert = sportsAlerts.FirstOrDefault(e => e.Sport.ToLower() == "favourite").IsAlert;
 
@@ -198,13 +214,46 @@ namespace TruSport.ViewModels
                 await App.Database.SaveAlertSetting(alert);
 
                 var tags = await App.Database.GetTags();
-                await notificationRegistrationService.RegisterDeviceAsync(tags);
-                
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
                 await SecureStorage.SetAsync("CricketAlert", CricketAlert.ToString());
             }
             catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Cricket Alert");
+            }
+        }
+
+        public async Task UpdateBasketballAlert()
+        {
+            try
+            {
+                NotiAlert alert = new NotiAlert
+                {
+                    Sport = "Basketball",
+                    IsAlert = BasketballAlert
+                };
+
+                await App.Database.SaveAlertSetting(alert);
+
+                var tags = await App.Database.GetTags();
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
+
+                await SecureStorage.SetAsync("BasketballAlert", BasketballAlert.ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Basketball Alert");
             }
         }
 
@@ -221,7 +270,12 @@ namespace TruSport.ViewModels
                 await App.Database.SaveAlertSetting(alert);
 
                 var tags = await App.Database.GetTags();
-                await notificationRegistrationService.RegisterDeviceAsync(tags);
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
 
                 await SecureStorage.SetAsync("FootballAlert", FootballAlert.ToString());
             }
@@ -244,7 +298,12 @@ namespace TruSport.ViewModels
                 await App.Database.SaveAlertSetting(alert);
 
                 var tags = await App.Database.GetTags();
-                await notificationRegistrationService.RegisterDeviceAsync(tags);
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
 
                 await SecureStorage.SetAsync("BowlingAlert", BowlingAlert.ToString());
             }
@@ -267,7 +326,12 @@ namespace TruSport.ViewModels
                 await App.Database.SaveAlertSetting(alert);
 
                 var tags = await App.Database.GetTags();
-                await notificationRegistrationService.RegisterDeviceAsync(tags);
+                try
+                {
+                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                }
+                catch (Exception ex)
+                { }
 
                 await SecureStorage.SetAsync("TennisAlert", TennisAlert.ToString());
             }

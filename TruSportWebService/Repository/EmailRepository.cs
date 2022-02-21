@@ -11,6 +11,7 @@ using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
 using OnTrackWebService.Models.Shop;
+using OnTrackWebService.Models.Ticket;
 
 namespace OnTrackWebService.Repository
 {
@@ -23,7 +24,7 @@ namespace OnTrackWebService.Repository
             _context = context;
         }
 
-        public async Task SendSignUpEmail(User user, UserTeam userTeam = null, TicketCompanyUser ticketCompanyUser = null)
+        public async Task SendSignUpEmail(User user, UserTeam userTeam = null, TicketCompanyUser ticketCompanyUser = null, string ticketCompany = null)
         {
             try
             {
@@ -39,7 +40,7 @@ namespace OnTrackWebService.Repository
                 smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
                 MailMessage message = new MailMessage();
-                message.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK BERMUDA");
+                message.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK BERMUDA");
                 message.To.Add(new MailAddress(Constants.BCCAddress));
                 message.Subject = "New Sign Up";
                 message.IsBodyHtml = true;
@@ -102,6 +103,62 @@ namespace OnTrackWebService.Repository
                     body = body.Replace("[URL]", Constants.OnTrackWebEndpoint);
                     body = body.Replace("[Email]", user.Email);
                 }
+                else if(ticketCompany != null)
+                {
+                    body = @"<html>
+                    <head>
+                    <style type='text/css'>
+                        .ExternalClass,.ExternalClass div,.ExternalClass font,.ExternalClass p,.ExternalClass span,.ExternalClass td, img{ line - height:100 %}#outlook a{padding:0}.ExternalClass,.ReadMsgBody{width:100%}a,blockquote,body,li,p,table,td{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}table,td{mso-table-lspace:0;mso-table-rspace:0}img{-ms-interpolation-mode:bicubic;border:0;height:auto;outline:0;text-decoration:none}table{border-collapse:collapse!important}#bodyCell,#bodyTable,body{height:100%!important;margin:0;padding:0;font-family:ProximaNova,sans-serif}#bodyCell{padding:20px}#bodyTable{width:600px}@font-face{font-family:ProximaNova;src:url(https://cdn.auth0.com/fonts/proxima-nova/proximanova-regular-webfont-webfont.eot);src:url(https://cdn.auth0.com/fonts/proxima-nova/proximanova-regular-webfont-webfont.eot?#iefix) format('embedded-opentype'),url(https://cdn.auth0.com/fonts/proxima-nova/proximanova-regular-webfont-webfont.woff) format('woff');font-weight:400;font-style:normal}@font-face{font-family:ProximaNova;src:url(https://cdn.auth0.com/fonts/proxima-nova/proximanova-semibold-webfont-webfont.eot);src:url(https://cdn.auth0.com/fonts/proxima-nova/proximanova-semibold-webfont-webfont.eot?#iefix) format('embedded-opentype'),url(https://cdn.auth0.com/fonts/proxima-nova/proximanova-semibold-webfont-webfont.woff) format('woff');font-weight:600;font-style:normal}@media only screen and (max-width:480px){#bodyTable,body{width:100%!important}a,blockquote,body,li,p,table,td{-webkit-text-size-adjust:none!important}body{min-width:100%!important}#bodyTable{max-width:600px!important}#signIn{max-width:280px!important}}
+                    </style>
+                    </head>
+                    <body>
+                    <center>
+                        <table style='width: 600px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin: 0;padding: 0;font-family: &quot;ProximaNova&quot;, sans-serif;border-collapse: collapse !important;height: 100% !important;' align='center' border='0' cellpadding='0' cellspacing='0' height='100%' width='100%' id='bodyTable'>
+               
+                                <tr>
+               
+                                    <td align='center' valign='top' id='bodyCell' style='-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin: 0;padding: 20px;font-family: &quot;ProximaNova&quot;, sans-serif;height: 100% !important;'>
+                      
+                                        <div class='main'>
+                    <p style='text-align: center;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%; margin-bottom: 30px;'>
+                        <img src='https://ontrackimagestore.blob.core.windows.net/images/OnTrackBanner.png' width='100%' alt='ONTRACK' style='-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;'>
+                    </p>
+
+                    <h1>New User Sign Up!</h1>
+
+                    <p>[Name] has just signed up with a [Role] role for [TicketCompany].</p>
+
+                    <p>If you have any issues with thier account, please reply to them at [Email]. Otherwise, click below to validate their account.</p>
+
+                    <p><a href='[URL]/user/validate?email=[Email]'>Validate [Name]</a></p>
+
+                    <br>
+                    <br>
+                    Thanks!
+                    <br>
+
+                    <strong>ONTRACK BERMUDA</strong>
+
+                    <br><br>
+                    <hr style='border: 2px solid #EAEEF3; border-bottom: 0; margin: 20px 0;'>
+                    <p style='text-align: center;color: #A9B3BC;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;'>
+                        If you did not make this request, please contact us by replying to sports@ontrackbda.com.
+                    </p>
+                    </div>
+                    </td>
+                </tr>
+                </table>
+                    </center>
+                        </ body >
+                    </ html >
+                    ";
+
+                    body = body.Replace("[Role]", user.Role.Name);
+                    body = body.Replace("[TicketCompany]", ticketCompany);
+                    body = body.Replace("[Name]", user.Name);
+                    body = body.Replace("[URL]", Constants.OnTrackWebEndpoint);
+                    body = body.Replace("[Email]", user.Email);
+                }
                 else
                 {
                     body = @"<html>
@@ -129,7 +186,7 @@ namespace OnTrackWebService.Repository
 
                         <p>If you have any issues with thier account, please reply to them at [Email]. Otherwise, click below to validate their account.</p>
 
-                        <p><a href='[URL]/user/validate?email=[Email]'>Validate [FirstName]</a></p>
+                        <p><a href='[URL]/user/validate?email=[Email]'>Validate [Name]</a></p>
 
                         <br>
                         <br>
@@ -152,7 +209,7 @@ namespace OnTrackWebService.Repository
                         </ html >
                      ";
 
-                    body = body.Replace("[UserRole]", user.Role.Name);
+                    body = body.Replace("[Role]", user.Role.Name);
                     body = body.Replace("[Name]", user.Name);
                     body = body.Replace("[URL]", Constants.OnTrackWebEndpoint);
                     body = body.Replace("[Email]", user.Email);
@@ -192,7 +249,7 @@ namespace OnTrackWebService.Repository
                 smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
                 MailMessage message = new MailMessage();
-                message.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+                message.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
                 message.To.Add(new MailAddress(Constants.BCCAddress));
                 message.Subject = "New Customer";
                 message.IsBodyHtml = true;
@@ -285,7 +342,7 @@ namespace OnTrackWebService.Repository
 
 
                 MailMessage mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK BERMUDA");
+                mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK BERMUDA");
                 //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
                 mailMessage.To.Add(new MailAddress(email));
                 mailMessage.Subject = "Password Reset Request";
@@ -378,7 +435,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK BERMUDA");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK BERMUDA");
             mailMessage.To.Add(new MailAddress(Email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
 
@@ -463,7 +520,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(Email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
 
@@ -550,7 +607,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK BERMUDA");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK BERMUDA");
             mailMessage.To.Add(new MailAddress(Email));
             mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
 
@@ -635,7 +692,7 @@ namespace OnTrackWebService.Repository
                 smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
                 MailMessage message = new MailMessage();
-                message.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK BERMUDA");
+                message.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK BERMUDA");
                 message.To.Add(new MailAddress(email));
                 message.Subject = "Order Confirmation - " + order.OrderNumber;
                 message.IsBodyHtml = true;
@@ -697,7 +754,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(customer.Email));
             mailMessage.Bcc.Add(new MailAddress("tickets@ontrackbda.com"));
 
@@ -831,7 +888,7 @@ namespace OnTrackWebService.Repository
             return false;
         }
 
-        public async Task<bool> SendPaymentConfirmation(Customer customer, string authorisation, Order order, int quantity, SportEvent sportEvent)
+        public async Task<bool> SendPaymentConfirmation(Customer customer, string authorisation, Order order, int quantity, SportEvent sportEvent, List<PrintTicket> tickets = null)
         {
 
 
@@ -847,12 +904,20 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(customer.Email));
             mailMessage.Bcc.Add(new MailAddress("tickets@ontrackbda.com"));
 
+            if (tickets != null && tickets.Count > 0)
+            {
+                foreach (var ticket in tickets)
+                {
+                    mailMessage.Attachments.Add(new Attachment(ticket.File, ticket.FileName));
+                }
+            }
+
             mailMessage.IsBodyHtml = true;
-            mailMessage.Subject = "ONTRACK Match Ticket Confirmation";
+            mailMessage.Subject = "ONTRACK Event Ticket Confirmation";
 
             string body = @"<html>
                 <head>
@@ -884,7 +949,7 @@ namespace OnTrackWebService.Repository
 
                         <table style='width: 100%; border:none; text-align:left;'>
                             <tr>
-                             <th style='width:50%;'> Ticket </th>
+                             <th style='width:50%;'> Event </th>
                                        </tr>
                            <tr>
                              <td style='width:50%;'> [Title] </td>
@@ -894,17 +959,39 @@ namespace OnTrackWebService.Repository
                            </tr>
                         </table>
 <br/>
+<br/>
                         <table style='width: 100%; border:none; text-align:left;'>
                             <tr>
-                             <th style='width:50%;'> Qty </th>
-                             <th style='width:50%;'> Total </th>
+                             <th style='width:50%;'> Ticket </th>
+                             <th style='width:20%;'> Qty </th>
+                             <th style='width:30%;'> Subtotal </th>
+                           </tr>
+";
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                body += "<tr>";
+                body += "<td>" + orderDetail.EventTicket?.Product?.Age + (orderDetail.IsMemberTicket ? " (Member)" : string.Empty) + "</td> ";
+                body += "<td>" + orderDetail.Qty + "</td> ";
+                body += "<td>" + "$" + (orderDetail.Subtotal + (orderDetail.EventTicket?.Product?.MemberPrice == 0 ? 0 : (orderDetail.EventTicket?.Product?.Fee)) * orderDetail.Qty)  + "</td> ";
+                body += "</tr>";
+            }
+
+            body += @" 
+                        </table>
+<br/>
+                        <table style='width: 100%; border:none; text-align:left;'>
+                            <tr>
+                             <th style='width:70%;'></th>
+                             <th style='width:30%;'> Total </th>
                            </tr>
                            <tr>
-                             <td style='width:50%;'> [Quantity] </td>
-                             <td style='width:50%;'> $[Total] </td>
+                             <td style='width:70%;font-size:20px;'>  </td>
+                             <td style='width:30%;font-size:20px;'> $[Total] </td>
                            </tr>
  
                         </table>
+<br/>
+<br/>
 <br/>
                         <table style='width: 100%; border:none; text-align:left;'>
                             <tr>
@@ -914,8 +1001,7 @@ namespace OnTrackWebService.Repository
                            <tr>
                              <td style='width:50%;'> [Authorisation] </td>
                              <td style='width:50%;'> [TrxDate] </td>
-                           </tr>
- 
+                           </tr> 
                         </table>
 
 <hr/>
@@ -923,10 +1009,9 @@ namespace OnTrackWebService.Repository
 
 <br/>
 <h3>How do you get in?</h3>
-<p>In the app, you would have seen an 'Active' or 'My Tickets' tab in the ticketing section. A QR code is automatically generated for you. This can be scanned at the gate for entry. You being the purchaser, will have every purchased ticket on your device. If there are any issues with your phone, the ticketing administrators are able to search for your tickets by your name.</p>
+<p>In the app, you would have seen a 'My Tickets' tab in the ticketing section. A QR code is automatically generated for you. This can be scanned at the gate for entry. You being the purchaser, will have every purchased ticket on your device. If there are any issues with your phone, the ticketing administrators are able to search for your tickets by your name.</p>
 
 <br/>
-
 
                          <p>If you have any issues with your purchase please do not hesitate to contact us by replying to tickets@ontrackbda.com</p>
 
@@ -1000,7 +1085,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(transferCustomer.Email));
             mailMessage.Bcc.Add(new MailAddress("tickets@ontrackbda.com"));
 
@@ -1115,7 +1200,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(transferCustomer.Email));
             mailMessage.Bcc.Add(new MailAddress("tickets@ontrackbda.com"));
 
@@ -1199,6 +1284,7 @@ namespace OnTrackWebService.Repository
             TimeZoneInfo timeInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
 #endif
             DateTime fixtureTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(customerTicket.EventTicket.SportEvent.EventTime, DateTimeKind.Unspecified), timeInfo);
+            
             body = body.Replace("[FixtureDate]", fixtureTime.ToString("MMM dd yyyy - h:mm tt"));
 
             mailMessage.Body = body;
@@ -1233,7 +1319,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(customer.Email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
 
@@ -1342,7 +1428,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(customer.Email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
 
@@ -1448,7 +1534,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(customer.Email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
 
@@ -1556,7 +1642,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(customer.Email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
 
@@ -1662,7 +1748,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
             mailMessage.IsBodyHtml = true;
@@ -1773,7 +1859,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
             mailMessage.Attachments.Add(new Attachment(file, fileName));
@@ -1863,7 +1949,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(email));
             //mailMessage.Bcc.Add(new MailAddress("sports@ontrackbda.com"));
 
@@ -1989,7 +2075,7 @@ namespace OnTrackWebService.Repository
             List<Setting> smtpSetting = await _context.Settings.Where(e => e.Key.Contains("SMTP")).ToListAsync();
 
             SmtpClient smtpClient = new SmtpClient();
-            smtpClient.Credentials = new System.Net.NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
+            //smtpClient.Credentials = new System.Net.NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
             smtpClient.Host = smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPServer).Value;
             smtpClient.Port = 587;
             smtpClient.EnableSsl = true;
@@ -1998,7 +2084,7 @@ namespace OnTrackWebService.Repository
             smtpClient.Credentials = new NetworkCredential(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPPassword).Value);
 
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(Constants.NoReplyFromAddress, "ONTRACK TICKETS");
+            mailMessage.From = new MailAddress(smtpSetting.FirstOrDefault(e => e.Key == Constants.SMTPUsername).Value, "ONTRACK TICKETS");
             mailMessage.To.Add(new MailAddress(Constants.BCCAddress));
             mailMessage.Bcc.Add(new MailAddress("tickets@ontrackbda.com"));
 
@@ -2072,7 +2158,7 @@ namespace OnTrackWebService.Repository
 
 <br/>
 <h3>How do you get in?</h3>
-<p>In the app, you would have seen an 'Active' or 'My Tickets' tab in the ticketing section. A QR code is automatically generated for you. This can be scanned at the gate for entry. You being the purchaser, will have every purchased ticket on your device. If there are any issues with your phone, the ticketing administrators are able to search for your tickets by your name.</p>
+<p>In the app, you would have seen an 'My Tickets' menu in the ticketing section. A QR code is automatically generated for you. This can be scanned at the gate for entry. You being the purchaser, will have every purchased ticket on your device. If there are any issues with your phone, the ticketing administrators are able to search for your tickets by your name.</p>
 
 <br/>
 

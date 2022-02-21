@@ -7,6 +7,7 @@ using TruSport.iOS;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using TruSport.Styles;
+using Xamarin.Essentials;
 
 [assembly: ExportRenderer(typeof(ContentPage), typeof(ExtendedPageRenderer))]
 namespace TruSport.iOS
@@ -138,9 +139,18 @@ namespace TruSport.iOS
                 {
                     if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0))
                     {
-                        parent.ModalPresentationStyle = UIModalPresentationStyle.Popover;
-                        parent.ModalInPresentation = true;
-                    }
+						var idiom = DeviceInfo.Idiom;
+						if (idiom == DeviceIdiom.Phone)
+						{
+							parent.ModalPresentationStyle = UIModalPresentationStyle.Popover;
+							parent.ModalInPresentation = true;
+						}
+						else
+						{
+							parent.ModalPresentationStyle = UIModalPresentationStyle.FullScreen;
+							parent.ModalInPresentation = true;
+						}
+					}
                 }
             }
             catch (Exception ex)

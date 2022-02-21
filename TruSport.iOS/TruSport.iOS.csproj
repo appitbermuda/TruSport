@@ -64,7 +64,7 @@
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Distribution</CodesignKey>
 <RunCodeAnalysis>false</RunCodeAnalysis>  <ExternalConsole>false</ExternalConsole>
 <IpaIncludeArtwork></IpaIncludeArtwork>
 <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
@@ -278,6 +278,9 @@
     <PackageReference Include="Plugin.Permissions">
       <Version>6.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Xam.Plugin.LatestVersion">
+      <Version>2.1.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -289,19 +292,6 @@
   <ItemGroup>
     <BundleResource Include="Resources\RedCard_75px.png" />
     <BundleResource Include="Resources\YellowCard_75px.png" />
-    <BundleResource Include="Resources\FootballFavourites44.png" />
-    <BundleResource Include="Resources\FootballNews44.png" />
-    <BundleResource Include="Resources\FootballWhite48.png" />
-    <BundleResource Include="Resources\TableWhite73.png" />
-    <BundleResource Include="Resources\TeamWhite60.png" />
-    <BundleResource Include="Resources\FootballFavourites33.png" />
-    <BundleResource Include="Resources\FootballNews33.png" />
-    <BundleResource Include="Resources\FootballWhite24.png" />
-    <BundleResource Include="Resources\TableWhite36.png" />
-    <BundleResource Include="Resources\TeamWhite36.png" />
-    <BundleResource Include="Resources\TableWhite24.png" />
-    <BundleResource Include="Resources\FootballNews24.png" />
-    <BundleResource Include="Resources\FootballFavourites24.png" />
     <BundleResource Include="Resources\Close_White64.png" />
     <BundleResource Include="Resources\YellowCards_75px.png" />
     <BundleResource Include="Resources\Save32.png" />
@@ -311,41 +301,6 @@
     <BundleResource Include="Resources\fa-light-300.ttf" />
     <BundleResource Include="Resources\fa-regular-400.ttf" />
     <BundleResource Include="Resources\fa-solid-900.ttf" />
-    <BundleResource Include="Resources\Table%403x.png" />
-    <BundleResource Include="Resources\Table%402x.png" />
-    <BundleResource Include="Resources\Table.png" />
-    <BundleResource Include="Resources\User%403x.png" />
-    <BundleResource Include="Resources\User%402x.png" />
-    <BundleResource Include="Resources\User.png" />
-    <BundleResource Include="Resources\UserType%403x.png" />
-    <BundleResource Include="Resources\UserType%402x.png" />
-    <BundleResource Include="Resources\UserType.png" />
-    <BundleResource Include="Resources\Team%403x.png" />
-    <BundleResource Include="Resources\Team%402x.png" />
-    <BundleResource Include="Resources\Team.png" />
-    <BundleResource Include="Resources\Football%403x.png" />
-    <BundleResource Include="Resources\Football%402x.png" />
-    <BundleResource Include="Resources\Football.png" />
-    <BundleResource Include="Resources\Field%402x.png" />
-    <BundleResource Include="Resources\Field%403x.png" />
-    <BundleResource Include="Resources\Field.png" />
-    <BundleResource Include="Resources\Fixture%403x.png" />
-    <BundleResource Include="Resources\Fixture%402x.png" />
-    <BundleResource Include="Resources\Fixture.png" />
-    <BundleResource Include="Resources\News%402x.png" />
-    <BundleResource Include="Resources\News%403x.png" />
-    <BundleResource Include="Resources\News.png" />
-    <BundleResource Include="Resources\Favourite%403x.png" />
-    <BundleResource Include="Resources\Favourite%402x.png" />
-    <BundleResource Include="Resources\Favourite.png" />
-    <BundleResource Include="Resources\list.png" />
-    <BundleResource Include="Resources\list%402x.png" />
-    <BundleResource Include="Resources\users.png" />
-    <BundleResource Include="Resources\users%402x.png" />
-    <BundleResource Include="Resources\futbol.png" />
-    <BundleResource Include="Resources\futbol%402x.png" />
-    <BundleResource Include="Resources\star.png" />
-    <BundleResource Include="Resources\star%402x.png" />
     <BundleResource Include="Resources\OnTrack_Wordmark.png" />
     <BundleResource Include="Resources\Selected.png" />
     <BundleResource Include="Resources\menu.png" />
@@ -370,6 +325,11 @@
     <BundleResource Include="Resources\tennisfeature.jpg" />
     <BundleResource Include="Resources\ticketfeature.jpg" />
     <BundleResource Include="Resources\sportfeature.jpg" />
+    <BundleResource Include="Resources\basketballfeature.jpg" />
+    <BundleResource Include="Resources\triathlonfeature.jpg" />
+    <BundleResource Include="Resources\bermudabasketballlogo%402x.png" />
+    <BundleResource Include="Resources\bermudabasketballlogo.png" />
+    <BundleResource Include="Resources\bermudabasketballlogo%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

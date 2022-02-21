@@ -21,22 +21,23 @@ namespace TruSport.Views.Tickets
         {
             base.OnAppearing();
 
+            //string Token = await SecureStorage.GetAsync("Token");
+            //string email = await SecureStorage.GetAsync("Email");
+
+            //if (String.IsNullOrEmpty(Token) || String.IsNullOrEmpty(email))
+            //{
+            //    await Navigation.PushModalAsync(new SignInPage(), true);
+            //}
+
+            //appLinkEntry = new AppLinkEntry
+            //{
+            //    AppLinkUri = new Uri(Constants.ApplicationTicketURL),
+            //    Description = "ONTRACK Match Ticketing",
+            //    Title = "ONTRACK Tickets",
+            //    IsLinkActive = true
+            //};
+
             MessagingCenter.Send<AccountPage>(this, "Refresh");
-        }
-
-        void Menu_Clicked(System.Object sender, System.EventArgs e)
-        {
-            if (Application.Current.MainPage is MasterDetailPage mdp)
-            {
-                var page = (Page)Activator.CreateInstance(typeof(Tickets.TicketTabbedPage));
-                page.Title = "Tickets";
-
-                mdp.Detail = new NavigationPage(page)
-                {
-                    BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                    BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                };
-            }
         }
     }
 }

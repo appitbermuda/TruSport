@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+    x:Class="TruSport.Views.Triathlon.TriathlonMenuPage"
+    Title="ONTRACK Triathlon"
+    IconImageSource="menu.png">
+    <ContentPage.Content>
+        <StackLayout>
+        <Grid RowSpacing="0"  VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="225"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ContentView Grid.Row="0" BackgroundColor="{StaticResource navBackgroundColor}"/>
+            <Grid Grid.Row="0" VerticalOptions="FillAndExpand" Padding="0,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                <StackLayout Padding="50,50" Spacing="10">
+                    <Image x:Name="LogoImage"
+                           Source="ontrack_wordmark_reversed.png"
+                           Aspect="AspectFit"
+                           VerticalOptions="EndAndExpand"
+                           HorizontalOptions="CenterAndExpand"
+                       />
+                    <Frame Padding="2" HeightRequest="100" VerticalOptions="Center" HorizontalOptions="Center">
+                        <Image x:Name="SportLogoImage"
+                           Source="ontracklogo.png"
+                           Aspect="AspectFit"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                       />
+                    </Frame>
+                    </StackLayout>
+                </Grid>
+            <BoxView Grid.Row="1" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
+                <Grid Grid.Row="2" VerticalOptions="FillAndExpand" Padding="0,0,0,0" BackgroundColor="{DynamicResource backgroundColor}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <listView:SfListView Grid.Row="0" Margin="0,0,0,30" IsScrollBarVisible="False" HeightRequest="{Binding OnTrackHeight}" x:Name="OnTrackMenuItemsListView" ItemSize="50" ItemsSource="{Binding OnTrackMenuItems}" SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                  BackgroundColor="Transparent">
+            <listView:SfListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout>
+                        <Grid Padding="10" VerticalOptions="CenterAndExpand">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0"
+                               Text="{Binding IconSource}"
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"
+                               TextColor="{DynamicResource TextThirdColor}"
+                               FontFamily="{StaticResource fontAwesomeLightFamily}"
+                               FontSize="20"/>
+                        <StackLayout Grid.Column="1" Padding="15,0" HorizontalOptions="FillAndExpand">
+                            <Label VerticalOptions="CenterAndExpand" VerticalTextAlignment="Center" Text="{Binding Title}" FontSize="18" TextColor="{DynamicResource TextThirdColor}" />
+                        </StackLayout>
+                            </Grid>
+                            </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </listView:SfListView.ItemTemplate>
+        </listView:SfListView>
+                </Grid>
+            </Grid>
+    </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

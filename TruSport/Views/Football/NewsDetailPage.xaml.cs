@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TruSport.Model;
 using Xamarin.Forms;
 
-namespace TruSport.Views.Football
+namespace TruSport.Views
 {
     public partial class NewsDetailPage : ContentPage
     {

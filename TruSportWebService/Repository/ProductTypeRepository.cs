@@ -19,6 +19,7 @@ namespace OnTrackWebService.Repository
         {
             _context = context;
         }
+
         public async Task<bool> Delete(string id)
         {
             try

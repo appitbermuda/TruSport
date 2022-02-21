@@ -11,6 +11,7 @@ namespace TruSport.Model
         public string EventTicketID { get; set; }
         public int Qty { get; set; }
         public decimal Subtotal { get; set; }
+        public bool IsMemberTicket { get; set; }
 
         [Ignore]
         public Order Order { get; set; }

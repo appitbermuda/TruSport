@@ -15,6 +15,7 @@ namespace OnTrackWebService.Models
         public int? YellowCards { get; set; }
         public int? RedCards { get; set; }
         public bool IsActive { get; set; }
+        public int? JerseyNumber { get; set; }
 
         [ForeignKey("PlayerID")]
         public Player Player { get; set; }

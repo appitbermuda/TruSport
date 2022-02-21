@@ -81,8 +81,42 @@ namespace TruSport.Services
             }
             return null;
         }
-        
-            public async Task<List<BowlingLeagueStanding>> GetSomersbyLeagueBowlingTables()
+
+        public async Task<List<BasketballLeagueStanding>> GetIslandFallBasketballLeagueStandings()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/IslandFallBasketballLeague", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballLeagueStanding> table = JsonConvert.DeserializeObject<List<BasketballLeagueStanding>>(response.Content);
+
+                    return table;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<BowlingLeagueStanding>> GetSomersbyLeagueBowlingTables()
         {
             try
             {
@@ -359,6 +393,41 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<BasketballLeagueStanding>> GetBasketballTeamLeagueTable(string teamID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/BasketballTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballLeagueStanding> coaches = JsonConvert.DeserializeObject<List<BasketballLeagueStanding>>(response.Content);
+
+                    return coaches;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
         public async Task<List<LeagueTable>> GetFootballTeamLeagueTable(string teamID)
         {
             try
@@ -521,6 +590,41 @@ namespace TruSport.Services
                 if (response.IsSuccessful)
                 {
                     List<LeagueTable> coaches = JsonConvert.DeserializeObject<List<LeagueTable>>(response.Content);
+
+                    return coaches;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+            return null;
+        }
+
+        public async Task<List<BasketballLeagueStanding>> GetBasketballLeagueTableByLeague(string leagueID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueTable/BasketballLeagueTableByLeague", Method.GET);
+                request.AddParameter("leagueID", leagueID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballLeagueStanding> coaches = JsonConvert.DeserializeObject<List<BasketballLeagueStanding>>(response.Content);
 
                     return coaches;
                 }

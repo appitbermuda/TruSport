@@ -10,7 +10,7 @@
              xmlns:model="clr-namespace:TruSport.Model"
              xmlns:converter="clr-namespace:TruSport.Converters"
              xmlns:extension="clr-namespace:TruSport.Extensions"
-             x:Class="TruSport.Views.Football.NewsPage"
+             x:Class="TruSport.Views.NewsPage"
              Title="News"
              Icon="News.png">
     <ContentPage.BindingContext>

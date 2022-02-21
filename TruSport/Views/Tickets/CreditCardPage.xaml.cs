@@ -18,13 +18,13 @@ namespace TruSport.Views.Tickets
             InitializeComponent();
         }
 
-        public CreditCardPage(int ID)
-        {
-            creditCardPageViewModel = new CreditCardPageViewModel(Navigation, ID);
+        //public CreditCardPage(int ID)
+        //{
+        //    creditCardPageViewModel = new CreditCardPageViewModel(Navigation, ID);
 
-            this.BindingContext = creditCardPageViewModel;
+        //    this.BindingContext = creditCardPageViewModel;
 
-            InitializeComponent();
-        }
+        //    InitializeComponent();
+        //}
     }
 }

@@ -27,5 +27,8 @@ namespace OnTrackWebService.Models.Shop
 
         [NotMapped]
         public virtual List<OrderDetail> OrderDetails { get; set; }
+
+        [NotMapped]
+        public virtual List<ContactTrace> ContactTraces { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace OnTrackWebService.Models.Shop
         public string Image { get; set; }
         public decimal Price { get; set; }
         public decimal? MemberPrice { get; set; }
-        public decimal? Fee { get; set; }
+        public decimal Fee { get; set; }
 
         [ForeignKey("ProductTypeID")]
         public ProductType ProductType { get; set; }
@@ -23,6 +23,8 @@ namespace OnTrackWebService.Models.Shop
         [ForeignKey("TicketCompanyID")]
         public TicketCompany TicketCompany { get; set; }
 
+        [NotMapped]
+        public int MemberTicketCount { get; set; }
 
         //[ForeignKey("TeamID")]
         //public Team Team { get; set; }

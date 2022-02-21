@@ -57,8 +57,33 @@ namespace TruSport.Views.Bowling
             }
             else if (item.Title == "Tickets")
             {
-                var page = (Page)Activator.CreateInstance(item.TargetType);
-                App.Current.MainPage = page;
+                //string Token = await SecureStorage.GetAsync("Token");
+                //string email = await SecureStorage.GetAsync("Email");
+
+                //if (String.IsNullOrEmpty(Token) || String.IsNullOrEmpty(email))
+                //{
+                //    await Navigation.PushAsync(new SignInPage(), true);
+                //}
+                //else
+                //{
+                //    var tags = await App.Database.GetTags();
+                //    var tagsList = tags.ToList();
+                //    tagsList.Add(email);
+
+                //    tags = tagsList.ToArray();
+
+                //    try
+                //    {
+                //        //await notificationRegistrationService.RegisterDeviceAsync(tags);
+                //    }
+                //    catch (Exception ex)
+                //    { }
+
+                //    var page = (Page)Activator.CreateInstance(item.TargetType);
+                //App.Current.MainPage = new NavigationPage(page);
+
+                App.Current.MainPage = new Tickets.TicketFlyoutPage();
+                //}
             }
             else
             {

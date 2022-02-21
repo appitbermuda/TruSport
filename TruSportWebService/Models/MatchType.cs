@@ -8,6 +8,6 @@ namespace OnTrackWebService.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string Name { get; set; }
-        public bool? IsTable { get; set; }
+        public bool IsTable { get; set; }
     }
 }

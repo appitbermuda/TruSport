@@ -469,7 +469,12 @@ namespace TruSport.ViewModels
                     });
 
                     var tags = await App.Database.GetTags();
-                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                    try
+                    {
+                        await notificationRegistrationService.RegisterDeviceAsync(tags);
+                    }
+                    catch (Exception ex)
+                    { }
                 }
 
             }

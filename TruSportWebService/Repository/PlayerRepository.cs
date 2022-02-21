@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Basketball;
 
 namespace OnTrackWebService.Repository
 {
@@ -114,6 +115,54 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<BasketballPlayerSeason>> GetBasketballPlayers()
+        {
+            try
+            {
+                var players = await _context.BasketballPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).Where(e => e.Season.IsCurrent && e.IsActive).ToListAsync();
+
+                return players;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballPlayers");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<BasketballPlayerSeason>> GetBasketballPlayersByTeam(string teamID)
+        {
+            try
+            {
+                var players = await _context.BasketballPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).Where(e => e.TeamID == teamID && e.Season.IsCurrent && e.IsActive).ToListAsync();
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballPlayersByTeam");
+            }
+
+            return null;
+        }
+
+        public async Task<BasketballPlayerSeason> GetBasketballPlayer(string playerID)
+        {
+            try
+            {
+                var players = await _context.BasketballPlayerSeasons.Include(e => e.Team).Include(e => e.Player).Include(e => e.Season).FirstOrDefaultAsync(e => e.PlayerID == playerID && e.Season.IsCurrent);
+
+                return players;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballPlayer");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<CricketPlayerSeason>> GetCricketPlayers()
         {
             try
@@ -122,7 +171,7 @@ namespace OnTrackWebService.Repository
 
                 return players;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "GetCricketPlayers");
             }

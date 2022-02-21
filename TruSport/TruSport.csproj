@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
-    <IntermediateOutputPath>obj\Release\netstandard2.0</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\Release\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0</IntermediateOutputPath>
     <DebugType></DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
@@ -42,6 +42,7 @@
     <PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />
     <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
     <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
+    <PackageReference Include="Xam.Plugin.LatestVersion" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -51,7 +52,6 @@
     <Folder Include="Data\" />
     <Folder Include="Constants\" />
     <Folder Include="Controller\" />
-    <Folder Include="Views\Admin\" />
     <Folder Include="ViewModel\" />
     <Folder Include="Extensions\" />
     <Folder Include="Services\" />
@@ -70,6 +70,10 @@
     <Folder Include="ViewModel\Tennis\" />
     <Folder Include="Views\Tennis\" />
     <Folder Include="Model\Ticket\" />
+    <Folder Include="Views\Basketball\" />
+    <Folder Include="ViewModel\Basketball\" />
+    <Folder Include="Views\Triathlon\" />
+    <Folder Include="ViewModel\Triathlon\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Views\Football\MatchStatsPopUpPage %28another copy%29.cs" />
@@ -140,5 +144,12 @@
       <DependentUpon>CricketFormFixtureList %28copy%29.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Views\Basketball\" />
+    <None Remove="ViewModel\Basketball\" />
+    <None Remove="Xam.Plugin.LatestVersion" />
+    <None Remove="Views\Triathlon\" />
+    <None Remove="ViewModel\Triathlon\" />
   </ItemGroup>
 </Project>

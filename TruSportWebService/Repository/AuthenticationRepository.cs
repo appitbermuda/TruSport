@@ -73,6 +73,23 @@ namespace OnTrackWebService.Repository
             return false;
         }
 
+        public async Task<bool> OntrackrIsActive(string username)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.UserName == username && e.IsActive);
+
+                if (user != null)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return false;
+        }
+
         public async Task<bool> UserExists(string email)
         {
             try
@@ -90,6 +107,23 @@ namespace OnTrackWebService.Repository
             return false;
         }
 
+        public async Task<bool> OntrackrUserExists(string username)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.UserName == username);
+
+                if (user != null)
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return false;
+        }
+
         public async Task<User> SignInUser(UserAuthentication userAuthentication)
         {
             try
@@ -98,7 +132,7 @@ namespace OnTrackWebService.Repository
                     .Include(e => e.UserRoles)
                     .Include(e => e.UserTeams).ThenInclude(e => e.Team)
                     .Include(e => e.TicketCompanyUsers).ThenInclude(e => e.TicketCompany)
-                    .FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated && ((!String.IsNullOrEmpty(userAuthentication.sport) && userAuthentication.sport.ToLower() == e.Role.Sport.Name.ToLower()) || String.IsNullOrEmpty(userAuthentication.sport)));
+                    .FirstOrDefaultAsync(e => (e.Email == userAuthentication.email || e.UserName == userAuthentication.username) && e.IsValidated && ((!String.IsNullOrEmpty(userAuthentication.sport) && userAuthentication.sport.ToLower() == e.Role.Sport.Name.ToLower()) || String.IsNullOrEmpty(userAuthentication.sport)));
                 //var userRoles = await _context.UserRoles.Where(e => e.UserID == user.ID).ToListAsync();
 
                 if (user != null)
@@ -135,7 +169,55 @@ namespace OnTrackWebService.Repository
                         {
                             Subject = new ClaimsIdentity(new Claim[]
                             {
-                            new Claim(ClaimTypes.Name, user.Email.ToString()),
+                            new Claim(ClaimTypes.Name, user.UserName ?? user.Email.ToString()),
+                            new Claim(ClaimTypes.Role, user.Role.Name)
+                            }),
+                            Expires = DateTime.UtcNow.AddYears(100),
+                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                        };
+                        var token = tokenHandler.CreateToken(tokenDescriptor);
+                        user.Token = tokenHandler.WriteToken(token);
+
+                        // remove password before returning
+                        user.Password = null;
+
+                        return user;
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return null;
+        }
+
+        public async Task<User> SignInOntrackrUser(UserAuthentication userAuthentication)
+        {
+            try
+            {
+                var user = await _context.Users.Include(e => e.Role).ThenInclude(e => e.Sport)
+                    .Include(e => e.UserRoles)
+                    .Include(e => e.UserTeams).ThenInclude(e => e.Team)
+                    .Include(e => e.TicketCompanyUsers).ThenInclude(e => e.TicketCompany)
+                    .FirstOrDefaultAsync(e => e.UserName == userAuthentication.username && e.IsValidated && ((!String.IsNullOrEmpty(userAuthentication.sport) && userAuthentication.sport.ToLower() == e.Role.Sport.Name.ToLower()) || String.IsNullOrEmpty(userAuthentication.sport)));
+                
+                if (user != null)
+                {
+                    PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.Password, userAuthentication.password);
+
+                    if (passwordVerificationResult == PasswordVerificationResult.Success)
+                    {
+                        // authentication successful so generate jwt token
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                        var tokenDescriptor = new SecurityTokenDescriptor
+                        {
+                            Subject = new ClaimsIdentity(new Claim[]
+                            {
+                            new Claim(ClaimTypes.Name, user.UserName),
                             new Claim(ClaimTypes.Role, user.Role.Name)
                             }),
                             Expires = DateTime.UtcNow.AddYears(100),
@@ -180,6 +262,7 @@ namespace OnTrackWebService.Repository
                             user.Password = _passwordHasher.HashPassword(user.Password);
 
                             var role = await _context.Roles.FirstOrDefaultAsync(e => e.ID == user.RoleID);
+                            var ticketCompany = await _context.TicketCompanys.FirstOrDefaultAsync(e => e.ID == user.TicketCompanyID);
 
                             User newUser = new User
                             {
@@ -187,7 +270,8 @@ namespace OnTrackWebService.Repository
                                 LastName = user.LastName,
                                 Email = user.Email,
                                 Password = user.Password,
-                                RoleID = user.RoleID
+                                RoleID = user.RoleID,
+                                IsActive = true
                             };
 
                             _context.Users.Add(newUser);
@@ -197,8 +281,8 @@ namespace OnTrackWebService.Repository
                             {
                                 ticketCompanyUser = new TicketCompanyUser();
                                 ticketCompanyUser.TicketCompanyID = user.TicketCompanyID;
-
-                                ticketCompanyUser.UserID = user.ID;
+                                ticketCompanyUser.UserID = newUser.ID;
+                                ticketCompanyUser.IsActive = true;
 
                                 _context.TicketCompanyUsers.Add(ticketCompanyUser);
                                 await _context.SaveChangesAsync();
@@ -222,7 +306,7 @@ namespace OnTrackWebService.Repository
                             {
                                 newUser.Role = role;
                                 await emailRepository.Welcome(user.Email);
-                                await emailRepository.SendSignUpEmail(newUser, userTeam, ticketCompanyUser);
+                                await emailRepository.SendSignUpEmail(newUser, userTeam, ticketCompanyUser, ticketCompany.Name);
                             }
                             catch (Exception ex)
                             {
@@ -243,6 +327,110 @@ namespace OnTrackWebService.Repository
                                 Role = role,
                                 RoleID = user.RoleID,
                                 Email = user.Email,
+                                UserTeams = userTeams,
+                                TicketCompanyUsers = ticketCompanyUsers
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _context.Database.RollbackTransaction();
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return null;
+        }
+
+        public async Task<UserResponse> SignUpOntrackr(UserRequest user)
+        {
+            TicketCompanyUser ticketCompanyUser = null;
+            UserTeam userTeam = null;
+
+            try
+            {
+                if (!String.IsNullOrEmpty(user.UserName))
+                {
+                    if (user.Password.Length >= 8)
+                    {
+                        var userExists = await _context.Users.AnyAsync(e => e.UserName == user.UserName);
+                        if (!userExists)
+                        {
+
+                            _context.Database.BeginTransaction();
+                            //encrypt password
+                            user.Password = _passwordHasher.HashPassword(user.Password);
+
+                            var role = await _context.Roles.FirstOrDefaultAsync(e => e.ID == user.RoleID);
+                            var ticketCompany = await _context.TicketCompanys.FirstOrDefaultAsync(e => e.ID == user.TicketCompanyID);
+
+                            User newUser = new User
+                            {
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Email = user.Email,
+                                UserName = user.UserName,
+                                Password = user.Password,
+                                RoleID = user.RoleID,
+                                IsActive = true,
+                                IsValidated = true
+                            };
+
+                            _context.Users.Add(newUser);
+                            await _context.SaveChangesAsync();
+
+                            if (UserInRole.Role(role.Name, Roles.TicketAdmin))
+                            {
+                                ticketCompanyUser = new TicketCompanyUser();
+                                ticketCompanyUser.TicketCompanyID = user.TicketCompanyID;
+                                ticketCompanyUser.UserID = newUser.ID;
+                                ticketCompanyUser.IsActive = true;
+
+                                _context.TicketCompanyUsers.Add(ticketCompanyUser);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            if (UserInRole.Role(role.Name, Roles.TeamAdmin))
+                            {
+                                userTeam = new UserTeam();
+                                userTeam.TeamID = user.TeamID;
+
+                                userTeam.UserID = user.ID;
+
+                                _context.UserTeams.Add(userTeam);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            _context.Database.CommitTransaction();
+
+                            ////SEND EMAIL
+                            //try
+                            //{
+                            //    newUser.Role = role;
+                            //    await emailRepository.Welcome(user.Email);
+                            //    await emailRepository.SendSignUpEmail(newUser, userTeam, ticketCompanyUser, ticketCompany.Name);
+                            //}
+                            //catch (Exception ex)
+                            //{
+                            //    Debug.WriteLine(ex.Message, "Welcome Email");
+                            //}
+
+                            List<UserTeam> userTeams = new List<UserTeam>();
+                            userTeams.Add(userTeam);
+
+                            List<TicketCompanyUser> ticketCompanyUsers = new List<TicketCompanyUser>();
+                            ticketCompanyUsers.Add(ticketCompanyUser);
+
+                            return new UserResponse
+                            {
+                                ID = user.ID,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Role = role,
+                                RoleID = user.RoleID,
+                                Email = user.Email,
+                                UserName = user.UserName,
                                 UserTeams = userTeams,
                                 TicketCompanyUsers = ticketCompanyUsers
                             };
@@ -303,6 +491,66 @@ namespace OnTrackWebService.Repository
                                 Role = user.Role,
                                 RoleID = user.RoleID,
                                 Email = user.Email,
+                                TeamID = user.TeamID,
+                                Team = user.Team
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return null;
+        }
+
+        public async Task<UserResponse> SignUpOntrackrUser(User user)
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(user.UserName))
+                {
+                    if (user.Password.Length >= 8)
+                    {
+                        var userExists = await _context.Users.AnyAsync(e => e.UserName == user.UserName);
+                        if (!userExists)
+                        {
+                            //encrypt password
+                            user.Password = _passwordHasher.HashPassword(user.Password);
+
+                            _context.Users.Add(user);
+                            await _context.SaveChangesAsync();
+
+                            user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.ID == user.ID);
+
+                            if (!String.IsNullOrEmpty(user.TeamID))
+                            {
+                                var team = await _context.Teams.FirstOrDefaultAsync(e => e.ID == user.TeamID);
+                                user.Team = team;
+                            }
+
+                            ////SEND EMAIL
+                            //try
+                            //{
+                            //    await emailRepository.Welcome(user.Email);
+                            //    await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.Role.Name, user.Team != null ? user.Team.Name : null);
+                            //}
+                            //catch (Exception ex)
+                            //{
+                            //    Debug.WriteLine(ex.Message, "Welcome Email");
+                            //}
+
+                            return new UserResponse
+                            {
+                                ID = user.ID,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Role = user.Role,
+                                RoleID = user.RoleID,
+                                Email = user.Email,
+                                UserName = user.UserName,
                                 TeamID = user.TeamID,
                                 Team = user.Team
                             };
@@ -419,6 +667,43 @@ namespace OnTrackWebService.Repository
             return "There was an error resetting your password.";
         }
 
+        public async Task<string> ResetOntrackrUserPassword(PasswordReset passwordReset)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.UserName == passwordReset.UserName);
+
+                //PasswordVerificationResult passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user.TemporaryPassword, passwordReset.TemporaryPassword);
+
+                //if (passwordVerificationResult == PasswordVerificationResult.Success)
+                //{
+
+                    //encrypt password
+                    user.Password = _passwordHasher.HashPassword(passwordReset.Password);
+                    user.TemporaryPassword = null;
+
+                    _context.Users.Update(user);
+
+                    await _context.SaveChangesAsync();
+
+                    //user = await _context.Users.Include(e => e.UserType).Include(e => e.Team).FirstOrDefaultAsync(e => e.ID == user.ID);
+
+                    //SEND EMAIL
+                    //await emailRepository.SendSignUpEmail(user.FirstName + " " + user.LastName, user.Email, user.UserType.Name, user.Team != null ? user.Team.Name : null);
+
+                    return "Password reset successfully!";
+                //}
+
+                //return "Temporary password is incorrect or is expired.";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return "There was an error resetting your password.";
+        }
+
         public async Task<IEnumerable<TicketScanner>> GetScanners(ClaimsPrincipal claimsUser)
         {
             try
@@ -435,7 +720,7 @@ namespace OnTrackWebService.Repository
                     User owner = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == email && e.Role.Name == role);
 
 
-                    List<TicketScanner> scanners = await _context.Users.Include(e => e.Role).Where(e => e.Role.Name == Constants.TicketingAdmin && e.TeamID == owner.TeamID)
+                    List<TicketScanner> scanners = await _context.Users.Include(e => e.Role).Where(e => Constants.TicketingAdmin.Contains(e.Role.Name) && e.TeamID == owner.TeamID)
                         .Select(e => new TicketScanner
                         {
                             Name = e.FirstName + " " + e.LastName,
@@ -517,9 +802,9 @@ namespace OnTrackWebService.Repository
 
                 dbUser.FirstName = item.FirstName;
                 dbUser.LastName = item.LastName;
+                dbUser.UserName = item.UserName;
                 dbUser.Email = item.Email;
                 dbUser.RoleID = item.RoleID;
-                dbUser.TeamID = item.TeamID;
                 dbUser.IsValidated = item.IsValidated;
 
                 _context.Update(dbUser);

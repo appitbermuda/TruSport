@@ -8,6 +8,7 @@ using Xamarin.Essentials;
 using System.Diagnostics;
 using TruSport.ViewModel.Shop;
 using System.Linq;
+using TruSport.Model;
 
 namespace TruSport.Views
 {
@@ -21,8 +22,13 @@ namespace TruSport.Views
             loginViewModel = new LoginViewModel(Navigation);
             this.BindingContext = loginViewModel;
             InitializeComponent();
+        }
 
-            
+        public SignInPage(Type BackToPage)
+        {
+            loginViewModel = new LoginViewModel(Navigation, BackToPage);
+            this.BindingContext = loginViewModel;
+            InitializeComponent();
         }
 
         protected override async void OnAppearing()
@@ -94,7 +100,15 @@ namespace TruSport.Views
         {
             try
             {
-                await Navigation.PopAsync();
+                if(Navigation.ModalStack.Count == 0)
+                {
+                    if (Application.Current.MainPage is FlyoutPage mdp)
+                    {
+                        mdp.IsPresented = true;
+                    }
+                }
+                else
+                    await Navigation.PopModalAsync();
             }
             catch(Exception ex)
             {

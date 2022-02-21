@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:model="clr-namespace:TruSport.Model" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converter="clr-namespace:TruSport.Converters" x:Class="TruSport.Views.Football.LeagueStatsPage"
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:model="clr-namespace:TruSport.Model"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+             xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms"
+             xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:converter="clr-namespace:TruSport.Converters"
+             x:Class="TruSport.Views.Football.LeagueStatsPage"
              Title="Leaderboard">
     <ContentPage.Resources>
         <ResourceDictionary>

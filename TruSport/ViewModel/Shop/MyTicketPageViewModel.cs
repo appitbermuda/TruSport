@@ -157,7 +157,7 @@ namespace TruSport.ViewModel.Shop
 
                     if (customerTickets != null)
                     {
-                        customerTickets.ForEach(e => e.CustomerTicketObject = JsonConvert.SerializeObject(e.CustomerMatchTicket));
+                        customerTickets.ForEach(e =>  e.CustomerTicketObject = JsonConvert.SerializeObject(e.CustomerMatchTicket));
                         
                         CustomerTicketCollection = new ObservableCollection<CustomerTicket>(customerTickets);
                     }
@@ -280,7 +280,7 @@ namespace TruSport.ViewModel.Shop
                 {
                     await pushNotificationService.Send(new NotificationRequest
                     {
-                        Text = Customer.FirstName + "has rejected your match ticket transfer.",
+                        Text = Customer.FirstName + " has rejected your match ticket transfer.",
                         Silent = false,
                         Tags = new string[] { acceptTransfer.Customer.Email }
                     });

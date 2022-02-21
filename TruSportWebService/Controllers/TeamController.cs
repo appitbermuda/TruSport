@@ -105,6 +105,44 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("AllBasketball")]
+        public async Task<IActionResult> GetBasketballTeams()
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetBasketballTeams();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("AllBasketballTeams")]
+        public async Task<IActionResult> GetAllBasketballTeams()
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetAllBasketballTeams();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("AllCricket")]
         public async Task<IActionResult> GetCricketTeams()
         {
@@ -124,12 +162,50 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("AllCricketTeams")]
+        public async Task<IActionResult> GetAllCricketTeams()
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetAllCricketTeams();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("AllBowling")]
         public async Task<IActionResult> GetBowlingTeams()
         {
             try
             {
                 IEnumerable<BowlingTeam> teams = await _teamRepository.GetBowlingTeams();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("AllBowlingTeams")]
+        public async Task<IActionResult> GetAllBowlingTeams()
+        {
+            try
+            {
+                IEnumerable<BowlingTeam> teams = await _teamRepository.GetAllBowlingTeams();
 
                 if (teams != null)
                     return Ok(teams);
@@ -168,6 +244,25 @@ namespace OnTrackWebService.Controllers
             try
             {
                 IEnumerable<Team> teams = await _teamRepository.GetFootballTeams();
+
+                if (teams != null)
+                    return Ok(teams);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("AllFootballTeams")]
+        public async Task<IActionResult> GetAllFootballTeams()
+        {
+            try
+            {
+                IEnumerable<Team> teams = await _teamRepository.GetAllFootballTeams();
 
                 if (teams != null)
                     return Ok(teams);
@@ -300,6 +395,46 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values/5
         [HttpGet]
+        [Route("Basketball")]
+        public async Task<IActionResult> GetBasketballTeam(string id)
+        {
+            try
+            {
+                TeamSeason team = await _teamRepository.GetBasketballTeam(id);
+
+                if (team != null)
+                    return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("BasketballProfile")]
+        public async Task<IActionResult> GetBasketballProfile(string id)
+        {
+            try
+            {
+                Team team = await _teamRepository.GetBasketballProfile(id);
+
+                if (team != null)
+                    return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
         [Route("Cricket")]
         public async Task<IActionResult> GetCricketTeam(string id)
         {
@@ -379,8 +514,29 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpPost]
+        [Route("Import")]
+        public async Task<IActionResult> UploadBasketballFixtures([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportTeam fileUploadResponse = await _teamRepository.UploadTeams(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Basketball Team");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
         [Route("ImportBowling")]
-        public async Task<IActionResult> UploadFootballFixtures([FromForm(Name = "file")] IFormFile file)
+        public async Task<IActionResult> UploadBowlingFixtures([FromForm(Name = "file")] IFormFile file)
         {
             try
             {

@@ -3,14 +3,27 @@ namespace OnTrackWebService.Data
 {
     public class Constants
     {
+        public static string SETTING_BASKETBALL_TBD_ID = "59CFFA76-CA6B-4925-903A-37EDCB526CD2";
         public static string SETTING_CRICKET_TBD_ID = "932AEB43-1017-4615-BB4B-F88A913C2117";
         public static string SETTING_FOOTBALL_TBD_ID = "BA7124FE-A966-428A-A46A-64AF78B15D62";
         public static string SETTING_PROCESSING_FEE_ID = "E1D4E89C-B118-4155-9D8C-D82791879757";
+        public static string SETTING_DEFAULT_CONTACT_TRACING_TERM = "Default Contact Tracing Term";
+        public static string SETTING_DEFAULT_TICKET_TERM = "Default Ticket Term";
+        public static string SETTING_IMPORTANT_TICKETING_MESSAGE_ID = "98DA8F73-A7B2-4616-9A1C-E7DED1C16665";
         public static string SMTPServer = "SMTP Server";
         public static string SMTPPort = "SMTP Port";
         public static string SMTPUsername = "SMTP Username";
         public static string SMTPPassword = "SMTP Password";
 
+        public static string Triathlon = "Triathlon";
+        public static string Basketball = "Basketball";
+        public static string Bowling = "Bowling";
+        public static string Cricket = "Cricket";
+        public static string Football = "Football";
+        public static string Tennis = "Tennis";
+
+
+        public static string TicketingEmail = "tickets@ontrackbda.com";
         public static string FromAddress = "ontrackbda@gmail.com";
         public static string BCCAddress = "ontrackbda@gmail.com";
         public static string NoReplyFromAddress = "no-reply_ontrackbda@gmail.com";
@@ -29,6 +42,8 @@ namespace OnTrackWebService.Data
         public static string Currency = "840";
         public static string MerchantId = "33302800";
         public static string OrderNumberPrefix = "OT_TIX_";
+        public static string OnTrackWebEndpoint = "https://www.ontrackbda.com";
+        public static string TicketingAdmin = "Ticketing Administrator (Football);Ticketing Administrator (Football)";
 
         public const string Organization = "techReef";
         public const string Android = "OnTrack-1";

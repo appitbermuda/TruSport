@@ -155,7 +155,47 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<EventTicket> eventTickets = await _sportEventRepository.EventTicket(eventID, email);
+                IEnumerable<EventTicket> eventTickets = await _sportEventRepository.CustomerEventTicket(eventID, email);
+
+                if (eventTickets != null)
+                    return Ok(eventTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "SportEvent");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("CustomerTicket")]
+        public async Task<IActionResult> EventTicketProducts(string eventID, string email)
+        {
+            try
+            {
+
+                IEnumerable<EventTicket> eventTickets = await _sportEventRepository.CustomerEventTickets(eventID, email);
+
+                if (eventTickets != null)
+                    return Ok(eventTickets);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "SportEvent");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("EventTicket")]
+        public async Task<IActionResult> EventTickets(string eventID)
+        {
+            try
+            {
+
+                IEnumerable<EventTicket> eventTickets = await _sportEventRepository.EventTicket(eventID);
 
                 if (eventTickets != null)
                     return Ok(eventTickets);

@@ -143,7 +143,7 @@ namespace TruSport.Converters
 
                     foreach(var matchInning in matchInnings)
                     {
-                        if(cricketFixture.MatchType.Name == "One 50 Overs" || cricketFixture.MatchType.Name == "T20")
+                        if(cricketFixture.MatchType.Name == "One 50 Overs" || cricketFixture.MatchType.Name == "T20" || cricketFixture.MatchType.Name == "County Cup")
                             score += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
                         else
                             score += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
@@ -181,7 +181,7 @@ namespace TruSport.Converters
 
                     foreach (var matchInning in matchInnings)
                     {
-                        if (cricketFixture.MatchType.Name == "One 50 Overs" || cricketFixture.MatchType.Name == "T20")
+                        if (cricketFixture.MatchType.Name == "One 50 Overs" || cricketFixture.MatchType.Name == "T20" || cricketFixture.MatchType.Name == "County Cup")
                             score += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
                         else
                             score += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
@@ -1351,7 +1351,7 @@ namespace TruSport.Converters
                 if (parameter is Label)
                 {
                     if (!data.MatchType.IsTable)
-                        return data.League.Name + " " + data.MatchType.Name;
+                        return data.League.Name + " - " + data.MatchType.Name;
                     else
                         return data.League.Name;
                 }
@@ -1364,6 +1364,49 @@ namespace TruSport.Converters
                 }
             }
             catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingSelectionBasketballConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<BasketballFixture>(groupResult.Items.ToList<BasketballFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    if (!data.MatchType.IsTable)
+                        return data.League.Name + " - " + data.MatchType.Name;
+                    else
+                        return data.League.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Season.Date;
+                }
+            }
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Grouping Selection Converter");
             }
@@ -1394,7 +1437,7 @@ namespace TruSport.Converters
                 if (parameter is Label)
                 {
                     if (!data.MatchType.IsTable)
-                        return data.League.Name + " " + data.MatchType.Name;
+                        return data.League.Name + " - " + data.MatchType.Name;
                     else
                         return data.League.Name;
                 }
@@ -1437,7 +1480,7 @@ namespace TruSport.Converters
                 if (parameter is Label)
                 {
                     if (!data.MatchType.IsTable)
-                        return data.League.Name + " " + data.MatchType.Name;
+                        return data.League.Name + " - " + data.MatchType.Name;
                     else
                         return data.League.Name;
                 }
@@ -1677,6 +1720,46 @@ namespace TruSport.Converters
         }
     }
 
+    public class GroupingCompetitionBasketballConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<BasketballFixture>(groupResult.Items.ToList<BasketballFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    return data.MatchType.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Season.Date;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Competition Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class GroupingTransferSelectionConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1749,6 +1832,56 @@ namespace TruSport.Converters
             return value;
         }
         
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingLeagueDateSelectionBasketballConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                DateTime dateTime = new DateTime();
+
+                GroupResult groupResult = value as GroupResult;
+
+                if (groupResult != null)
+                {
+                    var items = new List<BasketballFixture>(groupResult.Items.ToList<BasketballFixture>());
+                    var data = items[0];
+
+                    if (parameter is Label)
+                    {
+                        return data.MatchType.Name;
+                    }
+                    else
+                    {
+                        return data.Date.ToString("dd MMM yyyy");
+                    }
+                }
+
+                var isDate = DateTime.TryParse(value.ToString(), out dateTime);
+
+                if (isDate)
+                    return dateTime.ToString("dd MMM yyyy");
+                else
+                    return (string)value;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping League Table Selection Converter");
+            }
+
+            return value;
+        }
+
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -1878,6 +2011,26 @@ namespace TruSport.Converters
             }
             else
                 return "ontracklogo.png";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BasketballImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((string)value != null && (string)value != "")
+            {
+                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+
+                return image;
+            }
+            else
+                return "http://ontrackimagestore.blob.core.windows.net/images/bermudabasketballlogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -2089,6 +2242,22 @@ namespace TruSport.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (((IList)value).Count == 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class MemberTicketCountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (((int)value) == 0)
+                return 100;
+
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

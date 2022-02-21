@@ -11,7 +11,8 @@
              xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
              xmlns:pullToRefresh="clr-namespace:Syncfusion.SfPullToRefresh.XForms;assembly=Syncfusion.SfPullToRefresh.XForms"
              xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
-             xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:templates="clr-namespace:TruSport.Templates"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+             xmlns:templates="clr-namespace:TruSport.Templates"
              x:Class="TruSport.Views.Football.CompetitionDetailsPage"
              NavigationPage.HasBackButton="False"
              NavigationPage.HasNavigationBar="False">

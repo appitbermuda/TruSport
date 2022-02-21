@@ -52,10 +52,10 @@ namespace OnTrackWebService.Repository
             try
             {
                 // Get the claims values
-                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                var username = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.UserName == username);
 
                 var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == CustomerEmail && e.IsValidated);
                 var ticketCompany = await _context.TicketCompanys.FirstOrDefaultAsync(e => e.ID == companyUser.TicketCompanyID);
@@ -95,10 +95,10 @@ namespace OnTrackWebService.Repository
             try
             {
                 // Get the claims values
-                var email = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
+                var username = claimsUser.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.UserName == username);
 
                 var customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == CustomerEmail && e.IsValidated);
                 var ticketCompany = await _context.TicketCompanys.FirstOrDefaultAsync(e => e.ID == companyUser.TicketCompanyID);
@@ -147,10 +147,10 @@ namespace OnTrackWebService.Repository
             try
             {
                 // Get the claims values
-                var email = user.Claims.Where(c => c.Type == ClaimTypes.Name)
+                var username = user.Claims.Where(c => c.Type == ClaimTypes.Name)
                                    .Select(c => c.Value).SingleOrDefault();
 
-                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.Email == email);
+                var companyUser = await _context.TicketCompanyUsers.FirstOrDefaultAsync(e => e.User.UserName == username);
 
                 ticketMembers = await _context.TicketMembers
                     .Include(e => e.TicketCompany)

@@ -15,6 +15,7 @@ namespace OnTrackWebService.Models
         public string Season { get; set; }
         public string SportID { get; set; }
         public string FieldID { get; set; }
+        public string TicketCompanyID { get; set; }
         public DateTime Date { get; set; }
         public string Time { get; set; }
         public string HomeTeamLogo { get; set; }
@@ -22,6 +23,7 @@ namespace OnTrackWebService.Models
         public string EventLogo { get; set; }
         public bool IsPostponed { get; set; }
         public bool IsCancelled { get; set; }
+        public string Term { get; set; }
 
         [ForeignKey("FieldID")]
         public Field Field { get; set; }
@@ -29,8 +31,20 @@ namespace OnTrackWebService.Models
         [ForeignKey("SportID")]
         public Sport Sport { get; set; }
 
+        [ForeignKey("TicketCompanyID")]
+        public TicketCompany TicketCompany { get; set; }
+
+        [NotMapped]
+        public string DefaultTicketTerm { get; set; }
+
+        [NotMapped]
+        public string DefaultContactTraceTerm { get; set; }
+
         [NotMapped]
         public int TicketsAvailable { get; set; }
+
+        [NotMapped]
+        public string Event => HomeTeam + " vs " + AwayTeam;
 
         [NotMapped]
         public string PostponedOrCancelled => IsPostponed ? "Postponed" : IsCancelled ? "Cancelled" : String.Empty;

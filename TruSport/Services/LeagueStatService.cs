@@ -529,6 +529,108 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<BasketballLeagueStat>> GetBasketballStatsByPlayer()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/BasketballStatsByPlayer", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballLeagueStat> stats = JsonConvert.DeserializeObject<List<BasketballLeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<BasketballLeagueStat>> GetBasketballForStatsByTeam()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/BasketballForStatsByTeam", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballLeagueStat> stats = JsonConvert.DeserializeObject<List<BasketballLeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
+        public async Task<List<BasketballLeagueStat>> GetBasketballAgainstStatsByTeam()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("LeagueStat/BasketballAgainstStatsByTeam", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballLeagueStat> stats = JsonConvert.DeserializeObject<List<BasketballLeagueStat>>(response.Content);
+
+                    return stats;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueStat");
+            }
+            return null;
+        }
+
         public async Task<LeagueStat> Get(string ID)
         {
             try

@@ -121,6 +121,42 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<EventTicket>> GetSportEventTickets(string eventID, string email)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("Token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("SportEvent/CustomerTicket", Method.GET);
+                request.AddParameter("eventID", eventID);
+                request.AddParameter("email", email);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<EventTicket> eventTickets = JsonConvert.DeserializeObject<List<EventTicket>>(response.Content);
+
+                    return eventTickets;
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "SportEvent");
+            }
+            return null;
+        }
+
         public async Task<List<EventTicket>> GetTeamSportEvents()
         {
             try

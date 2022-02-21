@@ -6,6 +6,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ListCountConverter x:Key="listCountConverter" />
+            <converters:MemberTicketCountConverter x:Key="memberTicketCountConverter" />
             <DataTemplate x:Name="ContactTracingItemTemplate" x:Key="ContactTracingItemTemplate">
                 <StackLayout HorizontalOptions="FillAndExpand"
                              VerticalOptions="FillAndExpand">
@@ -18,7 +19,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <!--<RowDefinition Height="Auto" />-->
-                        <RowDefinition Height="1" />
+                        <!--<RowDefinition Height="1" />-->
                     </Grid.RowDefinitions>
                        <Grid.ColumnDefinitions>
                            <ColumnDefinition Width="*"/>
@@ -47,7 +48,7 @@
                                    FontFamily="{StaticResource fontAwesomeSolidFamily}"
                                    VerticalOptions="CenterAndExpand"/>
                         </StackLayout>
-                       <BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource borderColor}" />
+                       <!--<BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource borderColor}" />-->
                         </Grid>
             </StackLayout>
             </DataTemplate>
@@ -103,7 +104,7 @@
                         </Grid.RowDefinitions>
                         <ContentView Grid.Row="0" Grid.ColumnSpan="5" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
 
-                        <StackLayout Grid.Row="0" Grid.ColumnSpan="2" Spacing="5" Padding="5,10"
+                        <StackLayout Grid.Row="0" Grid.ColumnSpan="3" Spacing="5"
                                      VerticalOptions="CenterAndExpand"
                                          HorizontalOptions="StartAndExpand"
                                          Orientation="Horizontal">
@@ -136,7 +137,7 @@
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding SportEvent.EventTime, StringFormat='{0:MMM d, h:mm tt}'}"/>
+                                            Text="{Binding SportEvent.EventTime, StringFormat='{0:MMM d - h:mm tt}'}"/>
                                 
                             </StackLayout>
 
@@ -144,7 +145,6 @@
                         <Label x:Name="TitleLabel"
                                    HorizontalOptions="CenterAndExpand"
                                    HorizontalTextAlignment="Center"
-                                   FontSize="Medium"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                         Text="{Binding SportEvent.Title}">
@@ -162,7 +162,6 @@
                         <Label x:Name="DescriptionLabel"
                                    HorizontalOptions="CenterAndExpand"
                                    HorizontalTextAlignment="Center"
-                                   FontSize="Small"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
                                         Text="{Binding SportEvent.Description}">
@@ -194,7 +193,7 @@
 
                             </ff:CachedImage>
                                 </Frame>
-                            <Label x:Name="HomeTeamNameLabel" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" FontSize="Micro" FontAttributes="Bold"
+                            <Label x:Name="HomeTeamNameLabel" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" FontAttributes="Bold"
                                        TextColor="{DynamicResource TextPrimaryColor}" Text="{Binding SportEvent.HomeTeam}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
@@ -330,7 +329,7 @@
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
                                     <StackLayout>
-                                        <Frame Padding="10" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}">
+                                        <Frame Padding="10" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="Transparent">
                                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -338,10 +337,10 @@
                                             <ColumnDefinition Width="80"/>
                                         </Grid.ColumnDefinitions>
                                     <StackLayout HorizontalOptions="StartAndExpand">
-                                        <Label Text="{Binding Product.Age}" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                                        <Label Text="{Binding Product.Age}" FontSize="Micro" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
                                     </StackLayout>
                                     <StackLayout Grid.Column="1" HorizontalOptions="StartAndExpand">
-                                        <numeric:SfNumericUpDown Value="{Binding Quantity}" ValueChanged="SfNumericUpDown_ValueChanged" BorderColor="Transparent" TextColor="{DynamicResource TextPrimaryColor}" FormatString="n0" StepValue="1" Minimum="0" SpinButtonAlignment="Both" TextAlignment="Center" HeightRequest="30">
+                                        <numeric:SfNumericUpDown Value="{Binding Quantity}" ValueChanged="SfNumericUpDown_ValueChanged"  BorderColor="Transparent" TextColor="{DynamicResource TextPrimaryColor}" FormatString="n0" StepValue="1" Minimum="0" Maximum="{Binding Product.MemberTicketCount, Converter={StaticResource memberTicketCountConverter}}" SpinButtonAlignment="Both" TextAlignment="Center" HeightRequest="30">
                                            <numeric:SfNumericUpDown.IncrementButtonSettings>
                                               <numeric:UpDownButtonSettings ButtonHeight="30" ButtonWidth="30">
                                                 <numeric:UpDownButtonSettings.ButtonView>
@@ -413,7 +412,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackLayout Grid.ColumnSpan="2">
-                        <Label Text="Due to COVID-19, we must ensure the correct approach is taken for contact tracing. Please provide the name(s) and contact details required by government to ensure the match is in compliance." LineBreakMode="WordWrap" FontSize="9" />
+                        <Label Text="{Binding SportEvent.DefaultContactTraceTerm}" LineBreakMode="WordWrap" FontSize="9" />
                     </StackLayout>
                     <StackLayout Grid.Row="1" Grid.Column="0">
                         <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
@@ -434,11 +433,12 @@
                         <Button Text="Add" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="30" CornerRadius="15" Padding="50,0" Command="{Binding AddContactTraceCommand}"/> 
                     </StackLayout>
                     <StackLayout Grid.Row="4" Grid.ColumnSpan="2" >
-                        <Frame IsClippedToBounds="True" BorderColor="{DynamicResource controlElementBackgroundColor}" CornerRadius="10" HeightRequest="{Binding ContactTracingHeight}" Padding="5">
+                        <BoxView HeightRequest="3" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource buttonBackgroundColor}"/>
+                        <!--<Frame IsClippedToBounds="True" BorderColor="{DynamicResource controlElementBackgroundColor}" CornerRadius="10" HeightRequest="{Binding ContactTracingHeight}" Padding="5" BackgroundColor="Transparent" HasShadow="False">-->
                         <listView:SfListView x:Name="ContactTracingList"
                                     ItemsSource="{Binding ContactTraces}"
                                     ItemTemplate="{StaticResource ContactTracingItemTemplate}"
-                                    SelectionMode="Single"
+                                    SelectionMode="SingleDeselect"
                                     SelectionChangedCommand="{Binding ContactTracingSelectedCommand}"
                                     SelectionChangedCommandParameter="{x:Reference ContactTracingList}"
                                     HorizontalOptions="FillAndExpand"
@@ -449,14 +449,14 @@
                                     ItemSize="20"
                                     HeightRequest="{Binding ContactTracingHeight}"
                                 />
-                            </Frame>
+                            <!--</Frame>-->
                     </StackLayout>
                 </Grid>
 
-                <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
+                <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0" IsVisible="{Binding ShowCardDetail}" >
                     <Label Text="Card Details" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
                 </StackLayout>
-                <Grid Padding="10" ColumnSpacing="20">
+                <Grid Padding="10" ColumnSpacing="20" IsVisible="{Binding ShowCardDetail}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -487,13 +487,16 @@
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
                 </Grid>
-
+                        
+                <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
+                    <Label Text="Important Information" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                </StackLayout>
                 <StackLayout Padding="10" Spacing="10">
                     <!--<Label Text="Due to your privacy and protection, OnTrack will not be storing your card information." FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>-->
 
-                    <!--<Label Text="First Division ticket holders must arrive before half time of the match. Premier Divison ticket holders will not be permitted to use their ticket before half time of the First Division match." FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>-->
+                    <Label Text="{Binding SportEvent.DefaultTicketTerm}" FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>
 
-                    <!--<Label Text="Due to COVID-19 regulations set by the governing body, all patrons are required to wear their mask at all times." FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small"/>-->
+                    <Label Text="{Binding SportEvent.Term}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="10"/>
 
                     <StackLayout Orientation="Horizontal" Padding="0,50,0,0">
                         <StackLayout>

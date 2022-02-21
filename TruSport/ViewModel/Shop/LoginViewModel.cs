@@ -19,8 +19,34 @@ namespace TruSport.ViewModel.Shop
         public CustomerAuthentication _userAuthentication;
         public string _email;
         public string _password;
+        Type _backToPage;
+        INavigation Navigation;
+        AuthenticationService authenticationService;
         private bool _isActivityIndicatorVisible;
         NotificationRegistrationService notificationRegistrationService;
+
+        public LoginViewModel(INavigation navigation, Type Page = null)
+        {
+            Navigation = navigation;
+            authenticationService = new AuthenticationService();
+
+            Customer = new CustomerAuthentication();
+            notificationRegistrationService = new NotificationRegistrationService();
+
+            if(Page != null)
+                BackToPage = Page;
+
+            GenerateSource();
+
+            RegisterCommand = new Command(async () => await Register());
+            ForgotPasswordCommand = new Command(async () => await ForgotPassword());
+        }
+
+        public Command ForgotPasswordCommand { get; set; }
+        public Command RegisterCommand { get; set; }
+
+        Command _loginCommand;
+        public Command LoginCommand => _loginCommand ?? (_loginCommand = new Command(Login, CanLogin));
 
         public CustomerAuthentication Customer
         {
@@ -32,6 +58,12 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _isActivityIndicatorVisible; }
             set { Set(ref _isActivityIndicatorVisible, value); }
+        }
+
+        public Type BackToPage
+        {
+            get { return _backToPage; }
+            set { Set(ref _backToPage, value); }
         }
 
         public string Email
@@ -56,41 +88,11 @@ namespace TruSport.ViewModel.Shop
             }
         }
 
-        Command _loginCommand;
-        public Command LoginCommand => _loginCommand ?? (_loginCommand = new Command(Login, CanLogin));
-
-        public Command ForgotPasswordCommand { get; set; }
-        public Command RegisterCommand { get; set; }
-        INavigation Navigation;
-        AuthenticationService authenticationService;
-
-        public LoginViewModel(INavigation navigation)
-        {
-            Navigation = navigation;
-            authenticationService = new AuthenticationService();
-
-            Customer = new CustomerAuthentication();
-            notificationRegistrationService = new NotificationRegistrationService();
-
-            GenerateSource();
-
-            RegisterCommand = new Command(async () => await Register());
-            ForgotPasswordCommand = new Command(async () => await ForgotPassword());
-
-            //MessagingCenter.Subscribe<NewItemPage, Item>(this, "AddItem", async (obj, item) =>
-            //{
-            //    var newItem = item as Item;
-            //    Items.Add(newItem);
-            //    await DataStore.AddItemAsync(newItem);
-            //});
-        }
-
         internal async void GenerateSource()
         {
             try
             {
                 IsActivityIndicatorVisible = true;
-
             }
             catch (Exception ex)
             {
@@ -106,7 +108,7 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                await Navigation.PushAsync(new SignUpPage());
+                await Navigation.PushAsync(new SignUpPage(),false);
             }
             catch (Exception ex)
             {
@@ -145,29 +147,43 @@ namespace TruSport.ViewModel.Shop
                                 IsActivityIndicatorVisible = false;
                                 App.IsLoggedIn = true;
                                                                 
-                                await Navigation.PopAsync();
+                                //await Navigation.PopModalAsync();
 
                                 var tags = await App.Database.GetTags();
                                 var tagsList = tags.ToList();
                                 tagsList.Add(thisCustomer.Email);
+                                tagsList.Add("ticket");
 
                                 tags = tagsList.ToArray();
 
-                                await notificationRegistrationService.RegisterDeviceAsync(tags);
+                                try
+                                {
+                                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                                }
+                                catch(Exception ex)
+                                { }
 
-                                Application.Current.MainPage = (new TicketFlyoutPage());
+                                //Application.Current.MainPage = (new TicketFlyoutPage());
+                                if (BackToPage != null)
+                                {
+                                    if (Application.Current.MainPage is FlyoutPage mdp)
+                                    {
+                                        var page = (Page)Activator.CreateInstance(BackToPage);
 
-                                //if (Application.Current.MainPage is MasterDetailPage mdp)
-                                //{
-                                //    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
-                                //    page.Title = "Tickets";
+                                        //if(BackToPage.N)
 
-                                //    mdp.Detail = new NavigationPage(page)
-                                //    {
-                                //        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                                //        BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                                //    };
-                                //}
+                                        mdp.Detail = new NavigationPage(page)
+                                        {
+                                            BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                                            BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                                        };
+                                    }
+                                }
+                                else
+                                {
+                                    await Navigation.PopModalAsync();
+                                    MessagingCenter.Send<LoginViewModel>(this, "OpenPurchasePage");
+                                }
                             }
                             else
                             {

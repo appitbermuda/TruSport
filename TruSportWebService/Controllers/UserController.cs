@@ -67,6 +67,24 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("OntrackrIsActive")]
+        public async Task<IActionResult> OntrackrIsActive(string username)
+        {
+            try
+            {
+                bool userExists = await _authenticationRepository.OntrackrIsActive(username);
+
+                return Ok(userExists);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("IsActive")]
         public async Task<IActionResult> IsActive(string email)
         {
@@ -91,6 +109,24 @@ namespace OnTrackWebService.Controllers
             try
             {
                 bool userExists = await _authenticationRepository.UserExists(email);
+
+                return Ok(userExists);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("OntrackrUserExists")]
+        public async Task<IActionResult> OntrackrUserExists(string username)
+        {
+            try
+            {
+                bool userExists = await _authenticationRepository.OntrackrUserExists(username);
 
                 return Ok(userExists);
             }
@@ -140,6 +176,24 @@ namespace OnTrackWebService.Controllers
 
         // POST api/values
         [HttpPost]
+        [Route("SignUpOntrackrUser")]
+        public async Task<IActionResult> SignUpOntrackr([FromBody] UserRequest user)
+        {
+            try
+            {
+                var newUser = await _authenticationRepository.SignUpOntrackr(user);
+                return Ok(newUser);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        // POST api/values
+        [HttpPost]
         [Route("SignUp")]
         public async Task<IActionResult> SignUpUser([FromBody] User user)
         {
@@ -163,6 +217,24 @@ namespace OnTrackWebService.Controllers
             try
             {
                 var user = await _authenticationRepository.SignInUser(userAuthentication);
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "User");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("SignInOntrackr")]
+        public async Task<IActionResult> SignInOntrackr([FromBody] UserAuthentication userAuthentication)
+        {
+            try
+            {
+                var user = await _authenticationRepository.SignInOntrackrUser(userAuthentication);
 
                 return Ok(user);
             }

@@ -114,8 +114,9 @@ namespace TruSport.Views
             }
             else if(item.Title == "Tickets")
             {
-                var page = (Page)Activator.CreateInstance(item.TargetType);
-                App.Current.MainPage = page;
+                //var page = (Page)Activator.CreateInstance(item.TargetType);
+                App.Current.MainPage = new Tickets.TicketFlyoutPage();
+                
             }
             else
             { 

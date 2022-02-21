@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using TruSport.Model;
 using TruSport.ViewModel.Shop;
 using Xamarin.Forms;

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using OnTrackWebService.Data;
 using OnTrackWebService.Interfaces;
 using OnTrackWebService.Models;
+using OnTrackWebService.Models.Basketball;
 using OnTrackWebService.Models.Imports;
 
 namespace OnTrackWebService.Repository
@@ -160,6 +161,56 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<TeamSeason> GetBasketballTeam(string teamID)
+        {
+            try
+            {
+                TeamSeason teamSeason = new TeamSeason();
+                List<BasketballFixture> fixtures = new List<BasketballFixture>();
+                List<BasketballLeagueStanding> leagueTables = new List<BasketballLeagueStanding>();
+
+                fixtures = await _context.BasketballFixtures
+                .Include(e => e.HomeTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.AwayTeam).ThenInclude(e => e.Coaches)
+                .Include(e => e.Field)
+                .Include(e => e.League)
+                .Include(e => e.Match)
+                .Include(e => e.MatchType)
+                .Include(e => e.Rosters)
+                .Include(e => e.Season)
+                .Where(e => e.AwayTeamID == teamID || e.HomeTeamID == teamID).ToListAsync();
+
+                fixtures.ForEach(e => e.SelectedTeamID = teamID);
+                fixtures.ForEach(e => e.SelectedTeamResult = (e.HomeTeamID == teamID && e.Match.HomeTeamScore > e.Match.AwayTeamScore) || (e.AwayTeamID == teamID && e.Match.AwayTeamScore > e.Match.HomeTeamScore) ? "W" : (e.AwayTeamID == teamID && e.Match.AwayTeamScore < e.Match.HomeTeamScore) || (e.HomeTeamID == teamID && e.Match.HomeTeamScore < e.Match.AwayTeamScore) ? "L" : (!e.Match.HomeTeamScore.HasValue || !e.Match.AwayTeamScore.HasValue) ? "" : "D");
+
+                leagueTables = await _context.BasketballLeagueStandings
+                        .Include(e => e.Team)
+                        .Include(e => e.Season)
+                        .Include(e => e.League).ToListAsync();
+
+                leagueTables.ForEach(e => e.IsSelectedTeam = (e.TeamID == teamID));
+
+                teamSeason = await _context.TeamSeasons
+                    .Include(e => e.League)
+                    .Include(e => e.Season)
+                    .Include(e => e.Team).ThenInclude(e => e.Coaches)
+                    .Include(e => e.Team).ThenInclude(e => e.Field)
+                    .FirstOrDefaultAsync(e => e.TeamID == teamID && e.Season.IsCurrent);
+
+                teamSeason.BasketballFixtures = fixtures;
+                teamSeason.BasketballForm = fixtures.Where(e => e.FixtureTime < DateTime.Now && e.Match.HomeTeamScore.HasValue && e.Match.AwayTeamScore.HasValue).OrderByDescending(e => e.Date).Take(6).ToList();
+                teamSeason.BasketballTable = leagueTables.Where(e => e.LeagueID == teamSeason.LeagueID).ToList();
+
+                return teamSeason;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public async Task<TeamSeason> GetCricketTeam(string teamID)
         {
             try
@@ -281,6 +332,75 @@ namespace OnTrackWebService.Repository
 
         }
 
+        public async Task<List<Team>> GetAllBasketballTeams()
+        {
+            try
+            {
+                var teams = await _context.Teams
+                    .Include(e => e.Field)
+                    .Include(e => e.Sport)
+                    .Include(e => e.League)
+                    .Where(e => e.Sport.Name == Constants.Basketball)
+                    .ToListAsync();
+
+                return teams;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return null;
+        }
+
+        public async Task<List<Team>> GetBasketballTeams()
+        {
+            try
+            {
+                List<Team> teams = new List<Team>();
+
+                var teamSeason = await _context.TeamSeasons
+                    .Include(e => e.Team).ThenInclude(e => e.Field)
+                    .Include(e => e.Team).ThenInclude(e => e.Sport)
+                    .Include(e => e.Season).ThenInclude(e => e.Sport)
+                    .Include(e => e.League)
+                    .Where(e => e.Team.Name != "TBD" && e.Season.Sport.Name == Constants.Basketball && e.Season.IsCurrent)
+                    .ToListAsync();
+
+                teamSeason.ForEach(e => e.Team.League = e.League);
+                teamSeason.ForEach(e => e.Team.LeagueID = e.LeagueID);
+
+                return teamSeason.Select(e => e.Team).OrderBy(e => e.Name).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return null;
+        }
+
+        public async Task<List<Team>> GetAllCricketTeams()
+        {
+            try
+            {
+                var teams = await _context.Teams
+                    .Include(e => e.Field)
+                    .Include(e => e.Sport)
+                    .Include(e => e.League)
+                    .Where(e => e.Sport.Name == Constants.Cricket)
+                    .ToListAsync();
+
+                return teams;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return null;
+        }
+
         public async Task<List<Team>> GetCricketTeams()
         {
             try
@@ -299,6 +419,24 @@ namespace OnTrackWebService.Repository
                 teamSeason.ForEach(e => e.Team.LeagueID = e.LeagueID);
 
                 return teamSeason.Select(e => e.Team).OrderBy(e => e.Name).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return null;
+        }
+
+        public async Task<List<BowlingTeam>> GetAllBowlingTeams()
+        {
+            try
+            {
+                var teams = await _context.BowlingTeams
+                    .Include(e => e.League)
+                    .ToListAsync();
+
+                return teams;
             }
             catch (Exception ex)
             {
@@ -352,6 +490,27 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<List<Team>> GetAllFootballTeams()
+        {
+            try
+            {
+                var teams = await _context.Teams
+                    .Include(e => e.Field)
+                    .Include(e => e.Sport)
+                    .Include(e => e.League)
+                    .Where(e => e.Sport.Name == Constants.Football)
+                    .ToListAsync();
+
+                return teams;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Team");
+            }
+
+            return null;
+        }
+
         public async Task<List<Team>> GetFootballTeams()
         {
             try
@@ -381,6 +540,52 @@ namespace OnTrackWebService.Repository
             }
 
             return null;
+        }
+
+        public async Task<Team> GetBasketballProfile(string teamID)
+        {
+            Team team = new Team();
+            List<BasketballFixture> fixtures = new List<BasketballFixture>();
+            List<BasketballLeagueStanding> basketballLeagueTables = new List<BasketballLeagueStanding>();
+            List<Transfer> transfers = new List<Transfer>();
+
+            try
+            {
+                var teamSeason = await _context.TeamSeasons
+                    .Include(e => e.Team).ThenInclude(e => e.Field)
+                    .Include(e => e.Team).ThenInclude(e => e.Sport)
+                    .Include(e => e.Season).ThenInclude(e => e.Sport)
+                    .Include(e => e.League)
+                    .Where(e => e.TeamID == teamID && e.Season.IsCurrent)
+                    .ToListAsync();
+
+                teamSeason.ForEach(e => e.Team.League = e.League);
+                teamSeason.ForEach(e => e.Team.LeagueID = e.LeagueID);
+
+                team = teamSeason.FirstOrDefault(e => e.Season.IsCurrent).Team;
+
+                basketballLeagueTables = await _context.BasketballLeagueStandings
+                        .Include(e => e.Team)
+                        .Include(e => e.Season)
+                        .Include(e => e.League).ToListAsync();
+
+                basketballLeagueTables.ForEach(e => e.IsSelectedTeam = (e.TeamID == teamID));
+
+                team.BasketballTable = basketballLeagueTables.FirstOrDefault(e => e.Season.IsCurrent && e.LeagueID == team.League.ID && e.TeamID == teamID);
+
+                teamSeason.ForEach(e => e.BasketballTable = basketballLeagueTables.Where(f => f.LeagueID == e.LeagueID).ToList());
+
+                teamSeason.ForEach(e => e.Transfers = transfers.Where(t => t.SeasonID == e.SeasonID).ToList());
+
+                team.TeamSeasons = teamSeason;
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return team;
         }
 
         public async Task<Team> GetCricketProfile(string teamID)
@@ -525,6 +730,99 @@ namespace OnTrackWebService.Repository
             }
 
             return team;
+        }
+
+        public async Task<ImportTeam> UploadTeams(IFormFile file)
+        {
+            try
+            {
+                List<Teams> errorTeams = new List<Teams>();
+                List<Team> teams = new List<Team>();
+                List<League> leagues = await _context.Leagues.ToListAsync();
+                List<Sport> sports = await _context.Sports.ToListAsync();
+                League league = null;
+                Sport sport = null;
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Configuration.MissingFieldFound = null;
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.IgnoreBlankLines = true;
+                    csv.Configuration.TrimOptions = TrimOptions.Trim;
+                    var records = csv.GetRecords<Teams>();                
+
+                    foreach (var record in records)
+                    {
+                        try
+                        {
+                            league = leagues.FirstOrDefault(e => e.Name == record.League.Trim());
+                            sport = sports.FirstOrDefault(e => e.Name == record.Sport.Trim());
+
+                            teams.Add(new Team
+                            {
+                                Name = record.Name,
+                                Alias = null,
+                                LeagueID = league.ID,
+                                SportID = sport.ID
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            record.Exception = ex.Message;
+                            errorTeams.Add(record);
+
+                        }
+                    }
+
+                    try
+                    {
+                        await Add(teams);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ImportTeam
+                        {
+                            Message = "Error importing teams to database.",
+                            Exception = ex.Message
+                        };
+                    }
+                }
+
+                if (errorTeams != null && errorTeams.Count > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    using (var streamWriter = new StreamWriter(memoryStream))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        csvWriter.WriteRecords(errorTeams);
+                        streamWriter.Flush();
+
+                        return new ImportTeam
+                        {
+                            Message = "Successfully imported teams with errors, please verify the following rows are correctly configured.",
+                            ErrorRows = errorTeams,
+                            ErrorFile = memoryStream.ToArray()
+                        };
+                    }
+                }
+
+                return new ImportTeam
+                {
+                    Message = "Successfully imported teams!"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ImportTeam
+                {
+                    Message = "Error importing teams!",
+                    Exception = ex.Message
+                };
+            }
+
+
         }
 
         public async Task<ImportBowlingTeam> UploadBowlingTeams(IFormFile file)
@@ -717,6 +1015,20 @@ namespace OnTrackWebService.Repository
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Team");
+            }
+        }
+
+        public async Task Add(List<Team> items)
+        {
+            try
+            {
+                await _context.Teams.AddRangeAsync(items);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Add Teams");
             }
         }
 

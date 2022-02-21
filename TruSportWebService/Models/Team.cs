@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using OnTrackWebService.Models.Basketball;
 
 namespace OnTrackWebService.Models
 {
@@ -20,6 +21,9 @@ namespace OnTrackWebService.Models
         [ForeignKey("HomeFieldID")]
         public Field Field { get; set; }
 
+        [ForeignKey("LeagueID")]
+        public League League { get; set; }
+
         [ForeignKey("SportID")]
         public Sport Sport { get; set; }
 
@@ -30,16 +34,22 @@ namespace OnTrackWebService.Models
         public virtual CricketLeagueTable CricketTable { get; set; }
 
         [NotMapped]
+        public virtual BasketballLeagueStanding BasketballTable { get; set; }
+
+        [NotMapped]
         public virtual List<TeamSeason> TeamSeasons { get; set; }
 
         [NotMapped]
         public virtual List<Coach> Coaches { get; set; }
 
-        [NotMapped]
-        public League League { get; set; }
+        //[NotMapped]
+        //public League League { get; set; }
 
         [NotMapped]
         public virtual List<CricketFixture> CricketFixtures { get; set; }
+
+        [NotMapped]
+        public virtual List<BasketballFixture> BasketballFixtures { get; set; }
 
         [NotMapped]
         public virtual List<Fixture> Fixtures { get; set; }
@@ -49,6 +59,9 @@ namespace OnTrackWebService.Models
 
         [NotMapped]
         public virtual List<CricketFixture> CricketForm { get; set; }
+
+        [NotMapped]
+        public virtual List<BasketballFixture> BasketballForm { get; set; }
 
         [NotMapped]
         public virtual List<Fixture> Form { get; set; }

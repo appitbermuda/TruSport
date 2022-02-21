@@ -27,6 +27,27 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [Authorize(Roles = Roles.Admin)]
         [HttpGet]
+        [Route("List")]
+        public async Task<IActionResult> AllContactTraces()
+        {
+            try
+            {
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.AllContactTraces();
+
+                if (contactTraces != null)
+                    return Ok(contactTraces);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet]
         [Route("All")]
         public async Task<IActionResult> ContactTraces()
         {
@@ -54,7 +75,7 @@ namespace OnTrackWebService.Controllers
             try
             {
 
-                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.GetTodayContactTraces(User);
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.GetContactTracesForToday(User);
 
                 if (contactTraces != null)
                     return Ok(contactTraces);
@@ -70,13 +91,35 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [Authorize(Roles = Roles.TicketAdmin)]
         [HttpGet]
-        [Route("Fixture")]
-        public async Task<IActionResult> FixtureContactTraces(string fixtureID)
+        [Route("ForToday")]
+        public async Task<IActionResult> ContactTracesForToday()
         {
             try
             {
 
-                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.Fixture(fixtureID);
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.GetTodayContactTracesForOntrackr(User);
+
+                if (contactTraces != null)
+                    return Ok(contactTraces);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("Event")]
+        public async Task<IActionResult> FixtureContactTraces(string eventID)
+        {
+            try
+            {
+
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.Event(eventID);
 
                 if (contactTraces != null)
                     return Ok(contactTraces);
@@ -113,6 +156,27 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [Authorize(Roles = Roles.TicketAdmin)]
         [HttpGet]
+        [Route("DownloadReport")]
+        public async Task<IActionResult> DownloadReport(string eventID)
+        {
+            try
+            {
+
+                bool downloaded = await _contactTraceRepository.DownloadReport(eventID, User);
+
+                return Ok(downloaded);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
         [Route("Reports")]
         public async Task<IActionResult> Reports()
         {
@@ -134,12 +198,75 @@ namespace OnTrackWebService.Controllers
         // GET api/values
         [Authorize(Roles = Roles.TicketAdmin)]
         [HttpGet]
+        [Route("EventReports")]
+        public async Task<IActionResult> EventReports()
+        {
+            try
+            {
+
+                List<TicketReport> fixtures = await _contactTraceRepository.EventReports(User);
+
+                return Ok(fixtures);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
         [Route("Team")]
         public async Task<IActionResult> TeamContactTraces()
         {
             try
             {
                 IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.Team(User);
+
+                if (contactTraces != null)
+                    return Ok(contactTraces);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("ForTeam")]
+        public async Task<IActionResult> ContactTracesForTeam()
+        {
+            try
+            {
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.TeamContactTraces(User);
+
+                if (contactTraces != null)
+                    return Ok(contactTraces);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "ContactTrace");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [Authorize(Roles = Roles.TicketAdmin)]
+        [HttpGet]
+        [Route("ForTeamOntrackr")]
+        public async Task<IActionResult> ContactTracesForTeamOntrackr()
+        {
+            try
+            {
+                IEnumerable<ContactTrace> contactTraces = await _contactTraceRepository.TeamContactTracesOntrackr(User);
 
                 if (contactTraces != null)
                     return Ok(contactTraces);

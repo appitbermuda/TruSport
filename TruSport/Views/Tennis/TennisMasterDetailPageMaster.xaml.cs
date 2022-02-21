@@ -55,7 +55,7 @@ namespace TruSport.Views.Tennis
                     new TennisMasterDetailPageMenuItem { Id = 3, Title = "Tournaments", IconSource="" , TargetType = typeof(Tennis.TournamentPage) },
                     new TennisMasterDetailPageMenuItem { Id = 4, Title = "Rankings", IconSource="" , TargetType = typeof(Tennis.RankingPage) },
                     new TennisMasterDetailPageMenuItem { Id = 5, Title = "Favourites", IconSource="" , TargetType = typeof(Tennis.FavouritePage) },
-                    new TennisMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(Tickets.TicketFlyoutPage) },
+                    new TennisMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(MainPage) },
                     new TennisMasterDetailPageMenuItem { Id = 4, Title = "Shop Merchandise", IconSource="" , TargetType = typeof(ShopPage) },
                     new TennisMasterDetailPageMenuItem { Id = 4, Title = "What's Happening?", IconSource="" , TargetType = typeof(FlyersPage) },
                     new TennisMasterDetailPageMenuItem { Id = 4, Title = "News", IconSource="" , TargetType = typeof(NewsPage) },

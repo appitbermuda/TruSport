@@ -42,6 +42,25 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("BasketballFeed")]
+        public async Task<IActionResult> BasketballFeed()
+        {
+            try
+            {
+                List<RssFeedItem> feed = await _newsRepository.BasketballFeed();
+
+                return Ok(feed);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "News");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("CricketFeed")]
         public async Task<IActionResult> CricketFeed()
         {

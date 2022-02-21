@@ -107,6 +107,27 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Award>> GetBasketballAwards()
+        {
+            try
+            {
+                var awards = await _context.Awards
+                    .Include(e => e.Player)
+                    .Include(e => e.AwardType)
+                    .Include(e => e.Season)
+                    .Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Basketball && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballAwards");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<Award>> GetCricketAwards()
         {
             try
@@ -149,6 +170,25 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Award>> GetBasketballPlayer(string playerid)
+        {
+            try
+            {
+                return await _context.Awards
+                    .Include(e => e.Player)
+                    .Include(e => e.AwardType)
+                    .Include(e => e.Season)
+                    .Include(e => e.Sport)
+                    .Where(e => e.Sport.Name == Constants.Basketball && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date && e.PlayerID == playerid).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<Award>> GetCricketPlayer(string playerid)
         {
             try
@@ -183,6 +223,28 @@ namespace OnTrackWebService.Repository
             {
 
             }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Award>> GetBasketballPlayerOfTheWeek()
+        {
+            try
+            {
+                var awards = await _context.Awards
+                    .Include(e => e.Player)
+                    .Include(e => e.AwardType)
+                    .Include(e => e.Season)
+                    .Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Basketball && e.AwardType.Name == "Week" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballPlayerOfTheWeek");
+            }
+
 
             return null;
         }
@@ -230,6 +292,28 @@ namespace OnTrackWebService.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Award>> GetBasketballPlayerOfTheMonth()
+        {
+            try
+            {
+                var awards = await _context.Awards
+                    .Include(e => e.Player)
+                    .Include(e => e.AwardType)
+                    .Include(e => e.Season)
+                    .Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Basketball && e.AwardType.Name == "Month" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballPlayerOfTheMonth");
+            }
+
+
+            return null;
+        }
+
         public async Task<IEnumerable<Award>> GetCricketPlayerOfTheMonth()
         {
             try
@@ -268,6 +352,28 @@ namespace OnTrackWebService.Repository
             {
                 Debug.WriteLine(ex.Message, "GetFootballPlayerOfTheMonth");
             }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Award>> GetBasketballPlayerOfTheYear()
+        {
+            try
+            {
+                var awards = await _context.Awards
+                    .Include(e => e.Player)
+                    .Include(e => e.AwardType)
+                    .Include(e => e.Season)
+                    .Include(e => e.Sport).Where(e => e.Sport.Name == Constants.Basketball && e.AwardType.Name == "Season" && e.StartDate < DateTime.Now && e.ExpiryDate > DateTime.Now.Date).ToListAsync();
+
+                if (awards != null && awards.Count > 0)
+                    return awards;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "GetBasketballPlayerOfTheYear");
+            }
+
 
             return null;
         }

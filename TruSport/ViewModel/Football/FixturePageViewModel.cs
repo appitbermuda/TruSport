@@ -372,23 +372,6 @@ namespace TruSport.ViewModels
 
                     MinDate = DateTime.Now.Date;
 
-                    var pastFixtures = await fixtureService.GetPastFootballFixtures();
-
-                    if (pastFixtures != null)
-                    {
-                        //var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now);
-                        if (pastFixtures.Count() > 0)
-                        {
-                            FixtureHeaderCount++;
-                            IsPreviousVisible = true;
-                            PastCollection = new ObservableCollection<Fixture>(pastFixtures.OrderByDescending(e => e.FixtureTime));
-                        }
-                        else
-                        {
-                            IsPreviousVisible = false;
-                        }
-                    }
-
                     var upcomingFixtures = await fixtureService.GetUpcomingFootballFixtures();
 
                     if (upcomingFixtures != null)
@@ -418,6 +401,23 @@ namespace TruSport.ViewModels
                         }
 
                         FixtureHeaderCount++;
+                    }
+
+                    var pastFixtures = await fixtureService.GetPastFootballFixtures();
+
+                    if (pastFixtures != null)
+                    {
+                        //var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now);
+                        if (pastFixtures.Count() > 0)
+                        {
+                            FixtureHeaderCount++;
+                            IsPreviousVisible = true;
+                            PastCollection = new ObservableCollection<Fixture>(pastFixtures.OrderByDescending(e => e.FixtureTime));
+                        }
+                        else
+                        {
+                            IsPreviousVisible = false;
+                        }
                     }
 
                     var liveFixtures = await fixtureService.GetLiveFootballFixtures();

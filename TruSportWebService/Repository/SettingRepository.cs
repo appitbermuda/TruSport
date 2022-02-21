@@ -39,13 +39,32 @@ namespace OnTrackWebService.Repository
                     //HomeTrackFieldImage = settings.FirstOrDefault(e => e.Key.Contains("TrackField")).Value,
                     //HomeSwimmingImage = settings.FirstOrDefault(e => e.Key.Contains("Swimming")).Value,
                     //HomeRugbyImage = settings.FirstOrDefault(e => e.Key.Contains("Rugby")).Value,
-                    //HomeBasketballImage = settings.FirstOrDefault(e => e.Key.Contains("Basketball")).Value,
+                    HomeBasketballImage = settings.FirstOrDefault(e => e.Key.Contains("Basketball")).Value,
                     //HomeFieldHockeyImage = settings.FirstOrDefault(e => e.Key.Contains("FieldHockey")).Value,
                     //HomeGolfImage = settings.FirstOrDefault(e => e.Key.Contains("Golf")).Value,
                     //HomeCyclingImage = settings.FirstOrDefault(e => e.Key.Contains("Cycling")).Value,
                 };
 
                 return sportFeature;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+            }
+
+            return null;
+        }
+
+        public async Task<string> ImportantMessage()
+        {
+            try
+            {
+                //var settings = await _context.Settings.FirstOrDefaultAsync(e => e.Key == Constants.SETTING_IMPORTANT_TICKETING_MESSAGE).ToListAsync();
+
+
+                var importantMessage = await GetString(Constants.SETTING_IMPORTANT_TICKETING_MESSAGE_ID);
+                
+                return importantMessage;
             }
             catch (Exception ex)
             {

@@ -101,7 +101,7 @@ namespace TruSport.ViewModels
                         {
                             Device.BeginInvokeOnMainThread(() =>
                             {
-                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                                Ad = ads.Any(e => e.Sport == Constants.Football) ? ads.FirstOrDefault(e => e.Sport == Constants.Football) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
                             });
                         }
                     });

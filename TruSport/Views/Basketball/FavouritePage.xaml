@@ -1,0 +1,472 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+    xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms"
+    xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"  
+    xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable"
+             xmlns:model="clr-namespace:TruSport.Model"
+             xmlns:converter="clr-namespace:TruSport.Converters"
+             xmlns:extension="clr-namespace:TruSport.Extensions"
+    x:Class="TruSport.Views.Basketball.FavouritePage"
+             Title="Favourites">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:ImageConverter x:Key="imageConverter"/>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converter:TeamNameConverter x:Key="teamNameConverter" />
+        <converter:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
+            <converter:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
+            <converter:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
+            <converter:GroupingSelectionBasketballConverter x:Key="groupingSelectionConverter"/>
+            <converter:GroupingTeamConverter x:Key="groupingTeamConverter"/>
+            <converter:FavouriteValueConverter x:Key="favouriteValueConverter"/>
+            <converter:TimeConverter x:Key="timeConverter"/>
+            <converter:ShowScoreConverter x:Key="showScoreConverter"/>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Name="FixtureItemTemplate"  x:Key="FixtureItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand" Padding="8,8,8,8">
+                    <Frame Padding="0" CornerRadius="10" BackgroundColor="Transparent" >
+                        <Frame Padding="0" CornerRadius="10" IsClippedToBounds="True" BackgroundColor="{DynamicResource frameBackgroundColor}">
+                            <Grid x:Name="grid" Padding="0,0,0,0"
+                      RowSpacing="5"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="50"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ContentView Grid.ColumnSpan="5" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
+                                <ContentView Grid.Row="2" Grid.ColumnSpan="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
+                                <StackLayout Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3" Spacing="5" Padding="5,10"
+                                 VerticalOptions="EndAndExpand"
+                                     HorizontalOptions="StartAndExpand"
+                                     Orientation="Horizontal">
+                                    <StackLayout Padding="2">
+                                        <Label x:Name="FieldIcon"
+                                   FontSize="Small"
+                                       Text="&#xe901;"
+                                       VerticalOptions="Center"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                    FontFamily="{StaticResource fontFamily}"/>
+                                    </StackLayout>
+                                    <StackLayout>
+                                        <Label x:Name="FieldName"
+                                   FontSize="Small"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                    Text="{Binding Field.Name}"/>
+                                    </StackLayout>
+                                </StackLayout>
+                                <StackLayout Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="EndAndExpand"
+                                     Orientation="Horizontal"
+                                 Padding="5,10">
+                                    <Label x:Name="TimeIcon"
+                                   FontSize="Small"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="&#xe904;"
+                                       FontFamily="{StaticResource fontFamily}"/>
+                                    <Label x:Name="TimeLabel"
+                                   FontSize="Small"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   IsVisible="{Binding IsPostponedOrCancelled, Converter={StaticResource inverseBooleanConverter}}"
+                                   VerticalTextAlignment="End"
+                                        Text="{Binding Time, Converter={StaticResource timeConverter}}"/>
+                                    <Label x:Name="PostponedLabel"
+                                   IsVisible="{Binding IsPostponedOrCancelled}"
+                                   FontSize="Small"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   VerticalTextAlignment="End"
+                                        Text="{Binding PostOrCanc}"/>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
+                                        <ff:CachedImage Source="{Binding HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                        LoadingPlaceholder="ontracklogo.png"
+                                                        CacheDuration="50"
+                                                        RetryCount="3"
+                                                        RetryDelay="600"
+                                         Aspect="AspectFit"
+                                        HeightRequest="30"
+                                                  WidthRequest="30"
+                                                        DownsampleToViewSize="True">
+
+                                        </ff:CachedImage>
+                                    </Frame>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
+                                        <ff:CachedImage Source="{Binding AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                        LoadingPlaceholder="ontracklogo.png"
+                                                        CacheDuration="50"
+                                                        RetryCount="3"
+                                                        RetryDelay="600"
+                                         Aspect="AspectFit"
+                                        HeightRequest="30"
+                                                  WidthRequest="30"
+                                                        DownsampleToViewSize="True">
+                                        </ff:CachedImage>
+                                    </Frame>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1" Grid.Column="2" VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                         Orientation="Vertical"
+                                 Padding="5,2"
+                                 Spacing="5">                                    
+                                    <StackLayout Orientation="Horizontal"  HorizontalOptions="Center" >
+                                        <Label x:Name="HomeTeamScoreLabel"
+                                   FontSize="Medium"
+                                   FontAttributes="Bold"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Match.HomeTeamScore}"/>
+                                        <Label 
+                                   x:Name="Versus"
+                                   FontSize="Small"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"
+                                                  VerticalOptions="Center"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Match.HomeTeamScore, Converter={StaticResource showScoreConverter}}" />
+                                        <Label x:Name="AwayTeamScoreLabel"
+                                   FontSize="Medium"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                        Text="{Binding Match.AwayTeamScore}"/>
+
+                                    </StackLayout>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                    <Label x:Name="HomeTeamAlias" Text="{Binding HomeTeam.Alias}" IsVisible="false"/>
+                                    <Label x:Name="HomeTeamNameLabel"
+                                   HorizontalOptions="EndAndExpand"
+                                   HorizontalTextAlignment="End"
+                                   FontSize="Micro"
+                                   FontAttributes="Bold"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding HomeTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference HomeTeamAlias}}">
+                                        <Label.FontSize>
+                                            <OnPlatform x:TypeArguments="x:Double">
+                                                <OnPlatform.Android>
+                                                    <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" />
+                                                </OnPlatform.Android>
+                                                <OnPlatform.iOS>
+                                                    <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" />
+                                                </OnPlatform.iOS>
+                                            </OnPlatform>
+                                        </Label.FontSize>
+                                    </Label>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="5,2"
+                                 Spacing="0">
+                                    <Label x:Name="AwayTeamAlias" Text="{Binding AwayTeam.Alias}" IsVisible="false"/>
+                                    <Label x:Name="AwayTeamNameLabel"
+                                   HorizontalOptions="StartAndExpand"
+                                   HorizontalTextAlignment="Start"
+                                   FontSize="Micro"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                        Text="{Binding AwayTeam.Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference AwayTeamAlias}}">
+                                        <Label.FontSize>
+                                            <OnPlatform x:TypeArguments="x:Double">
+                                                <OnPlatform.Android>
+                                                    <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" />
+                                                </OnPlatform.Android>
+                                                <OnPlatform.iOS>
+                                                    <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" />
+                                                </OnPlatform.iOS>
+                                            </OnPlatform>
+                                        </Label.FontSize>
+                                    </Label>
+                                </StackLayout>
+                                <StackLayout Grid.Row="2"  Grid.ColumnSpan="5" VerticalOptions="Center" HorizontalOptions="Center"  Padding="0" Spacing="0">
+                                    <Button x:Name="DeleteButton" BackgroundColor="Transparent" Padding="10,0" VerticalOptions="Center" FontSize="Small" Text="Remove" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="DarkRed" Command="{Binding Path=BindingContext.DeleteFixtureFavouriteCommand, Source={x:Reference FavouriteFixtureList}}" CommandParameter="{Binding .}"/>
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
+                    </Frame>
+                </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="TeamItemTemplate"  x:Key="TeamItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             Padding="0">
+                    <Grid x:Name="grid"
+                      RowSpacing="0"
+                      BackgroundColor="{DynamicResource backgroundColor}"
+                      VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" ColumnSpacing="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="1" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="50" />
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Grid.Column="0" Padding="0" VerticalOptions="Center">
+                            <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" HasShadow="False" IsClippedToBounds="True">
+                                <ff:CachedImage Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                        LoadingPlaceholder="ontracklogo.png"
+                                                        CacheDuration="50"
+                                                        RetryCount="3"
+                                                        RetryDelay="600"
+                                        Aspect="AspectFit"
+                                        HeightRequest="30"
+                                                  WidthRequest="30"
+                                                        DownsampleToViewSize="True">
+                                </ff:CachedImage>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout  Grid.Column="1" VerticalOptions="Center" Padding="0,20" Spacing="0">
+                            <Label x:Name="TeamName" VerticalOptions="Center" FontSize="Small" Text="{Binding Name}" LineBreakMode="WordWrap" HorizontalTextAlignment="Start" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </StackLayout>
+                        <StackLayout  Grid.Column="2" VerticalOptions="Center" Padding="0" Spacing="0">
+                            <Button x:Name="DeleteButton" BackgroundColor="Transparent" Padding="0" VerticalOptions="Center" FontSize="20" Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="DarkRed" Command="{Binding Path=BindingContext.DeleteTeamFavouriteCommand, Source={x:Reference TeamsList}}" CommandParameter="{Binding .}"/>
+                        </StackLayout>
+                        <BoxView Grid.Row="1" Grid.ColumnSpan="3" HeightRequest="1" BackgroundColor="WhiteSmoke" HorizontalOptions="FillAndExpand"/>
+                    </Grid>
+                </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout Spacing="0"
+                     Padding="0"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+        <Grid x:Name="PageGrid"
+              RowSpacing="0"
+              BackgroundColor="{DynamicResource backgroundColor}"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <tabView:SfTabView Grid.Row="0"
+                IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}"
+                TabHeaderBackgroundColor="{StaticResource tabHeaderColor}"
+                VisibleHeaderCount="2"
+                                 BackgroundColor="Transparent"
+                                 DisplayMode="Text"
+                               SelectedIndex="0"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                        <tabView:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}" 
+                                                              Position="Bottom" 
+                                                          StrokeThickness="2"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                    <tabView:SfTabItem Title="Teams" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        
+                        <tabView:SfTabItem.Content>
+                        <Grid BackgroundColor="{DynamicResource backgroundColor}" Padding="0,0,0,0" RowSpacing="0"
+                              HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <listView:SfListView Grid.Row="0"  x:Name="TeamsList"
+                                ItemsSource="{Binding FavouriteTeamCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                   SelectionMode="Single"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                 ItemSize="50"
+                                                     IsStickyGroupHeader="True"
+                                                     GroupHeaderSize="60"
+                                                 SelectionChanged="TeamSelected"
+                                                 
+                                >
+                                    <listView:SfListView.DataSource>
+                                    <data:DataSource>
+                                    <data:DataSource.GroupDescriptors>
+                                                <data:GroupDescriptor PropertyName="League.Name"/>
+                                    </data:DataSource.GroupDescriptors>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="League.Name" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                                    <listView:SfListView.GroupHeaderTemplate>
+                                  <DataTemplate>
+                                      <ViewCell>
+                                        <ViewCell.View>
+                                          <StackLayout Padding="8,25,8,0" HeightRequest="50" VerticalOptions="FillAndExpand">
+                                                        <Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent"  HeightRequest="50" VerticalOptions="FillAndExpand">
+                                                            <Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  HeightRequest="50" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                                                                <Grid HeightRequest="50">
+                                                                    <StackLayout Padding="10,0" VerticalOptions="CenterAndExpand" HorizontalOptions="Start">
+                                                                        <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingTeamConverter}, ConverterParameter={x:Reference TeamsList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                    VerticalOptions="Center" HorizontalOptions="Start"
+                                                     TextColor="{DynamicResource TextHeaderColor}"/>
+                                                                    </StackLayout>
+                                                                </Grid>
+                                                            </Frame>
+                                                        </Frame>
+                                                    </StackLayout>
+                                        </ViewCell.View>
+                                      </ViewCell>
+                                  </DataTemplate>
+                                </listView:SfListView.GroupHeaderTemplate>
+                                    </listView:SfListView>
+                <Grid Grid.Row="0" IsVisible="{Binding NoTeamFavourites}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Image Grid.Row="0"
+                       Source="ontracklogo.png"
+                       Aspect="AspectFit"
+                           HeightRequest="100"
+                           WidthRequest="100"
+                       VerticalOptions="End"
+                       HorizontalOptions="Center"
+                       />
+                    <StackLayout Grid.Row="1"
+                                 Padding="20,0">
+                        <Label Text="There are no teams in Favourites."
+                               TextColor="{DynamicResource TextPrimaryColor}"
+                               FontAttributes="Bold"
+                               FontSize="Small"
+                               HorizontalTextAlignment="Center"
+                               />
+                    </StackLayout>
+                    
+                </Grid>
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                     <tabView:SfTabItem Title="Fixtures" TitleFontColor="Gray"  SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                            <Grid BackgroundColor="{DynamicResource backgroundColor}" Padding="0,0,0,0" RowSpacing="0" 
+                              HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <listView:SfListView Grid.Row="0" x:Name="FavouriteFixtureList"
+                                ItemsSource="{Binding FavouriteFixturesCollection}"
+                                    ItemTemplate="{StaticResource FixtureItemTemplate}"
+                                   SelectionMode="SingleDeselect"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                 AutoFitMode="DynamicHeight"
+                                                     HeaderSize="30"
+                                                     SelectionChanged="FixtureSelected"
+                                >
+                                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.GroupDescriptors>
+                                                <data:GroupDescriptor PropertyName="League.Name"/>
+                                    </data:DataSource.GroupDescriptors>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="Date" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                                    <listView:SfListView.GroupHeaderTemplate>
+                                  <DataTemplate>
+                                      <ViewCell>
+                                        <ViewCell.View>
+                                            <StackLayout Padding="8,25,8,0">
+<Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+<Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                                            <Grid HeightRequest="50">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView  Grid.ColumnSpan="2"/>
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="{DynamicResource TextHeaderColor}"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference FavouriteFixtureList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="{DynamicResource TextHeaderColor}"/>
+                                                    </StackLayout>
+                                          </Grid>
+    </Frame>
+</Frame>
+                                            </StackLayout>
+                                        </ViewCell.View>
+                                      </ViewCell>
+                                  </DataTemplate>
+                                </listView:SfListView.GroupHeaderTemplate>
+                                </listView:SfListView>
+                <Grid Grid.Row="0" IsVisible="{Binding NoFixtureFavourites}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Image Grid.Row="0"
+                       Source="ontracklogo.png"
+                       Aspect="AspectFit"
+                           HeightRequest="100"
+                           WidthRequest="100"
+                       VerticalOptions="End"
+                       HorizontalOptions="Center"
+                       />
+                    <StackLayout Grid.Row="1"
+                                 Padding="20,0">
+                        <Label Text="There are no fixtures in Favourites."
+                               TextColor="{DynamicResource TextPrimaryColor}"
+                               FontAttributes="Bold"
+                               FontSize="Small"
+                               HorizontalTextAlignment="Center"
+                               />
+                    </StackLayout>
+                    
+                </Grid>
+                            </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+            </tabView:SfTabView>
+            <StackLayout Padding="10"  IsVisible="{Binding NoConnectivity}">
+                <Label Text="There are no favourites available" FontSize="Caption" TextColor="{DynamicResource TextPrimaryColor}" HorizontalOptions="Center" HorizontalTextAlignment="Center"  IsVisible="{Binding NoConnectivity}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                    </StackLayout>
+                <model:AdMobView Grid.Row="1"  VerticalOptions="EndAndExpand" MinimumHeightRequest="50" Size="Standardbanner"/>
+            <extension:CustomBusyIndicator IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -966,6 +966,7 @@ namespace TruSport.Model
         public int? JerseyNumber { get; set; }
         public bool IsStarter { get; set; }
         public int? SubstituteTime { get; set; }
+        public int? Position { get; set; }
 
         [Ignore]
         public bool IsHomeTeam { get; set; }
@@ -1000,7 +1001,7 @@ namespace TruSport.Model
         public bool IsHomeTeam { get; set; }
 
         [Ignore]
-        public Fixture Fixture { get; set; }
+        public CricketFixture Fixture { get; set; }
 
         [Ignore]
         public Team Team { get; set; }
@@ -1442,6 +1443,7 @@ namespace TruSport.Model
         public string FixtureID { get; set; }
         public string CricketFixtureID { get; set; }
         public string BowlingFixtureID { get; set; }
+        public string BasketballFixtureID { get; set; }
         public string TennisFixtureID { get; set; }
         public string Sport { get; set; }
 
@@ -1450,6 +1452,9 @@ namespace TruSport.Model
 
         [Ignore]
         public Team Team { get; set; }
+
+        [Ignore]
+        public BasketballFixture BasketballFixture { get; set; }
 
         [Ignore]
         public BowlingFixture BowlingFixture { get; set; }

@@ -9,6 +9,7 @@ using OnTrackWebService.Models;
 using System.Diagnostics;
 using OnTrackWebService.Models.Imports;
 using Microsoft.AspNetCore.Http;
+using OnTrackWebService.Models.Basketball;
 
 namespace OnTrackWebService.Controllers
 {
@@ -32,6 +33,27 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<LeagueTable> leagueTables = await _leagueTableRepository.GetAll();
+
+                if (leagueTables != null)
+                    return Ok(leagueTables);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
+        [Route("AllBasketballLeagueTables")]
+        public async Task<IActionResult> BasketballLeagueTables()
+        {
+            try
+            {
+
+                IEnumerable<BasketballLeagueStanding> leagueTables = await _leagueTableRepository.GetAllBasketball();
 
                 if (leagueTables != null)
                     return Ok(leagueTables);
@@ -125,6 +147,45 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("SyncBasketballLeagueStanding")]
+        public async Task<IActionResult> SyncBasketballLeagueStanding()
+        {
+            try
+            {
+
+                bool synced = await _leagueTableRepository.SyncBasketballStandings();
+
+                    return Ok(synced);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BasketballLeagueStanding")]
+        public async Task<IActionResult> BasketballLeagueStanding()
+        {
+            try
+            {
+
+                IEnumerable<BasketballLeagueStanding> leagueTables = await _leagueTableRepository.GetBasketballStandings();
+
+                if (leagueTables != null)
+                    return Ok(leagueTables);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("BowlingLeagueStanding")]
         public async Task<IActionResult> BowlingLeagueStanding()
         {
@@ -152,6 +213,26 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<CricketLeagueTable> leagueTables = await _leagueTableRepository.GetCricketPremierLeagueTable();
+
+                if (leagueTables != null)
+                    return Ok(leagueTables);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("IslandFallBasketballLeague")]
+        public async Task<IActionResult> IslandFallBasketballLeagueTable()
+        {
+            try
+            {
+
+                IEnumerable<BasketballLeagueStanding> leagueTables = await _leagueTableRepository.GetIslandFallBasketballLeagueStanding();
 
                 if (leagueTables != null)
                     return Ok(leagueTables);
@@ -325,6 +406,26 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("BasketballTeam")]
+        public async Task<IActionResult> BasketballTeamLeagueTable(string teamID)
+        {
+            try
+            {
+                //League league = _context.Leagues.FirstOrDefaultAsync(e => e.ID == leagueID)
+                var leagueTables = await _leagueTableRepository.GetBasketballTableByTeam(teamID);
+
+                if (leagueTables != null)
+                    return Ok(leagueTables);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("BowlingTeam")]
         public async Task<IActionResult> BowlingTeamLeagueTable(string teamID)
         {
@@ -414,6 +515,26 @@ namespace OnTrackWebService.Controllers
             {
 
                 IEnumerable<CricketLeagueTable> leagueTables = await _leagueTableRepository.GetCricketTableByLeague(leagueID);
+
+                if (leagueTables != null)
+                    return Ok(leagueTables);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "LeagueTable");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BasketballLeague")]
+        public async Task<IActionResult> BasketballLeagueTablesByLeague(string leagueID)
+        {
+            try
+            {
+
+                IEnumerable<BasketballLeagueStanding> leagueTables = await _leagueTableRepository.GetBasketballLeagueStandings(leagueID);
 
                 if (leagueTables != null)
                     return Ok(leagueTables);
@@ -531,6 +652,27 @@ namespace OnTrackWebService.Controllers
                 if (file != null)
                 {
                     ImportBowlingLeagueStandings fileUploadResponse = await _leagueTableRepository.UploadBowlingLeagueStandings(file);
+
+                    return Ok(fileUploadResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Upload Bowling");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("UploadBasketballStandings")]
+        public async Task<IActionResult> UploadBasketballStandings([FromForm(Name = "file")] IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    ImportBasketballLeagueStandings fileUploadResponse = await _leagueTableRepository.UploadBasketballLeagueStandings(file);
 
                     return Ok(fileUploadResponse);
                 }

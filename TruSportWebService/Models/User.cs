@@ -10,6 +10,7 @@ namespace OnTrackWebService.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string ID { get; set; }
         public string RoleID { get; set; }
+        public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -75,6 +76,7 @@ namespace OnTrackWebService.Models
     {
         public string ID { get; set; }
         public string RoleID { get; set; }
+        public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -87,6 +89,7 @@ namespace OnTrackWebService.Models
 
     public class UserAuthentication
     {
+        public string username { get; set; }
         public string email { get; set; }
         public string password { get; set; }
         public string sport { get; set; }

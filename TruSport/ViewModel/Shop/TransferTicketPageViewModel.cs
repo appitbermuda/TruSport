@@ -90,32 +90,37 @@ namespace TruSport.ViewModel.Shop
 
             try
             {
-                if (TransferRequest != null && !String.IsNullOrEmpty(TransferRequest.Email))
+                if (Customer.Email != TransferRequest.Email)
                 {
-                    string transferred = await customerTicketService.Transfer(TransferRequest);
-
-                    if (transferred.Contains("success"))
+                    if (TransferRequest != null && !String.IsNullOrEmpty(TransferRequest.Email))
                     {
-                        try
+                        string transferred = await customerTicketService.Transfer(TransferRequest);
+
+                        if (transferred.Contains("success"))
                         {
-                            await pushNotificationService.Send(new NotificationRequest
+                            try
                             {
-                                Text = Customer.Name + " has transferred you a match ticket, please go to 'My Tickets' to accept.",
-                                Silent = false,
-                                Tags = new string[] { TransferRequest.Email }
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(ex.Message, "Transfer Notification");
-                        }
+                                await pushNotificationService.Send(new NotificationRequest
+                                {
+                                    Text = Customer.Name + " has transferred you a match ticket, please go to 'My Tickets' to accept.",
+                                    Silent = false,
+                                    Tags = new string[] { TransferRequest.Email }
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message, "Transfer Notification");
+                            }
 
-                        await App.Current.MainPage.DisplayAlert("Ticket Transfer", transferred, "Okay");
+                            await App.Current.MainPage.DisplayAlert("Ticket Transfer", transferred, "Okay");
 
-                        MessagingCenter.Send(this, "TicketTransferred", true);
-                        await Navigation.PopModalAsync();
+                            MessagingCenter.Send(this, "TicketTransferred", true);
+                            await Navigation.PopModalAsync();
+                        }
                     }
                 }
+                else
+                    await App.Current.MainPage.DisplayAlert("Error", "You cannot transfer a ticket to yourself, please enter a recipient email address.", "Okay");
 
 
             }

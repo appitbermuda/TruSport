@@ -1,7 +1,6 @@
 using System;
 using TruSport.Data;
 using TruSport.Views;
-using TruSport.Views.Admin;
 using TruSport.Views.Football;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -117,11 +116,7 @@ namespace TruSport
 
             if (query.EndsWith("ticket", StringComparison.OrdinalIgnoreCase))
             {
-                ((MasterDetailPage)MainPage).Detail = new NavigationPage(new TicketTabbedPage()
-                {
-                    BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                    BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                });
+                App.Current.MainPage = new TicketFlyoutPage();
             }
         }
 
@@ -175,8 +170,8 @@ namespace TruSport
                 };
             }
 
-            var userLoggedIn = await SecureStorage.GetAsync("UserLoggedIn");
-            var token = await SecureStorage.GetAsync("Token");
+            //var userLoggedIn = await SecureStorage.GetAsync("UserLoggedIn");
+            //var token = await SecureStorage.GetAsync("Token");
             
             //if(userLoggedIn == null)
 
@@ -200,29 +195,29 @@ namespace TruSport
 
             VersionTracking.Track();
 
-            // Handle when your app starts
-            if (App.Database != null)
-            {
-                var sport = await App.Database.GetDefaultSport();
+            //// Handle when your app starts
+            //if (App.Database != null)
+            //{
+            //    var sport = await App.Database.GetDefaultSport();
 
-                if (sport == null || String.IsNullOrEmpty(sport.Sport))
-                    MainPage = new NavigationPage(new MainPage());
-                else
-                {
-                    if (sport.Sport.ToLower() == "cricket")
-                        MainPage = new CricketMasterDetailPage();
-                    else if (sport.Sport.ToLower() == "bowling")
-                        MainPage = new BowlingMasterDetailPage();
-                    else if (sport.Sport.ToLower() == "tennis")
-                        MainPage = new TennisMasterDetailPage();
-                    else
-                        MainPage = new FootballMasterDetailPage();
-                }
-            }
-            else
-            {
-                MainPage = new NavigationPage(new MainPage());
-            }
+            //    if (sport == null || String.IsNullOrEmpty(sport.Sport))
+            //        MainPage = new NavigationPage(new MainPage());
+            //    else
+            //    {
+            //        if (sport.Sport.ToLower() == "cricket")
+            //            MainPage = new CricketMasterDetailPage();
+            //        else if (sport.Sport.ToLower() == "bowling")
+            //            MainPage = new BowlingMasterDetailPage();
+            //        else if (sport.Sport.ToLower() == "tennis")
+            //            MainPage = new TennisMasterDetailPage();
+            //        else
+            //            MainPage = new FootballMasterDetailPage();
+            //    }
+            //}
+            //else
+            //{
+            //    MainPage = new NavigationPage(new MainPage());
+            //}
 
         }
 

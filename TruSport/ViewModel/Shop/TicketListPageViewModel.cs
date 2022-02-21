@@ -8,6 +8,7 @@ using Syncfusion.ListView.XForms;
 using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
+using TruSport.Views;
 using TruSport.Views.Tickets;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -17,6 +18,7 @@ namespace TruSport.ViewModel.Shop
     public class TicketListPageViewModel : BaseViewModel
     {
         private ObservableCollection<SportEvent> _sportEventCollection;
+        private SportEvent _sportEvent;
         private bool _noTickets;
         private bool _isActivityIndicatorVisible;
 
@@ -58,6 +60,12 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _sportEventCollection; }
             set { Set(ref _sportEventCollection, value); }
+        }
+
+        public SportEvent SportEvent
+        {
+            get { return _sportEvent; }
+            set { Set(ref _sportEvent, value); }
         }
 
         public bool NoTickets
@@ -105,11 +113,15 @@ namespace TruSport.ViewModel.Shop
                 if (SportEventCollection.Count == 0)
                     NoTickets = true;
                 
-                IsActivityIndicatorVisible = false;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Match Tickets");
+            }
+            finally
+            {
+
+                IsActivityIndicatorVisible = false;
             }
         }
 
@@ -133,27 +145,52 @@ namespace TruSport.ViewModel.Shop
 
         private async void TicketSelected(object obj)
         {
-            var listView = obj as SfListView;
-            var sportEvent = listView.SelectedItem as SportEvent;
-
-            MessagingCenter.Subscribe<TicketPurchasePageViewModel>(this, "TicketListPage", async (objs) =>
+            try
             {
+                var listView = obj as SfListView;
+                var sportEvent = listView.SelectedItem as SportEvent;
+
+                MessagingCenter.Subscribe<TicketPurchasePageViewModel>(this, "TicketListPage", async (objs) =>
+                {
                 //Purchase tickets saved to local
                 //var creditCards = await App.Database.T(Customer.Email);
                 GenerateSource();
-            });
+                });
 
-            var hasStock = await inventoryService.CheckEventTicketInventory(sportEvent.ID);
+                string Token = await SecureStorage.GetAsync("Token");                    
+                string email = await SecureStorage.GetAsync("Email");
 
-            if (hasStock)
-            {
-                await Navigation.PushModalAsync(new TicketPurchasePage(sportEvent));
+                if (String.IsNullOrEmpty(Token) || String.IsNullOrEmpty(email))
+                {
+                    SportEvent = sportEvent;
+                    MessagingCenter.Unsubscribe<LoginViewModel>(this, "OpenPurchasePage");
+                    MessagingCenter.Subscribe<LoginViewModel>(this, "OpenPurchasePage", async (objs) =>
+                    {
+                        await Navigation.PushModalAsync(new TicketPurchasePage(SportEvent));
+                    });
+
+                    await Navigation.PushModalAsync(new SignInPage());
+                }
+                else
+                {
+                    var hasStock = await inventoryService.CheckEventTicketInventory(sportEvent.ID);
+
+                    if (hasStock)
+                    {
+
+                        await Navigation.PushModalAsync(new TicketPurchasePage(sportEvent));
+                    }
+                    else
+                    {
+                        GenerateSource();
+                        await Application.Current.MainPage.DisplayAlert("Out of Stock", "Sorry, there are no more tickets left for purchase.", "OK");
+
+                    }
+                }                    
             }
-            else
+            catch(Exception ex)
             {
-                GenerateSource();
-                await Application.Current.MainPage.DisplayAlert("Out of Stock", "Sorry, there are no more tickets left for purchase.", "OK");
-                
+                Debug.WriteLine(ex.Message);
             }
         }
     }

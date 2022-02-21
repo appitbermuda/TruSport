@@ -5,9 +5,11 @@ using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
 using TruSport.Views;
+using TruSport.Views.Basketball;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
 using TruSport.Views.Tennis;
+using TruSport.Views.Triathlon;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -47,10 +49,11 @@ namespace TruSport.ViewModel
             //TrackTappedCommand = new Command(() => TrackTapped());
             //SwimmingTappedCommand = new Command(() => SwimmingTapped());
             //RugbyTappedCommand = new Command(() => RugbyTapped());
-            //BasketballTappedCommand = new Command(() => BasketballTapped());
+            BasketballTappedCommand = new Command(() => BasketballTapped());
             //HockeyTappedCommand = new Command(() => HockeyTapped());
             //GolfTappedCommand = new Command(() => GolfTapped());
             //CyclingTappedCommand = new Command(() => CyclingTapped());
+            TriathlonTappedCommand = new Command(() => TriathlonTapped());
         }
 
         #endregion
@@ -69,6 +72,7 @@ namespace TruSport.ViewModel
         public Command HockeyTappedCommand { get; }
         public Command GolfTappedCommand { get; }
         public Command CyclingTappedCommand { get; }
+        public Command TriathlonTappedCommand { get; }
 
         public ObservableCollection<Sport> Sports
         {
@@ -142,11 +146,11 @@ namespace TruSport.ViewModel
                 if (Sports == null)
                 {
                     var sports = await sportService.GetSports();
-                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "football");
+                    sport = sports.FirstOrDefault(e => e.Name == Constants.Football);
                 }
                 else
                 {
-                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "football");
+                    sport = Sports.FirstOrDefault(e => e.Name == Constants.Football);
                 }
 
                 await App.Database.SetDefaultSport(sport);
@@ -172,11 +176,11 @@ namespace TruSport.ViewModel
                 if (Sports == null)
                 {
                     var sports = await sportService.GetSports();
-                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "cricket");
+                    sport = sports.FirstOrDefault(e => e.Name == Constants.Cricket);
                 }
                 else
                 {
-                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "cricket");
+                    sport = Sports.FirstOrDefault(e => e.Name == Constants.Cricket);
                 }
 
 
@@ -203,11 +207,11 @@ namespace TruSport.ViewModel
                 if (Sports == null)
                 {
                     var sports = await sportService.GetSports();
-                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "bowling");
+                    sport = sports.FirstOrDefault(e => e.Name == Constants.Bowling);
                 }
                 else
                 {
-                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "bowling");
+                    sport = Sports.FirstOrDefault(e => e.Name == Constants.Bowling);
                 }
 
 
@@ -232,11 +236,11 @@ namespace TruSport.ViewModel
                 if (Sports == null)
                 {
                     var sports = await sportService.GetSports();
-                    sport = sports.FirstOrDefault(e => e.Name.ToLower() == "tennis");
+                    sport = sports.FirstOrDefault(e => e.Name == Constants.Tennis);
                 }
                 else
                 {
-                    sport = Sports.FirstOrDefault(e => e.Name.ToLower() == "tennis");
+                    sport = Sports.FirstOrDefault(e => e.Name == Constants.Tennis);
                 }
 
 
@@ -285,17 +289,30 @@ namespace TruSport.ViewModel
         //    }
         //}
 
-        //private async void BasketballTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Basketball"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+        private async void BasketballTapped()
+        {
+            try
+            {
+                Sport sport = new Sport();
 
-        //    }
-        //}
+                if (Sports == null)
+                {
+                    var sports = await sportService.GetSports();
+                    sport = sports.FirstOrDefault(e => e.Name == Constants.Basketball);
+                }
+                else
+                {
+                    sport = Sports.FirstOrDefault(e => e.Name == Constants.Basketball);
+                }
+
+                await App.Database.SetDefaultSport(sport);
+                Application.Current.MainPage = new BasketballMasterDetailPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         //private async void HockeyTapped()
         //{
@@ -332,6 +349,31 @@ namespace TruSport.ViewModel
 
         //    }
         //}
+
+        private async void TriathlonTapped()
+        {
+            try
+            {
+                Sport sport = new Sport();
+
+                if (Sports == null)
+                {
+                    var sports = await sportService.GetSports();
+                    sport = sports.FirstOrDefault(e => e.Name == Constants.Triathlon);
+                }
+                else
+                {
+                    sport = Sports.FirstOrDefault(e => e.Name == Constants.Triathlon);
+                }
+
+                await App.Database.SetDefaultSport(sport);
+                Application.Current.MainPage = new TriathlonFlyoutPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         #endregion
     }

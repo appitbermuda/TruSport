@@ -62,7 +62,24 @@ namespace OnTrackWebService.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("Basketball")]
+        public async Task<IActionResult> BasketballAwards()
+        {
+            try
+            {
+                IEnumerable<Award> playerAwards = await _playerAwardRepository.GetBasketballAwards();
 
+                if (playerAwards != null)
+                    return Ok(playerAwards);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Award");
+            }
+
+            return NoContent();
+        }
 
         [HttpGet]
         [Route("Cricket")]
@@ -92,6 +109,25 @@ namespace OnTrackWebService.Controllers
             try
             {
                 IEnumerable<Award> playerAwards = await _playerAwardRepository.GetFootballAwards();
+
+                if (playerAwards != null)
+                    return Ok(playerAwards);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Award");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BasketballPlayerOfTheWeek")]
+        public async Task<IActionResult> BasketballPlayerOfTheWeek()
+        {
+            try
+            {
+                IEnumerable<Award> playerAwards = await _playerAwardRepository.GetBasketballPlayerOfTheWeek();
 
                 if (playerAwards != null)
                     return Ok(playerAwards);
@@ -143,6 +179,25 @@ namespace OnTrackWebService.Controllers
         }
 
         [HttpGet]
+        [Route("BasketballPlayerOfTheMonth")]
+        public async Task<IActionResult> BasketballPlayerOfTheMonth()
+        {
+            try
+            {
+                IEnumerable<Award> playerAwards = await _playerAwardRepository.GetBasketballPlayerOfTheMonth();
+
+                if (playerAwards != null)
+                    return Ok(playerAwards);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Award");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
         [Route("CricketPlayerOfTheMonth")]
         public async Task<IActionResult> CricketPlayerOfTheMonth()
         {
@@ -168,6 +223,25 @@ namespace OnTrackWebService.Controllers
             try
             {
                 IEnumerable<Award> playerAwards = await _playerAwardRepository.GetFootballPlayerOfTheMonth();
+
+                if (playerAwards != null)
+                    return Ok(playerAwards);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Award");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BasketballPlayerOfTheYear")]
+        public async Task<IActionResult> BasketballPlayerOfTheYear()
+        {
+            try
+            {
+                IEnumerable<Award> playerAwards = await _playerAwardRepository.GetBasketballPlayerOfTheYear();
 
                 if (playerAwards != null)
                     return Ok(playerAwards);
@@ -245,6 +319,26 @@ namespace OnTrackWebService.Controllers
             try
             {
                 Award playerAward = await _playerAwardRepository.Get(id);
+
+                if (playerAward != null)
+                    return Ok(playerAward);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Award");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values/5
+        [HttpGet]
+        [Route("BasketballPlayer")]
+        public async Task<IActionResult> GetBasketballPlayer(string playerID)
+        {
+            try
+            {
+                IEnumerable<Award> playerAward = await _playerAwardRepository.GetBasketballPlayer(playerID);
 
                 if (playerAward != null)
                     return Ok(playerAward);

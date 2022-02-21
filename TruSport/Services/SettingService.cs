@@ -115,5 +115,28 @@ namespace TruSport.Services
                 return null;
             }
         }
+
+        public async Task<string> GetImportantMessage()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Setting/ImportantMessage", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                string importantMessage = JsonConvert.DeserializeObject<string>(response.Content);
+
+                return importantMessage;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+
+                return null;
+            }
+        }
     }
 }

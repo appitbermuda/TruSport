@@ -11,7 +11,7 @@
             <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
             <converters:CardNumberConverter x:Key="cardNumberConverter"/>
             <converters:PhoneNumberConverter x:Key="phoneNumberConverter"/>
-            <DataTemplate x:Name="CardItemTemplate" x:Key="CardItemTemplate">
+            <DataTemplate x:Name="WalletItemTemplate" x:Key="WalletItemTemplate">
                 <StackLayout Padding="0"
                              HorizontalOptions="FillAndExpand"
                              VerticalOptions="FillAndExpand">
@@ -27,12 +27,12 @@
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackLayout
                                          Padding="15,10"
                                          VerticalOptions="Center">
-                                <Label Text="{Binding Last4}"
+                                <Label Text="{Binding TokenPAN}"
                                        FontSize="Medium"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
@@ -195,13 +195,14 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout BackgroundColor="{DynamicResource backgroundColor}">
+        <StackLayout BackgroundColor="{DynamicResource backgroundColor}">            
             <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <ScrollView>
                 <Grid x:Name="ProfileGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0" ColumnSpacing="0" Padding="10,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -209,6 +210,7 @@
                     <RowDefinition Height="1"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="1"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40"/>
@@ -232,7 +234,28 @@
                         <Label Text="{Binding Customer.Phone, Converter={StaticResource phoneNumberConverter}}" FontSize="Small" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
                     <BoxView Grid.Row="4" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="WhiteSmoke"/>
+                    
+                    <StackLayout Grid.Row="5" HeightRequest="50" Grid.ColumnSpan="2" IsVisible="{Binding HasCards}">
+                        <Frame Padding="10,0" HeightRequest="30" CornerRadius="15" HasShadow="False" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="CenterAndExpand" HorizontalOptions="Start">
+                                <Label Text="Wallet" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" FontSize="Small" VerticalOptions="CenterAndExpand"/>
+                            </Frame>
+                        <StackLayout>
+                            <listView:SfListView x:Name="WalletList" Grid.Row="1"
+                                    ItemsSource="{Binding WalletCollection}"
+                                    ItemTemplate="{StaticResource WalletItemTemplate}"
+                                 SelectionMode="SingleDeselect"
+                                    TapCommand="{Binding CreditCardSelectedCommand}"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    ItemSpacing="5"
+                                 Padding="1"
+                                    SelectionBackgroundColor="Transparent"
+                                    AutoFitMode="DynamicHeight"        
+                                />
+                        </StackLayout>
+                    </StackLayout>
             </Grid>
+                    </ScrollView>
                 </StackLayout>
             <StackLayout Grid.Row="1" Padding="50,20" VerticalOptions="EndAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
                 <Button Text="Sign Out" BackgroundColor="{DynamicResource buttonBackgroundColor}" TextColor="{DynamicResource buttonTextColor}" Padding="50,0" HeightRequest="50" CornerRadius="25" Command="{Binding SignOutCommand}"></Button>

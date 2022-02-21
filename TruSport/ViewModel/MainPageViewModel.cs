@@ -126,25 +126,30 @@ namespace TruSport.ViewModel
         {
             try
             {
-                string Token = await SecureStorage.GetAsync("Token");
-                string email = await SecureStorage.GetAsync("Email");
+                //string Token = await SecureStorage.GetAsync("Token");
+                //string email = await SecureStorage.GetAsync("Email");
 
-                if (String.IsNullOrEmpty(Token) || String.IsNullOrEmpty(email))
-                {
-                    await Navigation.PushAsync(new SignInPage(), true);
-                }
-                else
-                {
-                    var tags = await App.Database.GetTags();
-                    var tagsList = tags.ToList();
-                    tagsList.Add(email);
+                //if (String.IsNullOrEmpty(Token) || String.IsNullOrEmpty(email))
+                //{
+                //    await Navigation.PushAsync(new SignInPage(), true);
+                //}
+                //else
+                //{
+                    //var tags = await App.Database.GetTags();
+                    //var tagsList = tags.ToList();
+                    //tagsList.Add(email);
 
-                    tags = tagsList.ToArray();
+                    //tags = tagsList.ToArray();
 
-                    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                    //try
+                    //{
+                    //    await notificationRegistrationService.RegisterDeviceAsync(tags);
+                    //}
+                    //catch (Exception ex)
+                    //{ }
 
                     Application.Current.MainPage = (new TicketFlyoutPage());
-                }                
+                //}                
             }
             catch (Exception ex)
             {

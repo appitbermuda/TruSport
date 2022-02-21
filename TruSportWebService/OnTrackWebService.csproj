@@ -8,32 +8,31 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|iPhoneSimulator' ">
-    <IntermediateOutputPath>obj\iPhoneSimulator\Test</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\iPhoneSimulator\Test\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1</IntermediateOutputPath>
     <DebugSymbols>false</DebugSymbols>
     <DebugType></DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\iPhoneSimulator\Test</OutputPath>
+    <OutputPath>bin\iPhoneSimulator\Test\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1</OutputPath>
     <DefineConstants></DefineConstants>
     <NoWarn></NoWarn>
     <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|iPhone' ">
-    <IntermediateOutputPath>obj\iPhone\Test</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\iPhone\Test\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1</IntermediateOutputPath>
     <DebugSymbols>false</DebugSymbols>
     <DebugType></DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\iPhone\Test</OutputPath>
+    <OutputPath>bin\iPhone\Test\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1</OutputPath>
     <DefineConstants></DefineConstants>
     <NoWarn></NoWarn>
     <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
-    <IntermediateOutputPath>obj\Release\netcoreapp2.1</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\Release\netcoreapp2.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1\netcoreapp3.1</IntermediateOutputPath>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE;RELEASE;NETCOREAPP;NETCOREAPP2_1</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\" />
     <Folder Include="Models\" />
     <Folder Include="Data\" />
     <Folder Include="Interfaces\" />
@@ -42,9 +41,7 @@
     <Folder Include="Models\CricHQ\" />
     <Folder Include="Models\Shop\" />
     <Folder Include="Models\Ad\" />
-    <Folder Include="wwwroot\images\" />
-    <Folder Include="Models\Tennis\" />
-    <Folder Include="Models\Ticket\" />
+    <Folder Include="Models\Basketball\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="3.1.8">
@@ -59,12 +56,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
-    <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="18.4.0.34" />
+    <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="19.2.0.47" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Models\Basketball\" />
   </ItemGroup>
 </Project>

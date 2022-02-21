@@ -20,17 +20,18 @@ namespace TruSport.ViewModel.Shop
         private ObservableCollection<EventTicket> _eventTicketCollection;
         private SportEvent _sportEvent;
         private EventTicket _eventTicket;
-        private EventTicket _eventTicketTwo;
         private Customer _customer;
         private CreditCard _creditCard;
-        private string _eventTicketTwoName;
         private string _customerName;
         private string _firstName;
         private string _lastName;
         private string _email;
         private string _phone;
+        private string _importantMessage;
+        private bool _isMember;
+        private bool _showCardDetail;
         private int _quantity;
-        private int _quantity2;
+        private int _memberTicketCount;
         private int _contactTracingHeight;
         private decimal _price;
         private decimal _price2;
@@ -94,12 +95,6 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _sportEvent, value); }
         }
 
-        public EventTicket EventTicketTwo
-        {
-            get { return _eventTicketTwo; }
-            set { Set(ref _eventTicketTwo, value); }
-        }
-
         public EventTicket EventTicket
         {
             get { return _eventTicket; }
@@ -116,12 +111,6 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _creditCard; }
             set { Set(ref _creditCard, value); }
-        }
-
-        public string EventTicketTwoName
-        {
-            get { return _eventTicketTwoName; }
-            set { Set(ref _eventTicketTwoName, value); }
         }
 
         public string CustomerName
@@ -148,19 +137,36 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _email, value); }
         }
 
+        public string ImportantMessage
+        {
+            get { return _importantMessage; }
+            set { Set(ref _importantMessage, value); }
+        }
+
         public string Phone
         {
             get { return _phone; }
             set { Set(ref _phone, value); }
         }
 
-        public int Quantity2
+        public bool ShowCardDetail
         {
-            get { return _quantity2; }
+            get { return _showCardDetail; }
+            set { Set(ref _showCardDetail, value); }
+        }
+
+        public bool IsMember
+        {
+            get { return _isMember; }
+            set { Set(ref _isMember, value); }
+        }
+
+        public int MemberTicketCount
+        {
+            get { return _memberTicketCount; }
             set
             {
-                Set(ref _quantity2, value);
-                this.UpdatePrice();
+                Set(ref _memberTicketCount, value);
             }
         }
 
@@ -228,7 +234,9 @@ namespace TruSport.ViewModel.Shop
 
                 if (Customer != null)
                 {
-                    var eventTickets = await sportEventService.GetSportEventTicket(sportEvent.ID, Email);
+                    var eventTickets = await sportEventService.GetSportEventTickets(sportEvent.ID, Email);
+
+                    ImportantMessage = await settingService.GetImportantMessage();
 
                     CreditCard = new CreditCard();
                     SportEvent = sportEvent;
@@ -236,28 +244,23 @@ namespace TruSport.ViewModel.Shop
 
                     if (eventTickets != null && eventTickets.Count > 0)
                     {
+                        IsMember = eventTickets.Any(e => e.Product.Age.Contains("Member"));
 
-                        ProcessingFeeAmount = eventTickets.FirstOrDefault().Product.Fee;
 
-                        eventTickets.ForEach(e => e.Quantity = e.Product.Age == "Adult" ? 1 : 0);
+                        if (IsMember)
+                        {
+                            MemberTicketCount = eventTickets?.FirstOrDefault(e => e.Product.Age.Contains("Member"))?.Product?.MemberTicketCount ?? 0;
+                            eventTickets.ForEach(e => e.Quantity = e.Product.Age.Contains("Member") ? 1 : 0);
+                        }
+                        else
+                            eventTickets.ForEach(e => e.Quantity = e.Product.Age == "Adult" ? 1 : 0);
 
                         EventTicketCollection = new ObservableCollection<EventTicket>(eventTickets.ToList());
 
                         UpdatePrice();
-                        //EventTicketCollection = new ObservableCollection<EventTicket>(eventTickets.Where(e => e.ID != eventTicket.ID).ToList());
                     }
 
-                    
-
-                    
-
                     CustomerName = Customer.Name;
-                    //Quantity = 1;
-                    //Price = eventTicket.Product.Price;
-                    //Subtotal = Price;
-                    
-                    //ProcessingFee = ProcessingFeeAmount;
-                    //Total = (Quantity * Price) + ProcessingFee;
 
                     ContactTraces.Add(new ContactTrace
                     {
@@ -275,21 +278,12 @@ namespace TruSport.ViewModel.Shop
                     SecureStorage.RemoveAll();
                     await App.Database.SignOut();
 
-                    if (Application.Current.MainPage is MasterDetailPage mdp)
-                    {
-                        var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
-                        page.Title = "Tickets";
-
-                        mdp.Detail = new NavigationPage(page)
-                        {
-                            BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                            BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                        };
-                    }
+                    Application.Current.MainPage = (new TicketFlyoutPage());
                 }
             }
             catch(Exception ex)
             {
+                await Navigation.PopModalAsync();
                 Debug.WriteLine(ex.Message, "Purchase Ticket");
             }
             finally
@@ -306,18 +300,34 @@ namespace TruSport.ViewModel.Shop
             try
             {
                 decimal thisSubtotal = 0.0m;
-                this.ProcessingFee = (this.EventTicketCollection.Sum(e => e.Quantity) * this.ProcessingFeeAmount);
+                decimal thisProcessingFee = 0.0m;
+
+                //check if any zero $ tickets
+
+                //int zeroDollar = this.EventTicketCollection.Where(e => e.Product.Price == 0).Sum(e => e.Quantity);
+                //this.ProcessingFeeAmount = 
+                //this.ProcessingFee = ((this.EventTicketCollection.Sum(e => e.Quantity) - zeroDollar) * this.ProcessingFeeAmount);
+
 
                 foreach (var eventTicket in EventTicketCollection)
                 {
                     if (eventTicket.Quantity > 0)
                     {
-                        thisSubtotal += eventTicket.Quantity * eventTicket.Product.Price;
+                            if (eventTicket.Product.Price > 0)
+                                thisProcessingFee += (eventTicket.Quantity * eventTicket.Product.Fee);
+
+                            thisSubtotal += (eventTicket.Quantity * eventTicket.Product.Price);
                     }
                 }
 
+                this.ProcessingFee = thisProcessingFee;
                 this.Subtotal = thisSubtotal;
                 this.Total = this.Subtotal + this.ProcessingFee;
+
+                if (this.Total > 0.00m)
+                    ShowCardDetail = true;                
+                else
+                    ShowCardDetail = false;
             }
             catch(Exception ex)
             {
@@ -337,7 +347,7 @@ namespace TruSport.ViewModel.Shop
                 {
                     if (EventTicketCollection.Sum(e => e.Quantity) > 0 && EventTicketCollection.Sum(e => e.Quantity) <= ContactTraces.Count)
                     {
-                        if (CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV))
+                        if ((ShowCardDetail && CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV)) || !ShowCardDetail)
                         {
                             List<OrderDetail> orderDetails = new List<OrderDetail>();
 
@@ -349,7 +359,9 @@ namespace TruSport.ViewModel.Shop
                                     {
                                         EventTicketID = eventTicket.ID,
                                         Qty = eventTicket.Quantity,
-                                        Subtotal = eventTicket.Quantity * eventTicket.Product.Price
+                                        Subtotal = eventTicket.Quantity * eventTicket.Product.Price,
+                                        IsMemberTicket = eventTicket.Product.Age.Contains("Member")
+                                        //Fee = eventTicket.Quantity * eventTicket.Product.Fee
                                     });
                                 }
                             }
@@ -357,9 +369,6 @@ namespace TruSport.ViewModel.Shop
                             PaymentAuthorize paymentAuthorize = new PaymentAuthorize
                             {
                                 NameOnCard = CustomerName,
-                                CardNumber = CreditCard.CardNumber,
-                                Expiry = CreditCard.Expiry,
-                                CVV = CreditCard.CVV,
                                 Quantity = EventTicketCollection.Sum(e => e.Quantity),
                                 Amount = Convert.ToString(Total),
                                 FixtureID = null,
@@ -369,15 +378,36 @@ namespace TruSport.ViewModel.Shop
                                 SportEventID = SportEvent.ID
                             };
 
+                            if (ShowCardDetail)
+                            {
+                                paymentAuthorize.CardNumber = CreditCard.CardNumber;
+                                paymentAuthorize.Expiry = CreditCard.Expiry;
+                                paymentAuthorize.CVV = CreditCard.CVV;
+                            }
+
                             var hasStock = await inventoryService.CheckEventTicketInventory(SportEvent.ID);
 
                             if (hasStock)
                             {
+                                if(!String.IsNullOrEmpty(ImportantMessage))
+                                    await App.Current.MainPage.DisplayAlert("Important Message", ImportantMessage, "Okay");
+                                
                                 bool confirmPayment = await App.Current.MainPage.DisplayAlert("Purchase Ticket", "You will be charged a total of " + Total.ToString("C"), "Purchase", "Cancel");
 
                                 if (confirmPayment)
                                 {
-                                    PaymentResponse paymentResponse = await customerTicketService.Purchase(paymentAuthorize);
+                                    PaymentResponse paymentResponse = new PaymentResponse();
+
+                                    if (ShowCardDetail)
+                                    {
+                                        //paymentResponse = await customerTicketService.PurchaseTest(paymentAuthorize);
+                                        paymentResponse = await customerTicketService.Purchase(paymentAuthorize);
+                                    }
+                                    else
+                                    {
+                                        //paymentResponse = await customerTicketService.ZeroPurchaseTest(paymentAuthorize);
+                                        paymentResponse = await customerTicketService.ZeroPurchase(paymentAuthorize);
+                                    }
 
                                     if (paymentResponse != null)
                                     {

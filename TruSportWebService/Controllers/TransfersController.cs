@@ -44,6 +44,27 @@ namespace OnTrackWebService.Controllers
 
         // GET api/values
         [HttpGet]
+        [Route("Basketball")]
+        public async Task<IActionResult> BasketballTransfer()
+        {
+            try
+            {
+
+                IEnumerable<Transfer> transfers = await _transferRepository.Basketball();
+
+                if (transfers != null)
+                    return Ok(transfers);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Transfer");
+            }
+
+            return NoContent();
+        }
+
+        // GET api/values
+        [HttpGet]
         [Route("Cricket")]
         public async Task<IActionResult> CricketTransfer()
         {

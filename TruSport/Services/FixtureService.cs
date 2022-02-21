@@ -86,6 +86,31 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<BasketballFixture>> GetBasketballFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/AllBasketball", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballFixture> fixtures = JsonConvert.DeserializeObject<List<BasketballFixture>>(response.Content);
+
+                    return fixtures;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
         public async Task<BowlingFixtureListView> GetBowlingFixtures()
         {
             try
@@ -152,6 +177,33 @@ namespace TruSport.Services
                     TennisFixtureListView fixtures = JsonConvert.DeserializeObject<TennisFixtureListView>(response.Content);
 
                     return fixtures;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+
+        public async Task<BasketballFixture> GetBasketballFixture(string id)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/Basketball", Method.GET);
+                request.AddParameter("id", id);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    BasketballFixture fixture = JsonConvert.DeserializeObject<BasketballFixture>(response.Content);
+
+                    return fixture;
                 }
             }
             catch (Exception ex)
@@ -240,6 +292,31 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<BasketballFixture>> GetPastBasketballFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/PastBasketball", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballFixture> fixtures = JsonConvert.DeserializeObject<List<BasketballFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
         public async Task<List<BowlingFixture>> GetPastBowlingFixtures()
         {
             try
@@ -304,6 +381,31 @@ namespace TruSport.Services
                 if (response.IsSuccessful)
                 {
                     List<TennisFixture> fixtures = JsonConvert.DeserializeObject<List<TennisFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<BasketballFixture>> GetUpcomingBasketballFixtures()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/UpcomingBasketball", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballFixture> fixtures = JsonConvert.DeserializeObject<List<BasketballFixture>>(response.Content);
 
                     return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
                 }
@@ -482,6 +584,41 @@ namespace TruSport.Services
 
                     return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<BasketballFixture>> GetBasketballHeadToHeadFixtures(string fixtureID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/BasketballHeadToHead", Method.GET);
+                request.AddParameter("fixtureID", fixtureID);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballFixture> fixtures = JsonConvert.DeserializeObject<List<BasketballFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
             }
             catch (Exception ex)
             {
@@ -700,6 +837,42 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<LiveBasketballFixture>> GetLiveBasketballFixtures()
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("oauth_token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/LiveBasketball", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<LiveBasketballFixture> fixtures = JsonConvert.DeserializeObject<List<LiveBasketballFixture>>(response.Content);
+
+                    if(fixtures != null)
+                        return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+                //}
+
+                //return null;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            return null;
+        }
+
         public async Task<List<Fixture>> GetLiveFixture()
         {
             try
@@ -873,6 +1046,32 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<BasketballFixture>> GetBasketballTeamFixtures(string teamID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/BasketballTeam", Method.GET);
+                request.AddParameter("teamID", teamID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballFixture> fixtures = JsonConvert.DeserializeObject<List<BasketballFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
         public async Task<List<BowlingFixture>> GetBowlingTeamFixtures(string teamID)
         {
             try
@@ -940,6 +1139,32 @@ namespace TruSport.Services
                 if (response.IsSuccessful)
                 {
                     List<TennisFixture> fixtures = JsonConvert.DeserializeObject<List<TennisFixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<BasketballFixture>> GetBasketballTeamForm(string teamID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/BasketballTeamForm", Method.GET);
+                request.AddParameter("teamID", teamID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballFixture> fixtures = JsonConvert.DeserializeObject<List<BasketballFixture>>(response.Content);
 
                     return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
                 }
@@ -1070,6 +1295,32 @@ namespace TruSport.Services
                 if (response.IsSuccessful)
                 {
                     List<Fixture> fixtures = JsonConvert.DeserializeObject<List<Fixture>>(response.Content);
+
+                    return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+            return null;
+        }
+
+        public async Task<List<BasketballFixture>> GetBasketballLeagueFixtures(string leagueID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Fixture/BasketballLeague", Method.GET);
+                request.AddParameter("leagueID", leagueID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<BasketballFixture> fixtures = JsonConvert.DeserializeObject<List<BasketballFixture>>(response.Content);
 
                     return fixtures.OrderByDescending(e => e.Date).ThenBy(e => e.Time).ToList();
                 }

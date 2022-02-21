@@ -77,7 +77,7 @@ namespace OnTrackWebService.Repository
         {
             try
             {
-                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => e.Email == userAuthentication.email && e.IsValidated);
+                var user = await _context.Users.Include(e => e.Role).FirstOrDefaultAsync(e => (e.Email == userAuthentication.email || e.UserName == userAuthentication.email) && e.IsValidated);
 
                 if (user != null)
                 {
@@ -200,6 +200,7 @@ namespace OnTrackWebService.Repository
 
                             User newUser = new User
                             {
+                                UserName = user.UserName,
                                 FirstName = user.FirstName,
                                 LastName = user.LastName,
                                 Email = user.Email,
@@ -256,6 +257,7 @@ namespace OnTrackWebService.Repository
                             return new UserResponse
                             {
                                 ID = user.ID,
+                                UserName = user.UserName,
                                 FirstName = user.FirstName,
                                 LastName = user.LastName,
                                 Role = role,

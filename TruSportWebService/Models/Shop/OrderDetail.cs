@@ -13,6 +13,7 @@ namespace OnTrackWebService.Models.Shop
         public string EventTicketID { get; set; }
         public int Qty { get; set; }
         public decimal Subtotal { get; set; }
+        public bool IsMemberTicket { get; set; }
 
         [ForeignKey("OrderID")]
         public Order Order { get; set; }

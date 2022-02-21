@@ -3,10 +3,18 @@ namespace TruSport
 {
     public static class Constants
     {
+        public static string Cycling = "Cycling";
+        public static string Golf = "Golf";
+        public static string Hockey = "Hockey";
+        public static string Rugby = "Rugby";
+        public static string Swimming = "Swimming";
+        public static string TrackAndField = "TrackAndField";
         public static string Bowling = "Bowling";
         public static string Cricket = "Cricket";
         public static string Tennis = "Tennis";
         public static string Football = "Football";
+        public static string Basketball = "Basketball";
+        public static string Triathlon = "Triathlon";
         public static string CryptoPW = "Ontr@ckTick3tingPlatf0rm2020!";
         public static string OnTrackEmail = "sports@ontrackbda.com";
         public static string OnTrackTicketingEmail = "tickets@ontrackbda.com";
@@ -43,8 +51,8 @@ namespace TruSport
         public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";
         public static string ListenConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=TPTAMlyAdTjqLH7eemrlPunhzKEy5yt3BMkxosyrkSY=";
 #else
-        //public const string APIEndpoint = "https://ontrackservice.azurewebsites.net/api/";
-        public const string APIEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
+        public const string APIEndpoint = "https://ontrackservice.azurewebsites.net/api/";
+        //public const string APIEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
         public static string NotificationHubName { get; set; } = "OnTrackPushHub";
         public static string ListenConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=P0I0U/tizyUD2mhlZnAH+VvNEuOUSZr722a3X+J2414=";
         //public static string NotificationHubName { get; set; } = "ontrackdevprodpush";

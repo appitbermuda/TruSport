@@ -9,6 +9,7 @@ using OnTrackWebService.Models;
 using System.Diagnostics;
 using OnTrackWebService.Data;
 using Microsoft.AspNetCore.Authorization;
+using OnTrackWebService.Models.Basketball;
 
 namespace OnTrackWebService.Controllers
 {
@@ -110,6 +111,63 @@ namespace OnTrackWebService.Controllers
             try
             {
                 PlayerSeason player = await _playerRepository.GetPlayer(id);
+
+                if (player != null)
+                    return Ok(player);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BasketballPlayers")]
+        public async Task<IActionResult> BasketballPlayers()
+        {
+            try
+            {
+                IEnumerable<BasketballPlayerSeason> players = await _playerRepository.GetBasketballPlayers();
+
+                if (players != null)
+                    return Ok(players);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("BasketballTeamPlayers")]
+        public async Task<IActionResult> BasketballPlayersByTeam(string teamID)
+        {
+            try
+            {
+                IEnumerable<BasketballPlayerSeason> players = await _playerRepository.GetBasketballPlayersByTeam(teamID);
+
+                if (players != null)
+                    return Ok(players);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("GetBasketballPlayer")]
+        public async Task<IActionResult> GetBasketballPlayer(string id)
+        {
+            try
+            {
+                BasketballPlayerSeason player = await _playerRepository.GetBasketballPlayer(id);
 
                 if (player != null)
                     return Ok(player);
