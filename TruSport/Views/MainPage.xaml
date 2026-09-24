@@ -17,6 +17,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand" Spacing="0">
                 <StackLayout.GestureRecognizers>
@@ -30,6 +31,18 @@
                     <Label Text="SPORTS" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                         </Grid>
             </StackLayout>
+            <!--<StackLayout Grid.Row="1" VerticalOptions="FillAndExpand" Spacing="0">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding EventTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Grid RowSpacing="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Spacing="0">
+                            <forms:CachedImage Source="sportfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                    <Label Text="EVENTS" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+            </StackLayout>-->
             <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding TicketTappedCommand}" />
@@ -43,6 +56,29 @@
                             </StackLayout>
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
                     <Label Text="TICKETS" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+            </StackLayout>
+            <StackLayout Grid.Row="2" VerticalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ShopTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                            <forms:CachedImage Source="shopfeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="ontracklogo.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                    <Label TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="SHOP " TextColor="White" FontSize="Large" />
+                                <Span Text="ON" FontAttributes="Bold" TextColor="White" FontSize="Large" />
+                                <Span Text="TRACK" TextColor="White" FontSize="Large" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
                         </Grid>
             </StackLayout>
         </Grid>

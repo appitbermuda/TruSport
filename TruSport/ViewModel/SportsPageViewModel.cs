@@ -8,6 +8,7 @@ using TruSport.Views;
 using TruSport.Views.Basketball;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
+using TruSport.Views.Golf;
 using TruSport.Views.Tennis;
 using TruSport.Views.Triathlon;
 using Xamarin.Essentials;
@@ -51,7 +52,7 @@ namespace TruSport.ViewModel
             //RugbyTappedCommand = new Command(() => RugbyTapped());
             BasketballTappedCommand = new Command(() => BasketballTapped());
             //HockeyTappedCommand = new Command(() => HockeyTapped());
-            //GolfTappedCommand = new Command(() => GolfTapped());
+            GolfTappedCommand = new Command(() => GolfTapped());
             //CyclingTappedCommand = new Command(() => CyclingTapped());
             TriathlonTappedCommand = new Command(() => TriathlonTapped());
         }
@@ -326,17 +327,30 @@ namespace TruSport.ViewModel
         //    }
         //}
 
-        //private async void GolfTapped()
-        //{
-        //    try
-        //    {
-        //        await Navigation.PushAsync(new DirectoryPage("Golf"));
-        //    }
-        //    catch (Exception ex)
-        //    {
+        private async void GolfTapped()
+        {
+            try
+            {
+                Sport sport = new Sport();
 
-        //    }
-        //}
+                if (Sports == null)
+                {
+                    var sports = await sportService.GetSports();
+                    sport = sports.FirstOrDefault(e => e.Name == Constants.Golf);
+                }
+                else
+                {
+                    sport = Sports.FirstOrDefault(e => e.Name == Constants.Golf);
+                }
+
+                await App.Database.SetDefaultSport(sport);
+                Application.Current.MainPage = new GolfFlyoutPage();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         //private async void CyclingTapped()
         //{

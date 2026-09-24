@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Syncfusion.ListView.XForms;
 using TruSport.Views.Setting;
@@ -66,7 +67,7 @@ namespace TruSport.Views.Basketball
                     new BasketballMasterDetailPageMenuItem { Id = 8, Title = "Help", IconSource="" , TargetType = typeof(HelpPage), Group = "OnTrack" },
                     new BasketballMasterDetailPageMenuItem { Id = 8, Title = "Settings", IconSource="" , TargetType = typeof(SettingPage), Group = "OnTrack" },
                     new BasketballMasterDetailPageMenuItem { Id = 9, Title = "Contact Us", IconSource="" , TargetType = typeof(ContactUsPage), Group = "OnTrack" },
-                    new BasketballMasterDetailPageMenuItem { Id = 9, Title = "Switch Sports", IconSource="" , TargetType = typeof(OnTrackPage), Group = "OnTrack" }
+                    //new BasketballMasterDetailPageMenuItem { Id = 9, Title = "Switch Sports", IconSource="" , TargetType = typeof(OnTrackPage), Group = "OnTrack" }
                 });
 
                 OnTrackHeight = 50 * OnTrackMenuItems.Count;
@@ -83,6 +84,19 @@ namespace TruSport.Views.Basketball
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
             #endregion
+        }
+
+        async void AllSportsButton_Clicked(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                await App.Database.ClearDefaultSport();
+                App.Current.MainPage = new OnTrackPage();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }

@@ -1,12 +1,22 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:numeric="clr-namespace:Syncfusion.SfNumericUpDown.XForms;assembly=Syncfusion.SfNumericUpDown.XForms"
-    x:Class="TruSport.Views.Tickets.TicketPurchasePage">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:numeric="clr-namespace:Syncfusion.SfNumericUpDown.XForms;assembly=Syncfusion.SfNumericUpDown.XForms" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:picker="http://schemas.syncfusion.com/xamarin"
+    x:Class="TruSport.Views.Tickets.TicketPurchasePage"
+    Title="Purchase Ticket">
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converters:ListHeightConverter x:Key="listHeightConverter" />
             <converters:ListCountConverter x:Key="listCountConverter" />
+            <converters:InverseBooleanConverter x:Key="inverseBooleanConverter" />
+            <converters:EventTicketIsStopConverter x:Key="eventTicketIsStopConverter" />
+            <converters:EventTicketIsStopInverseConverter x:Key="eventTicketIsStopInverseConverter" />
             <converters:MemberTicketCountConverter x:Key="memberTicketCountConverter" />
+            <converters:EventArgsConverter x:Key="eventArgsConverter"/>
+            <converters:HalfWidthConverter x:Key="halfWidthConverter"/>
+            <converters:WidthConverter x:Key="widthConverter"/>
+            <converters:ImageConverter x:Key="imageConverter"/>
+            <converters:EventImageConverter x:Key="eventImageConverter"/>
             <DataTemplate x:Name="ContactTracingItemTemplate" x:Key="ContactTracingItemTemplate">
                 <StackLayout HorizontalOptions="FillAndExpand"
                              VerticalOptions="FillAndExpand">
@@ -52,82 +62,178 @@
                         </Grid>
             </StackLayout>
             </DataTemplate>
+            <DataTemplate x:Name="EventTicketSpotItemTemplate" x:Key="EventTicketSpotItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand" WidthRequest="{Binding ., Converter={StaticResource halfWidthConverter}}" Padding="0,2.5">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Path=BindingContext.EventTicketSpotSelectedCommand}" CommandParameter="{Binding .}"/>
+                    </StackLayout.GestureRecognizers>
+                    <Frame Padding="5" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="Transparent">
+                   <Grid x:Name="grid" Padding="0,0,0,0"
+                      RowSpacing="5"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <!--<RowDefinition Height="1" />-->
+                    </Grid.RowDefinitions>
+                       <Grid.ColumnDefinitions>
+                           <ColumnDefinition Width="*"/>
+                           <!--<ColumnDefinition Width="Auto"/>
+                           <ColumnDefinition Width="Auto"/>-->
+                       </Grid.ColumnDefinitions>
+                    <StackLayout VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="CenterAndExpand">
+                                <Label x:Name="TicketTypeLabel"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                    Text="{Binding Product.Age}"/>
+                        </StackLayout>
+                       <StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                            <Label x:Name="PriceLabel"
+                                   FontSize="Micro"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Product.Price, StringFormat='${0}'}"/>
+                        </StackLayout>                       
+                       <!--<BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource borderColor}" />-->
+                        </Grid>
+                        </Frame>
+            </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="SelectedEventTicketSpotItemTemplate" x:Key="SelectedEventTicketSpotItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand" WidthRequest="50">
+                    <Frame Padding="5" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="{StaticResource selectedFrameBackgroundColor}">
+                   <Grid x:Name="grid" Padding="0,0,0,0"
+                      RowSpacing="5"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <!--<RowDefinition Height="1" />-->
+                    </Grid.RowDefinitions>
+                       <Grid.ColumnDefinitions>
+                           <ColumnDefinition Width="*"/>
+                           <!--<ColumnDefinition Width="Auto"/>
+                           <ColumnDefinition Width="Auto"/>-->
+                       </Grid.ColumnDefinitions>
+                    <StackLayout VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="CenterAndExpand">
+                                <Label x:Name="TicketTypeLabel"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource SelectedTextPrimaryColor}"
+                                    Text="{Binding Product.Age}"/>
+                        </StackLayout>
+                       <StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                            <Label x:Name="PriceLabel"
+                                   FontSize="Micro"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource SelectedTextPrimaryColor}"
+                                        Text="{Binding Product.Price, StringFormat='${0}'}"/>
+                        </StackLayout>                       
+                       <!--<BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource borderColor}" />-->
+                        </Grid>                        
+                        </Frame>
+            </StackLayout>
+            </DataTemplate>
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-
         <StackLayout BackgroundColor="{DynamicResource backgroundColor}" Spacing="0">
-            <Grid  BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,0" HeightRequest="90">
+            <!--<Grid  BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,0" HeightRequest="90">
                 <StackLayout VerticalOptions="FillAndExpand">
                     <Label Text="Purchase Ticket" FontSize="Small" FontAttributes="Bold" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
                 </StackLayout>
                  <StackLayout VerticalOptions="FillAndExpand">
                     <Button Text="" BackgroundColor="Transparent" FontSize="25" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" WidthRequest="30" HeightRequest="30" Padding="0" HorizontalOptions="StartAndExpand" Command="{Binding CloseClickedCommand}"/>
                 </StackLayout>
-            </Grid>
+            </Grid>-->
         <Grid VerticalOptions="FillAndExpand">
         <ScrollView VerticalOptions="FillAndExpand" Padding="0,0,0,50">
             <StackLayout Spacing="0">
                 <Grid>
-                    <StackLayout Spacing="0">
-                <Grid>                    
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                    <StackLayout Grid.Row="0">
+                    <StackLayout x:Name="SportEventsList" Spacing="0" BindableLayout.ItemsSource="{Binding SportEvents}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                <Grid Padding="2">
+                        <Grid.ColumnDefinitions>
+                            <!--<ColumnDefinition Width="100"/>-->
+                            <ColumnDefinition Width="*"/>
+                            <!--<ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>-->
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            <!--<RowDefinition Height="Auto" />-->
+                        </Grid.RowDefinitions>
                     <StackLayout HorizontalOptions="FillAndExpand"
-                                 VerticalOptions="FillAndExpand" Padding="8,8,8,8" BackgroundColor="{DynamicResource frameBackgroundColor}">
-                        <Frame Padding="0" CornerRadius="10" BackgroundColor="Transparent" HasShadow="False">
-                            <Frame Padding="0" CornerRadius="10" IsClippedToBounds="True" BackgroundColor="Transparent" HasShadow="False">
+                                 VerticalOptions="FillAndExpand" Padding="8,8,8,8" BackgroundColor="{StaticResource frameBackgroundColor}">
                     <Grid x:Name="grid" Padding="0,0,0,0"
-                          RowSpacing="5"
-                          ColumnSpacing="1"
+                          RowSpacing="10"
+                          ColumnSpacing="5"
                           BackgroundColor="Transparent"
                           VerticalOptions="FillAndExpand"
                           HorizontalOptions="FillAndExpand">
                         <Grid.Resources>
                             <ResourceDictionary>
-                                <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
-                                <converters:ImageConverter x:Key="imageConverter"/>
+                                <converters:IsNullConverter x:Key="isNullConverter"/>
                                 <converters:TimeConverter x:Key="timeConverter"/>
                             </ResourceDictionary>
                         </Grid.Resources>
                     <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50"/>
+                            <!--<ColumnDefinition Width="100"/>-->
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="70"/>
+                            <!--<ColumnDefinition Width="70"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="50"/>-->
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="1" />
                             <RowDefinition Height="Auto" />
+                            <!--<RowDefinition Height="Auto" />-->
                         </Grid.RowDefinitions>
-                        <ContentView Grid.Row="0" Grid.ColumnSpan="5" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
+                        <!--<ContentView Grid.Row="2" Grid.ColumnSpan="5" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />-->
 
-                        <StackLayout Grid.Row="0" Grid.ColumnSpan="3" Spacing="5"
-                                     VerticalOptions="CenterAndExpand"
-                                         HorizontalOptions="StartAndExpand"
-                                         Orientation="Horizontal">
-                                <StackLayout Padding="2">
+                        <StackLayout Grid.Row="2" Spacing="5"
+                                     VerticalOptions="StartAndExpand"
+                                         HorizontalOptions="CenterAndExpand">
+                                <StackLayout Padding="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
                                     <Label x:Name="FieldIcon"
                                        FontSize="Small"
                                            Text="&#xe901;"
                                            VerticalOptions="Center"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                         FontFamily="{StaticResource fontFamily}"/>
-                                    </StackLayout>
-                                <StackLayout>
                                     <Label x:Name="FieldName"
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding SportEvent.Field.Name}"/>
+                                        Text="{Binding Field.Name}"/>
                                     </StackLayout>
-                            </StackLayout>
-                            <StackLayout Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2"
-                                     VerticalOptions="CenterAndExpand"
-                                         HorizontalOptions="EndAndExpand"
-                                         Orientation="Horizontal"
-                                     Padding="5,10">
+                                    <StackLayout Padding="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
                                     <Label x:Name="TimeIcon"
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
@@ -137,17 +243,17 @@
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding SportEvent.EventTime, StringFormat='{0:MMM d - h:mm tt}'}"/>
-                                
+                                            Text="{Binding EventTime, StringFormat='{0:MMM d - h:mm tt}'}"/>
+                                </StackLayout>
                             </StackLayout>
 
-                        <StackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+                        <StackLayout Grid.Row="1">
                         <Label x:Name="TitleLabel"
                                    HorizontalOptions="CenterAndExpand"
                                    HorizontalTextAlignment="Center"
                                    TextColor="{DynamicResource TextPrimaryColor}"
                                    FontAttributes="Bold"
-                                        Text="{Binding SportEvent.Title}">
+                                        Text="{Binding Title}">
                                 <Label.FontSize>
                                     <OnPlatform x:TypeArguments="x:Double">  
                         <OnPlatform.Android> 
@@ -163,8 +269,8 @@
                                    HorizontalOptions="CenterAndExpand"
                                    HorizontalTextAlignment="Center"
                                    TextColor="{DynamicResource TextPrimaryColor}"
-                                   FontAttributes="Bold"
-                                        Text="{Binding SportEvent.Description}">
+                                   FontAttributes="Italic,Bold"
+                                        Text="{Binding Description}">
                                 <Label.FontSize>
                                     <OnPlatform x:TypeArguments="x:Double">  
                         <OnPlatform.Android> 
@@ -177,10 +283,27 @@
                                 </Label.FontSize>
                             </Label>
                     </StackLayout>
-                        
-                        <StackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
-                                <Frame HeightRequest="70" WidthRequest="70" CornerRadius="35" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
-                            <ff:CachedImage Source="{Binding SportEvent.HomeTeamLogo, Converter={StaticResource imageConverter}}"
+
+                        <StackLayout IsVisible="{Binding EventLogo, Converter={StaticResource isNullConverter}}" Grid.Row="0" Padding="5,0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Frame HeightRequest="100" WidthRequest="100" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding EventLogo, Converter={StaticResource imageConverter}}"
+                                                            ErrorPlaceholder="ontracklogo.png"
+                                            LoadingPlaceholder="ontracklogo.png"
+                                                            CacheDuration="50"
+                                                            RetryCount="3"
+                                                            RetryDelay="600"
+                                             Aspect="AspectFit"
+                                            HeightRequest="150"
+                                                      WidthRequest="150"
+                                                            DownsampleToViewSize="True">
+
+                            </ff:CachedImage>
+                                </Frame>                            
+                        </StackLayout>
+                        <StackLayout IsVisible="{Binding HomeTeam, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.Column="0" Padding="5,0" Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                        <StackLayout IsVisible="{Binding HomeTeam, Converter={StaticResource isNullConverter}}" Padding="5,0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                <Frame HeightRequest="50" WidthRequest="50" CornerRadius="0" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding HomeTeamLogo, Converter={StaticResource imageConverter}}"
                                                             ErrorPlaceholder="ontracklogo.png"
                                             LoadingPlaceholder="ontracklogo.png"
                                                             CacheDuration="50"
@@ -194,7 +317,7 @@
                             </ff:CachedImage>
                                 </Frame>
                             <Label x:Name="HomeTeamNameLabel" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" FontAttributes="Bold"
-                                       TextColor="{DynamicResource TextPrimaryColor}" Text="{Binding SportEvent.HomeTeam}">
+                                       TextColor="{DynamicResource TextPrimaryColor}" Text="{Binding HomeTeam}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
                             <OnPlatform.Android> 
@@ -207,9 +330,9 @@
                                     </Label.FontSize>
                                 </Label>
                         </StackLayout>
-                        <StackLayout Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
-                                 <Frame HeightRequest="70" WidthRequest="70" CornerRadius="35" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
-                            <ff:CachedImage Source="{Binding SportEvent.AwayTeamLogo, Converter={StaticResource imageConverter}}"
+                        <StackLayout IsVisible="{Binding AwayTeam, Converter={StaticResource isNullConverter}}" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                 <Frame HeightRequest="50" WidthRequest="50" CornerRadius="0" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding AwayTeamLogo, Converter={StaticResource imageConverter}}"
                                                             ErrorPlaceholder="ontracklogo.png"
                                             LoadingPlaceholder="ontracklogo.png"
                                                             CacheDuration="50"
@@ -221,8 +344,8 @@
                                                             DownsampleToViewSize="True">  
                                             </ff:CachedImage>
                                 </Frame>
-                            <Label x:Name="AwayTeamNameLabel" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" FontSize="Micro" FontAttributes="Bold"
-                                       TextColor="{DynamicResource TextPrimaryColor}" Text="{Binding SportEvent.AwayTeam}">
+                            <Label x:Name="AwayTeamNameLabel" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimaryColor}" Text="{Binding AwayTeam}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
                             <OnPlatform.Android> 
@@ -235,81 +358,197 @@
                                     </Label.FontSize>
                                 </Label>
                         </StackLayout>
-                        <StackLayout Grid.Row="2" Grid.Column="2" VerticalOptions="Center"
-                                         HorizontalOptions="Center"
-                                             Orientation="Vertical"
-                                     Padding="5,2"
-                                     Spacing="5">
-                     
-                                <Label 
-                                       x:Name="Versus"
-                                       FontSize="Small"
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="Center"
-                                                      VerticalOptions="Center"
-                                       TextColor="{DynamicResource TextPrimaryColor}"
-                                            Text="V" />
                         </StackLayout>
-                                <!--<StackLayout Grid.Row="0" Grid.Column="1"
-                                     VerticalOptions="Center"
-                                         HorizontalOptions="FillAndExpand"
-                                     Padding="5,2"
-                                     Spacing="0">
-                                <Label x:Name="HomeTeamNameLabel"
-                                       HorizontalOptions="EndAndExpand"
-                                       HorizontalTextAlignment="End"
-                                       FontSize="Micro"
-                                       FontAttributes="Bold"
-                                       TextColor="{DynamicResource TextPrimaryColor}"
-                                            Text="{Binding SportEvent.HomeTeam}">
-                                    <Label.FontSize>
-                                        <OnPlatform x:TypeArguments="x:Double">  
-                            <OnPlatform.Android> 
-                                <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" /> 
-                            </OnPlatform.Android> 
-                            <OnPlatform.iOS> 
-                                <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" /> 
-                            </OnPlatform.iOS> 
-                        </OnPlatform> 
-                                    </Label.FontSize>
-                                </Label>
-                            </StackLayout>-->
-                                <!--<StackLayout Grid.Row="0" Grid.Column="3"
-                                     VerticalOptions="Center"
-                                         HorizontalOptions="FillAndExpand"
-                                     Padding="5,2"
-                                     Spacing="0">
-                                <Label x:Name="AwayTeamNameLabel"
-                                       HorizontalOptions="StartAndExpand"
-                                       HorizontalTextAlignment="Start"
-                                       FontSize="Micro"
-                                       TextColor="{DynamicResource TextPrimaryColor}"
-                                       FontAttributes="Bold"
-                                            Text="{Binding SportEvent.AwayTeam}">
-                                    <Label.FontSize>
-                                        <OnPlatform x:TypeArguments="x:Double">  
-                            <OnPlatform.Android> 
-                                <OnIdiom x:TypeArguments="x:Double" Phone="10"  Tablet="17" /> 
-                            </OnPlatform.Android> 
-                            <OnPlatform.iOS> 
-                                <OnIdiom x:TypeArguments="x:Double"  Phone="11"  Tablet="16" /> 
-                            </OnPlatform.iOS> 
-                        </OnPlatform> 
-                                    </Label.FontSize>
-                                </Label>
-                            </StackLayout>-->
-                            </Grid>
-                            </Frame>
-                            </Frame>
-                        </StackLayout>
-                </Grid>
 
+                            </Grid>
+                        </StackLayout>
+                                            <!--Event Tickets-->
+                        <StackLayout Grid.Row="1" >
+                            <StackLayout HorizontalOptions="StartAndExpand" Padding="0,0,0,50" IsVisible="{Binding EventTickets, Converter={StaticResource eventTicketIsStopConverter}}">
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="MatchSpotImageTapped" CommandParameter="{Binding EventTickets}"/>
+                                                </StackLayout.GestureRecognizers>
+                                <ff:CachedImage Source="{Binding EventTickets, Converter={StaticResource eventImageConverter}}"
+                                                            ErrorPlaceholder="ontracklogo.png"
+                                            LoadingPlaceholder="ontracklogo.png"
+                                                            CacheDuration="50"
+                                                            RetryCount="3"
+                                                            RetryDelay="600" 
+                                             Aspect="AspectFit"
+                                             WidthRequest="{Binding ., Converter={StaticResource widthConverter}}"
+                                             HorizontalOptions="FillAndExpand"
+                                             VerticalOptions="FillAndExpand"
+                                                            DownsampleToViewSize="True">  
+                                </ff:CachedImage>
+                            </StackLayout>
+                                        <StackLayout Grid.Row="1" Padding="10,5,10,10">
+                                                    <Button 
+                                                            Command="{Binding Path=BindingContext.EventTicketSpotSelectedCommand, Source={x:Reference SportEventsList}}" CommandParameter="{Binding .}"
+                                                            FontSize="Small"
+                                                            FontAttributes="Bold"
+                                                            HorizontalOptions="FillAndExpand"
+                                                            VerticalOptions="FillAndExpand"
+                                                            TextColor="{DynamicResource buttonTextColor}"
+                                                            Text="Select Event Spot"
+                                                            BorderColor="{DynamicResource buttonBackgroundColor}"
+                                                            Padding="5"
+                                                            BackgroundColor="{DynamicResource buttonBackgroundColor}"
+                                                            />
+                <!--<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="5" IsVisible="{Binding SelectedEventSpotID, Converter={converters:IsNullConverter}}">                    
+                    <Frame Padding="5" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="Transparent">
+                   <Grid x:Name="EventTicketGrid" Padding="0,0,0,0"
+                      RowSpacing="5"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                       <Grid.ColumnDefinitions>
+                           <ColumnDefinition Width="*"/>
+                       </Grid.ColumnDefinitions>
+                    <StackLayout VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="CenterAndExpand">
+                                <Label x:Name="TicketTypeLabel"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                    Text="{Binding Product.Age}"/>
+                        </StackLayout>
+                       <StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                            <Label x:Name="PriceLabel"
+                                   FontSize="Micro"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Product.Price, StringFormat='${0}'}"/>
+                        </StackLayout>                                              
+                        </Grid>
+                        </Frame>
+            </StackLayout>-->
+                                                                                                                <!--<Frame Padding="5" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="Transparent">
+                   
+                    <StackLayout VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="CenterAndExpand">
+                                <Label x:Name="SelectSpotLabel"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                    Text="Select Event Spot"/>
+                        </StackLayout>                       
+                        </Frame>-->
+                                                            </StackLayout>
+                            <!--<StackLayout Grid.Row="1" HeightRequest="{Binding EventTickets, Converter={StaticResource listHeightConverter}}">
+                                <StackLayout HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand">
+                                                <FlexLayout x:Name="EventTicketSpotList" Wrap="Wrap" JustifyContent="SpaceEvenly" Direction="Row" AlignItems="Center" BindableLayout.ItemsSource="{Binding EventTickets}" BindableLayout.ItemTemplate="{StaticResource EventTicketSpotItemTemplate}">
+                               
+                            </FlexLayout>
+                               
+                                </StackLayout>
+                            </StackLayout>-->
+                        </Grid>
+                    </StackLayout>
+                    <StackLayout HorizontalOptions="StartAndExpand" IsVisible="{Binding EventTickets, Converter={StaticResource eventTicketIsStopInverseConverter}}">
+                        <StackLayout HorizontalOptions="StartAndExpand" Padding="0,0,0,75" IsVisible="{Binding EventTickets, Converter={StaticResource listCountConverter}}">
+                            <StackLayout BindableLayout.ItemsSource="{Binding EventTickets}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackLayout>
+                                            <Frame Padding="10" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="Transparent">
+                                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="110"/>
+                                                <ColumnDefinition Width="80"/>
+                                            </Grid.ColumnDefinitions>
+                                        <StackLayout HorizontalOptions="StartAndExpand">
+                                            <Label Text="{Binding Product.Age}" FontSize="Micro" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Column="1" HorizontalOptions="StartAndExpand">
+                                            <numeric:SfNumericUpDown Value="{Binding Quantity}" ValueChanged="SfNumericUpDown_ValueChanged"  BorderColor="Transparent" TextColor="{DynamicResource TextPrimaryColor}" FormatString="n0" StepValue="1" Minimum="0" Maximum="{Binding Product.MemberTicketCount, Converter={StaticResource memberTicketCountConverter}}" SpinButtonAlignment="Both" TextAlignment="Center" HeightRequest="30">
+                                               <numeric:SfNumericUpDown.IncrementButtonSettings>
+                                                  <numeric:UpDownButtonSettings ButtonHeight="30" ButtonWidth="30">
+                                                    <numeric:UpDownButtonSettings.ButtonView>
+                                                        <Grid HeightRequest="30" WidthRequest="30" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                                        <Label Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource buttonBackgroundColor}" FontSize="20" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                                        </Grid>
+                                                        </numeric:UpDownButtonSettings.ButtonView>
+                                                    </numeric:UpDownButtonSettings>
+                                              </numeric:SfNumericUpDown.IncrementButtonSettings>
+                                              <numeric:SfNumericUpDown.DecrementButtonSettings>
+                                                  <numeric:UpDownButtonSettings ButtonHeight="30" ButtonWidth="30">
+                                                    <numeric:UpDownButtonSettings.ButtonView>
+                                                        <Grid HeightRequest="30" WidthRequest="30" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                                        <Label Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource buttonBackgroundColor}" FontSize="20" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                                                        </Grid>
+                                                        </numeric:UpDownButtonSettings.ButtonView>
+                                                    </numeric:UpDownButtonSettings>
+                                              </numeric:SfNumericUpDown.DecrementButtonSettings>
+                                           </numeric:SfNumericUpDown>
+                                            <!--<Entry Text="{Binding Quantity}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Keyboard="Numeric" Placeholder="1"/>-->
+                                        </StackLayout>
+                                        <StackLayout Grid.Column="2" HorizontalOptions="EndAndExpand" Margin="20,0,0,0">
+                                            <Label Text="{Binding Product.Price, StringFormat='${0}'}" FontSize="Small" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                                        </StackLayout>
+                                            </Grid>
+                                            </Frame>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
+                            <!--<StackLayout Padding="0,20,0,10">
+                                <Button Text="UPDATE TOTAL" FontSize="Micro" HeightRequest="30" Padding="20,0" HorizontalOptions="Center" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" Command="{Binding UpdateQuantityCommand}"/>
+                            </StackLayout>-->
+                        </StackLayout>
+                    </StackLayout>
+
+                                            </StackLayout>
+                                                <!--<picker:SfPicker Grid.RowSpan="2"
+                                 x:Name="EventTicketPicker"                                 
+                                 HeaderText="{Binding Label, StringFormat='Select {0}'}"
+                                 IsOpen="false"
+                                HorizontalOptions="FillAndExpand"
+                                         VerticalOptions="Center"
+                                         PickerHeight="400"
+                                         PickerWidth="300"
+                                         PickerMode="Dialog"
+                                 SelectedItem="{Binding Product}"
+                                 ItemsSource="{Binding Products}"
+                                 DisplayMemberPath="Age"
+                                         ShowFooter="true"
+                                     HeaderTextColor="White"
+                                     HeaderBackgroundColor="{StaticResource primaryDarkBlue}">
+                    <picker:SfPicker.Behaviors>
+                    <extension:PickerEventToCommandBehavior EventName="SelectionChanged"
+                                                  Command="{Binding SelectedEventTicketChangedCommand}"
+                                                  Converter="{StaticResource eventArgsConverter}">
+                    </extension:PickerEventToCommandBehavior>
+                  </picker:SfPicker.Behaviors>
+                </picker:SfPicker>-->
+                </Grid>
+                                        </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                                
+                        </StackLayout>
                 <StackLayout Grid.ColumnSpan="2" HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
-                    <Label Text="Event Ticket" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                    <Label Text="Order Summary" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
                 </StackLayout>
                 <Grid Padding="10,10,10,50">
                     <Grid.RowDefinitions>
-                        <!--<RowDefinition Height="Auto"/>-->
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -321,85 +560,100 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     
-                    <!--<StackLayout Grid.Row="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,0,0,20">
-                        <Label Text="Event Ticket" TextColor="{DynamicResource TextPrimaryColor}" FontSize="25" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
-                    </StackLayout>-->
-                    <StackLayout Grid.Row="0" Grid.ColumnSpan="2" HorizontalOptions="StartAndExpand" Padding="0,0,0,75" IsVisible="{Binding EventTicketCollection, Converter={StaticResource listCountConverter}}">
-                        <StackLayout BindableLayout.ItemsSource="{Binding EventTicketCollection}">
-                            <BindableLayout.ItemTemplate>
-                                <DataTemplate>
-                                    <StackLayout>
-                                        <Frame Padding="10" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="Transparent">
-                                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="80"/>
-                                        </Grid.ColumnDefinitions>
-                                    <StackLayout HorizontalOptions="StartAndExpand">
-                                        <Label Text="{Binding Product.Age}" FontSize="Micro" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
-                                    </StackLayout>
-                                    <StackLayout Grid.Column="1" HorizontalOptions="StartAndExpand">
-                                        <numeric:SfNumericUpDown Value="{Binding Quantity}" ValueChanged="SfNumericUpDown_ValueChanged"  BorderColor="Transparent" TextColor="{DynamicResource TextPrimaryColor}" FormatString="n0" StepValue="1" Minimum="0" Maximum="{Binding Product.MemberTicketCount, Converter={StaticResource memberTicketCountConverter}}" SpinButtonAlignment="Both" TextAlignment="Center" HeightRequest="30">
-                                           <numeric:SfNumericUpDown.IncrementButtonSettings>
-                                              <numeric:UpDownButtonSettings ButtonHeight="30" ButtonWidth="30">
-                                                <numeric:UpDownButtonSettings.ButtonView>
-                                                    <Grid HeightRequest="30" WidthRequest="30" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                                    <Label Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource buttonBackgroundColor}" FontSize="20" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
-                                                    </Grid>
-                                                    </numeric:UpDownButtonSettings.ButtonView>
-                                                </numeric:UpDownButtonSettings>
-                                          </numeric:SfNumericUpDown.IncrementButtonSettings>
-                                          <numeric:SfNumericUpDown.DecrementButtonSettings>
-                                              <numeric:UpDownButtonSettings ButtonHeight="30" ButtonWidth="30">
-                                                <numeric:UpDownButtonSettings.ButtonView>
-                                                    <Grid HeightRequest="30" WidthRequest="30" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                                    <Label Text="" FontFamily="{StaticResource fontAwesomeSolidFamily}" TextColor="{DynamicResource buttonBackgroundColor}" FontSize="20" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
-                                                    </Grid>
-                                                    </numeric:UpDownButtonSettings.ButtonView>
-                                                </numeric:UpDownButtonSettings>
-                                          </numeric:SfNumericUpDown.DecrementButtonSettings>
-                                       </numeric:SfNumericUpDown>
-                                        <!--<Entry Text="{Binding Quantity}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Keyboard="Numeric" Placeholder="1"/>-->
-                                    </StackLayout>
-                                    <StackLayout Grid.Column="2" HorizontalOptions="EndAndExpand" Margin="20,0,0,0">
-                                        <Label Text="{Binding Product.Price, StringFormat='{0:C}'}" FontSize="Small" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
-                                    </StackLayout>
-                                        </Grid>
-                                        </Frame>
-                                    </StackLayout>
-                                </DataTemplate>
-                            </BindableLayout.ItemTemplate>
-                        </StackLayout>
-                        <!--<StackLayout Padding="0,20,0,10">
-                            <Button Text="UPDATE TOTAL" FontSize="Micro" HeightRequest="30" Padding="20,0" HorizontalOptions="Center" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" Command="{Binding UpdateQuantityCommand}"/>
-                        </StackLayout>-->
-                    </StackLayout>
-                    <StackLayout Grid.Row="1" HorizontalOptions="StartAndExpand">
+                    <StackLayout Grid.Row="0" Grid.ColumnSpan="2" Padding="5" BindableLayout.ItemsSource="{Binding EventSpotCollection}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackLayout Padding="0,0,0,10">
+                                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                        <StackLayout Grid.Row="0" Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand">
+                                                            <Label Text="{Binding SportEvent.Title}" FontSize="Small" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Start"/>
+                                                            <Label Text="{Binding Product.Age}" FontSize="Small" FontAttributes="Bold" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Start"/>
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="1" Grid.Column="0" HorizontalOptions="StartAndExpand">
+                                            <Label Text="{Binding SportEvent.EventTime, StringFormat='{0:MMM d - h:mm tt}'}" FontSize="Micro" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Start"/>
+                                            <!--<Entry Text="{Binding Quantity}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Keyboard="Numeric" Placeholder="1"/>-->
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="1" Grid.Column="1" HorizontalOptions="EndAndExpand">
+                                            <Label Text="{Binding Quantity, StringFormat='x{0}'}" FontSize="Small" TextColor="{DynamicResource TextPrimaryColor}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="End"/>
+                                            <!--<Entry Text="{Binding Quantity}" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Keyboard="Numeric" Placeholder="1"/>-->
+                                        </StackLayout>
+                                        <StackLayout Grid.Row="0" Grid.Column="1" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand">
+                                            <Label Text="{Binding Subtotal, StringFormat='${0}'}" FontSize="15" TextColor="{DynamicResource TextPrimaryColor}" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="End"/>
+                                        </StackLayout>
+                                            </Grid>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
+                    
+                    <StackLayout Margin="0,20,0,0" Grid.Row="1" HorizontalOptions="StartAndExpand">
                         <Label Text="Subtotal" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
                     </StackLayout>
-                    <StackLayout Grid.Row="1" Grid.Column="1" HorizontalOptions="EndAndExpand">
-                        <Label Text="{Binding Subtotal, StringFormat='{0:C}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
+                    <StackLayout Margin="0,20,0,0" Grid.Row="1" Grid.Column="1" HorizontalOptions="EndAndExpand">
+                        <Label Text="{Binding Subtotal, StringFormat='${0}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
                     </StackLayout>
                     <StackLayout Grid.Row="2" HorizontalOptions="StartAndExpand">
                         <Label Text="Processing Fee" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
                     </StackLayout>
                     <StackLayout Grid.Row="2" Grid.Column="1" HorizontalOptions="EndAndExpand">
-                        <Label Text="{Binding ProcessingFee, StringFormat='{0:C}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
+                        <Label Text="{Binding ProcessingFee, StringFormat='${0}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="15" FontAttributes="Bold"/>
                     </StackLayout>
                     <BoxView Grid.ColumnSpan="2" HeightRequest="1" Grid.Row="3" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" />
                     <StackLayout Grid.Row="4" HorizontalOptions="StartAndExpand">
                         <Label Text="Total" TextColor="{DynamicResource TextPrimaryColor}" FontSize="18" FontAttributes="Bold"/>
                     </StackLayout>
                     <StackLayout Grid.Row="4" Grid.Column="1" HorizontalOptions="EndAndExpand">
-                        <Label Text="{Binding Total, StringFormat='{0:C}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="18" FontAttributes="Bold"/>
+                        <Label Text="{Binding Total, StringFormat='${0}'}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="18" FontAttributes="Bold"/>
                     </StackLayout>
                 </Grid>
 
-                        <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0">
-                            <Label Text="Contact Tracing" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0" IsVisible="{Binding IsGuest}">
+                            <Label Text="Contact Details" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </StackLayout>                    
+                        <Grid ColumnSpacing="10" IsVisible="{Binding IsGuest}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackLayout Grid.Row="0" Grid.Column="0">
+                                <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="First Name" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                                    <Entry Text="{Binding Customer.FirstName}" Placeholder="First Name" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                </textinputlayout:SfTextInputLayout>
+                            </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="1">
+                                <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Last Name" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                                    <Entry Text="{Binding Customer.LastName}" Placeholder="Last Name" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                </textinputlayout:SfTextInputLayout>
+                            </StackLayout>
+                            <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
+                                <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Email" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                                    <Entry Text="{Binding Customer.Email}" Placeholder="Email" Keyboard="Email" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                </textinputlayout:SfTextInputLayout>
+                            </StackLayout>
+                            <StackLayout Grid.Row="2" Grid.ColumnSpan="2">
+                                <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Phone" ContainerType="Outlined" CharMaxLength="12" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
+                                    <Entry Text="{Binding Customer.Phone}" Placeholder="Phone" Keyboard="Telephone" TextColor="{DynamicResource TextPrimaryColor}"/>
+                                </textinputlayout:SfTextInputLayout>
+                            </StackLayout>
+                        </Grid>
+
+                        <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0" IsVisible="{Binding ShowContactTracing}">
+                            <Label Text="Contacts" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </StackLayout>
-                <Grid Padding="10" ColumnSpacing="20" Margin="0,0,0,30">
+                <Grid Padding="10" ColumnSpacing="20" Margin="0,0,0,30" IsVisible="{Binding ShowContactTracing}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/> 
@@ -434,7 +688,6 @@
                     </StackLayout>
                     <StackLayout Grid.Row="4" Grid.ColumnSpan="2" >
                         <BoxView HeightRequest="3" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource buttonBackgroundColor}"/>
-                        <!--<Frame IsClippedToBounds="True" BorderColor="{DynamicResource controlElementBackgroundColor}" CornerRadius="10" HeightRequest="{Binding ContactTracingHeight}" Padding="5" BackgroundColor="Transparent" HasShadow="False">-->
                         <listView:SfListView x:Name="ContactTracingList"
                                     ItemsSource="{Binding ContactTraces}"
                                     ItemTemplate="{StaticResource ContactTracingItemTemplate}"
@@ -448,10 +701,12 @@
                                     SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
                                     ItemSize="20"
                                     HeightRequest="{Binding ContactTracingHeight}"
-                                />
-                            <!--</Frame>-->
+                                >
+                                        </listView:SfListView>
                     </StackLayout>
                 </Grid>
+
+
 
                 <StackLayout HeightRequest="30" BackgroundColor="{DynamicResource controlHeaderBackgroundColor}" Padding="10,0" IsVisible="{Binding ShowCardDetail}" >
                     <Label Text="Card Details" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
@@ -461,27 +716,31 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <StackLayout Grid.ColumnSpan="2">
+                    <StackLayout Grid.Row="0" Grid.ColumnSpan="2">
+                        <Image Source="visa_mastercard.png" Aspect="AspectFit" HeightRequest="100" HorizontalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
                         <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Name of Card" ContainerType="Outlined" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding CustomerName}" Placeholder="Name" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
-                    <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
+                    <StackLayout Grid.Row="2" Grid.ColumnSpan="2">
                         <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Card Number" ContainerType="Outlined" CharMaxLength="16" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding CreditCard.CardNumber}" MaxLength="16" Keyboard="Numeric" Placeholder="1111222233334444" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
-                    <StackLayout Grid.Row="2" Grid.Column="0">
+                    <StackLayout Grid.Row="3" Grid.Column="0">
                         <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="Expiry (MMYY)" ContainerType="Outlined" CharMaxLength="4" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding CreditCard.Expiry}" MaxLength="4" Keyboard="Numeric" Placeholder="0125" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
                     </StackLayout>
-                    <StackLayout Grid.Row="2" Grid.Column="1">
+                    <StackLayout Grid.Row="3" Grid.Column="1">
                         <textinputlayout:SfTextInputLayout IsHintAlwaysFloated="True" Hint="CVV" ContainerType="Outlined" CharMaxLength="3" UnfocusedColor="{DynamicResource unfocusedBackgroundColor}" FocusedColor="{DynamicResource buttonBackgroundColor}">
                             <Entry Text="{Binding CreditCard.CVV}" MaxLength="3" Keyboard="Numeric" Placeholder="123" TextColor="{DynamicResource TextPrimaryColor}"/>
                         </textinputlayout:SfTextInputLayout>
@@ -492,11 +751,10 @@
                     <Label Text="Important Information" FontSize="Small" FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="{DynamicResource TextPrimaryColor}"/>
                 </StackLayout>
                 <StackLayout Padding="10" Spacing="10">
-                    <!--<Label Text="Due to your privacy and protection, OnTrack will not be storing your card information." FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>-->
-
+                    
                     <Label Text="{Binding SportEvent.DefaultTicketTerm}" FontSize="10" TextColor="{DynamicResource TextPrimaryColor}"/>
 
-                    <Label Text="{Binding SportEvent.Term}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="10"/>
+                    <Label Text="{Binding SportEvent.Term}" TextColor="{DynamicResource TextPrimaryColor}" FontSize="16"/>
 
                     <StackLayout Orientation="Horizontal" Padding="0,50,0,0">
                         <StackLayout>
@@ -515,14 +773,13 @@
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
-                            <!--<Button Text="Terms of Use" TextColor="{DynamicResource buttonBackgroundColor}" FontAttributes="Bold" FontSize="Small" HorizontalOptions="Center" HeightRequest="15" Clicked="Button_Clicked"/>-->
+                            
                         </StackLayout>
                     </StackLayout>
                     
                 </StackLayout>
-
-                <StackLayout Padding="10">
-                    <Button Text="{Binding Total, StringFormat='Purchase {0:C}'}" IsVisible="False" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding PurchaseCommand}">
+                <StackLayout Grid.Row="1" Padding="10">
+                    <Button Text="{Binding Total, StringFormat='Purchase ${0}'}" IsVisible="False" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding PurchaseCommand}">
                         <Button.Triggers>
                             <DataTrigger TargetType="Button"
                                          Binding="{Binding Source={x:Reference AgreeCheckbox}, Path=IsChecked}"
@@ -533,7 +790,9 @@
     </Button.Triggers>
                     </Button>
                 </StackLayout>
-                        </StackLayout>
+</StackLayout>
+                
+                            
                 </Grid>
             </StackLayout>
         </ScrollView>

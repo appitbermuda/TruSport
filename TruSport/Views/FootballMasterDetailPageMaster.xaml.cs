@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -62,10 +63,10 @@ namespace TruSport.Views
                 OnTrackMenuItems = new ObservableCollection<FootballMasterDetailPageMenuItem>(new[]
                 {
                     new FootballMasterDetailPageMenuItem { Id = 0, Title = "Home", IconSource="" , TargetType = typeof(FootballMasterDetailPage), Group = "OnTrack" },
-                    new FootballMasterDetailPageMenuItem { Id = 0, Title = "Fixtures", IconSource="" , TargetType = typeof(Football.FixturePage), Group = "OnTrack" },
+                    //new FootballMasterDetailPageMenuItem { Id = 0, Title = "Fixtures", IconSource="" , TargetType = typeof(Football.FixturePage), Group = "OnTrack" },
                     new FootballMasterDetailPageMenuItem { Id = 1, Title = "Teams", IconSource="" , TargetType = typeof(Football.TeamPage), Group = "OnTrack" },
-                    new FootballMasterDetailPageMenuItem { Id = 2, Title = "Standings", IconSource="" , TargetType = typeof(Football.TablePage), Group = "OnTrack" },
-                    new FootballMasterDetailPageMenuItem { Id = 3, Title = "Leaderboard", IconSource="" , TargetType = typeof(Football.LeagueStatsPage), Group = "OnTrack" },
+                    //new FootballMasterDetailPageMenuItem { Id = 2, Title = "Standings", IconSource="" , TargetType = typeof(Football.TablePage), Group = "OnTrack" },
+                    new FootballMasterDetailPageMenuItem { Id = 3, Title = "Stats", IconSource="" , TargetType = typeof(Football.StatPage), Group = "OnTrack" },
                     new FootballMasterDetailPageMenuItem { Id = 4, Title = "Competitions", IconSource="" , TargetType = typeof(Football.CompetitionsPage), Group = "OnTrack" },
                     new FootballMasterDetailPageMenuItem { Id = 5, Title = "Favourites", IconSource="" , TargetType = typeof(Football.FavouritePage), Group = "OnTrack" },
                     new FootballMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(MainPage), Group = "OnTrack" },
@@ -76,7 +77,7 @@ namespace TruSport.Views
                     new FootballMasterDetailPageMenuItem { Id = 8, Title = "Settings", IconSource="" , TargetType = typeof(SettingPage), Group = "OnTrack" },
                     //new FootballMasterDetailPageMenuItem { Id = 9, Title = "Privacy Policy", IconSource="" , TargetType = typeof(PrivacyPolicyPage), Group = "OnTrack" },
                     new FootballMasterDetailPageMenuItem { Id = 9, Title = "Contact Us", IconSource="" , TargetType = typeof(ContactUsPage), Group = "OnTrack" },
-                    new FootballMasterDetailPageMenuItem { Id = 9, Title = "Switch Sports", IconSource="" , TargetType = typeof(OnTrackPage), Group = "OnTrack" },
+                    //new FootballMasterDetailPageMenuItem { Id = 9, Title = "Switch Sports", IconSource="" , TargetType = typeof(OnTrackPage), Group = "OnTrack" },
                     //new FootballMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(Tickets.TicketTabbedPage), Group = "OnTrack" }
                 });
                 
@@ -94,6 +95,19 @@ namespace TruSport.Views
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
             #endregion
+        }
+
+        async void AllSportsButton_Clicked(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                await App.Database.ClearDefaultSport();
+                App.Current.MainPage = new OnTrackPage();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }

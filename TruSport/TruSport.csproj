@@ -6,43 +6,43 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
-    <IntermediateOutputPath>obj\Release\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\Release\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0\netstandard2.0</IntermediateOutputPath>
     <DebugType></DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
     <PackageReference Include="Microsoft.Azure.Mobile.Client" Version="4.0.2" />
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
-    <PackageReference Include="Syncfusion.Xamarin.SfListView" Version="18.1.0.42" />
-    <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="18.1.0.42" />
-    <PackageReference Include="Syncfusion.Xamarin.SfPicker" Version="18.1.0.42" />
-    <PackageReference Include="Syncfusion.Xamarin.SfMaskedEdit" Version="18.1.0.42" />
-    <PackageReference Include="Syncfusion.Xamarin.Core" Version="18.1.0.42" />
-    <PackageReference Include="Syncfusion.Xamarin.SfNumericUpDown" Version="18.1.0.42" />
+    <PackageReference Include="Syncfusion.Xamarin.SfListView" Version="20.1.0.58" />
+    <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="20.1.0.58" />
+    <PackageReference Include="Syncfusion.Xamarin.SfPicker" Version="20.1.0.58" />
+    <PackageReference Include="Syncfusion.Xamarin.SfMaskedEdit" Version="20.1.0.58" />
+    <PackageReference Include="Syncfusion.Xamarin.Core" Version="20.1.0.58" />
+    <PackageReference Include="Syncfusion.Xamarin.SfNumericUpDown" Version="20.1.0.58" />
     <PackageReference Include="Microsoft.Azure.Mobile.Client.SQLiteStore" Version="4.0.2" />
-    <PackageReference Include="Syncfusion.Xamarin.SfBusyIndicator" Version="18.1.0.42" />
-    <PackageReference Include="Syncfusion.Xamarin.SfTabView" Version="18.1.0.42" />
+    <PackageReference Include="Syncfusion.Xamarin.SfBusyIndicator" Version="20.1.0.58" />
+    <PackageReference Include="Syncfusion.Xamarin.SfTabView" Version="20.1.0.58" />
     <PackageReference Include="Microsoft.Identity.Client" Version="2.7.0" />
-    <PackageReference Include="Microsoft.AppCenter" Version="1.13.0" />
-    <PackageReference Include="Microsoft.AppCenter.Push" Version="1.13.0" />
+    <PackageReference Include="Microsoft.AppCenter" Version="5.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
-    <PackageReference Include="Syncfusion.Xamarin.SfPullToRefresh" Version="18.1.0.42" />
+    <PackageReference Include="Syncfusion.Xamarin.SfPullToRefresh" Version="20.1.0.58" />
     <PackageReference Include="RestSharp" Version="106.6.10" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="1.13.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="1.13.0" />
-    <PackageReference Include="Syncfusion.Xamarin.SfComboBox" Version="18.1.0.42" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
+    <PackageReference Include="Syncfusion.Xamarin.SfComboBox" Version="20.1.0.58" />
     <PackageReference Include="NodaTime" Version="2.4.6" />
     <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.11.982" />
-    <PackageReference Include="Syncfusion.Xamarin.SfCalendar" Version="18.1.0.42" />
+    <PackageReference Include="Syncfusion.Xamarin.SfCalendar" Version="20.1.0.58" />
     <PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />
     <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
     <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
     <PackageReference Include="Xam.Plugin.LatestVersion" Version="2.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -74,6 +74,12 @@
     <Folder Include="ViewModel\Basketball\" />
     <Folder Include="Views\Triathlon\" />
     <Folder Include="ViewModel\Triathlon\" />
+    <Folder Include="Views\Golf\" />
+    <Folder Include="Views\Event\" />
+    <Folder Include="ViewModel\Event\" />
+    <Folder Include="ViewModel\Event\HalfMarathon\" />
+    <Folder Include="ViewModel\Golf\" />
+    <Folder Include="Views\Notification\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Views\Football\MatchStatsPopUpPage %28another copy%29.cs" />
@@ -151,5 +157,11 @@
     <None Remove="Xam.Plugin.LatestVersion" />
     <None Remove="Views\Triathlon\" />
     <None Remove="ViewModel\Triathlon\" />
+    <None Remove="Views\Golf\" />
+    <None Remove="Views\Event\" />
+    <None Remove="ViewModel\Event\" />
+    <None Remove="ViewModel\Event\HalfMarathon\" />
+    <None Remove="ViewModel\Golf\" />
+    <None Remove="Views\Notification\" />
   </ItemGroup>
 </Project>

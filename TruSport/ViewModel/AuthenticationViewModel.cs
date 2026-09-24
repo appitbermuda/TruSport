@@ -11,7 +11,7 @@ using TruSport;
 using TruSport.Data;
 using TruSport.Model;
 using Microsoft.AppCenter;
-using Microsoft.AppCenter.Push;
+//using Microsoft.AppCenter.Push;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using TruSport.Services;
@@ -324,14 +324,14 @@ namespace TruSport.ViewModels
 
                             if (thisUser != null)
                             {
-                                bool isEnabled = await Microsoft.AppCenter.Push.Push.IsEnabledAsync();
+                                //bool isEnabled = await Microsoft.AppCenter.Push.Push.IsEnabledAsync();
                                 Guid DeviceID = Guid.Empty;
-                                if (isEnabled)
-                                {
+                                //if (isEnabled)
+                                //{
                                     Guid? deviceID = await AppCenter.GetInstallIdAsync();
                                     DeviceID = deviceID.GetValueOrDefault();
                                     App.DeviceID = DeviceID.ToString();
-                                }
+                                //}
 
                                 //await App.Database.SaveUser(localUser);
 
@@ -425,14 +425,14 @@ namespace TruSport.ViewModels
 
                                     if (!userExists)
                                     {
-                                        bool isEnabled = await Microsoft.AppCenter.Push.Push.IsEnabledAsync();
+                                        //bool isEnabled = await Microsoft.AppCenter.Push.Push.IsEnabledAsync();
                                         Guid DeviceID = Guid.Empty;
-                                        if (isEnabled)
-                                        {
+                                        //if (isEnabled)
+                                        //{
                                             Guid? deviceID = await AppCenter.GetInstallIdAsync();
                                             DeviceID = deviceID.GetValueOrDefault();
 
-                                        }
+                                        //}
 
                                         UserRequest saveUser = new UserRequest
                                         {
@@ -448,10 +448,10 @@ namespace TruSport.ViewModels
 
                                         if (userRegistered != null)
                                         {
-                                            if (isEnabled)
-                                            {
+                                            //if (isEnabled)
+                                            //{
                                                 App.DeviceID = DeviceID.ToString();
-                                            }
+                                            //}
 
                                             saveUser.ID = App.UserID;
                                             await App.Database.UpdateUser(userRegistered);
@@ -635,14 +635,14 @@ namespace TruSport.ViewModels
 
                                         if (thisUser != null)
                                         {
-                                            bool isEnabled = await Microsoft.AppCenter.Push.Push.IsEnabledAsync();
+                                            //bool isEnabled = await Microsoft.AppCenter.Push.Push.IsEnabledAsync();
                                             Guid DeviceID = Guid.Empty;
-                                            if (isEnabled)
-                                            {
+                                            //if (isEnabled)
+                                            //{
                                                 Guid? deviceID = await AppCenter.GetInstallIdAsync();
                                                 DeviceID = deviceID.GetValueOrDefault();
                                                 App.DeviceID = DeviceID.ToString();
-                                            }
+                                            //}
 
                                             //await App.Database.SaveUser(localUser);
 

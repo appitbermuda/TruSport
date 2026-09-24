@@ -2,16 +2,23 @@
 <ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:converter="clr-namespace:TruSport.Converters" x:Class="TruSport.Styles.DarkTheme" Source="DefaultTheme.xaml">
     <Color x:Key="backgroundColor">#000000</Color>
     <Color x:Key="navBackgroundColor">#131313</Color>
+    <Color x:Key="selectedNavBackgroundColor">#0e1550</Color>
     <Color x:Key="navTextColor">#FFFFFF</Color>
+    <Color x:Key="selectedNavTextColor">#FFFFFF</Color>
+    <Color x:Key="navModalTextColor">#0e1550</Color>
     <Color x:Key="listBackgroundColor">#0e1343</Color>
     <Color x:Key="listSelectedBackgroundColor">#131313</Color>
     <Color x:Key="headerBackgroundColor">#0e1550</Color>
     <Color x:Key="GroupHeaderBackgroundColor">#131313</Color>
+    <Color x:Key="buttonBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="buttonTextColor">#1d2462</Color>
     <Color x:Key="frameBackgroundColor">#272727</Color>
+    <Color x:Key="selectedFrameBackgroundColor">#0e1550</Color>
     <Color x:Key="controlHeaderBackgroundColor">#131313</Color>
     <Color x:Key="controlElementBackgroundColor">#1d1d1d</Color>
     <Color x:Key="unfocusedBackgroundColor">#F5F5F5</Color>
     <Color x:Key="TextPrimaryColor">#FFFFFF</Color>
+    <Color x:Key="SelectedTextPrimaryColor">#FFFFFF</Color>
     <Color x:Key="TextSecondaryColor">#FFFFFF</Color>
     <Color x:Key="TextThirdColor">#FFFFFF</Color>
     <Color x:Key="TextHeaderColor">#FFFFFF</Color>
@@ -22,6 +29,10 @@
     <Color x:Key="indicatorColor">#F5F5F5</Color>
     <Color x:Key="indicatorTextColor">#000000</Color>
     <Color x:Key="iconColor">#FFFFFF</Color>
-    <Color x:Key="buttonBackgroundColor">#FFFFFF</Color>
-    <Color x:Key="buttonTextColor">#1d2462</Color>
+    <Style x:Key="ontrackLogoWatermark" TargetType="Image">
+    <Setter Property="Source" Value="OnTrack_512Reveresed.png"/>
+    </Style>
+    <Style x:Key="ontrackWordmarkWatermark" TargetType="Image">
+    <Setter Property="Source" Value="ontrack_wordmark_reversed.png"/>
+    </Style>
 </ResourceDictionary>

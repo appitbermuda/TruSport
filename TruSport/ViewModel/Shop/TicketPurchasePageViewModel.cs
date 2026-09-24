@@ -16,20 +16,31 @@ namespace TruSport.ViewModel.Shop
 {
     public class TicketPurchasePageViewModel : BaseViewModel
     {
+        private Command<Syncfusion.SfPicker.XForms.SelectionChangedEventArgs> selectedEventTicketChangedCommand;
         public ObservableCollection<ContactTrace> _contactTraces;
         private ObservableCollection<EventTicket> _eventTicketCollection;
+        private ObservableCollection<Product> _productCollection;
+        private ObservableCollection<SportEvent> _sportEventCollection;
         private SportEvent _sportEvent;
         private EventTicket _eventTicket;
+        private Product _product;
         private Customer _customer;
         private CreditCard _creditCard;
+        private string _image;
+        private string _discountCode;
         private string _customerName;
         private string _firstName;
         private string _lastName;
         private string _email;
         private string _phone;
+        private string _eventTicketName;
+        private string _label;
         private string _importantMessage;
         private bool _isMember;
+        private bool _isGuest;
         private bool _showCardDetail;
+        private bool _showContactTracing;
+        private bool _showEventSpot;
         private int _quantity;
         private int _memberTicketCount;
         private int _contactTracingHeight;
@@ -46,7 +57,7 @@ namespace TruSport.ViewModel.Shop
         SettingService settingService;
         InventoryService inventoryService;
 
-        public TicketPurchasePageViewModel(INavigation navigation, SportEvent sportEvent)
+        public TicketPurchasePageViewModel(INavigation navigation, List<SportEvent> sportEvents, bool isGuest = false)
         {
             Navigation = navigation;
             sportEventService = new SportEventService();
@@ -54,21 +65,38 @@ namespace TruSport.ViewModel.Shop
             settingService = new SettingService();
             inventoryService = new InventoryService();
             ContactTraces = new ObservableCollection<ContactTrace>();
-            EventTicketCollection = new ObservableCollection<EventTicket>();
+            EventSpotCollection = new ObservableCollection<EventTicket>();
 
-            GenerateSource(sportEvent);
+            if (isGuest)
+            {
+                IsGuest = isGuest;
+                GenerateGuestSource(sportEvents);
+            }
+            else
+                GenerateSource(sportEvents);
 
             PurchaseCommand = new Command(async () => await Purchase());
             UpdateQuantityCommand = new Command(async () => await UpdateQuantity());
             CloseClickedCommand = new Command(async () => await Close());
             AddContactTraceCommand = new Command(async () => await AddContactTrace());
             ContactTracingSelectedCommand = new Command<object>(ContactTracingSelected);
+
+            EventTicketSpotSelectedCommand = new Command(async (obj) => await EventTicketSpotSelected(obj));
+
+            SelectedEventTicketChangedCommand = new Command<Syncfusion.SfPicker.XForms.SelectionChangedEventArgs>(EventTicketSelectionChanged);
         }
 
         public Command PurchaseCommand { get; set; }
         public Command UpdateQuantityCommand { get; set; }
         public Command CloseClickedCommand { get; set; }
         public Command AddContactTraceCommand { get; set; }
+        public Command EventTicketSpotSelectedCommand { get; set; }
+
+        public Command<Syncfusion.SfPicker.XForms.SelectionChangedEventArgs> SelectedEventTicketChangedCommand
+        {
+            get { return selectedEventTicketChangedCommand; }
+            set { selectedEventTicketChangedCommand = value; }
+        }
 
         private Command<Object> _contactTracingSelectedCommand;
         public Command<object> ContactTracingSelectedCommand
@@ -77,7 +105,7 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _contactTracingSelectedCommand, value); }
         }
 
-        public ObservableCollection<EventTicket> EventTicketCollection
+        public ObservableCollection<EventTicket> EventSpotCollection
         {
             get { return _eventTicketCollection; }
             set { Set(ref _eventTicketCollection, value); }
@@ -89,10 +117,28 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _contactTraces, value); }
         }
 
+        public ObservableCollection<Product> ProductCollection
+        {
+            get { return _productCollection; }
+            set { Set(ref _productCollection, value); }
+        }
+
+        public ObservableCollection<SportEvent> SportEvents
+        {
+            get { return _sportEventCollection; }
+            set { Set(ref _sportEventCollection, value); }
+        }
+
         public SportEvent SportEvent
         {
             get { return _sportEvent; }
             set { Set(ref _sportEvent, value); }
+        }
+
+        public Product Product
+        {
+            get { return _product; }
+            set { Set(ref _product, value); }
         }
 
         public EventTicket EventTicket
@@ -111,6 +157,18 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _creditCard; }
             set { Set(ref _creditCard, value); }
+        }
+
+        //public string Image
+        //{
+        //    get { return _image; }
+        //    set { Set(ref _image, value); }
+        //}
+
+        public string DiscountCode
+        {
+            get { return _discountCode; }
+            set { Set(ref _discountCode, value); }
         }
 
         public string CustomerName
@@ -149,10 +207,22 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _phone, value); }
         }
 
+        public string EventTicketName
+        {
+            get { return _eventTicketName; }
+            set { Set(ref _eventTicketName, value); }
+        }
+
         public bool ShowCardDetail
         {
             get { return _showCardDetail; }
             set { Set(ref _showCardDetail, value); }
+        }
+
+        public bool ShowContactTracing
+        {
+            get { return _showContactTracing; }
+            set { Set(ref _showContactTracing, value); }
         }
 
         public bool IsMember
@@ -161,14 +231,20 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _isMember, value); }
         }
 
-        public int MemberTicketCount
+        public bool IsGuest
         {
-            get { return _memberTicketCount; }
-            set
-            {
-                Set(ref _memberTicketCount, value);
-            }
+            get { return _isGuest; }
+            set { Set(ref _isGuest, value); }
         }
+
+        //public int MemberTicketCount
+        //{
+        //    get { return _memberTicketCount; }
+        //    set
+        //    {
+        //        Set(ref _memberTicketCount, value);
+        //    }
+        //}
 
         public int Quantity
         {
@@ -224,9 +300,10 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _total, value); }
         }
 
-        internal async void GenerateSource(SportEvent sportEvent)
+        internal async void GenerateSource(List<SportEvent> sportEvents)
         {
             IsBusy = true;
+
             try
             {
                 string Email = await SecureStorage.GetAsync("Email");
@@ -234,46 +311,52 @@ namespace TruSport.ViewModel.Shop
 
                 if (Customer != null)
                 {
-                    var eventTickets = await sportEventService.GetSportEventTickets(sportEvent.ID, Email);
+                    var currentSportEvents = await sportEventService.GetCurrentSportEvents();
+                    currentSportEvents = sportEvents.Where(e => sportEvents.Any(d => d.ID == e.ID)).ToList();
+                    currentSportEvents.ForEach(e => e.EventTickets.Sort((x, y) => x.Product.Order - y.Product.Order));
 
                     ImportantMessage = await settingService.GetImportantMessage();
+                    ShowContactTracing = await settingService.ShowContactTracing();
 
                     CreditCard = new CreditCard();
-                    SportEvent = sportEvent;
-                    decimal processingFee = 0.00m;
+                    SportEvents = new ObservableCollection<SportEvent>(currentSportEvents);
 
-                    if (eventTickets != null && eventTickets.Count > 0)
+                    if (SportEvents != null)
                     {
-                        IsMember = eventTickets.Any(e => e.Product.Age.Contains("Member"));
-
-
-                        if (IsMember)
+                        foreach (var sportEvent in SportEvents)
                         {
-                            MemberTicketCount = eventTickets?.FirstOrDefault(e => e.Product.Age.Contains("Member"))?.Product?.MemberTicketCount ?? 0;
-                            eventTickets.ForEach(e => e.Quantity = e.Product.Age.Contains("Member") ? 1 : 0);
-                        }
-                        else
-                            eventTickets.ForEach(e => e.Quantity = e.Product.Age == "Adult" ? 1 : 0);
+                            sportEvent.EventTickets = sportEvent.EventTickets.OrderBy(e => e.Product.Order).ToList();
 
-                        EventTicketCollection = new ObservableCollection<EventTicket>(eventTickets.ToList());
+                            if (sportEvent.EventTickets.Any(e => e.Product.Age.Contains("Spot #")))
+                            {
+                                sportEvent.ShowEventSpot = true;
+                            }
+                            else
+                            {
+                                sportEvent.ShowEventSpot = false;
+                            }
+                        }
 
                         UpdatePrice();
                     }
 
                     CustomerName = Customer.Name;
 
-                    ContactTraces.Add(new ContactTrace
+                    if (ShowContactTracing)
                     {
-                        FirstName = Customer.FirstName,
-                        LastName = Customer.LastName,
-                        Phone = Customer.Phone
-                    });
+                        ContactTraces.Add(new ContactTrace
+                        {
+                            FirstName = Customer.FirstName,
+                            LastName = Customer.LastName,
+                            Phone = Customer.Phone
+                        });
 
-                    ContactTracingHeight = 40;
+                        ContactTracingHeight = 40;
+                    }
                 }
                 else
                 {
-                    await Navigation.PopModalAsync();
+                    await Navigation.PopAsync();
 
                     SecureStorage.RemoveAll();
                     await App.Database.SignOut();
@@ -281,10 +364,58 @@ namespace TruSport.ViewModel.Shop
                     Application.Current.MainPage = (new TicketFlyoutPage());
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                await Navigation.PopModalAsync();
+                await Navigation.PopAsync();
                 Debug.WriteLine(ex.Message, "Purchase Ticket");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        internal async void GenerateGuestSource(List<SportEvent> sportEvents)
+        {
+            IsBusy = true;
+
+            try
+            {
+                var currentSportEvents = await sportEventService.GetCurrentSportEvents();
+                currentSportEvents = sportEvents.Where(e => sportEvents.Any(d => d.ID == e.ID)).ToList();
+                currentSportEvents.ForEach(e => e.EventTickets.Sort((x, y) => x.Product.Order - y.Product.Order));
+
+                ImportantMessage = await settingService.GetImportantMessage();
+                ShowContactTracing = await settingService.ShowContactTracing();
+
+                Customer = new Customer();
+                CreditCard = new CreditCard();
+                SportEvents = new ObservableCollection<SportEvent>(currentSportEvents);
+                decimal processingFee = 0.00m;
+
+                if (SportEvents != null)
+                {                    
+                    foreach (var sportEvent in SportEvents)
+                    {
+                        sportEvent.EventTickets = sportEvent.EventTickets.OrderBy(e => e.Product.Order).ToList();
+
+                        if (sportEvent.EventTickets.Any(e => e.Product.Age.Contains("Spot #")))
+                        {
+                            sportEvent.ShowEventSpot = true;
+                        }
+                        else
+                        {
+                            sportEvent.ShowEventSpot = false;
+                        }
+                    }               
+
+                    UpdatePrice();
+                }
+            }
+            catch (Exception ex)
+            {
+                await Navigation.PopAsync();
+                Debug.WriteLine(ex.Message, "Purchase Guest Ticket");
             }
             finally
             {
@@ -302,21 +433,38 @@ namespace TruSport.ViewModel.Shop
                 decimal thisSubtotal = 0.0m;
                 decimal thisProcessingFee = 0.0m;
 
-                //check if any zero $ tickets
-
-                //int zeroDollar = this.EventTicketCollection.Where(e => e.Product.Price == 0).Sum(e => e.Quantity);
-                //this.ProcessingFeeAmount = 
-                //this.ProcessingFee = ((this.EventTicketCollection.Sum(e => e.Quantity) - zeroDollar) * this.ProcessingFeeAmount);
-
-
-                foreach (var eventTicket in EventTicketCollection)
+                foreach (var sportEvent in SportEvents)
                 {
-                    if (eventTicket.Quantity > 0)
+                    foreach (var eventTicket in sportEvent.EventTickets)
                     {
+                        if (eventTicket.ID == sportEvent.SelectedEventSpotID)
+                        {
+                                if (eventTicket.Product?.Price > 0)
+                                    thisProcessingFee += eventTicket.Product.Fee;
+
+                                thisSubtotal += eventTicket.Product.Price;
+                        }
+                        else if (eventTicket.Quantity >= 0)
+                        {
+                            
+                            if (EventSpotCollection.Any(e => e.ID == eventTicket.ID))
+                            {
+                                var removeEventTicket = EventSpotCollection.FirstOrDefault(e => e.ID == eventTicket.ID);
+
+                                EventSpotCollection.Remove(removeEventTicket);
+                            }
+
+                            if (eventTicket.Quantity > 0)
+                            {
+                                eventTicket.SportEvent = sportEvent;
+                                EventSpotCollection.Add(eventTicket);
+                            }
+                            
                             if (eventTicket.Product.Price > 0)
                                 thisProcessingFee += (eventTicket.Quantity * eventTicket.Product.Fee);
 
                             thisSubtotal += (eventTicket.Quantity * eventTicket.Product.Price);
+                        }
                     }
                 }
 
@@ -338,114 +486,147 @@ namespace TruSport.ViewModel.Shop
         async Task Purchase()
         {
             IsBusy = true;
+            int inventoryLevel = 0;
+            bool spotAvailable = false;
+            List<string> NoInventory = new List<string>();
+            List<OrderDetail> orderDetails = new List<OrderDetail>();
+
             try
             {
-                await UpdateQuantity();
-                var inventoryLevel = await inventoryService.EventTicketInventory(SportEvent.ID);
-
-                if (EventTicketCollection.Sum(e => e.Quantity) <= inventoryLevel)
+                if (SportEvents != null && SportEvents.Count > 0 && (CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV))
+                    && ((IsGuest && !String.IsNullOrEmpty(Customer.FirstName) && !String.IsNullOrEmpty(Customer.LastName) && !String.IsNullOrEmpty(Customer.Email) && !String.IsNullOrEmpty(Customer.Phone)) || !IsGuest))
                 {
-                    if (EventTicketCollection.Sum(e => e.Quantity) > 0 && EventTicketCollection.Sum(e => e.Quantity) <= ContactTraces.Count)
+                    foreach (var sportEvent in SportEvents)
                     {
-                        if ((ShowCardDetail && CreditCard != null && !String.IsNullOrEmpty(CreditCard.CardNumber) && !String.IsNullOrEmpty(CreditCard.Expiry) && !String.IsNullOrEmpty(CreditCard.CVV)) || !ShowCardDetail)
+                        if (sportEvent.EventTickets.Any(d => d.Product.Age.Contains("Spot #") && d.ID == sportEvent.SelectedEventSpotID))
                         {
-                            List<OrderDetail> orderDetails = new List<OrderDetail>();
+                            EventTicket eventTicket = sportEvent.EventTickets.FirstOrDefault(e => e.ID == sportEvent.SelectedEventSpotID);
+                            spotAvailable = await inventoryService.CheckIfEventSpotAvailable(eventTicket.ID);
+                        }
+                        else
+                        {
+                            inventoryLevel = await inventoryService.EventTicketInventory(sportEvent.ID);
+                        }
 
-                            foreach (var eventTicket in EventTicketCollection)
+                        if ((!String.IsNullOrEmpty(sportEvent.SelectedEventSpotID) && !spotAvailable) || (sportEvent.EventTickets.Sum(e => e.Quantity) > inventoryLevel && sportEvent.EventTickets.Sum(e => e.Quantity) <= 0))
+                        {
+                            if ((!String.IsNullOrEmpty(sportEvent.SelectedEventSpotID) && !spotAvailable))
                             {
-                                if (eventTicket.Quantity > 0)
+                                NoInventory.Add(sportEvent.Title + " - " + sportEvent.EventTickets.FirstOrDefault(e => e.ID == sportEvent.SelectedEventSpotID).Product.Age);
+                            }
+                            else
+                            {
+                                NoInventory.Add(sportEvent.Title + " - " + sportEvent.Date.ToString("MMM-dd hh:mm tt"));
+                            }
+                        }
+                        else
+                        {
+                            foreach (var eventTicket in sportEvent.EventTickets)
+                            {
+                                if (eventTicket.Quantity > 0 || eventTicket.ID == sportEvent.SelectedEventSpotID)
                                 {
+                                    int quantity = eventTicket.ID == sportEvent.SelectedEventSpotID ? 1 : eventTicket.Quantity;
+
                                     orderDetails.Add(new OrderDetail
                                     {
+                                        SportEventID = sportEvent.ID,
                                         EventTicketID = eventTicket.ID,
-                                        Qty = eventTicket.Quantity,
-                                        Subtotal = eventTicket.Quantity * eventTicket.Product.Price,
-                                        IsMemberTicket = eventTicket.Product.Age.Contains("Member")
+                                        Qty = quantity,
+                                        Subtotal = quantity * (DiscountCode == eventTicket.Product.MemberCode ? (eventTicket.Product.MemberPrice ?? eventTicket.Product.Price) : eventTicket.Product.Price),
+                                        IsMemberTicket = !String.IsNullOrEmpty(DiscountCode) && (DiscountCode == eventTicket.Product.MemberCode)
                                         //Fee = eventTicket.Quantity * eventTicket.Product.Fee
                                     });
                                 }
                             }
+                        }
+                    }
 
-                            PaymentAuthorize paymentAuthorize = new PaymentAuthorize
+                    if (NoInventory.Count == 0)
+                    {
+                        PaymentAuthorize paymentAuthorize = new PaymentAuthorize
+                        {
+                            NameOnCard = CustomerName ?? Customer.Name,
+                            Amount = Convert.ToString(Total),
+                            FixtureID = null,
+                            CardNumber = CreditCard.CardNumber,
+                            Expiry = CreditCard.Expiry,
+                            CVV = CreditCard.CVV,
+                            OrderDetails = orderDetails.ToList(),
+                            Email = Customer.Email
+                        };
+
+                        if (ShowContactTracing)
+                        {
+                            paymentAuthorize.ContactTraces = ContactTraces.ToList();
+                        }
+
+                        if (IsGuest)
+                        {
+                            paymentAuthorize.FirstName = Customer.FirstName;
+                            paymentAuthorize.LastName = Customer.LastName;
+                            paymentAuthorize.Phone = Customer.Phone;
+                        }
+
+                        if (!String.IsNullOrEmpty(ImportantMessage))
+                            await App.Current.MainPage.DisplayAlert("Important Message", ImportantMessage, "Okay");
+
+                        bool confirmPayment = await App.Current.MainPage.DisplayAlert("Purchase Ticket", "You will be charged a total of $" + Total, "Purchase", "Cancel");
+
+                        if (confirmPayment)
+                        {
+                            PaymentResponse paymentResponse = new PaymentResponse();
+
+                            paymentResponse = await customerTicketService.GuestCheckoutPurchase(paymentAuthorize);
+
+                            if (paymentResponse != null)
                             {
-                                NameOnCard = CustomerName,
-                                Quantity = EventTicketCollection.Sum(e => e.Quantity),
-                                Amount = Convert.ToString(Total),
-                                FixtureID = null,
-                                //CustomerID = Customer.ID,
-                                ContactTraces = ContactTraces.ToList(),
-                                OrderDetails = orderDetails.ToList(),
-                                SportEventID = SportEvent.ID
-                            };
+                                IsBusy = false;
 
-                            if (ShowCardDetail)
-                            {
-                                paymentAuthorize.CardNumber = CreditCard.CardNumber;
-                                paymentAuthorize.Expiry = CreditCard.Expiry;
-                                paymentAuthorize.CVV = CreditCard.CVV;
-                            }
-
-                            var hasStock = await inventoryService.CheckEventTicketInventory(SportEvent.ID);
-
-                            if (hasStock)
-                            {
-                                if(!String.IsNullOrEmpty(ImportantMessage))
-                                    await App.Current.MainPage.DisplayAlert("Important Message", ImportantMessage, "Okay");
-                                
-                                bool confirmPayment = await App.Current.MainPage.DisplayAlert("Purchase Ticket", "You will be charged a total of " + Total.ToString("C"), "Purchase", "Cancel");
-
-                                if (confirmPayment)
+                                MessagingCenter.Subscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased", async (objs, product) =>
                                 {
-                                    PaymentResponse paymentResponse = new PaymentResponse();
+                                    MessagingCenter.Unsubscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased");
 
-                                    if (ShowCardDetail)
-                                    {
-                                        //paymentResponse = await customerTicketService.PurchaseTest(paymentAuthorize);
-                                        paymentResponse = await customerTicketService.Purchase(paymentAuthorize);
-                                    }
-                                    else
-                                    {
-                                        //paymentResponse = await customerTicketService.ZeroPurchaseTest(paymentAuthorize);
-                                        paymentResponse = await customerTicketService.ZeroPurchase(paymentAuthorize);
-                                    }
+                                    if (product.IsApproved)
+                                        await Navigation.PopAsync();
+                                });
 
-                                    if (paymentResponse != null)
-                                    {
-                                        IsBusy = false;
-
-                                        MessagingCenter.Subscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased", async (objs, product) =>
-                                        {
-                                            MessagingCenter.Unsubscribe<PurchaseTicketResultPageViewModel, PaymentResponse>(this, "TicketPurchased");
-
-                                            if (product.IsApproved)
-                                                await Navigation.PopModalAsync();
-                                        });
-
-                                        await Navigation.PushModalAsync(new PurchaseTicketResultPage(paymentResponse));
-                                    }
-                                    else
-                                    {
-                                        await Application.Current.MainPage.DisplayAlert("Transaction Error", "Looks like there was an issue processing your payment, please check your card details and try again.", "OK");
-                                    }
-                                }
+                                await Navigation.PushModalAsync(new PurchaseTicketResultPage(paymentResponse));
                             }
                             else
                             {
-                                await Application.Current.MainPage.DisplayAlert("Out of Stock", "Sorry, there are no more tickets left for purchase.", "OK");
-                                await Navigation.PopModalAsync();
+                                await Application.Current.MainPage.DisplayAlert("Transaction Error", "Looks like there was an issue processing your payment, please check your card details and try again.", "OK");
                             }
-
                         }
-                        else
-                            await Application.Current.MainPage.DisplayAlert("Card Details", "Please enter your card details.", "OK");
+
                     }
                     else
-                        await Application.Current.MainPage.DisplayAlert("Contact Tracing", "You must provide the names for the match tickets for contact tracing.", "OK");
+                    {
+                        if (NoInventory.Count > 0)
+                        {
+                            if (NoInventory.Any(e => e.Contains("Spot #")))
+                            {
+                                await Application.Current.MainPage.DisplayAlert("Not Available", "Unfortunately, this spot is no longer available:" + string.Join(", ", NoInventory), "OK");
+                            }
+                            else
+                            {
+                                await Application.Current.MainPage.DisplayAlert("Not Available", "Unfortunately, there aren't any tickets left for:" + string.Join(", ", NoInventory), "OK");
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Available Tickets", "Sorry, there " + (inventoryLevel == 0 ? "are no tickets" : inventoryLevel == 1 ? "is only 1 ticket" : "are only " + inventoryLevel + " tickets") + " available.", "OK");
-                    await Navigation.PopModalAsync();
+                    if (IsGuest && (String.IsNullOrEmpty(Customer.FirstName) || String.IsNullOrEmpty(Customer.LastName) || String.IsNullOrEmpty(Customer.Email) || String.IsNullOrEmpty(Customer.Phone)))
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Personal Information", "Enter you personal details to receive your ticket.", "OK");
+                    }
+
+                    if (ShowCardDetail && CreditCard != null && (String.IsNullOrEmpty(CreditCard.CardNumber) || String.IsNullOrEmpty(CreditCard.Expiry) || String.IsNullOrEmpty(CreditCard.CVV)))
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Card Details", "Please enter your card details.", "OK");
+                    }
+                                        
+                    await Navigation.PopAsync();
                 }
             }
             catch (Exception ex)
@@ -462,12 +643,8 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                if(EventTicketCollection.Count > 0)
+                if(SportEvents.Select(e => e.EventTickets).Count() > 0)
                 {
-
-                    //Quantity2 = EventTicketCollection.Sum(e => e.Quantity);
-                    //Price2 = EventTicketCollection.FirstOrDefault().Product.Price;
-
                     UpdatePrice();
                 }
             }
@@ -481,8 +658,9 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
+                MessagingCenter.Send(this, "ClearTicketList");
                 MessagingCenter.Send(this, "TicketListPage");
-                await Navigation.PopModalAsync(true);
+                await Navigation.PopAsync(true);
             }
             catch (Exception ex)
             {
@@ -543,6 +721,71 @@ namespace TruSport.ViewModel.Shop
             catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Remove Contact Tracing");
+            }
+        }
+
+        private async Task EventTicketSpotSelected(object obj)
+        {
+            try
+            {
+                var selectedSportEvent = obj as SportEvent;
+
+                MessagingCenter.Subscribe<TicketSpotListPageViewModel, EventTicket>(this, "SelectedEventSpot", async (objs, selectedSpot) =>
+                {
+                    MessagingCenter.Unsubscribe<TicketSpotListPageViewModel, EventTicket>(this, "SelectedEventSpot");
+
+                    if (selectedSpot != null)
+                    {
+                        foreach (var sportEvent in SportEvents)
+                        {
+                            if (sportEvent.ID == selectedSpot.SportEventID)
+                            {
+                                sportEvent.SelectedEventSpotID = selectedSpot.ID;
+                                selectedSpot.Quantity = 1;
+
+                                if (EventSpotCollection.Any(e => e.SportEventID == selectedSpot.SportEventID))
+                                {
+                                    var eventTicket = EventSpotCollection.FirstOrDefault(e => e.SportEventID == selectedSpot.SportEventID);
+
+                                    EventSpotCollection.Remove(eventTicket);
+                                }
+
+                                EventSpotCollection.Add(selectedSpot);
+
+                                await Application.Current.MainPage.DisplayAlert("Spot Added", selectedSpot.Product.Age + " has been added to Order Summary below.", "OK");
+
+                                UpdatePrice();
+                                break;
+                            }
+                        }
+                    }
+                });
+
+
+                await Navigation.PushModalAsync(new TicketSpotListPage(selectedSportEvent.ID));
+                    //DisplayAlert("Message", (listView.SelectedItem as SportEvent).ContactName + " is selected", "OK");
+                //}
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "EventTicketSpotSelected");
+            }
+        }
+
+        private void EventTicketSelectionChanged(Syncfusion.SfPicker.XForms.SelectionChangedEventArgs e)
+        {
+            try
+            {
+                var product = e.NewValue as Product;
+
+                Product = product;
+                EventTicketName = Product.Age;
+
+                UpdatePrice();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
     }

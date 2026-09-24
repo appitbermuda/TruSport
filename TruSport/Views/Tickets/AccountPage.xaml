@@ -177,7 +177,7 @@
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End"/>
-                                <Label Text="{Binding Total, StringFormat='{0:C}'}"
+                                <Label Text="{Binding Total, StringFormat='${0}'}"
                                        FontSize="Micro"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"

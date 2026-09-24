@@ -125,6 +125,22 @@ namespace TruSport.Converters
         }
     }
 
+    public class FailedTransactionConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (String.IsNullOrEmpty((string)value))
+                return "Transaction Failed";
+
+            return (string)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return int.Parse((string)value);
+        }
+    }
+
     public class CricketHomeTeamScoreConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -143,7 +159,7 @@ namespace TruSport.Converters
 
                     foreach(var matchInning in matchInnings)
                     {
-                        if(cricketFixture.MatchType.Name == "One 50 Overs" || cricketFixture.MatchType.Name == "T20" || cricketFixture.MatchType.Name == "County Cup")
+                        if(cricketFixture.MatchType.Name.Contains("50 Overs") || cricketFixture.MatchType.Name.Contains("T20") || cricketFixture.MatchType.Name.Contains("County Cup"))
                             score += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
                         else
                             score += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
@@ -181,7 +197,7 @@ namespace TruSport.Converters
 
                     foreach (var matchInning in matchInnings)
                     {
-                        if (cricketFixture.MatchType.Name == "One 50 Overs" || cricketFixture.MatchType.Name == "T20" || cricketFixture.MatchType.Name == "County Cup")
+                        if (cricketFixture.MatchType.Name.Contains("50 Overs") || cricketFixture.MatchType.Name.Contains("T20") || cricketFixture.MatchType.Name.Contains("County Cup"))
                             score += String.Format("{0}/{1} ({2} Ovr) ", matchInning.Run, matchInning.Wicket, matchInning.Over);
                         else
                             score += String.Format("{0}/{1}", matchInning.Run, matchInning.Wicket);
@@ -343,6 +359,19 @@ namespace TruSport.Converters
                 return false;
             else
                 return true;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class HalfWidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (App.ScreenWidth/2) - 10;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1334,6 +1363,43 @@ namespace TruSport.Converters
         }
     }
 
+    public class GroupingSelectionTicketConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<CustomerTicket>(groupResult.Items.ToList<CustomerTicket>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    return data.EventTicket.SportEvent.TicketTitle;
+                }
+                else
+                {
+                        return data.EventTicket.SportEvent.Date.ToString("MMM d");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class GroupingSelectionFootballConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1389,6 +1455,49 @@ namespace TruSport.Converters
                 GroupResult groupResult = value as GroupResult;
 
                 var items = new List<BasketballFixture>(groupResult.Items.ToList<BasketballFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    if (!data.MatchType.IsTable)
+                        return data.League.Name + " - " + data.MatchType.Name;
+                    else
+                        return data.League.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Season.Date;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Selection Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GroupingSelectionGolfConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<GolfFixture>(groupResult.Items.ToList<GolfFixture>());
                 var data = items[0];
 
                 if (parameter is Label)
@@ -1760,6 +1869,46 @@ namespace TruSport.Converters
         }
     }
 
+    public class GroupingCompetitionGolfConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value == null)
+                    return value;
+
+                GroupResult groupResult = value as GroupResult;
+
+                var items = new List<GolfFixture>(groupResult.Items.ToList<GolfFixture>());
+                var data = items[0];
+
+                if (parameter is Label)
+                {
+                    return data.MatchType.Name;
+                }
+                else
+                {
+                    if (data.Season.IsCurrent)
+                        return data.Date.ToString("MMM d");
+                    else
+                        return data.Season.Date;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Grouping Competition Converter");
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class GroupingTransferSelectionConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -2005,7 +2154,28 @@ namespace TruSport.Converters
         {
             if ((string)value != null && (string)value != "")
             {
-                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+                var image = Constants.ImageEndPoint + (string)value;
+
+                return image;
+            }
+            else
+                return "ontracklogo.png";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class EventImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var eventTickets = ((List<EventTicket>)value);
+            if (eventTickets != null && eventTickets.Count > 0)
+            {
+                var image = Constants.ImageEndPoint + eventTickets.FirstOrDefault().Product.Image;
 
                 return image;
             }
@@ -2025,12 +2195,12 @@ namespace TruSport.Converters
         {
             if ((string)value != null && (string)value != "")
             {
-                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+                var image = Constants.ImageEndPoint + (string)value;
 
                 return image;
             }
             else
-                return "http://ontrackimagestore.blob.core.windows.net/images/bermudabasketballlogo.png";
+                return Constants.ImageEndPoint + "bermudabasketballlogo.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -2045,7 +2215,7 @@ namespace TruSport.Converters
         {
             if ((string)value != null && (string)value != "")
             {
-                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+                var image = Constants.ImageEndPoint + (string)value;
 
                 return image;
             }
@@ -2065,7 +2235,7 @@ namespace TruSport.Converters
         {
             if ((string)value != null && (string)value != "")
             {
-                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+                var image = Constants.ImageEndPoint + (string)value;
 
                 return image;
             }
@@ -2085,7 +2255,7 @@ namespace TruSport.Converters
         {
             if ((string)value != null && (string)value != "")
             {
-                var image = "http://ontrackimagestore.blob.core.windows.net/images/" + (string)value;
+                var image = Constants.ImageEndPoint + (string)value;
 
                 return image;
             }
@@ -2191,6 +2361,44 @@ namespace TruSport.Converters
         }
     }
 
+    public class EventTicketIsStopConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var eventTickets = ((List<EventTicket>)value);
+            if (eventTickets.Any(e => e.Product.Age.Contains("Spot #")))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class EventTicketIsStopInverseConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var eventTickets = ((List<EventTicket>)value);
+            if (eventTickets.Any(e => e.Product.Age.Contains("Spot #")))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class EventArgsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -2229,6 +2437,23 @@ namespace TruSport.Converters
                 return false;
 
             return !(((IList)value).Count == 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class ListHeightConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var eventTickets = ((List<EventTicket>)value);
+            if (eventTickets.Count > 0)
+                return 25 * eventTickets.Count;
+
+            return 400;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

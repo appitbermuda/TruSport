@@ -12,11 +12,14 @@ namespace TruSport.Model
         public string Age { get; set; }
         public string Image { get; set; }
         public decimal Price { get; set; }
+        public decimal? MemberPrice { get; set; }
         public decimal Fee { get; set; }
+        public string MemberCode { get; set; }
         public int MemberTicketCount { get; set; }
+        public int Order { get; set; }
 
-        //[Ignore]
-        //public ProductType ProductType { get; set; }
+        [Ignore]
+        public ProductType ProductType { get; set; }
 
         //[Ignore]
         //public TicketCompany TicketCompany { get; set; }

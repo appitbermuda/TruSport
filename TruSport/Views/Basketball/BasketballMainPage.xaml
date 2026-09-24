@@ -81,7 +81,7 @@
                         </StackLayout>
                     </Grid>
                 <Button VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" x:Name="MenuButton" ImageSource="menu.png" Clicked="Button_Clicked"/>
-                <Button Grid.Column="2" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" x:Name="ShowHidePOW" Text="" TextColor="White" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="ShowHidePOW_Clicked"  IsEnabled="{Binding HasAwards}" />
+                <Button Grid.Column="2" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" x:Name="ShowHidePOW" Text="" TextColor="White" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="ShowHidePOW_Clicked"  IsVisible="{Binding HasAwards}" />
 
 
                 <StackLayout  x:Name="POWContainer" Grid.Row="2" Grid.ColumnSpan="3" Padding="5"  IsVisible="{Binding ShowPOW}">

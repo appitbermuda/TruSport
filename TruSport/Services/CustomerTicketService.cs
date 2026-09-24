@@ -189,6 +189,72 @@ namespace TruSport.Services
             return paymentResponse;
         }
 
+        public async Task<PaymentResponse> GuestPurchase(PaymentAuthorize payment)
+        {
+            PaymentResponse paymentResponse = new PaymentResponse();
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+
+                var request = new RestRequest("CustomerTicket/PurchaseGuestTicket", Method.POST);
+
+                request.AddJsonBody(payment);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    paymentResponse = JsonConvert.DeserializeObject<PaymentResponse>(response.Content);
+
+                    return paymentResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            paymentResponse.Description = "There was an issue with your payment, please try again.";
+            paymentResponse.IsApproved = false;
+            return paymentResponse;
+        }
+
+        public async Task<PaymentResponse> GuestCheckoutPurchase(PaymentAuthorize payment)
+        {
+            PaymentResponse paymentResponse = new PaymentResponse();
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+
+                var request = new RestRequest("CustomerTicket/PurchaseGuestTicketCheckout", Method.POST);
+
+                request.AddJsonBody(payment);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    paymentResponse = JsonConvert.DeserializeObject<PaymentResponse>(response.Content);
+
+                    return paymentResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Fixture");
+            }
+
+            paymentResponse.Description = "There was an issue with your payment, please try again.";
+            paymentResponse.IsApproved = false;
+            return paymentResponse;
+        }
+
         public async Task<PaymentResponse> ZeroPurchase(PaymentAuthorize payment)
         {
             PaymentResponse paymentResponse = new PaymentResponse();

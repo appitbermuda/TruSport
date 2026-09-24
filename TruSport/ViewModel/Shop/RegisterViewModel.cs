@@ -13,6 +13,7 @@ namespace TruSport.ViewModel.Shop
     public class RegisterViewModel : BaseValidationViewModel
     {
         public CustomerRequest _customerRequest;
+        Type _backToPage;
         public string _firstName;
         public string _lastName;
         public string _email;
@@ -46,6 +47,12 @@ namespace TruSport.ViewModel.Shop
         {
             get { return _isRoleSelected; }
             set { Set(ref _isRoleSelected, value); }
+        }
+
+        public Type BackToPage
+        {
+            get { return _backToPage; }
+            set { Set(ref _backToPage, value); }
         }
 
         public string FirstName
@@ -119,7 +126,7 @@ namespace TruSport.ViewModel.Shop
         INavigation Navigation;
         AuthenticationService authenticationService;
 
-        public RegisterViewModel(INavigation navigation)
+        public RegisterViewModel(INavigation navigation, Type Page = null)
         {
             Navigation = navigation;
             authenticationService = new AuthenticationService();
@@ -127,6 +134,9 @@ namespace TruSport.ViewModel.Shop
             IsRoleSelected = false;
 
             Customer = new CustomerRequest();
+
+            if (Page != null)
+                BackToPage = Page;
 
             GenerateSource();
 

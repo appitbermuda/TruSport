@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace TruSport.Views.Cricket
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CricketMasterDetailPage : MasterDetailPage
+    public partial class CricketMasterDetailPage : FlyoutPage
     {
         public CricketMasterDetailPage()
         {

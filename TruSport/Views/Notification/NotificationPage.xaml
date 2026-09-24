@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable"
+    x:Class="TruSport.Views.Notification.NotificationPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Name="NotificationItemTemplate" x:Key="NotificationItemTemplate">
+                <StackLayout Padding="0"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" RowSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackLayout Padding="10" VerticalOptions="Center" Grid.ColumnSpan="2">
+                                <Label Text="{Binding Title}"
+                                       FontSize="Medium"
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                            </StackLayout>
+                            
+                            <StackLayout Padding="15,10" VerticalOptions="Center" Grid.ColumnSpan="2" Grid.Row="1">
+                                <Label Text="{Binding Message}"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                            </StackLayout>
+                            
+                            <StackLayout Padding="15,10" VerticalOptions="Center" Grid.Column="0" Grid.Row="2">
+                                <Label Text="{Binding DeliveredTime, StringFormat='{0:dddd MMM dd, yyyy h:mm tt}'}"
+                                       FontSize="Micro"                                       
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start">
+                                </Label>
+                            </StackLayout>
+                            <StackLayout Padding="15,10" VerticalOptions="Center" Grid.Column="1" Grid.Row="2">
+                                <Label Text="{Binding Tag}"
+                                       FontSize="Micro"                                       
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="End">
+                                </Label>
+                            </StackLayout>
+                </Grid>
+                    </StackLayout>
+                    </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Spacing="20">
+                <Grid x:Name="NotificationGrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <listView:SfListView x:Name="NotificationList"
+                                        ItemsSource="{Binding PushNotificationCollection}"
+                                        ItemTemplate="{StaticResource NotificationItemTemplate}"
+                                        SelectionMode="None"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="FillAndExpand"
+                                        ItemSpacing="5"
+                                        Padding="1"
+                                        SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
+                                        AutoFitMode="DynamicHeight"
+                                    >
+                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="DeliveredTime" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                </listView:SfListView>
+                        </StackLayout>
+                <ActivityIndicator HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsActivityIndicatorVisible}" IsRunning="{Binding IsActivityIndicatorVisible}"/>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

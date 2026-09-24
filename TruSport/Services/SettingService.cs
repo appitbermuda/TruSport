@@ -138,5 +138,51 @@ namespace TruSport.Services
                 return null;
             }
         }
+
+        public async Task<string> GetCurrentVersionNumber()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Setting/CurrentVersionNumber", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                string currentVersionNumber = JsonConvert.DeserializeObject<string>(response.Content);
+
+                return currentVersionNumber;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+
+                return null;
+            }
+        }
+
+        public async Task<bool> ShowContactTracing()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Setting/ShowContactTracing", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                bool showContactTracing = JsonConvert.DeserializeObject<bool>(response.Content);
+
+                return showContactTracing;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Setting");
+
+                return false;
+            }
+        }
     }
 }

@@ -67,7 +67,7 @@
                         <!--<Button Grid.Column="2" FontSize="Large" VerticalOptions="CenterAndExpand" HorizontalOptions="Start" x:Name="SelectSport" Text="{Binding SelectedSport, Converter={StaticResource sportConverter}}" TextColor="White" FontFamily="{StaticResource fontAwesomeSolidFamily}" Command="{Binding SelectSportCommand}"/>-->
                     </Grid>
                 <Button VerticalOptions="CenterAndExpand" x:Name="MenuButton" ImageSource="menu.png" Clicked="Button_Clicked" BackgroundColor="Transparent"/>
-                <Button Grid.Column="2" VerticalOptions="CenterAndExpand" x:Name="ShowHidePOW" Text="" TextColor="White" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="ShowHidePOW_Clicked" IsEnabled="{Binding HasAwards}"  BackgroundColor="Transparent"/>
+                <Button Grid.Column="2" VerticalOptions="CenterAndExpand" x:Name="ShowHidePOW" Text="" TextColor="White" FontFamily="{StaticResource fontAwesomeSolidFamily}" Clicked="ShowHidePOW_Clicked" IsVisible="{Binding HasAwards}"  BackgroundColor="Transparent"/>
                 <StackLayout  x:Name="POWContainer" Grid.Row="2" Grid.ColumnSpan="3" Padding="5"  IsVisible="{Binding ShowPOW}">
                     <CarouselView ItemsSource="{Binding AwardCollection}" HeightRequest="400">
                         <CarouselView.ItemTemplate>

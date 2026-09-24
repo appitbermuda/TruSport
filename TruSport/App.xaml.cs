@@ -6,7 +6,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 using Microsoft.AppCenter;
-using Microsoft.AppCenter.Push;
+//using Microsoft.AppCenter.Push;
 using System.IO;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -37,9 +37,7 @@ namespace TruSport
         public App()
         {
             //Register Syncfusion license
-            //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTUxNzhAMzEzNjJlMzQyZTMwZkJVNlFpZWo2ajNrRCtTdllpYWpUbDlYRUdIZyswTUl1MWN6aHo2M3lUQT0=");
-            //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjUwNTkxQDMxMzgyZTMxMmUzMFc0QlJSUWl1VnVJa3UrM0JRSFBvK0hwajdNb0JtM3NzN0c0ODNlRHI4UDQ9");
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mjc2MzQ3QDMxMzgyZTMxMmUzMEJqVi9DRlJZTVk3QThlVXVzTU5LRXVmeERPV2VqVjk5L1JUWk4yZjc1YTA9");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjQ5NjIxQDMyMzAyZTMxMmUzMFoyNG92dytaQndwT1R0Q1dUcXhqYzRmTkE4TlY5cHVuVWJjL2NZTE5GSHc9");
 
             InitializeComponent();
 
@@ -53,11 +51,8 @@ namespace TruSport
 
             Resources = new ResourceDictionary();
             Resources.Add("buttonStyle", buttonStyle);
-            //Resources.Add("primaryGray", Color.FromHex("ff00b4"));
-            //Resources.Add("primaryGray", Color.FromHex("37474F"));
             Resources.Add("primaryPink", Color.FromHex("848685"));
             Resources.Add("primaryAccentPink", Color.FromHex("ff77d7"));
-            //Resources.Add("primaryPink", Color.FromHex("ff77d7"));
             Resources.Add("primaryLightGray", Color.FromHex("556167"));
             Resources.Add("primaryBarBlue", Color.FromHex("0e1550"));
             Resources.Add("primaryDarkBlue", Color.FromHex("2a348d"));
@@ -78,34 +73,8 @@ namespace TruSport
             PushServiceContainer.Resolve<IPushNotificationActionService>()
             .ActionTriggered += NotificationActionTriggered;
 
-
-            //MainPage = new AdminMainPage();
-            //MainPage = new FootballMainPage();
-            //MainPage = new OnTrackPage();
-            //MainPage = new NavigationPage(new OnTrackPage())
-            //{
-            //    BackgroundColor = (Color)App.Current.Resources["primaryDarkBlueTwo"],
-            //    BarTextColor = Color.White,
-            //};
-
-            //MainPage = new FootballMasterDetailPage();
-
-
             MainPage = new NavigationPage(new MainPage());
             
-
-            //MainPage = new NavigationPage(new AdminMainPage()
-            //{
-            //    BarBackgroundColor = (Color)App.Current.Resources["primaryLightGray"],
-            //    BarTextColor = Color.White,
-
-            //});
-
-            //MainPage = new NavigationPage(new FootballMainPage()
-            //{
-            //    BarBackgroundColor = Color.FromHex("37474F"),
-            //    BarTextColor = Color.White
-            //});
         }
 
         protected override void OnAppLinkRequestReceived(Uri uri)
@@ -143,37 +112,7 @@ namespace TruSport
 
         protected override async void OnStart()
         {
-            if (!AppCenter.Configured)
-            {
-                Microsoft.AppCenter.Push.Push.PushNotificationReceived += (sender, e) =>
-                {
-
-                    //// Add the notification message and title to the message
-                    //var summary = $"Push notification received:" +
-                    //                    $"\n\tNotification title: {e.Title}" +
-                    //                    $"\n\tMessage: {e.Message}";
-
-                    //// If there is custom data associated with the notification,
-                    //// print the entries
-                    //if (e.CustomData != null)
-                    //{
-                    //    summary += "\n\tCustom data:\n";
-                    //    foreach (var key in e.CustomData.Keys)
-                    //    {
-                    //        summary += $"\t\t{key} : {e.CustomData[key]}\n";
-                    //    }
-                    //}
-
-                    //// Send the notification summary to debug output
-                    //System.Diagnostics.Debug.WriteLine(summary);
-                    
-                };
-            }
-
-            //var userLoggedIn = await SecureStorage.GetAsync("UserLoggedIn");
-            //var token = await SecureStorage.GetAsync("Token");
             
-            //if(userLoggedIn == null)
 
 #if DEBUG
             //await SecureStorage.SetAsync("TeamID", "fb9e133c-f062-4bd2-947a-b3db229464ae");
@@ -187,37 +126,7 @@ namespace TruSport
             AppCenter.Start("ios=7e262408-f3ac-48de-90ea-44ae3d91643b;android=7396cb46-271a-4f33-88d5-b97ed582f5c9",
                   typeof(Analytics), typeof(Crashes));
 
-            //var deviceID = await AppCenter.GetInstallIdAsync();
-
-            //await Push.SetEnabledAsync(true);
-
-            //bool isEnabled = await Push.IsEnabledAsync();
-
             VersionTracking.Track();
-
-            //// Handle when your app starts
-            //if (App.Database != null)
-            //{
-            //    var sport = await App.Database.GetDefaultSport();
-
-            //    if (sport == null || String.IsNullOrEmpty(sport.Sport))
-            //        MainPage = new NavigationPage(new MainPage());
-            //    else
-            //    {
-            //        if (sport.Sport.ToLower() == "cricket")
-            //            MainPage = new CricketMasterDetailPage();
-            //        else if (sport.Sport.ToLower() == "bowling")
-            //            MainPage = new BowlingMasterDetailPage();
-            //        else if (sport.Sport.ToLower() == "tennis")
-            //            MainPage = new TennisMasterDetailPage();
-            //        else
-            //            MainPage = new FootballMasterDetailPage();
-            //    }
-            //}
-            //else
-            //{
-            //    MainPage = new NavigationPage(new MainPage());
-            //}
 
         }
 

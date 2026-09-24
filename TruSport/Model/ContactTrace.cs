@@ -18,5 +18,8 @@ namespace TruSport.Model
 
         [Ignore]
         public Order Order { get; set; }
+
+        [Ignore]
+        public string EventTicketID { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Syncfusion.DataSource;
 using TruSport.Model;
 using TruSport.ViewModels;
@@ -25,8 +26,16 @@ namespace TruSport.Views.Football
                 PropertyName = "League.Name",
                 KeySelector = (object obj1) =>
                 {
-                    var item = (obj1 as Team);
-                    return item.League.Order;
+                    try
+                    {
+                        var item = (obj1 as Team);
+                        return item.League.Order;
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message, "Team League");
+                        return 0;
+                    }
                 }
             });
         }

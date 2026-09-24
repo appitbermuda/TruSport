@@ -188,6 +188,8 @@ namespace TruSport.ViewModel.Shop
                 SecureStorage.RemoveAll();
                 await App.Database.SignOut();
 
+                App.IsLoggedIn = false;
+
                 try
                 {
                     await notificationRegistrationService.DeregisterDeviceAsync();
@@ -195,18 +197,18 @@ namespace TruSport.ViewModel.Shop
                 catch (Exception ex)
                 { }
 
-                //App.Current.MainPage = new NavigationPage(new TicketFlyoutPage());
+                Application.Current.MainPage = (new TicketFlyoutPage());
 
-                if (Application.Current.MainPage is FlyoutPage mdp)
-                {
-                    var page = (Page)Activator.CreateInstance(typeof(SignInPage), new object[] { typeof(AccountPage) });
+                //if (Application.Current.MainPage is FlyoutPage mdp)
+                //{
+                //    var page = (Page)Activator.CreateInstance(typeof(SignInPage), new object[] { typeof(AccountPage) });
 
-                    mdp.Detail = new NavigationPage(page)
-                    {
-                        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                        BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                    };
-                }
+                //    mdp.Detail = new NavigationPage(page)
+                //    {
+                //        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                //        BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                //    };
+                //}
 
                 //App.Current.MainPage = new NavigationPage(new MainPage());
 
@@ -237,7 +239,7 @@ namespace TruSport.ViewModel.Shop
                 //{
                 //    App.Current.MainPage = new NavigationPage(new MainPage());
                 //}
-                //if (Application.Current.MainPage is MasterDetailPage mdp)
+                //if (Application.Current.MainPage is FlyoutPage mdp)
                 //{
                 //    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
                 //    page.Title = "Tickets";

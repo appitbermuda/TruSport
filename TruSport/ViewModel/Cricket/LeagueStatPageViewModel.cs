@@ -17,9 +17,8 @@ namespace TruSport.ViewModels.Cricket
     public class LeagueStatPageViewModel : BaseViewModel
     {
         #region Fields
-        private LeagueStat tappedInfo; 
-        private ObservableCollection<LeagueStat> _playerMostRunsCollection;
-        private ObservableCollection<LeagueStat> _playerMostWicketsCollection;
+        private MatchType tappedInfo; 
+        private ObservableCollection<MatchType> _matchTypeCollection;
         
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> itemtapCommand;
         private Command<object> favoriteTapCommand;
@@ -27,8 +26,7 @@ namespace TruSport.ViewModels.Cricket
         private bool _isActivityIndicatorVisible;
         private bool noConnectivity;
         
-        LeagueStatService leagueStatsService;
-        AdService adService;
+        MatchTypeService matchTypeService;
 
         #endregion
 
@@ -36,15 +34,10 @@ namespace TruSport.ViewModels.Cricket
 
         public LeagueStatPageViewModel()
         {
-            PlayerMostRunsCollection = new ObservableCollection<LeagueStat>();
-            PlayerMostWicketsCollection = new ObservableCollection<LeagueStat>();
+            MatchTypeCollection = new ObservableCollection<MatchType>();
 
-            leagueStatsService = new LeagueStatService();
-            adService = new AdService();
-
+            matchTypeService = new MatchTypeService();
             GenerateSource();
-
-            AdTappedCommand = new Command(AdTapped);
         }
 
         #endregion
@@ -77,24 +70,12 @@ namespace TruSport.ViewModels.Cricket
             set { resetTapCommand = value; }
         }
 
-        public ObservableCollection<LeagueStat> PlayerMostRunsCollection
+        public ObservableCollection<MatchType> MatchTypeCollection
         {
-            get { return _playerMostRunsCollection; }
-            set { Set(ref this._playerMostRunsCollection, value); }
+            get { return _matchTypeCollection; }
+            set { Set(ref this._matchTypeCollection, value); }
         }
 
-        public ObservableCollection<LeagueStat> PlayerMostWicketsCollection
-        {
-            get { return _playerMostWicketsCollection; }
-            set { Set(ref this._playerMostWicketsCollection, value); }
-        }
-
-        private Ad _ad;
-        public Ad Ad
-        {
-            get { return _ad; }
-            set { Set(ref _ad, value); }
-        }
 
         public bool NoConnectivity
         {
@@ -114,10 +95,6 @@ namespace TruSport.ViewModels.Cricket
 
         internal async void GenerateSource()
         {
-            //for(var i = 0; i < SyncTitles.Length; i++)
-            //{
-            //    SyncTitleCollection.Add(SyncTitles[i]);
-            //}
             IsActivityIndicatorVisible = true;
 
             var current = Connectivity.NetworkAccess;
@@ -127,29 +104,11 @@ namespace TruSport.ViewModels.Cricket
 
                 try
                 {
-                    await Task.Run(async () =>
-                    {
-                        var ads = await adService.GetAds();
 
-                        if (ads != null)
-                        {
-                            Device.BeginInvokeOnMainThread(() =>
-                            {
-                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
-                            });
-                        }
-                    });
+                    var matchTypes = await matchTypeService.GetCurrentCricketLeagueTypes();
 
-                    var runsByPlayer = await leagueStatsService.GetMostRunsByPlayer();
-
-                    if(runsByPlayer != null)
-                        PlayerMostRunsCollection = new ObservableCollection<LeagueStat>(runsByPlayer);
-
-                    var wicketsByPlayer = await leagueStatsService.GetMostWicketsByPlayer();
-
-                    if(wicketsByPlayer != null)
-                        PlayerMostWicketsCollection = new ObservableCollection<LeagueStat>(wicketsByPlayer);
-
+                    if(matchTypes != null)
+                        MatchTypeCollection = new ObservableCollection<MatchType>(matchTypes);
                 }
                 catch (Exception ex)
                 {
@@ -162,71 +121,12 @@ namespace TruSport.ViewModels.Cricket
             //ItemTapCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(ItemTapped);
         }
 
-        private async void AdTapped()
-        {
-            try
-            {
-                await Task.Run(async () =>
-                {
-                    await adService.Impressions(Ad.ID);
-                });
-
-                await Launcher.OpenAsync(new Uri(Ad.URL));
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-                Debug.WriteLine(ex.Message, "Ad Tapped");
-            }
-        }
-
-        //private void ResetTapped(object obj)
-        //{
-        //    secondLV.DataSource.Filter = null;
-        //    secondLV.DataSource.RefreshFilter();
-        //    firstLV.AllowSwiping = true;
-        //}
-
-        //private void FavoriteTapped(object obj)
-        //{
-        //    var departureInfo = obj as DepartureInfo;
-        //    var pinnedInfo = FirstLVCollection.Any(o => o.Name == departureInfo.Name) ? FirstLVCollection.First(o => o.Name == departureInfo.Name) : null;
-        //    if (pinnedInfo == null)
-        //    {
-        //        FirstLVCollection.Add(new PinnedInfo() { Name = departureInfo.Name, RouteName = departureInfo.Name, Icon = departureInfo.Icon, IsFavorite = true });
-        //    }
-        //}
-
         #endregion
 
         private async void ItemTapped(Syncfusion.ListView.XForms.ItemTappedEventArgs e)
         {
-            tappedInfo = e.ItemData as LeagueStat;
-            //if (tappedInfo.IsFavorite)
-            //{
-            //    secondLV.DataSource.Filter = FilterDepartures;
-            //    tappedInfo.IsFavorite = false;
-            //}
-            //else
-            //{
-            //    secondLV.DataSource.Filter = null;
-            //    tappedInfo.IsFavorite = true;
-            //}
-            //secondLV.DataSource.RefreshFilter();
+            tappedInfo = e.ItemData as MatchType;
         }
-
-        //private bool FilterDepartures(object obj)
-        //{
-        //    var departureInfo = obj as DepartureInfo;
-        //    if (tappedInfo == null)
-        //        return true;
-
-        //    if (departureInfo.Name.ToLower().Contains(tappedInfo.Name.ToLower())
-        //         || departureInfo.RouteName.ToLower().Contains(tappedInfo.RouteName.ToLower()))
-        //        return true;
-        //    else
-        //        return false;
-        //}
 
         #region Player Info
 

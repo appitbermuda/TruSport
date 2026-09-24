@@ -19,10 +19,12 @@ namespace TruSport.ViewModel.Shop
     public class MyTicketPageViewModel : BaseViewModel
     {
         private ObservableCollection<AcceptTransfer> _transferRequestCollection;
-        private ObservableCollection<CustomerTicket> _customerTicketCollection;
+        private ObservableCollection<CustomerTicket> _upcomingCustomerTicketCollection;
+        private ObservableCollection<CustomerTicket> _activeCustomerTicketCollection;
         private ObservableCollection<CustomerOrder> _orderCollection;
         private Customer _customer;
-        private bool _noTickets;
+        private bool _noActiveTickets;
+        private bool _noUpcomingTickets;
         private bool _isActivityIndicatorVisible;
 
         OrderService orderService;
@@ -40,7 +42,8 @@ namespace TruSport.ViewModel.Shop
             adService = new AdService();
             pushNotificationService = new PushNotificationService();
             OrderCollection = new ObservableCollection<CustomerOrder>();
-            CustomerTicketCollection = new ObservableCollection<CustomerTicket>();
+            ActiveCustomerTicketCollection = new ObservableCollection<CustomerTicket>();
+            UpcomingCustomerTicketCollection = new ObservableCollection<CustomerTicket>();
             TransferRequestCollection = new ObservableCollection<AcceptTransfer>();
 
             GenerateSource();
@@ -79,10 +82,16 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref acceptTransferCommand, value); }
         }
 
-        public ObservableCollection<CustomerTicket> CustomerTicketCollection
+        public ObservableCollection<CustomerTicket> ActiveCustomerTicketCollection
         {
-            get { return _customerTicketCollection; }
-            set { Set(ref _customerTicketCollection, value); }
+            get { return _activeCustomerTicketCollection; }
+            set { Set(ref _activeCustomerTicketCollection, value); }
+        }
+
+        public ObservableCollection<CustomerTicket> UpcomingCustomerTicketCollection
+        {
+            get { return _upcomingCustomerTicketCollection; }
+            set { Set(ref _upcomingCustomerTicketCollection, value); }
         }
 
         public ObservableCollection<CustomerOrder> OrderCollection
@@ -104,10 +113,16 @@ namespace TruSport.ViewModel.Shop
             set { Set(ref _ad, value); }
         }
 
-        public bool NoTickets
+        public bool NoActiveTickets
         {
-            get { return _noTickets; }
-            set { Set(ref _noTickets, value); }
+            get { return _noActiveTickets; }
+            set { Set(ref _noActiveTickets, value); }
+        }
+
+        public bool NoUpcomingTickets
+        {
+            get { return _noUpcomingTickets; }
+            set { Set(ref _noUpcomingTickets, value); }
         }
 
         public Customer Customer
@@ -126,7 +141,8 @@ namespace TruSport.ViewModel.Shop
         {
             try
             {
-                NoTickets = false;
+                NoActiveTickets = false;
+                NoUpcomingTickets = false;
                 IsActivityIndicatorVisible = true;
 
                 var current = Connectivity.NetworkAccess;
@@ -159,11 +175,16 @@ namespace TruSport.ViewModel.Shop
                     {
                         customerTickets.ForEach(e =>  e.CustomerTicketObject = JsonConvert.SerializeObject(e.CustomerMatchTicket));
                         
-                        CustomerTicketCollection = new ObservableCollection<CustomerTicket>(customerTickets);
+                        ActiveCustomerTicketCollection = new ObservableCollection<CustomerTicket>(customerTickets.Where(e => e.EventTicket.SportEvent.Date == DateTime.Now.Date.AddHours(-4).Date).OrderBy(e => e.EventTicket.SportEvent.Date));
+                        UpcomingCustomerTicketCollection = new ObservableCollection<CustomerTicket>(customerTickets.Where(e => e.EventTicket.SportEvent.Date > DateTime.Now.Date.AddHours(-4).Date).OrderBy(e => e.EventTicket.SportEvent.Date));
                     }
 
-                    if (CustomerTicketCollection.Count == 0 && TransferRequestCollection.Count == 0)
-                        NoTickets = true;
+                    if (ActiveCustomerTicketCollection.Count == 0)
+                        NoActiveTickets = true;
+
+                    if (UpcomingCustomerTicketCollection.Count == 0)
+                        NoUpcomingTickets = true;
+
                 }
                 else
                 {

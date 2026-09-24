@@ -109,10 +109,10 @@ namespace TruSport.ViewModel
 
                 if (!String.IsNullOrEmpty(Email) && !IsEmailSent)
                 {
-                    var hasTempPassword = await authenticationService.HasTemporaryPassword(Email);
+                    //var hasTempPassword = await authenticationService.HasTemporaryPassword(Email);
 
-                    if (!hasTempPassword)
-                    {
+                    //if (!hasTempPassword)
+                    //{
                         if (Regex.IsMatch(Email, "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$"))
                         {
                             ForgotPassword forgotPassword = new ForgotPassword
@@ -142,11 +142,11 @@ namespace TruSport.ViewModel
                         {
                             EmailError = true;
                         }
-                    }
-                    else
-                    {
-                        IsEmailSent = true;
-                    }
+                    //}
+                    //else
+                    //{
+                    //    IsEmailSent = true;
+                    //}
                 }
                 else if (!String.IsNullOrEmpty(Email) && !String.IsNullOrEmpty(Password) && !String.IsNullOrEmpty(TemporaryPassword) && !String.IsNullOrEmpty(ConfirmPassword) && IsEmailSent)
                 {
@@ -193,7 +193,7 @@ namespace TruSport.ViewModel
                                             //await Navigation.PopModalAsync();
 
                                             Application.Current.MainPage = (new TicketFlyoutPage());
-                                            //if (Application.Current.MainPage is MasterDetailPage mdp)
+                                            //if (Application.Current.MainPage is FlyoutPage mdp)
                                             //{
                                             //    var page = (Page)Activator.CreateInstance(typeof(TicketTabbedPage));
                                             //    page.Title = "Tickets";

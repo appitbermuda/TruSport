@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable" xmlns:converters="clr-namespace:TruSport.Converters"
     x:Class="TruSport.Views.Tickets.OrderHistoryPage">
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converters:FailedTransactionConverter x:Key="failedTransactionConverter" />
             <DataTemplate x:Name="OrderItemTemplate" x:Key="OrderItemTemplate">
                 <StackLayout Padding="0"
                              HorizontalOptions="FillAndExpand"
@@ -34,7 +35,7 @@
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start"/>
                                 <StackLayout>
-                                <Label Text="{Binding Fixture}"
+                                <Label Text="{Binding OrderDetails[0].EventTicket.SportEvent.Event}"
                                        FontSize="Micro"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
@@ -105,7 +106,7 @@
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start"/>
-                                <Label Text="{Binding Authorisation}"
+                                <Label Text="{Binding Authorisation, Converter={StaticResource failedTransactionConverter}}"
                                        FontSize="Micro"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"
@@ -123,7 +124,7 @@
                                        LineBreakMode="WordWrap"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="End"/>
-                                <Label Text="{Binding Total, StringFormat='{0:C}'}"
+                                <Label Text="{Binding Total, StringFormat='${0}'}"
                                        FontSize="Micro"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        LineBreakMode="WordWrap"

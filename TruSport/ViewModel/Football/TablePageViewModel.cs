@@ -21,6 +21,7 @@ namespace TruSport.ViewModels
         private ObservableCollection<LeagueTable> premierTeamCollection;
         private ObservableCollection<LeagueTable> firstDivisionTeamCollection;
         private ObservableCollection<LeagueTable> coronaTeamCollection;
+        private ObservableCollection<LeagueTable> womensTeamCollection;
         private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> itemtapCommand;
         private Command<object> favoriteTapCommand;
         private Command<object> resetTapCommand;
@@ -96,6 +97,12 @@ namespace TruSport.ViewModels
             set { Set(ref this.coronaTeamCollection, value); }
         }
 
+        public ObservableCollection<LeagueTable> WomensTeamCollection
+        {
+            get { return womensTeamCollection; }
+            set { Set(ref this.womensTeamCollection, value); }
+        }
+
         public bool NoConnectivity
         {
             get { return noConnectivity; }
@@ -137,7 +144,7 @@ namespace TruSport.ViewModels
                         {
                             Device.BeginInvokeOnMainThread(() =>
                             {
-                                Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                                Ad = ads.Any(e => e.Sport == Constants.Football) ? ads.FirstOrDefault(e => e.Sport == Constants.Football) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
                             });
                         }
                     });
@@ -154,6 +161,10 @@ namespace TruSport.ViewModels
                     var coronaDivTeams = await leagueTableService.GetCoronaLeagueTables();
                     if (coronaDivTeams != null)
                         CoronaTeamCollection = new ObservableCollection<LeagueTable>(coronaDivTeams.OrderBy(e => e.Position));
+
+                    var womensDivTeams = await leagueTableService.GetWomensLeagueTables();
+                    if (womensDivTeams != null)
+                        WomensTeamCollection = new ObservableCollection<LeagueTable>(womensDivTeams.OrderBy(e => e.Position));
 
                 }
                 else

@@ -9,6 +9,7 @@ using TruSport.Views;
 using TruSport.Views.Basketball;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
+using TruSport.Views.Golf;
 using TruSport.Views.Tennis;
 using TruSport.Views.Triathlon;
 using Xamarin.Essentials;
@@ -464,7 +465,7 @@ namespace TruSport.ViewModel.Football
 
                 await SecureStorage.SetAsync("GolfAlert", alert.IsAlert.ToString());
 
-                //Application.Current.MainPage = new GolfMasterDetailPage();
+                Application.Current.MainPage = new GolfFlyoutPage();
             }
             catch (Exception ex)
             {

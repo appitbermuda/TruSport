@@ -6,10 +6,14 @@ using TruSport.Model;
 using TruSport.Services;
 using TruSport.ViewModels;
 using TruSport.Views;
+using TruSport.Views.Basketball;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
+using TruSport.Views.Event;
+using TruSport.Views.Golf;
 using TruSport.Views.Tennis;
 using TruSport.Views.Tickets;
+using TruSport.Views.Triathlon;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -45,6 +49,8 @@ namespace TruSport.ViewModel
 
             SportTappedCommand = new Command(() => SportTapped());
             TicketTappedCommand = new Command(() => TicketTapped());
+            ShopTappedCommand = new Command(() => ShopTapped());
+            EventTappedCommand = new Command(() => EventTapped());
             //TrackTappedCommand = new Command(() => TrackTapped());
             //SwimmingTappedCommand = new Command(() => SwimmingTapped());
             //RugbyTappedCommand = new Command(() => RugbyTapped());
@@ -61,6 +67,8 @@ namespace TruSport.ViewModel
         public Command RefreshCommand { get; }
         public Command SportTappedCommand { get; }
         public Command TicketTappedCommand { get; }
+        public Command ShopTappedCommand { get; }
+        public Command EventTappedCommand { get; }
 
         public LandingFeature FeatureImages
         {
@@ -114,7 +122,34 @@ namespace TruSport.ViewModel
         {
             try
             {
-                Application.Current.MainPage = new NavigationPage(new SportsPage());
+                //Application.Current.MainPage = new NavigationPage(new SportsPage());
+
+                if (App.Database != null)
+                {
+                    var sport = await App.Database.GetDefaultSport();
+
+                    if (sport != null && !String.IsNullOrEmpty(sport.Sport))
+                    {
+                        if (sport.Sport == Constants.Cricket)
+                            App.Current.MainPage = new CricketMasterDetailPage();
+                        else if (sport.Sport == Constants.Bowling)
+                            App.Current.MainPage = new BowlingMasterDetailPage();
+                        else if (sport.Sport == Constants.Tennis)
+                            App.Current.MainPage = new TennisMasterDetailPage();
+                        else if (sport.Sport == Constants.Basketball)
+                            App.Current.MainPage = new BasketballMasterDetailPage();
+                        else if (sport.Sport == Constants.Triathlon)
+                            App.Current.MainPage = new TriathlonFlyoutPage();
+                        else if (sport.Sport == Constants.Golf)
+                            App.Current.MainPage = new GolfFlyoutPage();
+                        else
+                            App.Current.MainPage = new FootballMasterDetailPage();
+                    }
+                    else
+                        Application.Current.MainPage = new NavigationPage(new OnTrackPage());
+                }
+                else
+                    Application.Current.MainPage = new NavigationPage(new OnTrackPage());
             }
             catch (Exception ex)
             {
@@ -126,30 +161,38 @@ namespace TruSport.ViewModel
         {
             try
             {
-                //string Token = await SecureStorage.GetAsync("Token");
-                //string email = await SecureStorage.GetAsync("Email");
+                string Email = await SecureStorage.GetAsync("Email");
+                var Customer = await App.Database.GetCustomerByIDAsync(Email);
+                if (Customer != null)
+                    App.IsLoggedIn = true;
+                else
+                    App.IsLoggedIn = false;
 
-                //if (String.IsNullOrEmpty(Token) || String.IsNullOrEmpty(email))
-                //{
-                //    await Navigation.PushAsync(new SignInPage(), true);
-                //}
-                //else
-                //{
-                    //var tags = await App.Database.GetTags();
-                    //var tagsList = tags.ToList();
-                    //tagsList.Add(email);
+                Application.Current.MainPage = (new TicketFlyoutPage());      
+            }
+            catch (Exception ex)
+            {
 
-                    //tags = tagsList.ToArray();
+            }
+        }
 
-                    //try
-                    //{
-                    //    await notificationRegistrationService.RegisterDeviceAsync(tags);
-                    //}
-                    //catch (Exception ex)
-                    //{ }
+        private async void ShopTapped()
+        {
+            try
+            {
+                Application.Current.MainPage = new NavigationPage(new ShopPage(true));
+            }
+            catch (Exception ex)
+            {
 
-                    Application.Current.MainPage = (new TicketFlyoutPage());
-                //}                
+            }
+        }
+
+        private async void EventTapped()
+        {
+            try
+            {
+                Application.Current.MainPage = (new EventFlyoutPage());
             }
             catch (Exception ex)
             {

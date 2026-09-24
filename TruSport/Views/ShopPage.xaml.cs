@@ -7,12 +7,15 @@ namespace TruSport.Views
 {
     public partial class ShopPage : ContentPage
     {
-        public ShopPage()
+        public ShopPage(bool backButtonRequired = false)
         {
-            Title = "Shop OnTrack";
+            //Title = "Shop OnTrack";
 
 
             InitializeComponent();
+
+            if (backButtonRequired)
+                BackButton.IsVisible = true;
 
             Web.Source = new Uri("https://shop.ontrackbda.com");
 
@@ -22,5 +25,11 @@ namespace TruSport.Views
 
             ActivityIndicator.IsVisible = false;
         }
+
+        void BackButton_Clicked(System.Object sender, System.EventArgs e)
+        {
+            App.Current.MainPage = new NavigationPage(new MainPage());
+        }
+
     }
 }

@@ -111,6 +111,28 @@
             </StackLayout>
             <StackLayout Grid.Row="4" VerticalOptions="FillAndExpand">
                 <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GolfTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                            <Image Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" >
+                                <Image.Source>
+                                    <OnPlatform x:TypeArguments="ImageSource">
+                                        <On Platform="iOS" Value="golffeature.jpg" />
+                                        <On Platform="Android" Value="golffeature.png" />
+                                    </OnPlatform>
+                                </Image.Source>
+                            </Image>                            
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                    <Label Text="GOLF" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+            </StackLayout>
+            <StackLayout Grid.Row="5" VerticalOptions="FillAndExpand">
+                <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding TennisTappedCommand}" />
                 </StackLayout.GestureRecognizers>
                 <Grid RowSpacing="0" VerticalOptions="FillAndExpand">

@@ -17,26 +17,15 @@ namespace TruSport.Views.Cricket
             this.BindingContext = leagueStatPageViewModel;
             InitializeComponent();
 
-            PlayerMostRunsList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
-            {
-                PropertyName = "LeagueName",
-                KeySelector = (object obj1) =>
-                {
-                    var item = (obj1 as LeagueStat);
-                    return item.LeagueName;
-                }
-            });
+        }
 
-            PlayerMostWicketsList.DataSource.GroupDescriptors.Add(new GroupDescriptor()
-            {
-                PropertyName = "LeagueName",
-                KeySelector = (object obj1) =>
-                {
-                    var item = (obj1 as LeagueStat);
-                    return item.LeagueName;
-                }
-            });
+        async void Handle_ItemTapped(object sender, Syncfusion.ListView.XForms.ItemTappedEventArgs e)
+        {
+            var item = e.ItemData as MatchType;
 
+            await Navigation.PushAsync(new StatPage(item));
+
+            MatchTypeList.SelectedItems.Clear();
         }
     }
 }

@@ -219,6 +219,31 @@ namespace TruSport.Services
             return null;
         }
 
+        public async Task<List<Award>> GetGolfPlayerOfTheWeek()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Award/GolfPlayerOfTheWeek", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Award> playerAwards = JsonConvert.DeserializeObject<List<Award>>(response.Content);
+
+                    return playerAwards;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Award");
+            }
+            return null;
+        }
+
         public async Task<List<Award>> GetFootballPlayerOfTheWeek()
         {
             try
@@ -300,6 +325,31 @@ namespace TruSport.Services
             {
                 var client = new RestClient(Constants.APIEndpoint);
                 var request = new RestRequest("Award/TennisPlayerOfTheMonth", Method.GET);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    List<Award> playerAwards = JsonConvert.DeserializeObject<List<Award>>(response.Content);
+
+                    return playerAwards;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Award");
+            }
+            return null;
+        }
+
+        public async Task<List<Award>> GetGolfPlayerOfTheMonth()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Award/GolfPlayerOfTheMonth", Method.GET);
 
                 // We execute the request and capture the response
                 // in a variable called `response`

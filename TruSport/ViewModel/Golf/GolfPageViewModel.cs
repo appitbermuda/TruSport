@@ -1,0 +1,847 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using TruSport.Data;
+using TruSport.Model;
+using Syncfusion.ListView.XForms;
+using Xamarin.Forms;
+using Xamarin.Forms.Internals;
+using System.Threading.Tasks;
+using TruSport.Services;
+using System.Collections.Generic;
+using TruSport.Views.Golf;
+using Syncfusion.DataSource.Extensions;
+using TruSport.Extensions;
+using Xamarin.Essentials;
+using NodaTime;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Crashes;
+using Device = Xamarin.Forms.Device;
+using System.Windows.Input;
+using Syncfusion.SfCalendar.XForms;
+using Newtonsoft.Json;
+using TruSport.Views;
+using System.Diagnostics;
+
+namespace TruSport.ViewModels.Golf
+{
+    public class GolfPageViewModel : BaseViewModel
+    {
+        #region Fields
+
+        public CalendarEventCollection calendarInlineEvents;
+        private int selectedIndex;
+        private int fixtureHeaderCount;
+        private ObservableCollection<Award> awardCollection;
+        private ObservableCollection<GolfFixture> pastCollection;
+        private ObservableCollection<GolfFixture> upcomingCollection;
+        private ObservableCollection<GolfFixture> fixtureCollection;
+        private ObservableCollection<GolfFixture> fixtureFloatCollection;
+        private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> onFixtureSelectedCommand;
+        private Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> onLiveFixtureSelectedCommand;
+        private Command<object> leagueSelectedCommand;
+        private Command calendarVisibilityClickedCommand;
+        private Command<object> refreshPastFixturesCommand;
+        private Command<object> refreshUpcomingFixturesCommand;
+        private Command<object> refreshLiveFixturesCommand;
+        private bool showPOW;
+        private bool hasAwards;
+        private bool refreshActive;
+        private bool noUpcomingFixtures;
+        private bool noLiveFixtures;
+        private bool _isActivityIndicatorVisible;
+        private bool isFavourite;
+        private bool isFavouriteVisible;
+        private bool noConnectivity;
+        private bool cancelFixtureRefresh;
+        private bool isUpcomingCalendarVisible;
+        private bool showSport;
+        private bool isPreviousVisible;
+        private bool isLiveVisible;
+        private bool _isFootball;
+        private bool _isCricket;
+        private int totalCount;
+        private bool isLoadMoreVisible;
+        private string selectedSport;
+        private DateTime _minDate;
+        Sport _sport;
+
+        FixtureService fixtureService;
+        AwardService awardService;
+        AdService adService;
+
+        INavigation Navigation;
+
+        #endregion
+
+        #region Constructor
+
+        public GolfPageViewModel(INavigation navigation)
+        {
+            Navigation = navigation;
+
+            PastCollection = new ObservableCollection<GolfFixture>();
+            UpcomingCollection = new ObservableCollection<GolfFixture>();
+            FixtureCollection = new ObservableCollection<GolfFixture>();
+            CalendarInlineEvents = new CalendarEventCollection();
+
+            fixtureService = new FixtureService();
+            awardService = new AwardService();
+            adService = new AdService();
+
+            SelectedIndex = 0;
+
+            GenerateSource();
+
+            AdTappedCommand = new Command(AdTapped);
+            CalendarCellTapped = new Command<CalendarTappedEventArgs>(CellTapped);
+
+            RefreshPastFixturesCommand = new Command<object>(async (obj) => await RefreshPastFixtures());
+            RefreshUpcomingFixturesCommand = new Command<object>(async (obj) => await RefreshUpcomingFixtures());
+            RefreshLiveFixturesCommand = new Command<object>(async (obj) => await RefreshLiveFixtures());
+
+            OnFixtureSelectedCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(FixtureSelected);
+            OnLiveFixtureSelectedCommand = new Command<Syncfusion.ListView.XForms.ItemTappedEventArgs>(LiveFixtureSelected);
+            LeagueSelectedCommand = new Command<object>(SelectedLeague);
+            CalendarVisibilityClickedCommand = new Command(CalendarVisibilityClicked);
+            SelectSportCommand = new Command(SelectSport);
+            SelectedSportCommand = new Command<string>(SportSelected);
+
+            MessagingCenter.Subscribe<string>("Fixtures", "RefreshFixtures", async (sender) =>
+            {
+                MessagingCenter.Unsubscribe<string>("Fixtures", "RefreshFixtures");
+                RefreshFixturesTimer();
+
+            });
+        }
+        #endregion
+
+        #region Properties
+        public Command AdTappedCommand { get; }
+        public CalendarEventCollection CalendarInlineEvents
+        {
+            get { return calendarInlineEvents; }
+            set { Set(ref calendarInlineEvents, value); }
+        }
+
+        public ICommand CalendarCellTapped { get; set; }
+        public Command<object> LeagueSelectedCommand
+        {
+            get { return leagueSelectedCommand; }
+            set { leagueSelectedCommand = value; }
+        }
+
+        public Command CalendarVisibilityClickedCommand
+        {
+            get { return calendarVisibilityClickedCommand; }
+            set { calendarVisibilityClickedCommand = value; }
+        }
+
+        public Command SelectSportCommand { get; }
+        public Command<string> SelectedSportCommand { get; }
+
+        public Command<object> RefreshPastFixturesCommand
+        {
+            get { return refreshPastFixturesCommand; }
+            set { refreshPastFixturesCommand = value; }
+        }
+
+        public Command<object> RefreshUpcomingFixturesCommand
+        {
+            get { return refreshUpcomingFixturesCommand; }
+            set { refreshUpcomingFixturesCommand = value; }
+        }
+
+        public Command<object> RefreshLiveFixturesCommand
+        {
+            get { return refreshLiveFixturesCommand; }
+            set { refreshLiveFixturesCommand = value; }
+        }
+
+        public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> OnFixtureSelectedCommand
+        {
+            get { return onFixtureSelectedCommand; }
+            set { onFixtureSelectedCommand = value; }
+        }
+
+        public Command<Syncfusion.ListView.XForms.ItemTappedEventArgs> OnLiveFixtureSelectedCommand
+        {
+            get { return onLiveFixtureSelectedCommand; }
+            set { onLiveFixtureSelectedCommand = value; }
+        }
+
+        private Ad _ad;
+        public Ad Ad
+        {
+            get { return _ad; }
+            set { Set(ref _ad, value); }
+        }
+
+        public Sport Sport
+        {
+            get { return _sport; }
+            set { Set(ref _sport, value); }
+        }
+
+        public int TotalCount
+        {
+            get { return totalCount; }
+            set { totalCount = value; }
+        }
+
+        public bool IsLoadMoreVisible
+        {
+            get { return isLoadMoreVisible; }
+            set { Set(ref isLoadMoreVisible, value); }
+        }
+
+        public ObservableCollection<Award> AwardCollection
+        {
+            get { return awardCollection; }
+            set { Set(ref awardCollection, value); }
+        }
+
+        public ObservableCollection<GolfFixture> PastCollection
+        {
+            get { return pastCollection; }
+            set { Set(ref pastCollection, value); }
+        }
+
+        public ObservableCollection<GolfFixture> UpcomingCollection
+        {
+            get { return upcomingCollection; }
+            set { Set(ref upcomingCollection, value); }
+        }
+
+        public ObservableCollection<GolfFixture> FixtureCollection
+        {
+            get { return fixtureCollection; }
+            set { Set(ref fixtureCollection, value); }
+        }
+
+        public ObservableCollection<GolfFixture> FixtureFloatCollection
+        {
+            get { return fixtureFloatCollection; }
+            set { Set(ref fixtureFloatCollection, value); }
+        }
+
+        public int SelectedIndex
+        {
+            get { return selectedIndex; }
+            set { Set(ref selectedIndex, value); }
+        }
+
+        public bool RefreshActive
+        {
+            get { return refreshActive; }
+            set { Set(ref refreshActive, value); }
+        }
+
+        public bool HasAwards
+        {
+            get { return hasAwards; }
+            set { Set(ref hasAwards, value); }
+        }
+
+        public bool IsActivityIndicatorVisible
+        {
+            get { return _isActivityIndicatorVisible; }
+            set { Set(ref _isActivityIndicatorVisible, value); }
+        }
+
+        public bool IsFavourite
+        {
+            get { return isFavourite; }
+            set { Set(ref isFavourite, value); }
+        }
+
+        public bool IsFavouriteVisible
+        {
+            get { return isFavouriteVisible; }
+            set { Set(ref isFavouriteVisible, value); }
+        }
+
+        public bool NoConnectivity
+        {
+            get { return noConnectivity; }
+            set { Set(ref noConnectivity, value); }
+        }
+
+        public bool NoUpcomingFixtures
+        {
+            get { return noUpcomingFixtures; }
+            set { Set(ref noUpcomingFixtures, value); }
+        }
+
+        public bool NoLiveFixtures
+        {
+            get { return noLiveFixtures; }
+            set { Set(ref noLiveFixtures, value); }
+        }
+
+        public bool CancelFixtureRefresh
+        {
+            get { return cancelFixtureRefresh; }
+            set { Set(ref cancelFixtureRefresh, value); }
+        }
+
+        public bool IsUpcomingCalendarVisible
+        {
+            get { return isUpcomingCalendarVisible; }
+            set { Set(ref isUpcomingCalendarVisible, value); }
+        }
+
+        public DateTime MinDate
+        {
+            get { return _minDate; }
+            set { Set(ref _minDate, value); }
+        }
+
+        public string SelectedSport
+        {
+            get { return selectedSport; }
+            set { Set(ref selectedSport, value); }
+        }
+
+        public bool ShowSport
+        {
+            get { return showSport; }
+            set { Set(ref showSport, value); }
+        }
+
+        public bool ShowPOW
+        {
+            get { return showPOW; }
+            set { Set(ref showPOW, value); }
+        }
+
+        public bool IsLiveVisible
+        {
+            get { return isLiveVisible; }
+            set { Set(ref isLiveVisible, value); }
+        }
+
+        public bool IsPreviousVisible
+        {
+            get { return isPreviousVisible; }
+            set { Set(ref isPreviousVisible, value); }
+        }
+
+        public int FixtureHeaderCount
+        {
+            get { return fixtureHeaderCount; }
+            set { Set(ref fixtureHeaderCount, value); }
+        }
+
+        #endregion
+
+        #region Generate Source
+
+        internal async void GenerateSource()
+        {
+            CancelFixtureRefresh = true;
+            HasAwards = false;
+            IsActivityIndicatorVisible = true;
+
+            try
+            {
+                //SelectedSport = await SecureStorage.GetAsync("Sport");
+                var awards = await awardService.GetGolfPlayerOfTheWeek();
+
+                await Task.Run(async () =>
+                {
+                    var ads = await adService.GetAds();
+
+                    if (ads != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Ad = ads.Any(e => e.Sport == Constants.Bowling) ? ads.FirstOrDefault(e => e.Sport == Constants.Bowling) : ads.FirstOrDefault(e => String.IsNullOrEmpty(e.Sport));
+                        });
+                    }
+                });
+
+                var _showPOW = await SecureStorage.GetAsync("ShowPOW");
+                ShowPOW = ((_showPOW != null ? Convert.ToBoolean(_showPOW) : true) && awards != null);
+
+                if (awards != null)
+                {
+                    HasAwards = true;
+                    AwardCollection = new ObservableCollection<Award>(awards);
+                }
+
+                var current = Connectivity.NetworkAccess;
+                if (current == NetworkAccess.Internet)
+                {
+                    NoConnectivity = false;
+                    IsUpcomingCalendarVisible = false;
+
+                    MinDate = DateTime.Now.Date;
+
+                    var fixtures = await fixtureService.GetGolfFixtures();
+
+                    if (fixtures != null)
+                    {
+                        //var upcomingFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now);
+                        //FixtureCollection = new ObservableCollection<GolfFixture>(fixtures.OrderBy(e => e.FixtureTime));
+
+                        FixtureFloatCollection = new ObservableCollection<GolfFixture>(fixtures.Where(e => e.Season.IsCurrent).OrderBy(e => e.Date).ThenBy(e => TimeSpan.Parse(e.Time)));
+                        TotalCount = FixtureFloatCollection.Count;
+
+                        if (TotalCount > 0)
+                        {
+                            var startIndex = FixtureFloatCollection.OrderBy(e => e.Date).IndexOf(e => e.Date > DateTime.Now);
+
+                            if (startIndex >= 0)
+                            {
+                                if (startIndex != 0)
+                                {
+                                    IsLoadMoreVisible = true;
+
+                                    AddFixtures(startIndex, 50);
+                                }
+                                else
+                                    AddFixtures(0, TotalCount);
+
+                            }
+                            else
+                                AddFixtures(0, TotalCount);
+                        }
+
+                        if (fixtures.Count() > 0)
+                        {
+                            var upcomingFixtures = fixtures.Where(e => e.Date > DateTime.Now);
+                            NoUpcomingFixtures = false;
+
+                            if(upcomingFixtures.Count() > 0)
+                                SelectedIndex = 1;
+
+                            foreach (var fixture in upcomingFixtures)
+                            {
+                                CalendarInlineEvent event1 = new CalendarInlineEvent();
+                                event1.StartTime = fixture.FixtureTime;
+                                event1.EndTime = event1.StartTime.AddHours(2);
+                                event1.Subject = string.Format("{0}", fixture.League.Name);
+                                event1.Color = (Color)App.Current.Resources["primaryDarkBlueTwo"];
+
+                                CalendarInlineEvents.Add(event1);
+                            }
+                        }
+                        else
+                        {
+                            NoUpcomingFixtures = true;
+                        }
+
+                        //FixtureHeaderCount++;
+                    }
+
+                    //var pastFixtures = await fixtureService.GetPastGolfFixtures();
+
+                    //if (pastFixtures != null)
+                    //{
+                    //    //var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) < DateTime.Now);
+                    //    if (pastFixtures.Count() > 0)
+                    //    {
+                    //        FixtureHeaderCount++;
+                    //        IsPreviousVisible = true;
+                    //        PastCollection = new ObservableCollection<GolfFixture>(pastFixtures.OrderByDescending(e => e.FixtureTime));
+                    //    }
+                    //    else
+                    //    {
+                    //        IsPreviousVisible = false;
+                    //    }
+                    //}
+
+                    //var liveFixtures = await fixtureService.GetLiveFootballFixtures();
+
+                    //if (liveFixtures != null)
+                    //{
+                    //    //var liveFixtures = fixtures.Where(e => e.FixtureTime <= DateTime.Now &&
+                    //        //e.FixtureTime.AddMinutes(110) >= DateTime.Now && !e.IsPostponed);
+
+                    //    if (liveFixtures.Count() > 0)
+                    //    {
+                    //        RefreshActive = true;
+                    //        NoLiveFixtures = false;
+                    //        FixtureHeaderCount++;
+
+                    //        Device.StartTimer(TimeSpan.FromSeconds(60), () =>
+                    //        {
+                    //            if (LiveCollection != null && LiveCollection.Count() > 0)
+                    //            {
+                    //                RefreshActive = true;
+                    //                Device.BeginInvokeOnMainThread(async () => await RefreshFixtures());
+                    //            }
+                    //            else
+                    //            {
+                    //                RefreshActive = false;
+                    //                NoLiveFixtures = true;
+                    //                return false;
+                    //            }
+
+                    //            return true;
+                    //        });
+
+                    //        LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
+                    //    }
+                    //    else
+                    //    {
+                    //        RefreshActive = false;
+
+                    //        NoLiveFixtures = true;
+                    //    }
+                    //}
+                
+                }
+                else
+                    NoConnectivity = true;
+
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+
+            IsActivityIndicatorVisible = false;
+        }
+
+        internal async Task RefreshFixtures()
+        {
+            try
+            {
+                var current = Connectivity.NetworkAccess;
+                if (current == NetworkAccess.Internet)
+                {
+                    NoConnectivity = false;
+
+                    var pastFixtures = await fixtureService.GetPastGolfFixtures();
+                    if (pastFixtures != null)
+                    {
+                        PastCollection = new ObservableCollection<GolfFixture>(pastFixtures);
+                    }
+
+                    var upcomingFixtures = await fixtureService.GetUpcomingGolfFixtures();
+                    if (upcomingFixtures != null)
+                    {
+                        UpcomingCollection = new ObservableCollection<GolfFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
+                    }
+
+                    //var liveFixtures = await fixtureService.GetLiveFootballFixtures();
+                    //if (liveFixtures != null)
+                    //{
+                    //    if (liveFixtures.Count() > 0 && FixtureHeaderCount < 3)
+                    //        FixtureHeaderCount++;
+
+                    //    LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
+                    //}
+                }
+                else
+                    NoConnectivity = true;
+            }
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "RefreshFixtures");
+            }
+        }
+
+
+        internal async Task RefreshPastFixtures()
+        {
+            try
+            {
+                var fixtures = await fixtureService.GetPastGolfFixtures();
+
+                if (fixtures != null)
+                {
+                    var pastFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) <= DateTime.Now);
+                    PastCollection = new ObservableCollection<GolfFixture>(pastFixtures);
+                }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "RefreshPastFixtures");
+            }
+        }
+
+        internal async Task RefreshUpcomingFixtures()
+        {
+            try
+            {
+                var fixtures = await fixtureService.GetUpcomingGolfFixtures();
+
+                if (fixtures != null)
+                {
+                    var upcomingFixtures = fixtures.Where(e => e.FixtureTime.AddMinutes(110) >= DateTime.Now);
+
+                    UpcomingCollection = new ObservableCollection<GolfFixture>(upcomingFixtures.OrderBy(e => e.FixtureTime));
+
+
+                    if (upcomingFixtures.Count() > 0)
+                    {
+                        NoUpcomingFixtures = false;
+                        SelectedIndex = 1;
+                    }
+                    else
+                        NoUpcomingFixtures = true;
+                }
+            }
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "RefreshUpcomingFixtures");
+            }
+        }
+
+        internal async Task RefreshFixturesTimer()
+        {
+            try
+            {
+                if (!RefreshActive)
+                {
+                    var fixtures = await fixtureService.GetFootballFixtures();
+
+                    Device.StartTimer(TimeSpan.FromSeconds(60), () =>
+                    {
+                        if (fixtures != null && fixtures.Count > 0)
+                        {
+                            var liveFixtures = fixtures.Where(e => e.FixtureTime <= DateTime.Now &&
+                                e.FixtureTime.AddMinutes(110) >= DateTime.Now);
+
+                            if (liveFixtures != null && liveFixtures.Count() > 0)
+                            {
+                                RefreshActive = true;
+                                Device.BeginInvokeOnMainThread(async () => await RefreshFixtures());
+                            }
+                            else
+                            {
+                                RefreshActive = false;
+                                NoLiveFixtures = true;
+                                return false;
+                            }
+
+                            return true;
+                        }
+                        else
+                        {
+                            RefreshActive = false;
+                            return false;
+                        }
+                    });
+                }
+            }
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "RefreshFixturesTimer");
+            }
+
+        }
+
+        internal async Task RefreshLiveFixtures()
+        {
+            //try
+            //{
+            //    var liveFixtures = await fixtureService.GetLiveFootballFixtures();
+
+            //    NoLiveFixtures = liveFixtures.Count > 0;
+
+            //    LiveCollection = new ObservableCollection<LiveFixture>(liveFixtures);
+            //}
+            //catch(Exception ex)
+            //{
+            //    Crashes.TrackError(ex);
+            //    Debug.WriteLine(ex.Message, "RefreshLiveFixtures");
+            //}
+        }
+
+        private async void CalendarVisibilityClicked()
+        {
+            IsUpcomingCalendarVisible = !IsUpcomingCalendarVisible;
+        }
+
+        private async void SelectSport()
+        {
+            ShowSport = !ShowSport;
+        }
+
+        private async void SportSelected(string sport)
+        {
+            try
+            {
+                if (sport != SelectedSport)
+                {
+                    //await SecureStorage.SetAsync("Sport", sport);
+                    Application.Current.MainPage = new FootballMasterDetailPage();
+                }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Sport Selected");
+            }
+
+        }
+
+        private async void SelectedLeague(object obj)
+        {
+            try
+            {
+                var groupResult = obj as Syncfusion.DataSource.Extensions.GroupResult;
+
+                var items = new List<GolfFixture>(groupResult.Items.ToList<GolfFixture>());
+                var data = items[0];
+
+                //var fixture = fixtures.FirstOrDefault();
+
+                var league = data.League;
+
+                await Navigation.PushAsync(new CompetitionDetailsPage(league));
+            }
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "SelectedLeague");
+            }
+        }
+
+        //async Task Favourite()
+        //{
+        //    try
+        //    {
+        //        if (IsFavourite)
+        //        {
+        //            IsFavourite = false;
+
+        //            await App.Database.DeleteFixtureFavourite(FixtureItem.ID);
+        //        }
+        //        else
+        //        {
+        //            IsFavourite = true;
+
+        //            var favourite = new Favourite
+        //            {
+        //                FixtureID = FixtureItem.ID,
+        //                Type = "GolfFixture"
+        //            };
+
+        //            await App.Database.SaveFavourite(favourite);
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IsFavourite = !IsFavourite;
+        //        await App.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+        //    }
+        //    finally
+        //    {
+
+        //    }
+        //}
+
+        private async void FixtureSelected(Syncfusion.ListView.XForms.ItemTappedEventArgs e)
+        {
+            var item = e.ItemData as GolfFixture;
+
+            if(item != null)
+                await Navigation.PushAsync(new FixtureDetailsPage(item));
+        }
+
+        private async void LiveFixtureSelected(Syncfusion.ListView.XForms.ItemTappedEventArgs e)
+        {
+            var item = e.ItemData as GolfFixture;
+
+            if (item != null)
+                await Navigation.PushAsync(new FixtureDetailsPage(item));
+        }
+
+        private void CellTapped(CalendarTappedEventArgs obj)
+        {
+            var text = obj.DateTime.ToString("dd/MM/yyyy") + " " + obj.SelectedAppointment.ToString();
+            IsUpcomingCalendarVisible = false;
+        }
+
+        private bool CanLoadMoreItems(object obj)
+        {
+            try
+            {
+                if (FixtureCollection.Count >= TotalCount)
+                    return false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        private async void LoadMoreItems(object obj)
+        {
+            try
+            {
+                var listview = obj as Syncfusion.ListView.XForms.SfListView;
+                listview.IsBusy = true;
+
+                if (FixtureFloatCollection.Count > 0)
+                {
+                    var index = FixtureCollection.Count;
+                    var count = index + 50 >= TotalCount ? TotalCount - index : 50;
+                    //count = count >= TotalCount ? TotalCount - index : 50;
+                    AddFixtures(index, count);
+                }
+
+                listview.IsBusy = false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Load More");
+            }
+        }
+
+        private void AddFixtures(int index, int count)
+        {
+            try
+            {
+                count = count >= TotalCount ? TotalCount - index : 50;
+                for (int i = index; i < index + count; i++)
+                {
+                    if (i < TotalCount)
+                    {
+                        var fixture = FixtureFloatCollection[i];
+
+                        FixtureCollection.Add(fixture);
+                    }
+                    else
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "AddFixtures");
+            }
+        }
+
+        private async void AdTapped()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await adService.Impressions(Ad.ID);
+                });
+
+                await Launcher.OpenAsync(new Uri(Ad.URL));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "Ad Tapped");
+            }
+        }
+
+        #endregion
+
+    }
+}

@@ -16,5 +16,9 @@ namespace TruSport.Model
 
         [Ignore]
         public Product Product { get; set; }
+
+        [Ignore]
+        public decimal Subtotal => Product != null ? Product.Price * Quantity : 0.0m;
+
     }
 }

@@ -413,6 +413,18 @@ namespace TruSport.Data
             }
         }
 
+        public async Task ClearDefaultSport()
+        {
+            try
+            {
+                await database.DeleteAllAsync<DefaultSport>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
 
         //Favourite
         public async Task<List<Favourite>> GetFavourites()

@@ -218,11 +218,11 @@ namespace TruSport.ViewModels
             set { Set(ref cancelFixtureRefresh, value); }
         }
 
-        public bool HasScore
-        {
-            get { return _hasScore; }
-            set { Set(ref _hasScore, value); }
-        }
+        //public bool HasScore
+        //{
+        //    get { return _hasScore; }
+        //    set { Set(ref _hasScore, value); }
+        //}
 
         #endregion
 
@@ -251,7 +251,7 @@ namespace TruSport.ViewModels
                     }
                 });
 
-                HasScore = FixtureItem.Match.HomeTeamScore.HasValue && !FixtureItem.Match.AwayTeamScore.HasValue;
+                //HasScore = FixtureItem.Match.HomeTeamScore.HasValue && FixtureItem.Match.AwayTeamScore.HasValue;
 
                 var fixture = await fixtureService.GetFootballFixture(FixtureItem.ID);
 

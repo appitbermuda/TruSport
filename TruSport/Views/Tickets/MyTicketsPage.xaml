@@ -1,19 +1,98 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:forms="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms" xmlns:zxcm="clr-namespace:ZXing.Common;assembly=zxing.portable"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters" xmlns:forms="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms" xmlns:zxcm="clr-namespace:ZXing.Common;assembly=zxing.portable" xmlns:tabView="http://schemas.syncfusion.com/xamarin" xmlns:data="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable" xmlns:pullToRefresh="clr-namespace:Syncfusion.SfPullToRefresh.XForms;assembly=Syncfusion.SfPullToRefresh.XForms"
     x:Class="TruSport.Views.Tickets.MyTicketsPage"
     Title="My Tickets">
     <ContentPage.Resources>
+        <converters:InverseBooleanConverter x:Key="inverseBooleanConverter" />            
         <converters:ListCountConverter x:Key="listCountConverter"/>
+                                <converters:IsNullConverter x:Key="isNullConverter"/>
         <ResourceDictionary>
+            <converters:GroupHeaderNameConverter x:Key="groupHeaderNameConverter"/>
+            <converters:GroupHeaderSizeConverter x:Key="groupHeaderSizeConverter"/>
+            <converters:GroupHeaderFontConverter x:Key="groupHeaderFontConverter"/>
+            <converters:GroupingSelectionTicketConverter x:Key="groupingSelectionConverter"/>
             <DataTemplate x:Name="MatchTicketItemTemplate" x:Key="MatchTicketItemTemplate">
                             <StackLayout HorizontalOptions="FillAndExpand"
                              VerticalOptions="FillAndExpand" Padding="8,8,8,8">
                     <Frame Padding="0" CornerRadius="10" BackgroundColor="Transparent">
                         <Frame Padding="0" CornerRadius="10" IsClippedToBounds="True" BackgroundColor="{DynamicResource frameBackgroundColor}">
-                <Grid x:Name="grid" Padding="0,0,0,0"
+                <Grid x:Name="grid" Padding="0,10,0,0"
                       RowSpacing="5"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <converters:ImageConverter x:Key="imageConverter"/>
+                            <converters:TimeConverter x:Key="timeConverter"/>
+                            <converters:InverseBooleanConverter x:Key="inverseBooleanConverter" />
+                                <converters:IsNullConverter x:Key="isNullConverter"/>
+                        </ResourceDictionary>
+                    </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackLayout  IsVisible="{Binding EventTicket.SportEvent.EventLogo, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.ColumnSpan="5">
+                <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackLayout Grid.Row="1" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Frame HeightRequest="160" WidthRequest="160" CornerRadius="80" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding EventTicket.SportEvent.EventLogo, Converter={StaticResource imageConverter}}"
+                                                            ErrorPlaceholder="ontracklogo.png"
+                                            LoadingPlaceholder="ontracklogo.png"
+                                                            CacheDuration="50"
+                                                            RetryCount="3"
+                                                            RetryDelay="600"
+                                             Aspect="AspectFit"
+                                            HeightRequest="150"
+                                                      WidthRequest="150"
+                                                            DownsampleToViewSize="True">
+
+                            </ff:CachedImage>
+                                </Frame>                            
+                        </StackLayout>
+                                        <StackLayout Grid.Row="0">
+                                            <StackLayout HorizontalOptions="CenterAndExpand">
+                                                <Label x:Name="EventTitle"
+                                       FontSize="18"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding EventTicket.SportEvent.Title}"
+                                        HorizontalTextAlignment="Center"
+                                        FontAttributes="Bold"/>
+                                            </StackLayout>
+                                            <StackLayout>
+                                                <Label x:Name="EventDescription"
+                                       FontSize="15"
+                                       TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding EventTicket.SportEvent.Description}"
+                                        HorizontalTextAlignment="Center"
+                                        />
+                                            </StackLayout>
+                                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding EventTicket.SportEvent.HomeTeam, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.ColumnSpan="5">
+                        <Grid x:Name="MatchGrid" Padding="0,0,0,0"
+                      RowSpacing="1"
                       ColumnSpacing="1"
                       BackgroundColor="Transparent"
                       VerticalOptions="FillAndExpand"
@@ -34,13 +113,8 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="1" />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <StackLayout Grid.Row="0" Grid.Column="0" Padding="5" HorizontalOptions="Center" VerticalOptions="Center">
+                                        <StackLayout Grid.Row="0" Grid.Column="0" Padding="5" HorizontalOptions="Center" VerticalOptions="Center">
                             <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
                         <ff:CachedImage Source="{Binding EventTicket.SportEvent.HomeTeamLogo, Converter={StaticResource imageConverter}}"
                                                         ErrorPlaceholder="ontracklogo.png"
@@ -132,13 +206,16 @@
                                 </Label.FontSize>
                             </Label>
                         </StackLayout>
-                    <StackLayout Grid.Row="1" Grid.ColumnSpan="5" Spacing="5" Padding="5,10"
+                                        </Grid>
+                                </StackLayout>
+                    
+                    <StackLayout Grid.Row="1" Grid.ColumnSpan="5" Spacing="5" Padding="5,10,5,0"
                                      VerticalOptions="EndAndExpand"
                                          HorizontalOptions="CenterAndExpand"
                                          Orientation="Horizontal">
                                 <StackLayout Padding="2">
                                     <Label x:Name="FieldIcon"
-                                       FontSize="Small"
+                                       FontSize="15"
                                            Text="&#xe901;"
                                            VerticalOptions="Center"
                                        TextColor="{DynamicResource TextPrimaryColor}"
@@ -146,7 +223,7 @@
                                     </StackLayout>
                                 <StackLayout>
                                     <Label x:Name="FieldName"
-                                       FontSize="Small"
+                                       FontSize="15"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                         Text="{Binding EventTicket.SportEvent.Field.Name}"/>
                                     </StackLayout>
@@ -155,16 +232,17 @@
                                      VerticalOptions="Center"
                                          HorizontalOptions="CenterAndExpand"
                                          Orientation="Horizontal"
-                                     Padding="5,10">
+                                     Padding="5,0,5,10">
                                     <Label x:Name="TimeIcon"
-                                       FontSize="Small"
+                                       FontSize="17"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                             Text="&#xe904;"
                                            FontFamily="{StaticResource fontFamily}"/>
                                 <Label x:Name="TimeLabel"
-                                       FontSize="Small"
+                                       FontSize="17"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
+                                           FontAttributes="Bold"
                                             Text="{Binding EventTicket.SportEvent.EventTime, StringFormat='{0:MMM dd - hh:mm tt}'}"/>
                                 </StackLayout>
                     <StackLayout Grid.Row="3" Grid.ColumnSpan="5"
@@ -213,7 +291,7 @@
     </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout Background="{DynamicResource backgroundColor}">
-            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid HorizontalOptions="FillAndExpand" RowSpacing="0" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -281,7 +359,7 @@
                                     <Label x:Name="FieldName"
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
-                                        Text="{Binding CustomerTicket.EventTicket.SportEvent.Fixture.Field.Name}"/>
+                                        Text="{Binding CustomerTicket.EventTicket.SportEvent.Field.Name}"/>
                                     </StackLayout>
                             </StackLayout>
                             <StackLayout Grid.Row="2" Grid.ColumnSpan="5"
@@ -298,16 +376,33 @@
                                        FontSize="Small"
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        VerticalTextAlignment="End"
-                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.Fixture.FixtureTime, StringFormat='{0:MMM dd - h:mm tt}'}"/>
+                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.EventTime, StringFormat='{0:MMM dd - h:mm tt}'}"/>
                                 
                             </StackLayout>
                         <StackLayout Grid.Row="3" Grid.ColumnSpan="5">
-                            <Label Text="{Binding CustomerTicket.EventTicket.Product.Age, StringFormat='1 {0} Ticket'}" HorizontalOptions="Center" FontSize="Medium" FontAttributes="Bold"/>
+                            <Label Text="{Binding CustomerTicket.EventTicket.Product.Age, StringFormat='1 {0}'}" HorizontalOptions="Center" FontSize="Medium" FontAttributes="Bold"/>
                         </StackLayout>
 
-                        <StackLayout Grid.Row="0" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                        <StackLayout IsVisible="{Binding CustomerTicket.EventTicket.SportEvent.EventLogo, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.ColumnSpan="5" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Frame HeightRequest="160" WidthRequest="160" CornerRadius="80" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
+                            <ff:CachedImage Source="{Binding CustomerTicket.EventTicket.SportEvent.EventLogo, Converter={StaticResource imageConverter}}"
+                                                            ErrorPlaceholder="ontracklogo.png"
+                                            LoadingPlaceholder="ontracklogo.png"
+                                                            CacheDuration="50"
+                                                            RetryCount="3"
+                                                            RetryDelay="600"
+                                             Aspect="AspectFit"
+                                            HeightRequest="150"
+                                                      WidthRequest="150"
+                                                            DownsampleToViewSize="True">
+
+                            </ff:CachedImage>
+                                </Frame>                            
+                        </StackLayout>
+
+                        <StackLayout IsVisible="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.Column="0" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
-                            <ff:CachedImage Source="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                            <ff:CachedImage Source="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeamLogo, Converter={StaticResource imageConverter}}"
                                                             ErrorPlaceholder="ontracklogo.png"
                                             LoadingPlaceholder="ontracklogo.png"
                                                             CacheDuration="50"
@@ -321,9 +416,9 @@
                             </ff:CachedImage>
                                 </Frame>
                         </StackLayout>
-                        <StackLayout Grid.Row="0" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
+                        <StackLayout IsVisible="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.Column="4" Padding="5,0" HorizontalOptions="Center" VerticalOptions="Center">
                                  <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False">
-                            <ff:CachedImage Source="{Binding CustomerTicket.EventTicket.SportEvent.AwayTeam.TeamLogo, Converter={StaticResource imageConverter}}"
+                            <ff:CachedImage Source="{Binding CustomerTicket.EventTicket.SportEvent.AwayTeamLogo, Converter={StaticResource imageConverter}}"
                                                             ErrorPlaceholder="ontracklogo.png"
                                             LoadingPlaceholder="ontracklogo.png"
                                                             CacheDuration="50"
@@ -336,7 +431,7 @@
                                             </ff:CachedImage>
                                 </Frame>
                         </StackLayout>
-                        <StackLayout Grid.Row="0" Grid.Column="2" VerticalOptions="Center"
+                        <StackLayout IsVisible="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.Column="2" VerticalOptions="Center"
                                          HorizontalOptions="Center"
                                              Orientation="Vertical"
                                      Padding="5,2"
@@ -351,7 +446,7 @@
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                             Text="V" />
                         </StackLayout>
-                                <StackLayout Grid.Row="0" Grid.Column="1"
+                                <StackLayout IsVisible="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.Column="1"
                                      VerticalOptions="Center"
                                          HorizontalOptions="FillAndExpand"
                                      Padding="5,2"
@@ -361,7 +456,7 @@
                                        HorizontalTextAlignment="End"
                                        FontAttributes="Bold"
                                        TextColor="{DynamicResource TextPrimaryColor}"
-                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam.Name}">
+                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
                             <OnPlatform.Android> 
@@ -374,7 +469,7 @@
                                     </Label.FontSize>
                                 </Label>
                             </StackLayout>
-                                <StackLayout Grid.Row="0" Grid.Column="3"
+                                <StackLayout IsVisible="{Binding CustomerTicket.EventTicket.SportEvent.HomeTeam, Converter={StaticResource isNullConverter}}" Grid.Row="0" Grid.Column="3"
                                      VerticalOptions="Center"
                                          HorizontalOptions="FillAndExpand"
                                      Padding="5,2"
@@ -384,7 +479,7 @@
                                        HorizontalTextAlignment="Start"                                       
                                        TextColor="{DynamicResource TextPrimaryColor}"
                                        FontAttributes="Bold"
-                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.AwayTeam.Name}">
+                                            Text="{Binding CustomerTicket.EventTicket.SportEvent.AwayTeam}">
                                     <Label.FontSize>
                                         <OnPlatform x:TypeArguments="x:Double">  
                             <OnPlatform.Android> 
@@ -415,21 +510,179 @@
                             </BindableLayout.ItemTemplate>
                         </StackLayout>
                 </StackLayout>
-            <listView:SfListView x:Name="MyTicketsList" Grid.Row="1"
-                                    ItemsSource="{Binding CustomerTicketCollection}"
+                <tabView:SfTabView Grid.Row="1" VerticalOptions="FillAndExpand" VisibleHeaderCount="2"
+                                 TabHeaderBackgroundColor="{StaticResource tabHeaderColor}"
+                               BackgroundColor="Transparent"
+                                 DisplayMode="Text"
+                               ContentTransitionDuration="200"
+                               TabHeaderPosition="Top"
+                                TabHeight="50">
+                    <tabView:SfTabView.SelectionIndicatorSettings>
+                <tabView:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}" 
+                                                              Position="Bottom" 
+                                                              StrokeThickness="2"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                    <tabView:SfTabItem Title="Active Tickets" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                        <Grid BackgroundColor="Transparent" Padding="0,0,0,0" RowSpacing="0"
+                              HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <pullToRefresh:SfPullToRefresh Grid.Row="1" x:Name="pullToRefreshCurrent" Refreshing="pullToRefreshCurrent_Refreshing"
+                               ProgressBackgroundColor="{DynamicResource TextPrimaryColor}" ProgressStrokeColor="{StaticResource primaryDarkBlueTwo}" RefreshContentHeight="50" 
+                               RefreshContentWidth="50" TransitionMode="Push" IsRefreshing="False">
+  <pullToRefresh:SfPullToRefresh.PullableContent>
+                            <listView:SfListView x:Name="ActiveTicketsList" Grid.Row="1"
+                                    ItemsSource="{Binding ActiveCustomerTicketCollection}"
                                     ItemTemplate="{StaticResource MatchTicketItemTemplate}"
                                  SelectionMode="Single"
                                     TapCommand="{Binding TicketSelectedCommand}"
                                     HorizontalOptions="FillAndExpand"
                                     VerticalOptions="FillAndExpand"
                                     ItemSpacing="5"
+                                    AllowGroupExpandCollapse="True"
                                  Padding="1"
                                     SelectionBackgroundColor="Transparent"
-                                    AutoFitMode="DynamicHeight"        
-                                />
-            <StackLayout IsVisible="{Binding NoTickets}" Padding="10" HorizontalOptions="Center">
-                <Label HorizontalTextAlignment="Center" TextColor="{DynamicResource TextPrimaryColor}" Text="You do not have any active purchased tickets." FontSize="Small"/>
-            </StackLayout>
+                                    AutoFitMode="DynamicHeight"                                   
+                                >
+                                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="EventTicket.SportEvent.Date" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                                    <listView:SfListView.GroupHeaderTemplate>
+                                  <DataTemplate>
+                                      <ViewCell>
+                                        <ViewCell.View>
+                                            <StackLayout Padding="8,25,8,0">
+<Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+<Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                                            <Grid>
+                                                <!--<Grid.GestureRecognizers>
+                                                  <TapGestureRecognizer Command="{Binding Path=BindingContext.LeagueSelectedCommand, Source={x:Reference PastFixtureList}}" CommandParameter="{Binding .}"/>
+                                              </Grid.GestureRecognizers>-->
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <!--<ColumnDefinition Width="Auto"/>-->
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView />
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                </StackLayout>
+                                                <!--<StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference ActiveTicketsList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                    </StackLayout>-->
+                                          </Grid>
+    </Frame>
+</Frame>
+                                            </StackLayout>
+                                        </ViewCell.View>
+                                      </ViewCell>
+                                  </DataTemplate>
+                                </listView:SfListView.GroupHeaderTemplate>
+                                </listView:SfListView>
+                            </pullToRefresh:SfPullToRefresh.PullableContent>
+ </pullToRefresh:SfPullToRefresh>
+                                
+                    <StackLayout IsVisible="{Binding NoActiveTickets}" Padding="10" HorizontalOptions="Center">
+                        <Label HorizontalTextAlignment="Center" TextColor="{DynamicResource TextPrimaryColor}" Text="You do not have any active purchased tickets." FontSize="Small"/>
+                    </StackLayout>
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                    <tabView:SfTabItem Title="Upcoming" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                        <Grid BackgroundColor="Transparent" Padding="0,0,0,0" RowSpacing="0"
+                              HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <pullToRefresh:SfPullToRefresh x:Name="pullToRefreshUpcoming" Refreshing="pullToRefreshUpcoming_Refreshing"
+                               ProgressBackgroundColor="{DynamicResource TextPrimaryColor}" ProgressStrokeColor="{StaticResource primaryDarkBlueTwo}" RefreshContentHeight="50" 
+                               RefreshContentWidth="50" TransitionMode="Push" IsRefreshing="False">
+  <pullToRefresh:SfPullToRefresh.PullableContent>
+                            <listView:SfListView x:Name="UpcomingTicketsList" Grid.Row="1"
+                                    ItemsSource="{Binding UpcomingCustomerTicketCollection}"
+                                    ItemTemplate="{StaticResource MatchTicketItemTemplate}"
+                                 SelectionMode="Single"
+                                    TapCommand="{Binding TicketSelectedCommand}"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                    ItemSpacing="5"
+                                    AllowGroupExpandCollapse="True"
+                                 Padding="1"
+                                    SelectionBackgroundColor="Transparent"
+                                    AutoFitMode="DynamicHeight"                                   
+                                >
+                                    <listView:SfListView.DataSource>
+                                  <data:DataSource>
+                                    <data:DataSource.SortDescriptors>
+                                      <data:SortDescriptor PropertyName="EventTicket.SportEvent.Date" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                  </data:DataSource>
+                                </listView:SfListView.DataSource>
+                                    <listView:SfListView.GroupHeaderTemplate>
+                                  <DataTemplate>
+                                      <ViewCell>
+                                        <ViewCell.View>
+                                            <StackLayout Padding="5">
+<Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+<Frame IsClippedToBounds="True" CornerRadius="10" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                                            <Grid>
+                                                <!--<Grid.GestureRecognizers>
+                                                  <TapGestureRecognizer Command="{Binding Path=BindingContext.LeagueSelectedCommand, Source={x:Reference PastFixtureList}}" CommandParameter="{Binding .}"/>
+                                              </Grid.GestureRecognizers>-->
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <!--<ColumnDefinition Width="Auto"/>-->
+                                                </Grid.ColumnDefinitions>
+                                                <BoxView  />
+                                                <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                                                <Label x:Name="leagueLabel" Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference leagueLabel}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                </StackLayout>
+                                                <!--<StackLayout Grid.Column="1" Padding="10,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                                <Label Text="{Binding ., Converter={StaticResource groupingSelectionConverter}, ConverterParameter={x:Reference UpcomingTicketsList}}"
+                                                     FontSize="{Binding Key, 
+                                                            Converter={StaticResource groupHeaderSizeConverter}}"
+                                                     FontAttributes="Bold"
+                                                     TextColor="White"/>
+                                                    </StackLayout>-->
+                                          </Grid>
+    </Frame>
+</Frame>
+                                            </StackLayout>
+                                        </ViewCell.View>
+                                      </ViewCell>
+                                  </DataTemplate>
+                                </listView:SfListView.GroupHeaderTemplate>
+                                </listView:SfListView>
+                            </pullToRefresh:SfPullToRefresh.PullableContent>
+ </pullToRefresh:SfPullToRefresh>
+                    <StackLayout IsVisible="{Binding NoUpcomingTickets}" Padding="10" HorizontalOptions="Center">
+                        <Label HorizontalTextAlignment="Center" TextColor="{DynamicResource TextPrimaryColor}" Text="You do not have any upcoming purchased tickets." FontSize="Small"/>
+                    </StackLayout>
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                </tabView:SfTabView>            
             <!--<StackLayout Grid.Row="1" Padding="0,0,0,0" HeightRequest="45" WidthRequest="200" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                         <Image Source="ontrack_wordmark_reversed" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
                     </StackLayout>-->

@@ -4,7 +4,7 @@
     <StackLayout>
         <Grid RowSpacing="0"  VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
-                <RowDefinition Height="225"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="1"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -13,8 +13,9 @@
             <Grid Grid.Row="0" VerticalOptions="FillAndExpand" Padding="0,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                <StackLayout Padding="50,50" Spacing="10">
+                <StackLayout Padding="50,50,50,10" Spacing="10">
                     <Image x:Name="LogoImage"
                            Source="ontrack_wordmark_reversed.png"
                            Aspect="AspectFit"
@@ -29,6 +30,9 @@
                            HorizontalOptions="Center"
                        />
                     </Frame>
+                    </StackLayout>
+                <StackLayout Grid.Row="1" HorizontalOptions="Center" Padding="10,0,10,20">
+                        <Button x:Name="AllSportsButton" Text="All Sports" FontAttributes="Bold" BackgroundColor="White" TextColor="{StaticResource navBackgroundColor}" Padding="10" HeightRequest="30" CornerRadius="15" Clicked="AllSportsButton_Clicked" />                        
                     </StackLayout>
                 </Grid>
             <BoxView Grid.Row="1" HeightRequest="1" BackgroundColor="WhiteSmoke"/>

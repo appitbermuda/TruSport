@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -62,7 +63,7 @@ namespace TruSport.Views.Tennis
                     new TennisMasterDetailPageMenuItem { Id = 4, Title = "Help", IconSource="" , TargetType = typeof(HelpPage) },
                     new TennisMasterDetailPageMenuItem { Id = 4, Title = "Settings", IconSource="" , TargetType = typeof(SettingPage) },
                     new TennisMasterDetailPageMenuItem { Id = 4, Title = "Contact Us", IconSource="" , TargetType = typeof(ContactUsPage) },
-                    new TennisMasterDetailPageMenuItem { Id = 4, Title = "Sports", IconSource="" , TargetType = typeof(OnTrackPage) },
+                    //new TennisMasterDetailPageMenuItem { Id = 4, Title = "Sports", IconSource="" , TargetType = typeof(OnTrackPage) },
                 });
             }
 
@@ -76,6 +77,19 @@ namespace TruSport.Views.Tennis
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
             #endregion
+        }
+
+        async void AllSportsButton_Clicked(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                await App.Database.ClearDefaultSport();
+                App.Current.MainPage = new OnTrackPage();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }

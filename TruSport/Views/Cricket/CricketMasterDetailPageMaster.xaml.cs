@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -50,10 +51,10 @@ namespace TruSport.Views.Cricket
                 OnTrackMenuItems = new ObservableCollection<CricketMasterDetailPageMenuItem>(new[]
                 {
                     new CricketMasterDetailPageMenuItem { Id = 0, Title = "Home", IconSource="" , TargetType = typeof(CricketMasterDetailPage), Group = "OnTrack" },
-                new CricketMasterDetailPageMenuItem { Id = 0, Title = "Fixtures", IconSource="" , TargetType = typeof(Cricket.FixturePage), Group = "OnTrack" },
+                //new CricketMasterDetailPageMenuItem { Id = 0, Title = "Fixtures", IconSource="" , TargetType = typeof(Cricket.FixturePage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 1, Title = "Teams", IconSource="" , TargetType = typeof(Cricket.TeamPage), Group = "OnTrack" },
-                new CricketMasterDetailPageMenuItem { Id = 2, Title = "Standings", IconSource="" , TargetType = typeof(Cricket.TablePage), Group = "OnTrack" },
-                new CricketMasterDetailPageMenuItem { Id = 3, Title = "Leaderboard", IconSource="" , TargetType = typeof(Cricket.LeagueStatsPage), Group = "OnTrack" },
+                new CricketMasterDetailPageMenuItem { Id = 2, Title = "Stats", IconSource="" , TargetType = typeof(Cricket.LeagueStatsPage), Group = "OnTrack" },
+                //new CricketMasterDetailPageMenuItem { Id = 3, Title = "Leaderboard", IconSource="" , TargetType = typeof(Cricket.LeagueStatsPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 4, Title = "Competitions", IconSource="" , TargetType = typeof(Cricket.CompetitionsPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 5, Title = "Favourites", IconSource="" , TargetType = typeof(Cricket.FavouritePage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(MainPage), Group = "OnTrack" },
@@ -65,7 +66,7 @@ namespace TruSport.Views.Cricket
                 new CricketMasterDetailPageMenuItem { Id = 8, Title = "Settings", IconSource="" , TargetType = typeof(SettingPage), Group = "OnTrack" },
                 //new CricketMasterDetailPageMenuItem { Id = 9, Title = "Privacy Policy", IconSource="" , TargetType = typeof(PrivacyPolicyPage), Group = "OnTrack" },
                 new CricketMasterDetailPageMenuItem { Id = 9, Title = "Contact Us", IconSource="" , TargetType = typeof(ContactUsPage), Group = "OnTrack" },
-                new CricketMasterDetailPageMenuItem { Id = 9, Title = "Sports", IconSource="" , TargetType = typeof(OnTrackPage), Group = "OnTrack" },
+                //new CricketMasterDetailPageMenuItem { Id = 9, Title = "Sports", IconSource="" , TargetType = typeof(OnTrackPage), Group = "OnTrack" },
                 //new CricketMasterDetailPageMenuItem { Id = 9, Title = "Tickets", IconSource="" , TargetType = typeof(Tickets.TicketTabbedPage), Group = "OnTrack" }
             });
 
@@ -82,6 +83,19 @@ namespace TruSport.Views.Cricket
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
             #endregion
+        }
+
+        async void AllSportsButton_Clicked(System.Object sender, System.EventArgs e)
+        {
+            try
+            {
+                await App.Database.ClearDefaultSport();
+                App.Current.MainPage = new OnTrackPage();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }

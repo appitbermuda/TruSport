@@ -763,6 +763,9 @@ namespace TruSport.Model
         
         [Ignore]
         public virtual List<MatchRosterSummary> MatchRosterSummary { get; set; }
+
+        [Ignore]
+        public bool HasScore => Match != null ? Match.HomeTeamScore.HasValue && Match.AwayTeamScore.HasValue : false;
     }
 
     public class CricketFixture
@@ -1420,6 +1423,7 @@ namespace TruSport.Model
         public string ID { get; set; }
         public string Name { get; set; }
         public string SportID { get; set; }
+        public string Image { get; set; }
         public int Order { get; set; }
 
         [Ignore]

@@ -11,12 +11,23 @@
             <DataTemplate x:Key="ticketFixtureTemplate">
                 <templates:TicketFixture />
             </DataTemplate>
+            <DataTemplate x:Key="selectedTicketFixtureTemplate">
+                <templates:SelectedTicketFixture />
+            </DataTemplate>
             <DataTemplate x:Key="ticketEventTemplate">
                 <templates:TicketEvent />
             </DataTemplate>
+            <DataTemplate x:Key="selectedTicketEventTemplate">
+                <templates:SelectedTicketEvent />
+            </DataTemplate>
+
             <templates:TicketDataTemplateSelector x:Key="ticketDataTemplateSelector"
                                                         TicketFixtureTemplate="{StaticResource ticketFixtureTemplate}"
                                                         TicketEventTemplate="{StaticResource ticketEventTemplate}"
+                                                        />
+            <templates:SelectedTicketDataTemplateSelector x:Key="selectedTicketDataTemplateSelector"
+                                                        TicketFixtureTemplate="{StaticResource selectedTicketFixtureTemplate}"
+                                                        TicketEventTemplate="{StaticResource selectedTicketEventTemplate}"
                                                         />
             <!--<DataTemplate x:Name="MatchTicketItemTemplate" x:Key="MatchTicketItemTemplate">
                 <StackLayout>
@@ -475,27 +486,40 @@
                 </CarouselView>
             </StackLayout>-->
             <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <listView:SfListView x:Name="MatchTicketsList"
-                                    ItemsSource="{Binding SportEventCollection}"
-                                    ItemTemplate="{StaticResource ticketDataTemplateSelector}"
-                                    SelectionMode="SingleDeselect"
-                                    SelectionChangedCommand="{Binding TicketSelectedCommand}"
-                                    SelectionChangedCommandParameter="{x:Reference MatchTicketsList}"
-                                    HorizontalOptions="FillAndExpand"
-                                    VerticalOptions="FillAndExpand"
-                                    ItemSpacing="5"
-                                    Padding="1"
-                                    SelectionBackgroundColor="{DynamicResource listSelectedBackgroundColor}"
-                                    AutoFitMode="DynamicHeight"        
-                                >
-                <listView:SfListView.DataSource>
-                                  <data:DataSource>
-                                    <data:DataSource.SortDescriptors>
-                                      <data:SortDescriptor PropertyName="Date" Direction="Ascending"/>
-                                    </data:DataSource.SortDescriptors>
-                                  </data:DataSource>
-                                </listView:SfListView.DataSource>
-            </listView:SfListView>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <StackLayout Grid.Row="0">
+                        <listView:SfListView x:Name="MatchTicketsList"
+                                                ItemsSource="{Binding SportEventCollection}"
+                                                ItemTemplate="{StaticResource ticketDataTemplateSelector}"
+                                                SelectedItemTemplate="{StaticResource selectedTicketDataTemplateSelector}"
+                                                SelectionMode="Multiple"
+                                                SelectedItems="{Binding SelectedTickets}"
+                                                SelectionChanged="MatchTicketsList_SelectionChanged"
+                                                HorizontalOptions="FillAndExpand"
+                                                VerticalOptions="FillAndExpand"
+                                                ItemSpacing="5"
+                                                Padding="1"
+                                                SelectionBackgroundColor="{DynamicResource buttonBackgroundColor}"
+                                                AutoFitMode="DynamicHeight"        
+                                            >
+                            <listView:SfListView.DataSource>
+                                              <data:DataSource>
+                                                <data:DataSource.SortDescriptors>
+                                                  <data:SortDescriptor PropertyName="Date" Direction="Ascending"/>
+                                                </data:DataSource.SortDescriptors>
+                                              </data:DataSource>
+                                            </listView:SfListView.DataSource>
+                        </listView:SfListView>
+                    </StackLayout>
+            <StackLayout Grid.Row="1">
+                    <Button x:Name="CheckoutButton" Text="Checkout" IsVisible="False" TextColor="{DynamicResource buttonTextColor}" BackgroundColor="{DynamicResource buttonBackgroundColor}" HeightRequest="50" HorizontalOptions="Center" Padding="50,0" CornerRadius="25" Command="{Binding CheckoutCommand}"/>
+            </StackLayout>
+                                
+                </Grid>
             </StackLayout>
             <StackLayout Grid.Row="1" IsVisible="{Binding NoTickets}" Padding="10" HorizontalOptions="Center">
                 <Label HorizontalTextAlignment="Center" TextColor="{DynamicResource TextPrimaryColor}" Text="There are currently no match tickets available." FontSize="Small"/>

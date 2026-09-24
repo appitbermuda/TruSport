@@ -92,6 +92,25 @@
             </StackLayout>
             <StackLayout Grid.Row="4" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"  Spacing="0">
                 <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GolfTappedCommand}" />
+                </StackLayout.GestureRecognizers>
+                    <Grid RowSpacing="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <!--<Image Source="footballfeature"
+                                       Aspect="AspectFill"
+                                       
+                                       HorizontalOptions="FillAndExpand"
+                                       VerticalOptions="FillAndExpand"/>-->
+                            <forms:CachedImage Source="golffeature" ErrorPlaceholder="ontracklogo.png" LoadingPlaceholder="golffeature" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                            </StackLayout>
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>
+                        <!--<forms:CachedImage Source="{Binding FeatureImages.HomeFootballImage, Converter={StaticResource imageConverter}}" ErrorPlaceholder="OnTrack_512.png" LoadingPlaceholder="OnTrack_512.png" CacheDuration="50" RetryCount="3" RetryDelay="250" Aspect="AspectFill" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" DownsampleToViewSize="True" />
+                        <ContentView BackgroundColor="Black" Opacity=".6"/>-->
+                    <Label Text="GOLF" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        </Grid>
+            </StackLayout>
+            <!--<StackLayout Grid.Row="5" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"  Spacing="0">
+                <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding TennisTappedCommand}" />
                 </StackLayout.GestureRecognizers>
                     <Grid RowSpacing="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
@@ -101,7 +120,7 @@
                         <ContentView BackgroundColor="Black" Opacity=".6"/>
                     <Label Text="TENNIS" TextColor="White" FontAttributes="Bold" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                         </Grid>
-            </StackLayout>
+            </StackLayout>-->
             <!--<StackLayout Grid.Row="5" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"  Spacing="0">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding TriathlonTappedCommand}" />

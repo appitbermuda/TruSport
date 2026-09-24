@@ -15,7 +15,7 @@
     <StackLayout>
         <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
-                <RowDefinition Height="150"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="1"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -28,19 +28,22 @@
                         <ColumnDefinition Width="10" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="30" />
-                        <RowDefinition Height="80" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                <StackLayout Grid.RowSpan="2" Grid.ColumnSpan="3" Padding="50,0" Spacing="0">
+                <StackLayout Grid.Row="0" Grid.ColumnSpan="3" Padding="50,50,50,20" Spacing="0">
                     <Image x:Name="LogoImage"
                            Source="ontrack_wordmark_reversed.png"
                            Aspect="AspectFit"
                            VerticalOptions="CenterAndExpand"
                            HorizontalOptions="CenterAndExpand"
                        />
-                    <Label Text="{Binding SetSport}" TextColor="White" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" VerticalOptions="Start"/>
+                    <Label Text="Football" TextColor="White" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" VerticalOptions="Start"/>
                     </StackLayout>
                     
+                <StackLayout Grid.Row="1" Grid.ColumnSpan="3" HorizontalOptions="Center" Padding="10,0,10,20">
+                        <Button x:Name="AllSportsButton" Text="All Sports" FontAttributes="Bold" BackgroundColor="White" TextColor="{StaticResource navBackgroundColor}" Padding="10" HeightRequest="30" CornerRadius="15" Clicked="AllSportsButton_Clicked" />                        
+                    </StackLayout>
 <!--                    <Label Grid.Column="1" Grid.Row="2" Text="OnTrack" Style="{DynamicResource SubtitleStyle}" />-->
                 </Grid>
             <BoxView Grid.Row="1" HeightRequest="1" BackgroundColor="WhiteSmoke"/>

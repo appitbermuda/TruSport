@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
-using Google.MobileAds;
+//using Google.MobileAds;
 using Microsoft.AppCenter;
-using Microsoft.AppCenter.Push;
+//using Microsoft.AppCenter.Push;
 //using Microsoft.WindowsAzure.MobileServices;
 using Syncfusion.ListView.XForms.iOS;
 using Syncfusion.SfBusyIndicator.XForms.iOS;
@@ -63,7 +63,7 @@ namespace TruSport.iOS
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            MobileAds.SharedInstance.Start(CompletionHandler);
+            //MobileAds.SharedInstance.Start(CompletionHandler);
 
             Forms.SetFlags("CarouselView_Experimental");
 
@@ -122,9 +122,9 @@ namespace TruSport.iOS
             return true;
         }
 
-        private void CompletionHandler(InitializationStatus status)
-        {
-        }
+        //private void CompletionHandler(InitializationStatus status)
+        //{
+        //}
 
         //void RegisterForRemoteNotifications()
         //{

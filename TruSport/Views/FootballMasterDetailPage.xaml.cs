@@ -12,7 +12,7 @@ using Xamarin.Forms.Xaml;
 namespace TruSport.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class FootballMasterDetailPage : MasterDetailPage
+    public partial class FootballMasterDetailPage : FlyoutPage
     {
         public FootballMasterDetailPage()
         {
@@ -115,6 +115,14 @@ namespace TruSport.Views
             else if(item.Title == "Tickets")
             {
                 //var page = (Page)Activator.CreateInstance(item.TargetType);
+
+                string Email = await SecureStorage.GetAsync("Email");
+                var Customer = await App.Database.GetCustomerByIDAsync(Email);
+                if (Customer != null)
+                    App.IsLoggedIn = true;
+                else
+                    App.IsLoggedIn = false;
+
                 App.Current.MainPage = new Tickets.TicketFlyoutPage();
                 
             }

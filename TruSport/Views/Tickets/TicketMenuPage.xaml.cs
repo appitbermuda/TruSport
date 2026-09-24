@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using Syncfusion.ListView.XForms;
 using TruSport.Views.Football;
 using TruSport.Views.Setting;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace TruSport.Views.Tickets
@@ -42,20 +43,40 @@ namespace TruSport.Views.Tickets
 
             public TicketMasterDetailPageMasterViewModel()
             {
-                OnTrackMenuItems = new ObservableCollection<TicketMasterDetailPageMenuItem>(new[]
+                if (App.IsLoggedIn)
                 {
-                    new TicketMasterDetailPageMenuItem { Id = 0, Title = "Home", IconSource="" , TargetType = typeof(TicketListPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 1, Title = "My Account", IconSource="" , TargetType = typeof(Tickets.AccountPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 2, Title = "My Tickets", IconSource="" , TargetType = typeof(Tickets.MyTicketsPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 3, Title = "Order History", IconSource="" , TargetType = typeof(Tickets.OrderHistoryPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 4, Title = "Shop Merchandise", IconSource="" , TargetType = typeof(ShopPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 5, Title = "What's Happening?", IconSource="" , TargetType = typeof(FlyersPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 6, Title = "News", IconSource="" , TargetType = typeof(NewsPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 7, Title = "Help", IconSource="" , TargetType = typeof(HelpPage) },
-                    //new TicketMasterDetailPageMenuItem { Id = 8, Title = "Settings", IconSource="" , TargetType = typeof(SettingPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 9, Title = "Contact Us", IconSource="" , TargetType = typeof(ContactUsPage) },
-                    new TicketMasterDetailPageMenuItem { Id = 10, Title = "Sports", IconSource="" , TargetType = typeof(OnTrackPage) },
-                });
+                    OnTrackMenuItems = new ObservableCollection<TicketMasterDetailPageMenuItem>(new[]
+                    {
+                        new TicketMasterDetailPageMenuItem { Id = 0, Title = "Home", IconSource="" , TargetType = typeof(TicketListPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 1, Title = "My Account", IconSource="" , TargetType = typeof(Tickets.AccountPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 2, Title = "My Tickets", IconSource="" , TargetType = typeof(Tickets.MyTicketsPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 3, Title = "Order History", IconSource="" , TargetType = typeof(Tickets.OrderHistoryPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 4, Title = "Shop Merchandise", IconSource="" , TargetType = typeof(ShopPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 5, Title = "What's Happening?", IconSource="" , TargetType = typeof(FlyersPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 6, Title = "News", IconSource="" , TargetType = typeof(NewsPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 7, Title = "Help", IconSource="" , TargetType = typeof(HelpPage) },
+                        //new TicketMasterDetailPageMenuItem { Id = 8, Title = "Settings", IconSource="" , TargetType = typeof(SettingPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 9, Title = "Contact Us", IconSource="" , TargetType = typeof(ContactUsPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 10, Title = "Sports", IconSource="" , TargetType = typeof(OnTrackPage) },
+                    });
+                }
+                else
+                {
+                    OnTrackMenuItems = new ObservableCollection<TicketMasterDetailPageMenuItem>(new[]
+                    {
+                        new TicketMasterDetailPageMenuItem { Id = 0, Title = "Home", IconSource="" , TargetType = typeof(TicketListPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 1, Title = "My Account", IconSource="" , TargetType = typeof(Tickets.AccountPage) },
+                        //new TicketMasterDetailPageMenuItem { Id = 2, Title = "My Tickets", IconSource="" , TargetType = typeof(Tickets.MyTicketsPage) },
+                        //new TicketMasterDetailPageMenuItem { Id = 3, Title = "Order History", IconSource="" , TargetType = typeof(Tickets.OrderHistoryPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 4, Title = "Shop Merchandise", IconSource="" , TargetType = typeof(ShopPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 5, Title = "What's Happening?", IconSource="" , TargetType = typeof(FlyersPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 6, Title = "News", IconSource="" , TargetType = typeof(NewsPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 7, Title = "Help", IconSource="" , TargetType = typeof(HelpPage) },
+                        //new TicketMasterDetailPageMenuItem { Id = 8, Title = "Settings", IconSource="" , TargetType = typeof(SettingPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 9, Title = "Contact Us", IconSource="" , TargetType = typeof(ContactUsPage) },
+                        new TicketMasterDetailPageMenuItem { Id = 10, Title = "Sports", IconSource="" , TargetType = typeof(OnTrackPage) },
+                    });
+                }
             }
 
             #region INotifyPropertyChanged Implementation

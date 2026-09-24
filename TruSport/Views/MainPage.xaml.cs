@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace TruSport
     {
         readonly INotificationRegistrationService _notificationRegistrationService;
         FixtureService fixtureService;
+        SettingService settingService;
 
         MainPageViewModel mainPageViewModel;
 
@@ -29,7 +31,7 @@ namespace TruSport
         {
             mainPageViewModel = new MainPageViewModel(Navigation);
             fixtureService = new FixtureService();
-
+            settingService = new SettingService();
 
             InitializeComponent();
 
@@ -42,7 +44,7 @@ namespace TruSport
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            //await GetVersionInfo();
+            await GetVersionInfo();
 
             //// Handle when your app starts
             //if (App.Database != null)
@@ -65,6 +67,8 @@ namespace TruSport
             //}
         }
 
+        
+
         void ShowAlert(string message)
         => MainThread.BeginInvokeOnMainThread(()
         => DisplayAlert("Notification", message, "OK").ContinueWith((task)
@@ -77,14 +81,25 @@ namespace TruSport
             string result = string.Empty;
             try
             {
-                var isLatest = await CrossLatestVersion.Current.IsUsingLatestVersion();
+                bool isLatest = await CrossLatestVersion.Current.IsUsingLatestVersion();
+                //string latestVersionNumber = await CrossLatestVersion.Current.GetLatestVersionNumber();
+                string installedVersionNumber = CrossLatestVersion.Current.InstalledVersionNumber;
+                string currentVersionNumber = await settingService.GetCurrentVersionNumber();
 
-                if (!isLatest)
+
+                if (!isLatest && currentVersionNumber != installedVersionNumber)
                 {
                     await DisplayAlert("Update Required", "There is a new version of OnTrack available. Please update now.", "Update");
 
-                    await CrossLatestVersion.Current.OpenAppInStore();
-                    
+
+                    string url = string.Empty;
+                    var location = RegionInfo.CurrentRegion.Name.ToLower();
+                    if (Device.RuntimePlatform == Device.Android)
+                        url = "https://play.google.com/store/apps/details?id=com.techreef.TruSport&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1";
+                    else if (Device.RuntimePlatform == Device.iOS)
+                        url = "https://apps.apple.com/us/app/ontrack-bm/id1407229911?mt=8";
+                    await Browser.OpenAsync(url, BrowserLaunchMode.External);
+
                 }
             }
             catch (Exception ex)

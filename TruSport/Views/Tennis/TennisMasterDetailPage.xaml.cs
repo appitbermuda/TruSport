@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace TruSport.Views.Tennis
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class TennisMasterDetailPage : MasterDetailPage
+    public partial class TennisMasterDetailPage : FlyoutPage
     {
         public TennisMasterDetailPage()
         {

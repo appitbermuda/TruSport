@@ -5,6 +5,7 @@ using TruSport.ViewModel;
 using TruSport.Views.Basketball;
 using TruSport.Views.Bowling;
 using TruSport.Views.Cricket;
+using TruSport.Views.Golf;
 using TruSport.Views.Tennis;
 using TruSport.Views.Triathlon;
 using Xamarin.Essentials;
@@ -48,6 +49,8 @@ namespace TruSport.Views
                         App.Current.MainPage = new BasketballMasterDetailPage();
                     else if (sport.Sport == Constants.Triathlon)
                         App.Current.MainPage = new TriathlonFlyoutPage();
+                    else if (sport.Sport == Constants.Golf)
+                        App.Current.MainPage = new GolfFlyoutPage();
                     else
                         App.Current.MainPage = new FootballMasterDetailPage();
                 }

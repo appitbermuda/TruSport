@@ -1,5 +1,5 @@
 using System;
-namespace TruSport
+namespace Ontrack
 {
     public static class Constants
     {
@@ -36,7 +36,8 @@ namespace TruSport
         public static string MatchCommissioner = "Match Commissioner";
         public static string TeamAdministrator = "Team Administrator";
         public static string NotificationChannelName { get; set; } = "OnTrackNotifyChannel";
-        
+        public const string ImageEndPoint = "https://ontrackimagestore.blob.core.windows.net/images/";
+
         //public static string ListenConnectionString { get; set; } = "Endpoint=sb://uridepush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=ESGAUJ/HbYDTmU9g8l4ECSoffmBOndBB3TEML0/QRCA=";
         public static string DebugTag { get; set; } = "OnTrackNotify";
         public static string[] SubscriptionTags { get; set; } = { "default", "football", "cricket" };
@@ -44,14 +45,14 @@ namespace TruSport
         public static string APNTemplateBody { get; set; } = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
 
 #if DEBUG
-        public const string APIEndpoint = "http://localhost:40139/api/";
+        //public const string APIEndpoint = "http://localhost:40139/api/";
         //public const string APIEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
-        //public const string APIEndpoint = "https://ontrackservice.azurewebsites.net/api/";
+        public const string APIEndpoint = "https://ontrackserviceapi.azurewebsites.net/api/";
         //public const string ChatEndpoint = "http://localhost:26585/chatHub";
         public static string NotificationHubName { get; set; } = "OnTrackDevPushHub";
         public static string ListenConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=TPTAMlyAdTjqLH7eemrlPunhzKEy5yt3BMkxosyrkSY=";
 #else
-        public const string APIEndpoint = "https://ontrackservice.azurewebsites.net/api/";
+        public const string APIEndpoint = "https://ontrackserviceapi.azurewebsites.net/api/";
         //public const string APIEndpoint = "https://ontrackservicetest.azurewebsites.net/api/";
         public static string NotificationHubName { get; set; } = "OnTrackPushHub";
         public static string ListenConnectionString { get; set; } = "Endpoint=sb://ontrackpush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=P0I0U/tizyUD2mhlZnAH+VvNEuOUSZr722a3X+J2414=";
@@ -59,5 +60,4 @@ namespace TruSport
         //public static string ListenConnectionString { get; set; } = "Endpoint=sb://ontrackdevpush.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=nsIXDAEutaeMsrisPfd0mnYAZNYGggsKpLE9JAjMRKs=";
 #endif
     }
-
 }

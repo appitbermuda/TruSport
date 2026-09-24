@@ -116,7 +116,7 @@ namespace TruSport.Services
             return null;
         }
 
-        public async Task<List<LeagueStat>> GetMostRunsByPlayer()
+        public async Task<List<LeagueStat>> GetMostRunsByPlayer(string matchTypeID)
         {
             try
             {
@@ -126,6 +126,7 @@ namespace TruSport.Services
                 //{
                 var client = new RestClient(Constants.APIEndpoint);
                 var request = new RestRequest("LeagueStat/RunsByPlayer", Method.GET);
+                request.AddParameter("matchTypeID", matchTypeID);
                 //request.AddHeader("authorization", "Bearer " + accessToken);
 
                 // We execute the request and capture the response
@@ -150,7 +151,7 @@ namespace TruSport.Services
             return null;
         }
 
-        public async Task<List<LeagueStat>> GetMostWicketsByPlayer()
+        public async Task<List<LeagueStat>> GetMostWicketsByPlayer(string matchTypeID)
         {
             try
             {
@@ -160,6 +161,7 @@ namespace TruSport.Services
                 //{
                 var client = new RestClient(Constants.APIEndpoint);
                 var request = new RestRequest("LeagueStat/WicketsByPlayer", Method.GET);
+                request.AddParameter("matchTypeID", matchTypeID);
                 //request.AddHeader("authorization", "Bearer " + accessToken);
 
                 // We execute the request and capture the response

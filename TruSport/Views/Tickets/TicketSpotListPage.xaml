@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:extension="clr-namespace:TruSport.Extensions" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converters="clr-namespace:TruSport.Converters" 
+    x:Class="TruSport.Views.Tickets.TicketSpotListPage"
+    Title="ONTRACK Tickets"
+    NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:TicketsAvailableConverter x:Name="ticketsAvailableConverter" x:Key="ticketsAvailableConverter"/>
+            <converters:HalfWidthConverter x:Key="halfWidthConverter"/>
+            <converters:WidthConverter x:Key="widthConverter"/>
+            <converters:EventImageConverter x:Key="eventImageConverter"/>
+            <converters:ListHeightConverter x:Key="listHeightConverter"/>
+            <converters:ImageConverter x:Key="imageConverter"/>
+            <DataTemplate x:Name="EventTicketSpotItemTemplate" x:Key="EventTicketSpotItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand" WidthRequest="{Binding ., Converter={StaticResource halfWidthConverter}}" Padding="0,2.5">
+                    <Frame Padding="5" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="Transparent">
+                   <Grid x:Name="grid" Padding="0,0,0,0"
+                      RowSpacing="5"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                       <Grid.ColumnDefinitions>
+                           <ColumnDefinition Width="*"/>
+                       </Grid.ColumnDefinitions>
+                    <StackLayout VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="CenterAndExpand">
+                                <Label x:Name="TicketTypeLabel"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                    Text="{Binding Product.Age}"/>
+                        </StackLayout>
+                       <StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                            <Label x:Name="PriceLabel"
+                                   FontSize="Micro"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Product.Price, StringFormat='${0}'}"/>
+                        </StackLayout>                                              
+                        </Grid>
+                        </Frame>
+            </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="SelectedEventTicketSpotItemTemplate" x:Key="SelectedEventTicketSpotItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand" WidthRequest="{Binding ., Converter={StaticResource halfWidthConverter}}" Padding="0,2.5">
+                    <Frame Padding="5" HasShadow="False" BorderColor="{DynamicResource buttonBackgroundColor}" BackgroundColor="{StaticResource selectedFrameBackgroundColor}">
+                   <Grid x:Name="grid" Padding="0,0,0,0"
+                      RowSpacing="5"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />                        
+                    </Grid.RowDefinitions>
+                       <Grid.ColumnDefinitions>
+                           <ColumnDefinition Width="*"/>
+                       </Grid.ColumnDefinitions>
+                    <StackLayout VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="CenterAndExpand">
+                                <Label x:Name="TicketTypeLabel"
+                                   FontSize="Small"
+                                       FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource SelectedTextPrimaryColor}"
+                                    Text="{Binding Product.Age}"/>
+                        </StackLayout>
+                       <StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                            <Label x:Name="PriceLabel"
+                                   FontSize="Micro"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="CenterAndExpand"
+                                   TextColor="{DynamicResource SelectedTextPrimaryColor}"
+                                        Text="{Binding Product.Price, StringFormat='${0}'}"/>
+                        </StackLayout>                       
+                        </Grid>                        
+                        </Frame>
+            </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <Grid RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /> 
+                    <RowDefinition Height="*" />   
+                </Grid.RowDefinitions>
+                <Grid  BackgroundColor="{DynamicResource navBackgroundColor}" Padding="10,10">
+                <StackLayout VerticalOptions="FillAndExpand">
+                    <StackLayout Grid.Row="1" >
+                        <StackLayout>
+                        <Label x:Name="TitleLabel"
+                                   HorizontalOptions="CenterAndExpand"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{DynamicResource navTextColor}"
+                                   FontAttributes="Bold"
+                                        Text="{Binding SportEvent.Title}">
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="14"  Tablet="21" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="15"  Tablet="22" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                            </Label>
+                        <Label x:Name="DescriptionLabel"
+                                   HorizontalOptions="CenterAndExpand"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{DynamicResource navTextColor}"
+                                   FontAttributes="Italic,Bold"
+                                        Text="{Binding SportEvent.Description}">
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">  
+                        <OnPlatform.Android> 
+                            <OnIdiom x:TypeArguments="x:Double" Phone="12"  Tablet="19" /> 
+                        </OnPlatform.Android> 
+                        <OnPlatform.iOS> 
+                            <OnIdiom x:TypeArguments="x:Double"  Phone="13"  Tablet="21" /> 
+                        </OnPlatform.iOS> 
+                    </OnPlatform> 
+                                </Label.FontSize>
+                            </Label>
+                    </StackLayout>
+                    <StackLayout Spacing="5"
+                                     VerticalOptions="StartAndExpand"
+                                         HorizontalOptions="CenterAndExpand">
+                                <StackLayout Padding="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                                    <Label x:Name="FieldIcon"
+                                       FontSize="Small"
+                                           Text="&#xe901;"
+                                           VerticalOptions="Center"
+                                       TextColor="{DynamicResource navTextColor}"
+                                        FontFamily="{StaticResource fontFamily}"/>
+                                    <Label x:Name="FieldName"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource navTextColor}"
+                                        Text="{Binding SportEvent.Field.Name}"/>
+                                    </StackLayout>
+                                    <StackLayout Padding="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                                    <Label x:Name="TimeIcon"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource navTextColor}"
+                                            Text="&#xe904;"
+                                           FontFamily="{StaticResource fontFamily}"/>
+                                <Label x:Name="TimeLabel"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource navTextColor}"
+                                       VerticalTextAlignment="End"
+                                            Text="{Binding SportEvent.EventTime, StringFormat='{0:MMM d - h:mm tt}'}"/>
+                                </StackLayout>
+                            </StackLayout>
+                </StackLayout>
+                </StackLayout>
+                 <StackLayout VerticalOptions="FillAndExpand">
+                    <Button Text="" BackgroundColor="Transparent" FontSize="25" TextColor="{DynamicResource navTextColor}" FontFamily="{DynamicResource fontAwesomeSolidFamily}" VerticalOptions="CenterAndExpand" WidthRequest="30" HeightRequest="30" Padding="0" HorizontalOptions="StartAndExpand" Command="{Binding CloseClickedCommand}"/>
+                </StackLayout>
+            </Grid>
+                
+        <StackLayout Grid.Row="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource backgroundColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>            
+            <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">                                
+                    <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <ff:CachedImage Source="{Binding Image, Converter={StaticResource imageConverter}}"
+                                                ErrorPlaceholder="ontracklogo.png"
+                                LoadingPlaceholder="ontracklogo.png"
+                                                CacheDuration="50"
+                                                RetryCount="3"
+                                                RetryDelay="600" 
+                                    Aspect="AspectFit"
+                                    WidthRequest="{Binding ., Converter={StaticResource widthConverter}}"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                                DownsampleToViewSize="True">  
+                    </ff:CachedImage>
+                </StackLayout>
+            </StackLayout>
+                <StackLayout Grid.Row="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">                                        
+                    <listView:SfListView x:Name="TicketSpotsList"
+                                            ItemsSource="{Binding EventTicketCollection}"
+                                            ItemTemplate="{StaticResource EventTicketSpotItemTemplate}"  
+                                            SelectedItemTemplate="{StaticResource SelectedEventTicketSpotItemTemplate}"                                                 
+                                            SelectionMode="SingleDeselect"
+                                            SelectedItem="{Binding EventTicket}"
+                                            SelectionChangedCommand="{Binding TicketSelectedCommand}"
+                                            SelectionChangedCommandParameter="{x:Reference TicketSpotsList}"
+                                            HorizontalOptions="FillAndExpand"
+                                            VerticalOptions="FillAndExpand"
+                                            ItemSpacing="2"
+                                            Padding="1"                                             
+                                            AutoFitMode="DynamicHeight"                                            
+                                        >
+                                        <listView:SfListView.LayoutManager>
+                                            <listView:GridLayout SpanCount="2"/>
+                                        </listView:SfListView.LayoutManager>
+                    </listView:SfListView>
+                                        
+                </StackLayout>
+            <StackLayout Grid.Row="0" Grid.RowSpan="2" IsVisible="{Binding NoTickets}" Padding="10" HorizontalOptions="Center">
+                <Label HorizontalTextAlignment="Center" TextColor="{DynamicResource TextPrimaryColor}" Text="There are currently no match tickets available." FontSize="Small"/>
+            </StackLayout>
+            <extension:CustomBusyIndicator Grid.RowSpan="2" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+        </Grid>
+            </StackLayout>
+                
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -5,7 +5,7 @@ using TruSport.Data;
 
 namespace TruSport.Droid.Data
 {
-    [Service]
+    [Service(Exported = true)]
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class PushNotificationFirebaseMessagingService : FirebaseMessagingService
     {

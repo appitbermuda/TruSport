@@ -89,10 +89,10 @@ namespace TruSport.Services
         {
             try
             {
-                string accessToken = await SecureStorage.GetAsync("Token");
+                //string accessToken = await SecureStorage.GetAsync("Token");
 
-                if (accessToken != null)
-                {
+                //if (accessToken != null)
+                //{
                     var client = new RestClient(Constants.APIEndpoint);
                     var request = new RestRequest("Inventory/CheckEventTickets", Method.GET);
                     //request.AddHeader("authorization", "Bearer " + accessToken);
@@ -108,7 +108,7 @@ namespace TruSport.Services
 
                         return hasStock;
                     }
-                }
+                //}
             }
             catch (Exception ex)
             {
@@ -194,10 +194,10 @@ namespace TruSport.Services
         {
             try
             {
-                string accessToken = await SecureStorage.GetAsync("Token");
+                //string accessToken = await SecureStorage.GetAsync("Token");
 
-                if (accessToken != null)
-                {
+                //if (accessToken != null)
+                //{
                     var client = new RestClient(Constants.APIEndpoint);
                     var request = new RestRequest("Inventory/EventTicket", Method.GET);
                     //request.AddHeader("authorization", "Bearer " + accessToken);
@@ -213,7 +213,7 @@ namespace TruSport.Services
 
                         return stock;
                     }
-                }
+                //}
             }
             catch (Exception ex)
             {
@@ -223,6 +223,41 @@ namespace TruSport.Services
 
 
             return 0;
+        }
+
+        public async Task<bool> CheckIfEventSpotAvailable(string EventTicketID)
+        {
+            try
+            {
+                //string accessToken = await SecureStorage.GetAsync("Token");
+
+                //if (accessToken != null)
+                //{
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("Inventory/EventSpot", Method.GET);
+                //request.AddHeader("authorization", "Bearer " + accessToken);
+                request.AddParameter("EventTicketID", EventTicketID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    bool stock = JsonConvert.DeserializeObject<bool>(response.Content);
+
+                    return stock;
+                }
+                //}
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "Player");
+
+            }
+
+
+            return false;
         }
     }
 }

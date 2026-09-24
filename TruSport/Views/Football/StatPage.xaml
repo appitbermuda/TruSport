@@ -1,0 +1,817 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:tabView="clr-namespace:Syncfusion.XForms.TabView;assembly=Syncfusion.SfTabView.XForms" xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms" xmlns:converter="clr-namespace:TruSport.Converters" xmlns:extension="clr-namespace:TruSport.Extensions"
+    x:Class="TruSport.Views.Football.StatPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:ImageConverter x:Key="imageConverter"/>
+            <converter:TeamNameConverter x:Key="teamNameConverter"/>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+            <converter:TableIndexToColorConverter x:Key="tableIndexConverter"/>
+            <converter:GameTimeConverter x:Key="gameTimeConverter"/>
+            <OnPlatform x:TypeArguments="x:String" x:Key="fontFamily" iOS="icomoon" Android="icomoon.ttf#icomoon" />
+            <DataTemplate x:Name="TableItemTemplate"  x:Key="TableItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center">
+                    <StackLayout HorizontalOptions="FillAndExpand"
+                                 VerticalOptions="FillAndExpand">
+                    
+                <Grid x:Name="grid"
+                      Padding="0"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="45" />
+                            <RowDefinition Height="1" />
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0">
+                                <Label x:Name="PositionLabel"
+                                       HorizontalTextAlignment="Center"
+                                   FontSize="12"
+                                       Text="{Binding Position}"
+                                   TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                            <StackLayout Padding="0" VerticalOptions="Center">
+                        <!--<controls:CircleImage FillColor="White" Aspect="AspectFit" Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="40" WidthRequest="40" />-->
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
+                        <ff:CachedImage Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                                        CacheDuration="50"
+                                                        RetryCount="3"
+                                                        RetryDelay="600"
+                                        Aspect="AspectFit"
+                                        HeightRequest="30"
+                                                  WidthRequest="30"
+                                                        DownsampleToViewSize="True">  
+                                            <!--<ff:CachedImage.Transformations>  
+                                                <ffTransformations:CircleTransformation />  
+                                            </ff:CachedImage.Transformations>-->  
+                                        </ff:CachedImage>
+                            </Frame>
+                    </StackLayout>
+                            <Label x:Name="TeamAlias" Text="{Binding Alias}" IsVisible="false"/>
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="12"
+                                   FontAttributes="None"
+                                   VerticalTextAlignment="Center"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                        Text="{Binding Name, Converter={StaticResource teamNameConverter}, ConverterParameter={x:Reference TeamAlias}}"/>
+                            <!--<Label x:Name="TeamNameLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="{Binding Name}"/>-->
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Played}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Wins}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="LossLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Loss}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="DrawLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Draws}"/>
+                        </StackLayout>
+                    <!--<StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GoalsForLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding GoalsFor}"/>
+                        </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GoalsAgainstLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding GoalsAgainst}"/>
+                        </StackLayout>-->
+                    <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="GoalDiffLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding GoalDiff}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label x:Name="PointsLabel"
+                                   FontSize="12"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   HorizontalTextAlignment="Center"
+                                        Text="{Binding Points}"/>
+                        </StackLayout>
+                         <BoxView Grid.Row="1" Grid.ColumnSpan="8"
+                                         BackgroundColor="{DynamicResource borderColor}"
+                                         HeightRequest="1"/>
+                        </Grid>
+                    </StackLayout>
+                    </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="PlayerItemTemplate"  x:Key="PlayerItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center">
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="1"
+                      ColumnSpacing="1"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1"/>
+                    </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5,0,5">
+                                <Label x:Name="PlayerNameLabel"
+                                   FontSize="Small"
+                                       Text="{Binding PlayerName}"
+                                   TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="EndAndExpand"
+                                     Padding="0,5,10,5">
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="Medium"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                   HorizontalOptions="EndAndExpand"
+                                        Text="{Binding Goals}"/>
+                        </StackLayout>
+                    <BoxView Grid.Row="1" HeightRequest="1" Grid.ColumnSpan="2" BackgroundColor="LightGray" Opacity=".3" HorizontalOptions="FillAndExpand"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="TeamItemTemplate"  x:Key="TeamItemTemplate">
+                <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center">
+                    
+                <Grid x:Name="grid"
+                      Padding="1"
+                      RowSpacing="1"
+                      ColumnSpacing="5"
+                      BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">    
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1"/>
+                    </Grid.RowDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="10,5,0,5">
+                        <Frame HeightRequest="40" WidthRequest="40" CornerRadius="20" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" HasShadow="False" IsClippedToBounds="True">
+                        <ff:CachedImage Source="{Binding TeamLogo, Converter={StaticResource imageConverter}}"
+                                                        ErrorPlaceholder="ontracklogo.png"
+                                        LoadingPlaceholder="ontracklogo.png"
+                                                        CacheDuration="50"
+                                                        RetryCount="3"
+                                                        RetryDelay="600"
+                                        Aspect="AspectFit"
+                                        HeightRequest="40"
+                                                  WidthRequest="40"
+                                                        DownsampleToViewSize="True">  
+                                        </ff:CachedImage>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="1"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand"
+                                 Padding="0,5">
+                                <Label x:Name="PlayerNameLabel"
+                                   FontSize="Small"
+                                       Text="{Binding TeamName}"
+                                   TextColor="{DynamicResource TextPrimaryColor}"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="EndAndExpand"
+                                     Padding="0,5,10,5">
+                            <Label x:Name="TeamNameLabel"
+                                   FontSize="Medium"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                   HorizontalOptions="EndAndExpand"
+                                        Text="{Binding Goals}"/>
+                        </StackLayout>
+                    <BoxView Grid.Row="1" HeightRequest="1" Grid.ColumnSpan="3" BackgroundColor="LightGray" Opacity=".3" HorizontalOptions="FillAndExpand"/>
+                        </Grid>
+                    </StackLayout>
+            </DataTemplate>
+            <DataTemplate x:Name="LeagueHeaderItemTemplate"  x:Key="LeagueHeaderItemTemplate">
+              <StackLayout Padding="5,15,5,0">
+                <Frame CornerRadius="5" Padding="0" BackgroundColor="Transparent">
+                    <Frame IsClippedToBounds="True" CornerRadius="5" Padding="0"  BackgroundColor="{DynamicResource GroupHeaderBackgroundColor}">
+                        <Grid VerticalOptions="FillAndExpand" Padding="0,10">
+                            <StackLayout  Grid.Column="0" Padding="10,0" VerticalOptions="Center" HorizontalOptions="Start">
+                            <Label x:Name="leagueLabel" Text="{Binding .}"
+                                    FontSize="Small"
+                                    FontAttributes="Bold"
+                                    TextColor="White"/>
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                </Frame>
+                </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout Spacing="0"
+                     Padding="0"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+        <Grid x:Name="PageGrid"
+              RowSpacing="0"
+              BackgroundColor="{DynamicResource backgroundColor}"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+                <tabView:SfTabView Grid.Row="0" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}" VisibleHeaderCount="2"
+                               TabHeaderBackgroundColor="{StaticResource tabHeaderColor}"
+                               DisplayMode="Text"
+                               SelectedIndex="0"
+                                EnableSwiping="False"
+                                   TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                        <tabView:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}" 
+                                                              Position="Bottom" 
+                                                          StrokeThickness="2"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                    <tabView:SfTabItem Title="Standings" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackLayout Grid.Row="0">
+                                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="FillAndExpand">
+                                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="Center" Padding="10,20" WidthRequest="350">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="87"/>
+                                                <ColumnDefinition Width="87"/>
+                                                <ColumnDefinition Width="87"/>
+                                                <ColumnDefinition Width="87"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Frame x:Name="PremierDivision" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="15" HeightRequest="20" Padding="15,5" BackgroundColor="{DynamicResource buttonBackgroundColor}">
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer x:Name="PremierDivisionTap" Tapped="PremierDivisionTap_Tapped"/>
+                                                </Frame.GestureRecognizers>
+                                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label x:Name="PremierLabel" Text="Premier" FontSize="Micro" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{DynamicResource buttonTextColor}"/>
+                                                </StackLayout>
+                                            </Frame>
+                                            <Frame x:Name="FirstDivision" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="15" HeightRequest="20" Padding="15,5" BackgroundColor="{DynamicResource buttonTextColor}" >
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer x:Name="FirstDivisionTap" Tapped="FirstDivisionTap_Tapped"/>
+                                                </Frame.GestureRecognizers>
+                                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label x:Name="FirstLabel" Text="First" FontSize="Micro" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{DynamicResource buttonBackgroundColor}"/>                                                
+                                                </StackLayout>
+                                            </Frame>
+                                            <Frame x:Name="CoronaDivision" Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="15" HeightRequest="20" Padding="15,5" BackgroundColor="{DynamicResource buttonTextColor}" >
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer x:Name="CoronaDivisionTap" Tapped="CoronaDivisionTap_Tapped"/>
+                                                </Frame.GestureRecognizers>
+                                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label x:Name="CoronaLabel" Text="Corona" FontSize="Micro" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{DynamicResource buttonBackgroundColor}"/>                                                
+                                                </StackLayout>
+                                            </Frame>
+                                            <Frame x:Name="WomenDivision" Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="15" HeightRequest="20" Padding="15,5" BackgroundColor="{DynamicResource buttonTextColor}" >
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer x:Name="WomenDivisionTap" Tapped="WomenDivisionTap_Tapped"/>
+                                                </Frame.GestureRecognizers>
+                                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label x:Name="WomenLabel" Text="Women's" FontSize="Micro" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{DynamicResource buttonBackgroundColor}"/>                                                
+                                                </StackLayout>
+                                            </Frame>
+                                        </Grid>
+                                    </ScrollView>
+                                </StackLayout>
+                                
+                                <StackLayout Grid.RowSpan="2" HeightRequest="250" WidthRequest="250" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" InputTransparent="True">
+                            <Image Style="{StaticResource ontrackLogoWatermark}" Opacity="0.1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1">
+                                        <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              RowSpacing="0" BackgroundColor="Transparent">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="30" />
+                                    <RowDefinition Height="2" />
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                                <StackLayout Grid.Row="0" HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Center"
+                             Padding="0,0">
+                        <Grid Grid.Row="1" 
+                              x:Name="TableHeaderGrid"
+                              Padding="0,0"
+                              RowSpacing="1"
+                              ColumnSpacing="1"
+
+                              VerticalOptions="FillAndExpand"
+                              HorizontalOptions="FillAndExpand">    
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" Grid.ColumnSpan="2" Padding="10,0,0,0"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                        Text="TEAM"/>
+                        </StackLayout>
+                           <StackLayout Grid.Row="0" Grid.Column="2"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="P"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"
+                                        Text="W"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="L"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="D"/>
+                        </StackLayout>
+                            <StackLayout Grid.Row="0" Grid.Column="6"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="GD"/>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="7"
+                                 VerticalOptions="Center"
+                                     HorizontalOptions="FillAndExpand">
+                            <Label 
+                                   FontSize="13"
+                                   TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Center"
+                                        Text="Pts"/>
+                        </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                                <BoxView Grid.Row="1"
+                                         BackgroundColor="{DynamicResource borderColor}"
+                                         HeightRequest="2"/>
+                             
+                                <listView:SfListView Grid.Row="2" x:Name="PremierLeagueList"
+                                ItemsSource="{Binding PremierDivisionCollection}"
+                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 AutoFitMode="DynamicHeight"/>
+
+                                            <listView:SfListView Grid.Row="2" x:Name="FirstDivisionList" IsVisible="false"
+                                ItemsSource="{Binding FirstDivisionCollection}"
+                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 AutoFitMode="DynamicHeight"/>
+
+                                            <listView:SfListView Grid.Row="2" x:Name="CoronaLeagueList" IsVisible="false"
+                                ItemsSource="{Binding CoronaLeagueCollection}"
+                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 AutoFitMode="DynamicHeight"/>
+                                            
+                                            <listView:SfListView Grid.Row="2" x:Name="WomenLeagueList" IsVisible="false"
+                                ItemsSource="{Binding WomensLeagueCollection}"
+                                    ItemTemplate="{StaticResource TableItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="White"
+                                 AutoFitMode="DynamicHeight"/>
+
+                                        
+
+                                    <extension:CustomBusyIndicator Grid.Row="2" IsVisible="{Binding IsActivityIndicatorVisible}"/>
+                                    </Grid>
+                                </StackLayout>
+                            </Grid>
+                            </tabView:SfTabItem.Content>
+                        </tabView:SfTabItem>
+                    <tabView:SfTabItem Title="Leaderboard" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                            <Grid>
+                                 <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackLayout Grid.Row="0">
+                                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="FillAndExpand">
+                                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="Center" Padding="10,20" WidthRequest="350">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="87"/>
+                                                <ColumnDefinition Width="87"/>
+                                                <ColumnDefinition Width="87"/>
+                                                <ColumnDefinition Width="87"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Frame x:Name="PremierDivisionLB" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="15" HeightRequest="20" Padding="15,5" BackgroundColor="{DynamicResource buttonBackgroundColor}">
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer x:Name="PremierDivisionTapLB" Tapped="PremierDivisionTap_Tapped"/>
+                                                </Frame.GestureRecognizers>
+                                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label x:Name="PremierLabelLB" Text="Premier" FontSize="Micro" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{DynamicResource buttonTextColor}"/>
+                                                </StackLayout>
+                                            </Frame>
+                                            <Frame x:Name="FirstDivisionLB" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="15" HeightRequest="20" Padding="15,5" BackgroundColor="{DynamicResource buttonTextColor}" >
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer x:Name="FirstDivisionTapLB" Tapped="FirstDivisionTap_Tapped"/>
+                                                </Frame.GestureRecognizers>
+                                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label x:Name="FirstLabelLB" Text="First" FontSize="Micro" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{DynamicResource buttonBackgroundColor}"/>                                                
+                                                </StackLayout>
+                                            </Frame>
+                                            <Frame x:Name="CoronaDivisionLB" Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="15" HeightRequest="20" Padding="15,5" BackgroundColor="{DynamicResource buttonTextColor}" >
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer x:Name="CoronaDivisionTapLB" Tapped="CoronaDivisionTap_Tapped"/>
+                                                </Frame.GestureRecognizers>
+                                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label x:Name="CoronaLabelLB" Text="Corona" FontSize="Micro" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{DynamicResource buttonBackgroundColor}"/>                                                
+                                                </StackLayout>
+                                            </Frame>
+                                            <Frame x:Name="WomenDivisionLB" Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center" CornerRadius="15" HeightRequest="20" Padding="15,5" BackgroundColor="{DynamicResource buttonTextColor}" >
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer x:Name="WomenDivisionTapLB" Tapped="WomenDivisionTap_Tapped"/>
+                                                </Frame.GestureRecognizers>
+                                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label x:Name="WomenLabelLB" Text="Women's" FontSize="Micro" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{DynamicResource buttonBackgroundColor}"/>                                                
+                                                </StackLayout>
+                                            </Frame>
+                                        </Grid>
+                                    </ScrollView>
+                                </StackLayout>
+                                    <StackLayout Grid.RowSpan="2" HeightRequest="250" WidthRequest="250" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" InputTransparent="True">
+                            <Image Style="{StaticResource ontrackLogoWatermark}" Opacity="0.1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Aspect="AspectFit"/>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1">
+                                        <tabView:SfTabView Grid.Row="0" IsVisible="{Binding NoConnectivity, Converter={StaticResource inverseBooleanConverter}}" VisibleHeaderCount="3"
+                                 TabHeaderBackgroundColor="{StaticResource tabHeaderColor}"
+                                 DisplayMode="Text"
+                               SelectedIndex="0"
+                               EnableSwiping="False"
+                                TabHeight="50">
+                <tabView:SfTabView.SelectionIndicatorSettings>
+                        <tabView:SelectionIndicatorSettings Color="{DynamicResource tabIndicatorColor}" 
+                                                              Position="Bottom"
+                                                            StrokeThickness="2"/>
+                </tabView:SfTabView.SelectionIndicatorSettings>
+                    
+                    <tabView:SfTabItem Title="Goals Scored" TitleFontColor="Gray"  SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                        <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="Transparent"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <listView:SfListView Grid.Row="0" x:Name="PremierTeamScoredList"
+                                ItemsSource="{Binding PremierTeamScoredCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                                 GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                                 AllowGroupExpandCollapse="True"
+                                 GroupHeaderSize="60"
+                                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                            <listView:SfListView Grid.Row="0" x:Name="FirstTeamScoredList" IsVisible="false"
+                                ItemsSource="{Binding FirstTeamScoredCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                                 GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                                 AllowGroupExpandCollapse="True"
+                                 GroupHeaderSize="60"
+                                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                            <listView:SfListView Grid.Row="0" x:Name="CoronaTeamScoredList" IsVisible="false"
+                                ItemsSource="{Binding CoronaTeamScoredCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                                 GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                                 AllowGroupExpandCollapse="True"
+                                 GroupHeaderSize="60"
+                                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                            <listView:SfListView Grid.Row="0" x:Name="WomenTeamScoredList" IsVisible="false"
+                                ItemsSource="{Binding WomenTeamScoredCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                                 GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                                 AllowGroupExpandCollapse="True"
+                                 GroupHeaderSize="60"
+                                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                    <tabView:SfTabItem Title="Goals Conceded" TitleFontColor="Gray"  SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="Transparent"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                                <listView:SfListView Grid.Row="0" x:Name="PremierTeamConcededList"
+                                ItemsSource="{Binding PremierTeamConcededCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                    GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                                     AllowGroupExpandCollapse="True"
+                                 GroupHeaderSize="60"
+                                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                                <listView:SfListView Grid.Row="0" x:Name="FirstTeamConcededList" IsVisible="false"
+                                ItemsSource="{Binding FirstTeamConcededCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                    GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                                     AllowGroupExpandCollapse="True"
+                                 GroupHeaderSize="60"
+                                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                                <listView:SfListView Grid.Row="0" x:Name="CoronaTeamConcededList" IsVisible="false"
+                                ItemsSource="{Binding CoronaTeamConcededCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                    GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                                     AllowGroupExpandCollapse="True"
+                                 GroupHeaderSize="60"
+                                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                                <listView:SfListView Grid.Row="0" x:Name="WomenTeamConcededList" IsVisible="false"
+                                ItemsSource="{Binding WomenTeamConcededCollection}"
+                                    ItemTemplate="{StaticResource TeamItemTemplate}"
+                                    GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                                      HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                                     AllowGroupExpandCollapse="True"
+                                 GroupHeaderSize="60"
+                                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                        </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+                                            <tabView:SfTabItem Title="Most Goals" TitleFontColor="Gray" SelectionColor="{DynamicResource TextPrimaryColor}">
+                        <tabView:SfTabItem.Content>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="0,0,0,0"
+                              VerticalOptions="FillAndExpand"
+                              BackgroundColor="Transparent"
+                              RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                                <listView:SfListView Grid.Row="0" x:Name="PremierPlayerGoalsList"
+                                ItemsSource="{Binding PremierPlayerGoalsCollection}"
+                                    ItemTemplate="{StaticResource PlayerItemTemplate}"
+                                    GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                   HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                    AllowGroupExpandCollapse="True"
+                                    GroupHeaderSize="60"
+                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                                <listView:SfListView Grid.Row="0" x:Name="FirstPlayerGoalsList" IsVisible="false"
+                                ItemsSource="{Binding FirstPlayerGoalsCollection}"
+                                    ItemTemplate="{StaticResource PlayerItemTemplate}"
+                                    GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                   HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                    AllowGroupExpandCollapse="True"
+                                    GroupHeaderSize="60"
+                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                                <listView:SfListView Grid.Row="0" x:Name="CoronaPlayerGoalsList" IsVisible="false"
+                                ItemsSource="{Binding CoronaPlayerGoalsCollection}"
+                                    ItemTemplate="{StaticResource PlayerItemTemplate}"
+                                    GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                   HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                    AllowGroupExpandCollapse="True"
+                                    GroupHeaderSize="60"
+                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                                <listView:SfListView Grid.Row="0" x:Name="WomenPlayerGoalsList" IsVisible="false"
+                                ItemsSource="{Binding WomenPlayerGoalsCollection}"
+                                    ItemTemplate="{StaticResource PlayerItemTemplate}"
+                                    GroupHeaderTemplate="{StaticResource LeagueHeaderItemTemplate}"
+                                   SelectionMode="None"
+                                   HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand"
+                                   ItemSpacing="0"
+                                    SelectionBackgroundColor="Transparent"
+                                    AllowGroupExpandCollapse="True"
+                                    GroupHeaderSize="60"
+                                 AutoFitMode="DynamicHeight">
+                                </listView:SfListView>
+
+                                </Grid>
+                        </tabView:SfTabItem.Content>
+                    </tabView:SfTabItem>
+            </tabView:SfTabView>
+                                </StackLayout>
+                            </Grid>
+                            </Grid>
+                            </tabView:SfTabItem.Content>
+                        </tabView:SfTabItem>
+                    </tabView:SfTabView>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

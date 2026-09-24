@@ -166,22 +166,24 @@ namespace TruSport.ViewModel.Shop
                                 //Application.Current.MainPage = (new TicketFlyoutPage());
                                 if (BackToPage != null)
                                 {
-                                    if (Application.Current.MainPage is FlyoutPage mdp)
-                                    {
-                                        var page = (Page)Activator.CreateInstance(BackToPage);
 
-                                        //if(BackToPage.N)
+                                    Application.Current.MainPage = (new TicketFlyoutPage());
+                                    //if (Application.Current.MainPage is FlyoutPage mdp)
+                                    //{
+                                    //    var page = (Page)Activator.CreateInstance(BackToPage);
 
-                                        mdp.Detail = new NavigationPage(page)
-                                        {
-                                            BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
-                                            BarTextColor = (Color)App.Current.Resources["navTextColor"]
-                                        };
-                                    }
+                                    //    //if(BackToPage.N)
+
+                                    //    mdp.Detail = new NavigationPage(page)
+                                    //    {
+                                    //        BarBackgroundColor = (Color)App.Current.Resources["navBackgroundColor"],
+                                    //        BarTextColor = (Color)App.Current.Resources["navTextColor"]
+                                    //    };
+                                    //}
                                 }
                                 else
                                 {
-                                    await Navigation.PopModalAsync();
+                                    Application.Current.MainPage = (new TicketFlyoutPage());
                                     MessagingCenter.Send<LoginViewModel>(this, "OpenPurchasePage");
                                 }
                             }

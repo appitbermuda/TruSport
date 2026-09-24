@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
 using RestSharp;
 using TruSport.Model;
@@ -79,6 +80,62 @@ namespace TruSport.Services
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "Push");                
+            }
+        }
+
+        public async Task<List<PushNotification>> GetPushNotifications()
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+
+                var request = new RestRequest("PushNotification/AllNotifications", Method.GET);
+
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+
+                if (response.IsSuccessful)
+                {
+                    List<PushNotification> pushNotifications = JsonConvert.DeserializeObject<List<PushNotification>>(response.Content);
+
+                    return pushNotifications;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                Debug.WriteLine(ex.Message, "PushNotifications");
+            }
+            return null;
+        }
+
+        public async Task<PushNotification> Get(string ID)
+        {
+            try
+            {
+                var client = new RestClient(Constants.APIEndpoint);
+                var request = new RestRequest("PushNotification/Get", Method.GET);
+                request.AddParameter("id", ID);
+
+                // We execute the request and capture the response
+                // in a variable called `response`
+                IRestResponse response = await client.ExecuteTaskAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    PushNotification pushNotification = JsonConvert.DeserializeObject<PushNotification>(response.Content);
+
+                    return pushNotification;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "PushNotification");
+
+                return null;
             }
         }
     }

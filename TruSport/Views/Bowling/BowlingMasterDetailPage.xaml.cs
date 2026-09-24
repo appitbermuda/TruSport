@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace TruSport.Views.Bowling
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class BowlingMasterDetailPage : MasterDetailPage
+    public partial class BowlingMasterDetailPage : FlyoutPage
     {
         public BowlingMasterDetailPage()
         {

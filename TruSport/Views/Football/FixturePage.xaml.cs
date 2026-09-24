@@ -245,7 +245,7 @@ namespace TruSport.Views.Football
 
         void Button_Clicked(System.Object sender, System.EventArgs e)
         {
-            if (Application.Current.MainPage is MasterDetailPage mdp)
+            if (Application.Current.MainPage is FlyoutPage mdp)
             {
                 mdp.IsPresented = true;
             }

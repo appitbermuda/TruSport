@@ -108,11 +108,11 @@ namespace TruSport.ViewModels.Cricket
                         }
                     });
 
-                    var premDivTeams = await leagueTableService.GetPremierLeagueCricketTables();
+                    var premDivTeams = await leagueTableService.GetPremierLeagueCricketTables(null);
                     if (premDivTeams != null)
                         PremierTeamCollection = new ObservableCollection<CricketLeagueTable>(premDivTeams.OrderBy(e => e.Position));
 
-                    var firstDivTeams = await leagueTableService.GetFirstDivisionCricketTables();
+                    var firstDivTeams = await leagueTableService.GetFirstDivisionCricketTables(null);
                     if (firstDivTeams != null)
                         FirstDivisionTeamCollection = new ObservableCollection<CricketLeagueTable>(firstDivTeams.OrderBy(e => e.Position));
                 }

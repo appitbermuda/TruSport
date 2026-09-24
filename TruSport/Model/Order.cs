@@ -14,6 +14,7 @@ namespace TruSport.Model
         public decimal Total { get; set; }
         public string Authorisation { get; set; }
         public bool IsRefunded { get; set; }
+        public string AdditionalInfo { get; set; }
 
         [Ignore]
         public Customer Customer { get; set; }
@@ -26,6 +27,9 @@ namespace TruSport.Model
 
         [Ignore]
         public virtual List<OrderDetail> OrderDetails { get; set; }
+
+        [Ignore]
+        public virtual List<ContactTrace> ContactTraces { get; set; }
     }
 
     public class CustomerOrder
